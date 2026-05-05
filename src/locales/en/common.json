@@ -1,4 +1,13 @@
 {
+  "languages": {
+    "uk": "Ukrainian",
+    "en": "English"
+  },
+  "currencies": {
+    "uah": "Ukrainian Hryvnia",
+    "usd": "US Dollar",
+    "eur": "Euro"
+  },
   "viewToggle": {
     "grid_view": "Cards",
     "table_view": "Table"

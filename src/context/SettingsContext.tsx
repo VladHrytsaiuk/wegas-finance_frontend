@@ -13,6 +13,7 @@ import { useTheme } from "./ThemeContext";
 interface SettingsContextType {
   currency: string;
   language: string;
+  theme: string;
   isLoading: boolean;
   updateSettings: (newSettings: Partial<AppSettings>) => Promise<void>;
 }
@@ -68,36 +69,50 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Функція збереження
   const updateSettings = useCallback(
     async (newData: Partial<AppSettings>) => {
+      let updated: AppSettings;
+
       // Оновлюємо стейт оптимістично (щоб UI відреагував миттєво)
-      setSettingsState((prev) => ({ ...prev, ...newData }));
+      setSettingsState((prev) => {
+        updated = { ...prev, ...newData };
 
-      try {
-        // Відправляємо в БД
-        await settingsService.saveSettings({ ...settings, ...newData });
-
-        // Застосовуємо зміни локально
+        // side effects
         if (newData.language && newData.language !== i18n.language) {
           i18n.changeLanguage(newData.language);
         }
+        if (newData.theme) {
+          setTheme(newData.theme as "light" | "dark");
+        }
 
-        // 🔥 3. ГОЛОВНЕ ВИПРАВЛЕННЯ:
-        // Скидаємо весь кеш React Query.
-        await queryClient.invalidateQueries();
-      } catch (error) {
-        console.error("Error saving settings:", error);
-      }
+        // save to backend
+        settingsService.saveSettings(updated).catch((err) => {
+          console.error("Error saving settings:", err);
+        });
+
+        return updated;
+      });
+
+      // 🔥 3. ГОЛОВНЕ ВИПРАВЛЕННЯ:
+      // Скидаємо весь кеш React Query.
+      await queryClient.invalidateQueries();
     },
-    [i18n, queryClient, settings],
+    [i18n, queryClient, setTheme],
   );
 
   const value = React.useMemo(
     () => ({
       currency: settings.base_currency,
       language: settings.language,
+      theme: settings.theme,
       isLoading,
       updateSettings,
     }),
-    [settings.base_currency, settings.language, isLoading, updateSettings],
+    [
+      settings.base_currency,
+      settings.language,
+      settings.theme,
+      isLoading,
+      updateSettings,
+    ],
   );
 
   return (

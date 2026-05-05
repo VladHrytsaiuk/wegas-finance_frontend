@@ -1,16 +1,59 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useMemo, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import {
-  HiOutlineCurrencyDollar,
-  HiOutlineCurrencyEuro,
-  HiBanknotes,
-  HiGlobeAlt,
-} from "react-icons/hi2";
 
 import { useTheme } from "../../context/ThemeContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useSeedData } from "../useSeedData";
+
+// --- Components ---
+
+const UKFlag = () => (
+  <svg
+    width="18"
+    height="14"
+    viewBox="0 0 20 15"
+    style={{ borderRadius: "2px", display: "block" }}
+  >
+    <rect width="20" height="15" fill="#012169" />
+    <path d="M0 0l20 15M20 0L0 15" stroke="#fff" strokeWidth="3" />
+    <path d="M0 0l20 15M20 0L0 15" stroke="#C8102E" strokeWidth="2" />
+    <path d="M10 0v15M0 7.5h20" stroke="#fff" strokeWidth="5" />
+    <path d="M10 0v15M0 7.5h20" stroke="#C8102E" strokeWidth="3" />
+  </svg>
+);
+
+const UAFlag = () => (
+  <svg
+    width="18"
+    height="14"
+    viewBox="0 0 20 15"
+    style={{ borderRadius: "2px", display: "block" }}
+  >
+    <rect width="20" height="7.5" fill="#0057B7" />
+    <rect y="7.5" width="20" height="7.5" fill="#FFD700" />
+  </svg>
+);
+
+const CurrencySymbol = ({ symbol }: { symbol: string }) => (
+  <span
+    style={{
+      fontSize: "14px",
+      fontWeight: "bold",
+      width: "20px",
+      height: "20px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "var(--color-bg-page)",
+      borderRadius: "4px",
+      color: "var(--color-text-main)",
+      border: "1px solid var(--color-border)",
+    }}
+  >
+    {symbol}
+  </span>
+);
 
 interface OptionType {
   value: string;
@@ -19,84 +62,112 @@ interface OptionType {
 }
 
 export const useGeneralSettings = () => {
-  // 👇 1. Дістаємо i18n з хука
   const { t, i18n } = useTranslation();
   const { seed, isSeeding } = useSeedData();
   const { theme, toggleTheme } = useTheme();
+  const [isPending, startTransition] = useTransition();
 
   const {
     currency = "UAH",
-    language, // Тут може прийти "uk" з дефолтного стейту контексту
     updateSettings,
     isLoading,
   } = useSettings() || {};
 
-  const [localCurrency, setLocalCurrency] = useState<string>(currency);
+  // --- Options ---
 
-  // 👇 2. Ініціалізуємо локальний стейт тим, що ЗАРАЗ включено в i18n
-  // Це гарантує, що випадалка покаже те, що юзер бачить очима
-  const [localLanguage, setLocalLanguage] = useState<string>(i18n.language);
+  const currencyOptions: OptionType[] = useMemo(
+    () => [
+      {
+        value: "UAH",
+        label: t("common:currencies.uah", "Українська гривня"),
+        icon: <CurrencySymbol symbol="₴" />,
+      },
+      {
+        value: "USD",
+        label: t("common:currencies.usd", "Долар США"),
+        icon: <CurrencySymbol symbol="$" />,
+      },
+      {
+        value: "EUR",
+        label: t("common:currencies.eur", "Євро"),
+        icon: <CurrencySymbol symbol="€" />,
+      },
+    ],
+    [t],
+  );
 
-  useEffect(() => {
-    // Синхронізуємо тільки коли дані реально завантажились
-    if (!isLoading) {
-      if (currency) setLocalCurrency(currency);
-      // Якщо з бекенда прийшла мова, і вона відрізняється — оновлюємо,
-      // але пріоритет при старті краще віддати i18n у useState вище
-      if (language) setLocalLanguage(language);
-    }
-  }, [currency, language, isLoading]);
+  const languageOptions: OptionType[] = useMemo(
+    () => [
+      {
+        value: "uk",
+        label: t("common:languages.uk", "Українська"),
+        icon: <UAFlag />,
+      },
+      {
+        value: "en",
+        label: t("common:languages.en", "English"),
+        icon: <UKFlag />,
+      },
+    ],
+    [t],
+  );
 
-  // 👇 3. Додатковий ефект: якщо i18n змінився ззовні, підтягуємо випадалку
-  useEffect(() => {
-    setLocalLanguage(i18n.language);
-  }, [i18n.language]);
+  // --- Auto-Save Actions ---
 
-  const currencyOptions: OptionType[] = [
-    {
-      value: "UAH",
-      label: "Українська гривня (₴)",
-      icon: <HiBanknotes size={18} />,
+  const handleUpdate = useCallback(
+    async (updates: {
+      base_currency?: string;
+      language?: string;
+      theme?: string;
+    }) => {
+      if (!updateSettings) return;
+
+      // Wrap in transition to prevent UI "jumping" or "blocking"
+      startTransition(() => {
+        const savePromise = updateSettings(updates);
+
+        toast.promise(savePromise, {
+          loading: t("settings:settingsPage.toast_loading", "Збереження..."),
+          success: t(
+            "settings:settingsPage.toast_success",
+            "Налаштування збережено!",
+          ),
+          error: t("settings:settingsPage.toast_error", "Помилка збереження"),
+        });
+      });
     },
-    {
-      value: "USD",
-      label: "Долар США ($)",
-      icon: <HiOutlineCurrencyDollar size={18} />,
+    [updateSettings, t],
+  );
+
+  const setLocalCurrency = useCallback(
+    (val: string) => {
+      if (val === currency) return;
+      handleUpdate({ base_currency: val });
     },
-    {
-      value: "EUR",
-      label: "Євро (€)",
-      icon: <HiOutlineCurrencyEuro size={18} />,
+    [currency, handleUpdate],
+  );
+
+  const setLocalLanguage = useCallback(
+    (val: string) => {
+      if (val === i18n.language) return;
+      handleUpdate({ language: val });
     },
-  ];
+    [i18n.language, handleUpdate],
+  );
 
-  const languageOptions: OptionType[] = [
-    { value: "uk", label: "🇺🇦 Українська", icon: <HiGlobeAlt size={18} /> },
-    { value: "en", label: "🇺🇸 English", icon: <HiGlobeAlt size={18} /> },
-  ];
-
-  const handleSave = async () => {
-    if (!updateSettings) return;
-
-    const savePromise = updateSettings({
-      base_currency: localCurrency,
-      language: localLanguage,
-      theme: theme,
-    });
-
-    toast.promise(savePromise, {
-      loading: t("settings:settingsPage.toast_loading", "Збереження..."),
-      success: t("settings:settingsPage.toast_success", "Налаштування збережено!"),
-      error: t("settings:settingsPage.toast_error", "Помилка збереження"),
-    });
-  };
+  const handleToggleTheme = useCallback(() => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    toggleTheme();
+    handleUpdate({ theme: newTheme });
+  }, [theme, toggleTheme, handleUpdate]);
 
   return {
     state: {
-      localCurrency,
-      localLanguage,
+      localCurrency: currency,
+      localLanguage: i18n.language,
       theme,
       isLoading,
+      isPending,
       isSeeding,
       currencyOptions,
       languageOptions,
@@ -104,8 +175,7 @@ export const useGeneralSettings = () => {
     actions: {
       setLocalCurrency,
       setLocalLanguage,
-      toggleTheme,
-      handleSave,
+      toggleTheme: handleToggleTheme,
       seedData: seed,
     },
     t,

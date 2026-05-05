@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   max-width: 600px;
+  min-height: 500px;
 `;
 
 export const SectionTitle = styled.h2`

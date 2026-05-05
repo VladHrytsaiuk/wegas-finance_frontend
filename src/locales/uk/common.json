@@ -1,4 +1,13 @@
 {
+  "languages": {
+    "uk": "Українська",
+    "en": "English"
+  },
+  "currencies": {
+    "uah": "Українська гривня",
+    "usd": "Долар США",
+    "eur": "Євро"
+  },
   "viewToggle": {
     "grid_view": "Картки",
     "table_view": "Таблиця"

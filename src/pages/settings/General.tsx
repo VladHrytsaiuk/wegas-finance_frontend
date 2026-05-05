@@ -1,12 +1,17 @@
+import React from "react";
 import { Button } from "../../components/ui/Button";
-// 👇 Імпортуємо BaseSelect напряму (шлях може відрізнятись залежно від структури)
 import { BaseSelect } from "../../components/ui/Select/BaseSelect";
 
 import { useGeneralSettings } from "../../hooks/Settings/useGeneralSettings";
 import * as S from "./General.styles";
 
-// Допоміжна функція для рендеру лейбла (щоб не дублювати код двічі)
-const getTriggerLabel = (options: any[], value: string) => {
+interface OptionType {
+  value: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+const getTriggerLabel = (options: OptionType[], value: string) => {
   const selected = options.find((o) => o.value === value);
   if (!selected) return null;
   return (
@@ -24,6 +29,7 @@ function General() {
     localLanguage,
     theme,
     isLoading,
+    isPending,
     isSeeding,
     currencyOptions,
     languageOptions,
@@ -34,7 +40,7 @@ function General() {
   }
 
   return (
-    <S.Container>
+    <S.Container style={{ opacity: isPending ? 0.7 : 1, transition: "opacity 0.2s" }}>
       <S.SectionTitle>{t("settings:settingsPage.title")}</S.SectionTitle>
 
       {/* Тема */}
@@ -49,6 +55,7 @@ function General() {
           <S.SwitchButton
             $isActive={theme === "dark"}
             onClick={actions.toggleTheme}
+            disabled={isPending}
             aria-label="Toggle Dark Mode"
           />
         </S.SettingRow>
@@ -60,13 +67,14 @@ function General() {
         <BaseSelect
           triggerLabel={getTriggerLabel(languageOptions, localLanguage)}
           placeholder={t("common:ui.select_placeholder_default")}
+          disabled={isPending}
         >
           {languageOptions.map((opt) => (
             <S.OptionItem
               key={opt.value}
               $isActive={opt.value === localLanguage}
               onClick={() => actions.setLocalLanguage(opt.value)}
-              tabIndex={0} // Потрібно для навігації клавіатурою в BaseSelect
+              tabIndex={isPending ? -1 : 0}
               onKeyDown={(e) => {
                 if (e.key === "Enter") actions.setLocalLanguage(opt.value);
               }}
@@ -80,17 +88,20 @@ function General() {
 
       {/* Валюта */}
       <S.FormGroup>
-        <label htmlFor="currency">{t("settings:settingsPage.currency_label")}</label>
+        <label htmlFor="currency">
+          {t("settings:settingsPage.currency_label")}
+        </label>
         <BaseSelect
           triggerLabel={getTriggerLabel(currencyOptions, localCurrency)}
           placeholder={t("common:ui.select_placeholder_default")}
+          disabled={isPending}
         >
           {currencyOptions.map((opt) => (
             <S.OptionItem
               key={opt.value}
               $isActive={opt.value === localCurrency}
               onClick={() => actions.setLocalCurrency(opt.value)}
-              tabIndex={0}
+              tabIndex={isPending ? -1 : 0}
               onKeyDown={(e) => {
                 if (e.key === "Enter") actions.setLocalCurrency(opt.value);
               }}
@@ -102,12 +113,6 @@ function General() {
         </BaseSelect>
         <S.HelperText>{t("settings:settingsPage.currency_helper")}</S.HelperText>
       </S.FormGroup>
-
-      <div style={{ marginTop: "2rem" }}>
-        <Button variation="primary" onClick={actions.handleSave}>
-          {t("settings:settingsPage.save_button")}
-        </Button>
-      </div>
 
       <S.DevZone>
         <S.SectionTitle style={{ fontSize: "1.1rem", marginTop: "3rem" }}>

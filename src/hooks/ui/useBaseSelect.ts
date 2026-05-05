@@ -118,12 +118,7 @@ export const useBaseSelect = ({
       if (e.shiftKey) {
         triggerRef.current?.focus();
       } else {
-        if (triggerRef.current) {
-          triggerRef.current.focus();
-          setTimeout(() => {
-            focusNextElement(triggerRef.current!);
-          }, 0);
-        }
+        triggerRef.current?.focus();
       }
       return;
     }
@@ -131,10 +126,7 @@ export const useBaseSelect = ({
     if (e.key === "Enter" && !isMulti && activeEl.tagName !== "INPUT") {
       setTimeout(() => {
         setIsOpen(false);
-        if (triggerRef.current) {
-          triggerRef.current.focus();
-          setTimeout(() => focusNextElement(triggerRef.current!), 0);
-        }
+        triggerRef.current?.focus();
       }, 50);
       return;
     }
@@ -161,10 +153,7 @@ export const useBaseSelect = ({
     if (!isMulti) {
       setIsOpen(false);
       setTimeout(() => {
-        if (triggerRef.current) {
-          triggerRef.current.focus();
-          focusNextElement(triggerRef.current);
-        }
+        triggerRef.current?.focus();
       }, 0);
     }
   };
