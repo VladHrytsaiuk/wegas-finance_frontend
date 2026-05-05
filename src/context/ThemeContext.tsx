@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type Theme = "light" | "dark";
 
@@ -19,7 +25,7 @@ const getInitialTheme = (): Theme => {
   }
 
   const systemPrefersDark = window.matchMedia(
-    "(prefers-color-scheme: dark)"
+    "(prefers-color-scheme: dark)",
   ).matches;
   const initialTheme: Theme = systemPrefersDark ? "dark" : "light";
 
@@ -39,15 +45,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("app-theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
+  }, []);
+
+  const value = React.useMemo(
+    () => ({ theme, toggleTheme, setTheme }),
+    [theme, toggleTheme],
+  );
 
   return (
     // ⬅️ 2. ПЕРЕДАЄМО setTheme У VALUE
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };
 

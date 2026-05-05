@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query"; // ⬅️ 1. Імпорт
 import { settingsService, type AppSettings } from "../services/apiSettings";
@@ -60,41 +66,42 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [i18n, setTheme]); // Додав залежності для лінтера
 
   // Функція збереження
-  const updateSettings = async (newData: Partial<AppSettings>) => {
-    // Оновлюємо стейт оптимістично (щоб UI відреагував миттєво)
-    const updatedSettings = { ...settings, ...newData };
-    setSettingsState(updatedSettings);
+  const updateSettings = useCallback(
+    async (newData: Partial<AppSettings>) => {
+      // Оновлюємо стейт оптимістично (щоб UI відреагував миттєво)
+      setSettingsState((prev) => ({ ...prev, ...newData }));
 
-    try {
-      // Відправляємо в БД
-      await settingsService.saveSettings(updatedSettings);
+      try {
+        // Відправляємо в БД
+        await settingsService.saveSettings({ ...settings, ...newData });
 
-      // Застосовуємо зміни локально
-      if (newData.language && newData.language !== i18n.language) {
-        i18n.changeLanguage(newData.language);
+        // Застосовуємо зміни локально
+        if (newData.language && newData.language !== i18n.language) {
+          i18n.changeLanguage(newData.language);
+        }
+
+        // 🔥 3. ГОЛОВНЕ ВИПРАВЛЕННЯ:
+        // Скидаємо весь кеш React Query.
+        await queryClient.invalidateQueries();
+      } catch (error) {
+        console.error("Error saving settings:", error);
       }
+    },
+    [i18n, queryClient, settings],
+  );
 
-      // 🔥 3. ГОЛОВНЕ ВИПРАВЛЕННЯ:
-      // Скидаємо весь кеш React Query.
-      // Це змусить Дашборд, "Топ категорій" та всі інші віджети
-      // зробити нові запити на сервер. Оскільки в БД ми вже змінили валюту,
-      // сервер поверне нові цифри, перераховані по курсу.
-      await queryClient.invalidateQueries();
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      // Тут можна додати логіку відкату змін, якщо потрібно
-    }
-  };
+  const value = React.useMemo(
+    () => ({
+      currency: settings.base_currency,
+      language: settings.language,
+      isLoading,
+      updateSettings,
+    }),
+    [settings.base_currency, settings.language, isLoading, updateSettings],
+  );
 
   return (
-    <SettingsContext.Provider
-      value={{
-        currency: settings.base_currency,
-        language: settings.language,
-        isLoading,
-        updateSettings,
-      }}
-    >
+    <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
   );

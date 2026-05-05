@@ -18,7 +18,10 @@ export const useTransactionsPage = () => {
 
   // Setup Title
   useEffect(() => {
-    setPageTitle(t("transactions:transactionsPage.title"), t("transactions:transactionsPage.subtitle"));
+    setPageTitle(
+      t("transactions:transactionsPage.title"),
+      t("transactions:transactionsPage.subtitle"),
+    );
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
 
@@ -62,7 +65,10 @@ export const useTransactionsPage = () => {
   );
 
   // Handlers
-  const handleRowClick = (id: string) => navigate(`/transactions/${id}`);
+  const handleRowClick = useCallback(
+    (id: string) => navigate(`/transactions/${id}`),
+    [navigate],
+  );
 
   const hasActiveFilters = useMemo(() => {
     return (

@@ -68,6 +68,24 @@ const queryClient = new QueryClient({
   },
 });
 
+// --- Memoized or Static Objects ---
+const TOASTER_CONTAINER_STYLE = { margin: "8px" };
+const TOASTER_OPTIONS = {
+  success: { duration: 3000 },
+  error: { duration: 5000 },
+  style: {
+    fontSize: "16px",
+    maxWidth: "500px",
+    padding: "16px 24px",
+    backgroundColor: "var(--color-bg-surface)",
+    color: "var(--color-text-main)",
+    border: "1px solid var(--color-border)",
+    boxShadow: "var(--shadow-md)",
+  },
+};
+
+const NOOP_SET_TOKEN = () => {};
+
 function AppRoutes() {
   const location = useLocation();
   const background = location.state && location.state.background;
@@ -134,7 +152,7 @@ function AppRoutes() {
           </Route>
         </Route>
 
-        <Route path="login" element={<Login setToken={() => {}} />} />
+        <Route path="login" element={<Login setToken={NOOP_SET_TOKEN} />} />
         <Route path="register" element={<Register />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
@@ -178,20 +196,8 @@ function App() {
               <Toaster
                 position="top-center"
                 gutter={12}
-                containerStyle={{ margin: "8px" }}
-                toastOptions={{
-                  success: { duration: 3000 },
-                  error: { duration: 5000 },
-                  style: {
-                    fontSize: "16px",
-                    maxWidth: "500px",
-                    padding: "16px 24px",
-                    backgroundColor: "var(--color-bg-surface)",
-                    color: "var(--color-text-main)",
-                    border: "1px solid var(--color-border)",
-                    boxShadow: "var(--shadow-md)",
-                  },
-                }}
+                containerStyle={TOASTER_CONTAINER_STYLE}
+                toastOptions={TOASTER_OPTIONS}
               />
             </HeaderProvider>
           </SettingsProvider>

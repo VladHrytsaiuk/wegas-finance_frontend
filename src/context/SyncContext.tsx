@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
   type ReactNode,
+  useMemo,
 } from "react";
 import axios from "../services/Axios";
 import { toast } from "react-hot-toast";
@@ -189,19 +190,18 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     setIsVisible(false);
   }, []);
 
-  return (
-    <SyncContext.Provider
-      value={{
-        statusData,
-        isVisible,
-        startPolling,
-        stopPolling,
-        closeWidget,
-      }}
-    >
-      {children}
-    </SyncContext.Provider>
+  const value = useMemo(
+    () => ({
+      statusData,
+      isVisible,
+      startPolling,
+      stopPolling,
+      closeWidget,
+    }),
+    [statusData, isVisible, startPolling, stopPolling, closeWidget],
   );
+
+  return <SyncContext.Provider value={value}>{children}</SyncContext.Provider>;
 }
 
 export function useSync() {

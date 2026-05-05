@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useLocation } from "react-router-dom"; // 👈 Додано
 import { useUserRole } from "../hooks/useUserRole";
 
@@ -51,13 +57,15 @@ export const WorkspaceProvider = ({
     }
   }, [isStartupper, mode, isLoading]);
 
-  const setMode = (newMode: WorkspaceMode) => {
+  const setMode = useCallback((newMode: WorkspaceMode) => {
     setModeState(newMode);
     localStorage.setItem("app_mode", newMode);
-  };
+  }, []);
+
+  const value = React.useMemo(() => ({ mode, setMode }), [mode, setMode]);
 
   return (
-    <WorkspaceContext.Provider value={{ mode, setMode }}>
+    <WorkspaceContext.Provider value={value}>
       {children}
     </WorkspaceContext.Provider>
   );

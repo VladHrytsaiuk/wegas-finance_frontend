@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { startOfDay, endOfDay } from "date-fns";
@@ -80,31 +80,31 @@ export function useTransactionFilters() {
   });
 
   // --- 4. HANDLERS ---
-  const handleFilterChange = (key: string, val: any) => {
+  const handleFilterChange = useCallback((key: string, val: any) => {
     setFilterValues((prev) => ({ ...prev, [key]: val }));
     setPage(1);
-  };
+  }, []);
 
-  const handleSearchChange = (val: string) => {
+  const handleSearchChange = useCallback((val: string) => {
     // Оновлюємо тільки UI стейт миттєво
     setSearchQuery(val);
     // setPage(1) прибрали звідси, воно тепер в useEffect
-  };
+  }, []);
 
-  const handleSortChange = (val: string) => {
+  const handleSortChange = useCallback((val: string) => {
     setSortValue(val);
     setPage(1);
-  };
+  }, []);
 
-  const handleDateRangeChange = (range: {
-    from: Date | undefined;
-    to: Date | undefined;
-  }) => {
-    setDateRange(range);
-    setPage(1);
-  };
+  const handleDateRangeChange = useCallback(
+    (range: { from: Date | undefined; to: Date | undefined }) => {
+      setDateRange(range);
+      setPage(1);
+    },
+    [],
+  );
 
-  const handleClearAll = () => {
+  const handleClearAll = useCallback(() => {
     setFilterValues({
       type: [],
       account: [],
@@ -117,7 +117,7 @@ export function useTransactionFilters() {
     setDebouncedSearch(""); // Очищаємо API запит
     setSortValue("date-desc");
     setPage(1);
-  };
+  }, []);
 
   // --- 5. API PARAMS ---
   const apiParams = useMemo(() => {
@@ -167,21 +167,33 @@ export function useTransactionFilters() {
         options: [
           {
             value: "expense",
-            label: t("legacy:transactionFiltersHook.filter_type_expense", "Витрати"),
+            label: t(
+              "legacy:transactionFiltersHook.filter_type_expense",
+              "Витрати",
+            ),
           },
           {
             value: "income",
-            label: t("legacy:transactionFiltersHook.filter_type_income", "Доходи"),
+            label: t(
+              "legacy:transactionFiltersHook.filter_type_income",
+              "Доходи",
+            ),
           },
           {
             value: "transfer",
-            label: t("legacy:transactionFiltersHook.filter_type_transfer", "Перекази"),
+            label: t(
+              "legacy:transactionFiltersHook.filter_type_transfer",
+              "Перекази",
+            ),
           },
         ],
       },
       {
         key: "account",
-        label: t("legacy:transactionFiltersHook.filter_account_label", "Рахунок"),
+        label: t(
+          "legacy:transactionFiltersHook.filter_account_label",
+          "Рахунок",
+        ),
         type: "multi-select",
         treeType: "accounts",
         rawData: accounts.map((acc: any) => {
@@ -200,7 +212,10 @@ export function useTransactionFilters() {
     if (categories.length > 0) {
       config.push({
         key: "category",
-        label: t("legacy:transactionFiltersHook.filter_category_label", "Категорія"),
+        label: t(
+          "legacy:transactionFiltersHook.filter_category_label",
+          "Категорія",
+        ),
         type: "multi-select",
         treeType: "categories",
         rawData: categories,
