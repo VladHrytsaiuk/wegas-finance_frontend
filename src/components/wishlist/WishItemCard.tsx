@@ -1,0 +1,224 @@
+import {
+  HiTrash,
+  HiPencil,
+  HiCheck,
+  HiGift,
+  HiEllipsisHorizontal,
+  HiHandRaised,
+  HiLockClosed,
+  HiUserCircle,
+  HiArrowTopRightOnSquare,
+} from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
+
+import Modal from "../ui/Modal";
+import ConfirmDelete from "../ui/ConfirmDelete";
+import EditWishModal from "./EditWishModal";
+import { formatMoney, getUploadedFileUrl } from "../../utils/helpers";
+import * as S from "../../pages/wishlist/Wishlist.styles";
+
+import type { WishlistItem, WishlistGroup, User } from "../../types";
+
+interface WishItemCardProps {
+  item: WishlistItem;
+  user: User | null | undefined; // Твій тип користувача
+  familyMembers: User[] | undefined;
+  groups: WishlistGroup[];
+  handlers: {
+    updateItem: (data: any) => void;
+    deleteItem: (id: string) => void;
+    toggleReservation: (id: string) => void;
+  };
+  isOpen: boolean;
+  onToggleMenu: () => void;
+  onCloseMenu: () => void;
+}
+
+export default function WishItemCard({
+  item,
+  user,
+  familyMembers,
+  groups,
+  handlers,
+  isOpen,
+  onToggleMenu,
+  onCloseMenu,
+}: WishItemCardProps) {
+  const { t } = useTranslation();
+
+  const isBought = item.status === "bought";
+  const isMine = item.user_id === user?.id;
+  const isReservedByMe = item.reserved_by === user?.id;
+  const isReservedByOther = item.reserved_by && !isReservedByMe;
+  const isReserved = !!item.reserved_by;
+
+  const hasMenuActions = isMine;
+
+  const author = familyMembers?.find((m) => m.id === item.user_id);
+  const authorName = isMine ? "Моє" : author ? author.name : "Невідомо";
+
+  return (
+    <S.WishCard $isBought={isBought}>
+      {/* MENU TRIGGER */}
+      {hasMenuActions && (
+        <S.MenuTriggerContainer onClick={(e) => e.stopPropagation()}>
+          <S.MenuButton onClick={onToggleMenu}>
+            <HiEllipsisHorizontal size={20} />
+          </S.MenuButton>
+
+          {isOpen && (
+            <S.DropdownMenu>
+              <Modal>
+                {/* 1. ПОЗНАЧИТИ КУПЛЕНИМ */}
+                <S.MenuItem
+                  $variant="check"
+                  onClick={() => {
+                    handlers.updateItem({
+                      id: item.id,
+                      status: isBought ? "planning" : "bought",
+                    });
+                    onCloseMenu();
+                  }}
+                >
+                  <HiCheck />{" "}
+                  {isBought
+                    ? t("wishlist.mark_planning", "Повернути в плани")
+                    : t("wishlist.mark_bought", "Позначити купленим")}
+                </S.MenuItem>
+
+                {/* 2. РЕДАГУВАТИ */}
+                <Modal.Open opens={`edit-${item.id}`}>
+                  <S.MenuItem onClick={onCloseMenu}>
+                    <HiPencil /> {t("common.edit", "Редагувати")}
+                  </S.MenuItem>
+                </Modal.Open>
+
+                {/* 3. ВИДАЛИТИ */}
+                <div
+                  style={{
+                    borderTop: "1px solid var(--color-border)",
+                    margin: "4px 0",
+                  }}
+                ></div>
+                <Modal.Open opens={`delete-${item.id}`}>
+                  <S.MenuItem $variant="delete" onClick={onCloseMenu}>
+                    <HiTrash /> {t("common.delete", "Видалити")}
+                  </S.MenuItem>
+                </Modal.Open>
+
+                <Modal.Window name={`edit-${item.id}`}>
+                  <EditWishModal
+                    initialData={item}
+                    groups={groups}
+                    onSave={handlers.updateItem}
+                  />
+                </Modal.Window>
+                <Modal.Window name={`delete-${item.id}`}>
+                  <ConfirmDelete
+                    resourceName={item.name}
+                    onConfirm={() => handlers.deleteItem(item.id)}
+                  />
+                </Modal.Window>
+              </Modal>
+            </S.DropdownMenu>
+          )}
+        </S.MenuTriggerContainer>
+      )}
+
+      {/* IMAGE */}
+      <S.CardImage $src={getUploadedFileUrl(item.photo_url)}>
+        {!item.photo_url && (
+          <HiGift
+            size={48}
+            style={{
+              opacity: 0.2,
+              color: "var(--color-text-tertiary)",
+            }}
+          />
+        )}
+
+        {/* Бейджі резерву */}
+        {!isMine && isReserved && (
+          <S.StatusBadge $isMine={isReservedByMe}>
+            {isReservedByMe ? (
+              <>
+                <HiCheck size={14} />
+                Ви купуєте
+              </>
+            ) : (
+              <>
+                <HiLockClosed size={12} />
+                Резерв
+              </>
+            )}
+          </S.StatusBadge>
+        )}
+      </S.CardImage>
+
+      {/* BODY */}
+      <S.CardBody>
+        <div>
+          <S.Title $isBought={isBought}>{item.name}</S.Title>
+
+          <S.MetaRow>
+            <S.AuthorInfo title={`Створено: ${authorName}`}>
+              <HiUserCircle size={16} />
+              {authorName}
+            </S.AuthorInfo>
+
+            <S.PriorityBadge $priority={item.priority || 1}>
+              {item.priority === 3
+                ? "🔥 Високий"
+                : item.priority === 2
+                  ? "⚡ Середній"
+                  : "Низький"}
+            </S.PriorityBadge>
+          </S.MetaRow>
+        </div>
+
+        {/* ПОСИЛАННЯ ТА ЦІНА */}
+        <S.PriceRow>
+          <S.PriceText>
+            {item.price ? formatMoney(item.price, item.currency || "UAH") : "—"}
+          </S.PriceText>
+
+          {item.url && (
+            <S.LinkBtn
+              onClick={() => window.open(item.url, "_blank")}
+              title={t("common.open_link", "Відкрити в магазині")}
+            >
+              <HiArrowTopRightOnSquare size={18} />
+            </S.LinkBtn>
+          )}
+        </S.PriceRow>
+
+        {/* ACTION BUTTON */}
+        {!isMine && !isBought && (
+          <S.ReserveBtn
+            $isActive={isReservedByMe}
+            $isLocked={!!isReservedByOther}
+            onClick={(e) => {
+              if (isReservedByOther) return;
+              e.stopPropagation();
+              handlers.toggleReservation(item.id);
+            }}
+          >
+            {isReservedByMe ? (
+              <>
+                <HiCheck size={18} /> Зняти резерв
+              </>
+            ) : isReservedByOther ? (
+              <>
+                <HiLockClosed size={16} /> Зарезервовано
+              </>
+            ) : (
+              <>
+                <HiHandRaised size={18} /> Я хочу подарувати
+              </>
+            )}
+          </S.ReserveBtn>
+        )}
+      </S.CardBody>
+    </S.WishCard>
+  );
+}

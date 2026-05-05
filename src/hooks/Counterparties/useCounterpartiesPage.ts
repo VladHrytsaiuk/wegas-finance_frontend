@@ -1,0 +1,159 @@
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useCounterpartyData } from "./useCounterpartyData";
+import { useCounterpartyTree } from "./useCounterpartyTree";
+import { useUserRole } from "../useUserRole";
+import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+
+export const useCounterpartiesPage = () => {
+  const { t } = useTranslation();
+  const { canManageStructure } = useUserRole();
+
+  // Data
+  const { counterparties, categories, isLoadingCps, actions } =
+    useCounterpartyData();
+
+  // Local State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({ type: [] as string[] });
+  const [sortValue, setSortValue] = useState("name-asc");
+
+  const [selectedCp, setSelectedCp] = useState<any>(null);
+  const [selectedCat, setSelectedCat] = useState<any>(null);
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: string;
+    name: string;
+    isCategory: boolean;
+  } | null>(null);
+
+  // Computed Tree
+  const treeRoots = useCounterpartyTree({
+    counterparties,
+    categories,
+    searchQuery,
+    filters,
+    sortValue,
+  });
+
+  // Handlers
+  const openModal = (name: string) => {
+    setTimeout(() => document.getElementById(`trigger-${name}`)?.click(), 0);
+  };
+
+  const handleEditClick = (node: any) => {
+    if (!canManageStructure) return;
+
+    // node - це об'єкт TreeNode, у нього є поле raw (оригінальні дані) або data
+    const rawData = node.data || node.raw || node;
+
+    // Перевіряємо тип вузла
+    if (node.type === "subgroup" || node.type === "group" || node.isCategory) {
+      // Якщо це категорія (або підгрупа, яка є категорією)
+      // Треба знайти справжню категорію в масиві categories, якщо node.raw неповний
+      setSelectedCat(rawData);
+      openModal("edit-cat");
+    } else {
+      setSelectedCp(rawData);
+      openModal("edit-cp");
+    }
+  };
+
+  const handleDeleteClick = (id: string, isCategory: boolean = false) => {
+    if (!canManageStructure) return;
+
+    let name = "";
+    const categoryNameDefault =
+      t("counterpartiesPage.resource_category") || "Category";
+    const counterpartyNameDefault =
+      t("counterpartiesPage.resource_counterparty") || "Counterparty";
+
+    if (isCategory) {
+      const cat = categories.find((c: any) => c.id === id);
+      name = cat ? cat.name : categoryNameDefault;
+    } else {
+      const cp = counterparties.find((c: any) => c.id === id);
+      name = cp ? cp.name : counterpartyNameDefault;
+    }
+    setItemToDelete({ id, name, isCategory });
+    openModal("delete-confirm");
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setFilters({ type: [] });
+  };
+
+  const handleCloseSelection = () => {
+    setSelectedCp(null);
+    setSelectedCat(null);
+  };
+
+  // Configs
+  const filtersConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        key: "type",
+        label: t("counterpartiesPage.filter_type_label") || "Type",
+        type: "toggle",
+        options: [
+          {
+            value: "shop",
+            label: t("counterpartiesPage.filter_shop") || "Shop",
+          },
+          {
+            value: "person",
+            label: t("counterpartiesPage.filter_person") || "Person",
+          },
+          {
+            value: "other",
+            label: t("counterpartiesPage.filter_other") || "Other",
+          },
+        ],
+      },
+    ],
+    [t]
+  );
+
+  const sortOptions = useMemo(
+    () => [
+      {
+        value: "name-asc",
+        label: t("counterpartiesPage.sort_name_asc") || "Name (A-Z)",
+      },
+      {
+        value: "name-desc",
+        label: t("counterpartiesPage.sort_name_desc") || "Name (Z-A)",
+      },
+    ],
+    [t]
+  );
+
+  return {
+    state: {
+      treeRoots,
+      isLoadingCps,
+      searchQuery,
+      filters,
+      sortValue,
+      selectedCp,
+      selectedCat,
+      itemToDelete,
+      canManageStructure,
+      actions,
+    },
+    configs: {
+      filtersConfig,
+      sortOptions,
+    },
+    handlers: {
+      setSearchQuery,
+      setFilters,
+      setSortValue,
+      handleEditClick,
+      handleDeleteClick,
+      handleClearFilters,
+      handleCloseSelection,
+    },
+    t,
+  };
+};

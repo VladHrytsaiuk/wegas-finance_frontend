@@ -1,0 +1,153 @@
+import { useEffect } from "react";
+import { HiPlus, HiFlag } from "react-icons/hi2";
+
+// Components
+import Spinner from "../../components/ui/Spinner";
+import { Button } from "../../components/ui/Button";
+import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
+import CreateGoalModal from "../../components/goals/CreateGoalModal";
+import ExtendGoalModal from "../../components/goals/ExtendGoalModal";
+import GoalCard from "../../components/goals/GoalCard"; // Наш новий компонент
+
+// Logic & Styles
+import { useGoalsPage } from "../../hooks/Goals/useGoalsPage";
+import { useGoalsFilter } from "../../hooks/Goals/useGoalsFilter";
+import { useHeader } from "../../context/HeaderContext"; // Імпорт хедера
+import * as S from "./Goals.styles";
+
+function Goals() {
+  const {
+    state: { goals, isLoading, isCreateModalOpen, editingGoal, extendingGoal },
+    handlers: {
+      handleCreate,
+      handleEdit,
+      handleDelete,
+      handleToggleStatus,
+      handleCloseModal,
+      handleExtend,
+      updateGoalDate,
+    },
+    t,
+  } = useGoalsPage();
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    filters,
+    sortBy,
+    setSortBy,
+    filteredGoals,
+    filtersConfig,
+    sortOptions,
+    handleFilterChange,
+    handleClearAll,
+  } = useGoalsFilter(goals);
+
+  const { setPageTitle, resetPageTitle } = useHeader();
+
+  // Групуємо хендлери, щоб зручно передати їх у GoalCard
+  const cardHandlers = {
+    handleToggleStatus,
+    handleEdit,
+    handleDelete,
+    handleExtend,
+  };
+
+  // Встановлення глобального заголовка та субтайтлу
+  useEffect(() => {
+    setPageTitle(t("goals.title", "Фінансові цілі"), `Створіть власну ціль`);
+
+    return () => resetPageTitle();
+  }, [setPageTitle, resetPageTitle, t, goals.length]);
+
+  if (isLoading) return <Spinner />;
+
+  return (
+    <S.PageContainer>
+      <TableToolbar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder={t("goals.search_placeholder", "Пошук цілей...")}
+        filtersConfig={filtersConfig}
+        filterValues={filters}
+        onFilterChange={handleFilterChange}
+        sortOptions={sortOptions}
+        sortValue={sortBy}
+        onSortChange={setSortBy}
+        onClearAll={handleClearAll}
+      >
+        <Button
+          variation="primary"
+          size="medium"
+          onClick={handleCreate}
+          icon={<HiPlus />}
+        >
+          {t("goals.button_add")}
+        </Button>
+      </TableToolbar>
+
+      {filteredGoals.length > 0 ? (
+        <S.Grid>
+          {filteredGoals.map((goal) => (
+            <GoalCard key={goal.id} goal={goal} t={t} handlers={cardHandlers} />
+          ))}
+        </S.Grid>
+      ) : (
+        !isLoading && (
+          <S.EmptyState>
+            <S.EmptyIconWrapper>
+              <HiFlag />
+            </S.EmptyIconWrapper>
+            <div>
+              <h3>
+                {searchQuery
+                  ? t("common.no_results", "Нічого не знайдено")
+                  : t("goals.empty_title", "Список цілей порожній")}
+              </h3>
+              <p>
+                {searchQuery
+                  ? t("common.try_adjusting_search", "Спробуйте змінити запит")
+                  : t(
+                      "goals.empty_desc",
+                      "Створіть свою першу фінансову ціль, щоб почати відслідковувати прогрес.",
+                    )}
+              </p>
+            </div>
+
+            {!searchQuery && (
+              <Button
+                variation="primary"
+                onClick={handleCreate}
+                icon={<HiPlus />}
+              >
+                {t("goals.button_create_first")}
+              </Button>
+            )}
+          </S.EmptyState>
+        )
+      )}
+
+      {/* MODALS */}
+      {isCreateModalOpen && (
+        <CreateGoalModal
+          isOpen={isCreateModalOpen}
+          onClose={handleCloseModal}
+          editingGoal={editingGoal}
+        />
+      )}
+
+      <ExtendGoalModal
+        isOpen={!!extendingGoal}
+        onClose={() => handleExtend(null as any)}
+        currentDeadline={extendingGoal?.date_deadline || null}
+        onConfirm={(date) => {
+          if (extendingGoal) {
+            updateGoalDate(extendingGoal.id, date);
+          }
+        }}
+      />
+    </S.PageContainer>
+  );
+}
+
+export default Goals;

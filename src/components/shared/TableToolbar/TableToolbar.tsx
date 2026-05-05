@@ -1,0 +1,260 @@
+import { type ReactNode, useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { HiMagnifyingGlass, HiFunnel, HiCalendar } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
+
+// Components
+import { MultiSelectFilter } from "./MultiSelectFilter";
+import { RangeFilter } from "./RangeFilter";
+import { ToggleFilter } from "./ToggleFilter";
+import { SortControl } from "./SortControl";
+import { DateRangePicker } from "../../ui/DateRangePicker";
+
+// Hooks
+import { useDropdownPosition } from "../../../hooks/useDropdownPosition";
+
+// Styles & Types
+import * as S from "./TableToolbar.styles";
+import type { FilterConfig, FilterOption } from "./types";
+
+interface TableToolbarProps {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  searchPlaceholder?: string;
+  searchPosition?: "top" | "inline";
+  filtersConfig: FilterConfig[];
+  filterValues: any;
+  onFilterChange: (key: string, value: any) => void;
+  sortOptions: FilterOption[];
+  sortValue: string;
+  onSortChange: (value: string) => void;
+  onClearAll: () => void;
+  dateRange?: { from: Date | undefined; to: Date | undefined };
+  onDateRangeChange?: (range: {
+    from: Date | undefined;
+    to: Date | undefined;
+  }) => void;
+  children?: ReactNode;
+}
+
+export const TableToolbar = ({
+  searchQuery,
+  onSearchChange,
+  searchPlaceholder,
+  searchPosition = "inline",
+  filtersConfig,
+  filterValues,
+  onFilterChange,
+  sortOptions,
+  sortValue,
+  onSortChange,
+  onClearAll,
+  dateRange,
+  onDateRangeChange,
+  children,
+}: TableToolbarProps) => {
+  const { t } = useTranslation();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // Стейт для увімкнення/вимкнення функції стікі
+  const [isStickyEnabled, setIsStickyEnabled] = useState(false);
+
+  // Стейт для відстеження самого факту прилипання
+  const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isStickyEnabled) {
+      setIsSticky(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSticky(!entry.isIntersecting);
+      },
+      // Від'ємний відступ "-24px" змушує обзервер спрацювати ПІЗНІШЕ
+      { threshold: 1, rootMargin: "-1px 0px 0px 0px" },
+    );
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isStickyEnabled]);
+
+  const ESTIMATED_WIDTH = 480;
+
+  const {
+    triggerRef,
+    menuRef,
+    style: popupStyle,
+  } = useDropdownPosition(
+    showDatePicker,
+    () => setShowDatePicker(false),
+    "right",
+    ESTIMATED_WIDTH,
+  );
+
+  const finalSearchPlaceholder =
+    searchPlaceholder || t("toolbar.search_default_placeholder");
+
+  const hasDateFilter = dateRange && (dateRange.from || dateRange.to);
+
+  const hasActiveFilters =
+    searchQuery !== "" ||
+    hasDateFilter ||
+    Object.values(filterValues).some((val: any) => {
+      if (Array.isArray(val)) return val.length > 0;
+      if (typeof val === "object" && val !== null) return val.min || val.max;
+      return !!val;
+    });
+
+  return (
+    <>
+      {/* 1. ВЕРХНІЙ РЯДОК З КНОПКАМИ (відлітає при скролі) */}
+      <S.ChildrenTopRow style={{ position: "relative" }}>
+        {children}
+
+        {/* 🔥 МАЯЧОК: тепер він абсолютний відносно ChildrenTopRow. 
+            Він не займає місця і не створює подвійного gap в PageContainer */}
+        <div
+          ref={sentinelRef}
+          style={{
+            position: "absolute",
+            bottom: "-10px", // Трохи нижче за кнопки
+            left: 0,
+            height: "1px",
+            width: "10px",
+            pointerEvents: "none",
+            visibility: "hidden",
+          }}
+        />
+      </S.ChildrenTopRow>
+
+      {/* 2. ЛИПКИЙ КОНТЕЙНЕР (Фільтри + Пошук + Сортування) */}
+      <S.StickyContainer
+        $isSticky={isStickyEnabled && isSticky}
+        $stickyEnabled={isStickyEnabled}
+      >
+        <S.ControlsRow $isSticky={isStickyEnabled && isSticky}>
+          {searchPosition === "inline" && (
+            <S.SearchWrapper $inline>
+              <HiMagnifyingGlass />
+              <S.SearchInput
+                type="search"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder={finalSearchPlaceholder}
+              />
+            </S.SearchWrapper>
+          )}
+
+          {searchPosition === "inline" && <S.Divider />}
+
+          <S.FiltersGroup>
+            {filtersConfig.map((config: FilterConfig) => {
+              if (config.type === "multi-select") {
+                return (
+                  <MultiSelectFilter
+                    key={config.key}
+                    config={config}
+                    value={filterValues[config.key] || []}
+                    onChange={(vals) => onFilterChange(config.key, vals)}
+                  />
+                );
+              }
+
+              if (config.type === "range") {
+                return (
+                  <RangeFilter
+                    key={config.key}
+                    config={config}
+                    value={filterValues[config.key] || { min: "", max: "" }}
+                    onChange={(val) => onFilterChange(config.key, val)}
+                  />
+                );
+              }
+
+              if (config.type === "toggle") {
+                return (
+                  <ToggleFilter
+                    key={config.key}
+                    config={config}
+                    value={filterValues[config.key] || []}
+                    onChange={(vals) => onFilterChange(config.key, vals)}
+                  />
+                );
+              }
+
+              return null;
+            })}
+
+            {dateRange && onDateRangeChange && (
+              <>
+                <S.DateIconButton
+                  ref={triggerRef}
+                  type="button"
+                  onClick={() => setShowDatePicker(!showDatePicker)}
+                  $active={!!hasDateFilter || showDatePicker}
+                >
+                  <HiCalendar />
+                </S.DateIconButton>
+
+                {showDatePicker &&
+                  createPortal(
+                    <S.DatePopupPortal
+                      ref={menuRef}
+                      style={{ ...popupStyle, width: "fit-content" }}
+                    >
+                      <DateRangePicker
+                        dateFrom={dateRange.from}
+                        dateTo={dateRange.to}
+                        onChange={onDateRangeChange}
+                        staticPicker
+                        numberOfMonths={1}
+                      />
+                    </S.DatePopupPortal>,
+                    document.body,
+                  )}
+              </>
+            )}
+
+            {hasActiveFilters && (
+              <S.ResetButton type="button" onClick={onClearAll}>
+                <HiFunnel />
+              </S.ResetButton>
+            )}
+          </S.FiltersGroup>
+        </S.ControlsRow>
+
+        {(searchPosition === "top" || sortOptions.length > 0) && (
+          <S.BottomBar>
+            {searchPosition === "top" ? (
+              <S.SearchWrapper>
+                <HiMagnifyingGlass />
+                <S.SearchInput
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  placeholder={finalSearchPlaceholder}
+                />
+              </S.SearchWrapper>
+            ) : (
+              <div />
+            )}
+
+            {sortOptions.length > 0 && (
+              <SortControl
+                options={sortOptions}
+                value={sortValue}
+                onChange={onSortChange}
+              />
+            )}
+          </S.BottomBar>
+        )}
+      </S.StickyContainer>
+    </>
+  );
+};

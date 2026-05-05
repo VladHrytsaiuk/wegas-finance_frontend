@@ -1,0 +1,160 @@
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { HiPlus, HiArrowLeft, HiGift } from "react-icons/hi2";
+import { useQuery } from "@tanstack/react-query";
+
+import Spinner from "../../components/ui/Spinner";
+import { Button } from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
+import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
+
+import CreateWishModal from "../../components/wishlist/CreateWishModal";
+import WishItemCard from "../../components/wishlist/WishItemCard"; // Твій новий компонент
+import { useWishlist } from "../../hooks/Wishlist/useWishlist";
+import { useWishlistFilters } from "../../hooks/Wishlist/useWishlistFilters";
+import { getMeApi, getFamilyMembers } from "../../services/apiUsers";
+import { useHeader } from "../../context/HeaderContext";
+import * as S from "./Wishlist.styles";
+
+export default function WishlistItems() {
+  const { groupId } = useParams();
+  const navigate = useNavigate();
+  const { items, groups, isLoading, handlers, t } = useWishlist();
+  const { setPageTitle, resetPageTitle } = useHeader();
+
+  const { data: user } = useQuery({ queryKey: ["me"], queryFn: getMeApi });
+  const { data: familyMembers } = useQuery({
+    queryKey: ["familyMembers"],
+    queryFn: getFamilyMembers,
+  });
+
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  const groupItems = items.filter((i) => {
+    if (groupId === "virtual-my") return !i.group_id && i.user_id === user?.id;
+    if (groupId === "virtual-shared")
+      return !i.group_id && i.user_id !== user?.id;
+    return i.group_id === groupId;
+  });
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    filters,
+    sortBy,
+    setSortBy,
+    filteredItems,
+    filtersConfig,
+    sortOptions,
+    handleFilterChange,
+    handleClearAll,
+  } = useWishlistFilters(groupItems, groups);
+
+  let groupName = t("wishlist.group_unknown", "Папка");
+  if (groupId === "virtual-my") {
+    groupName = t("wishlist.my_wishes", "Мої бажання");
+  } else if (groupId === "virtual-shared") {
+    groupName = t("wishlist.shared_wishes", "Спільні бажання");
+  } else {
+    const group = groups.find((g) => g.id === groupId);
+    if (group) groupName = group.name;
+  }
+
+  useEffect(() => {
+    setPageTitle(groupName, "Додайте власне бажання");
+    return () => resetPageTitle();
+  }, [groupName, setPageTitle, resetPageTitle]);
+
+  if (isLoading) return <Spinner />;
+
+  return (
+    <S.PageContainer onClick={() => setOpenMenuId(null)}>
+      <S.HeaderSection>
+        <S.BackButton onClick={() => navigate("/wishlist")}>
+          <HiArrowLeft size={18} /> {t("common.return", "Назад")}
+        </S.BackButton>
+      </S.HeaderSection>
+
+      <TableToolbar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder={t("wishlist.search_placeholder", "Пошук бажань...")}
+        filtersConfig={filtersConfig}
+        filterValues={filters}
+        onFilterChange={handleFilterChange}
+        sortOptions={sortOptions}
+        sortValue={sortBy}
+        onSortChange={setSortBy}
+        onClearAll={handleClearAll}
+      >
+        <Modal>
+          <Modal.Open opens="create-wish">
+            <Button variation="primary" icon={<HiPlus />}>
+              {t("wishlist.btn_add_item", "Додати")}
+            </Button>
+          </Modal.Open>
+          <Modal.Window name="create-wish">
+            <CreateWishModal
+              groups={groups}
+              onCreate={handlers.createItem}
+              defaultGroupId={
+                groupId !== "virtual-my" && groupId !== "virtual-shared"
+                  ? groupId
+                  : undefined
+              }
+            />
+          </Modal.Window>
+        </Modal>
+      </TableToolbar>
+
+      {filteredItems.length > 0 ? (
+        <S.Grid>
+          {filteredItems.map((item) => (
+            <WishItemCard
+              key={item.id}
+              item={item}
+              user={user}
+              familyMembers={familyMembers}
+              groups={groups}
+              handlers={handlers}
+              isOpen={openMenuId === item.id}
+              onToggleMenu={() =>
+                setOpenMenuId(openMenuId === item.id ? null : item.id)
+              }
+              onCloseMenu={() => setOpenMenuId(null)}
+            />
+          ))}
+        </S.Grid>
+      ) : (
+        <S.EmptyState>
+          <S.EmptyIconWrapper>
+            <HiGift />
+          </S.EmptyIconWrapper>
+          <h3>
+            {searchQuery ? t("common.no_results") : t("wishlist.empty_title")}
+          </h3>
+          {!searchQuery && (
+            <Modal>
+              <Modal.Open opens="create-wish-empty">
+                <Button variation="primary" icon={<HiPlus />}>
+                  {t("wishlist.btn_add_item", "Додати")}
+                </Button>
+              </Modal.Open>
+              <Modal.Window name="create-wish-empty">
+                <CreateWishModal
+                  groups={groups}
+                  onCreate={handlers.createItem}
+                  defaultGroupId={
+                    groupId !== "virtual-my" && groupId !== "virtual-shared"
+                      ? groupId
+                      : undefined
+                  }
+                />
+              </Modal.Window>
+            </Modal>
+          )}
+        </S.EmptyState>
+      )}
+    </S.PageContainer>
+  );
+}
