@@ -90,7 +90,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
           type="button"
           disabled={disabled} // Нативний disabled
         >
-          {t("transactionForm.type_expense")}
+          {t("transactions:transactionForm.type_expense")}
         </S.Tab>
         <S.Tab
           className="type-tab-btn"
@@ -102,7 +102,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
           type="button"
           disabled={disabled}
         >
-          {t("transactionForm.type_income")}
+          {t("transactions:transactionForm.type_income")}
         </S.Tab>
         <S.Tab
           className="type-tab-btn"
@@ -114,7 +114,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
           type="button"
           disabled={disabled}
         >
-          <HiOutlineArrowsRightLeft /> {t("transactionForm.type_transfer")}
+          <HiOutlineArrowsRightLeft /> {t("transactions:transactionForm.type_transfer")}
         </S.Tab>
         <S.Tab
           className="type-tab-btn"
@@ -126,7 +126,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
           type="button"
           disabled={disabled}
         >
-          <HiOutlineBanknotes /> {t("general.debts")}
+          <HiOutlineBanknotes /> {t("navigation:general.debts")}
         </S.Tab>
       </S.MainTabs>
 
@@ -142,7 +142,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
             type="button"
             disabled={disabled}
           >
-            <HiArrowUpRight /> {t("transactions.loan_give")}
+            <HiArrowUpRight /> {t("transactions:transactions.loan_give")}
           </S.SubButton>
 
           <S.SubButton
@@ -153,7 +153,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
             type="button"
             disabled={disabled}
           >
-            <HiArrowDownLeft /> {t("transactions.loan_repay")}
+            <HiArrowDownLeft /> {t("transactions:transactions.loan_repay")}
           </S.SubButton>
 
           <S.SubButton
@@ -164,7 +164,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
             type="button"
             disabled={disabled}
           >
-            <HiArrowDownLeft /> {t("transactions.debt_take")}
+            <HiArrowDownLeft /> {t("transactions:transactions.debt_take")}
           </S.SubButton>
 
           <S.SubButton
@@ -175,7 +175,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
             type="button"
             disabled={disabled}
           >
-            <HiArrowUpRight /> {t("transactions.debt_repay")}
+            <HiArrowUpRight /> {t("transactions:transactions.debt_repay")}
           </S.SubButton>
         </S.SubOptionsGrid>
       )}

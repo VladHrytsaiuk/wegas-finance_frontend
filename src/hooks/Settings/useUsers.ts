@@ -30,36 +30,36 @@ export const useUsers = () => {
   const { mutate: addUser, isPending: isAdding } = useMutation({
     mutationFn: addUserApi,
     onSuccess: () => {
-      toast.success(t("usersPage.alert_add_success", "Користувача додано"));
+      toast.success(t("settings:usersPage.alert_add_success", "Користувача додано"));
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (err: any) =>
       toast.error(
         err.response?.data?.error ||
-          t("usersPage.alert_add_error", "Помилка додавання"),
+          t("settings:usersPage.alert_add_error", "Помилка додавання"),
       ),
   });
 
   const { mutate: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateUserApi,
     onSuccess: () => {
-      toast.success(t("usersPage.alert_update_success", "Дані оновлено"));
+      toast.success(t("settings:usersPage.alert_update_success", "Дані оновлено"));
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: () =>
-      toast.error(t("usersPage.alert_update_error", "Помилка оновлення")),
+      toast.error(t("settings:usersPage.alert_update_error", "Помилка оновлення")),
   });
 
   const { mutate: removeUser, isPending: isDeleting } = useMutation({
     mutationFn: deleteUserApi,
     onSuccess: () => {
       toast.success(
-        t("usersPage.alert_delete_success", "Користувача видалено"),
+        t("settings:usersPage.alert_delete_success", "Користувача видалено"),
       );
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: () =>
-      toast.error(t("usersPage.alert_delete_error", "Помилка видалення")),
+      toast.error(t("settings:usersPage.alert_delete_error", "Помилка видалення")),
   });
 
   // Обгортки для хендлерів

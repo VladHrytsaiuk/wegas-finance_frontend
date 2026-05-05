@@ -51,7 +51,7 @@ export function CounterpartyCategoryForm({
       <S.Title>{title}</S.Title>
 
       <S.FormRow>
-        <S.Label>{t("counterpartyCategoryForm.label_type")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyCategoryForm.label_type")}</S.Label>
         <S.TypeGrid>
           {TYPE_OPTIONS.map(({ id, icon: Icon, labelKey }) => (
             <S.TypeCard
@@ -68,7 +68,7 @@ export function CounterpartyCategoryForm({
       </S.FormRow>
 
       <S.FormRow>
-        <S.Label>{t("counterpartyCategoryForm.label_appearance")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyCategoryForm.label_appearance")}</S.Label>
         <ColorIconPicker
           color={color}
           icon={icon}
@@ -78,10 +78,10 @@ export function CounterpartyCategoryForm({
       </S.FormRow>
 
       <S.FormRow>
-        <S.Label>{t("counterpartyCategoryForm.label_name")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyCategoryForm.label_name")}</S.Label>
         <Input
           {...register("name", { required: true })}
-          placeholder={t("counterpartyCategoryForm.placeholder_name")}
+          placeholder={t("counterparties:counterpartyCategoryForm.placeholder_name")}
           autoFocus
           autoComplete="off"
         />
@@ -94,10 +94,10 @@ export function CounterpartyCategoryForm({
           onClick={close}
           disabled={isLoading}
         >
-          {t("counterpartyCategoryForm.button_cancel")}
+          {t("counterparties:counterpartyCategoryForm.button_cancel")}
         </Button>
         <Button disabled={isLoading} type="submit">
-          {t("counterpartyCategoryForm.button_save")}
+          {t("counterparties:counterpartyCategoryForm.button_save")}
         </Button>
       </S.Footer>
     </S.Form>

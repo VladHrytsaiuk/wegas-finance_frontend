@@ -1,0 +1,85 @@
+{
+  "counterpartiesPage": {
+    "title": "Контрагенти",
+    "add_category_button": "Категорію",
+    "add_counterparty_button": "Додати",
+    "search_placeholder": "Пошук...",
+    "filter_type_label": "Тип",
+    "filter_shop": "Магазини",
+    "filter_person": "Люди",
+    "filter_other": "Інше",
+    "sort_name_asc": "Назва (А-Я)",
+    "sort_name_desc": "Назва (Я-А)",
+    "status_loading": "Завантаження...",
+    "status_not_found": "Нічого не знайдено",
+    "resource_category": "Категорію",
+    "resource_counterparty": "Контрагента",
+    "delete_default_name": "Вибраний елемент"
+  },
+  "counterpartyCategoryForm": {
+    "title_edit": "Редагувати категорію",
+    "title_new": "Нова категорія",
+    "label_type": "Тип",
+    "type_shop": "Магазин",
+    "type_person": "Людина",
+    "type_other": "Інше",
+    "label_appearance": "Вигляд",
+    "label_name": "Назва",
+    "placeholder_name": "Напр. Пальне",
+    "button_cancel": "Скасувати",
+    "button_save": "Зберегти"
+  },
+  "counterpartySelect": {
+    "placeholder_default": "Оберіть контрагента...",
+    "search_placeholder": "Пошук...",
+    "status_not_found": "Нічого не знайдено",
+    "create_new": "Створити нового",
+    "search_person": "Пошук людей..."
+  },
+  "counterpartyTree": {
+    "group_shops": "Магазини та сервіси",
+    "group_people": "Люди",
+    "group_other": "Інше",
+    "default_label": "Підтип"
+  },
+  "counterpartyForm": {
+    "title_edit": "Редагувати контрагента",
+    "title_new": "Новий контрагент",
+    "label_type": "Тип контрагента",
+    "label_appearance": "Вигляд",
+    "label_name": "Назва",
+    "placeholder_name_person": "Ім'я Прізвище",
+    "placeholder_name_default": "Назва",
+    "required_name_error": "Введіть назву",
+    "label_category": "Категорія",
+    "category_not_found": "* Категорії цього типу відсутні",
+    "label_note": "Примітка",
+    "placeholder_note": "Додаткова інформація...",
+    "button_cancel": "Скасувати",
+    "button_save": "Зберегти",
+    "button_saving": "Збереження...",
+    "type_shop": "Магазин",
+    "type_person": "Людина",
+    "type_other": "Інше",
+    "error_svg_only": "Тільки SVG файли",
+    "error_size_limit": "Макс 20КБ",
+    "logo_active_status": "Логотип активний",
+    "logo_active_hint": "Іконка та колір не відображатимуться",
+    "divider_or": "АБО",
+    "button_upload_logo": "Завантажити лого бренду (SVG)",
+    "person_icon_fixed": "Фіксована іконка особи"
+  },
+  "counterpartyDataHook": {
+    "cat_create_success": "Категорію створено",
+    "cat_update_success": "Категорію оновлено",
+    "cat_delete_success": "Категорію видалено",
+    "cat_delete_error": "Видаліть спочатку контрагентів з цієї категорії",
+    "cp_create_success": "Контрагента створено",
+    "cp_update_success": "Контрагента оновлено",
+    "cp_delete_success": "Контрагента видалено"
+  },
+  "counterparties": {
+    "delete_success": "Контрагента видалено",
+    "update_success": "Контрагента оновлено"
+  }
+}

@@ -51,7 +51,7 @@ export default function TagSelect(props: TagSelectProps) {
               ))}
             </div>
           ) : (
-            <S.Placeholder>{t("tagSelect.placeholder_default")}</S.Placeholder>
+            <S.Placeholder>{t("settings:tagSelect.placeholder_default")}</S.Placeholder>
           )}
         </S.ContentWrapper>
 
@@ -61,7 +61,7 @@ export default function TagSelect(props: TagSelectProps) {
               onClick={actions.handleClear}
               type="button"
               tabIndex={-1}
-              title={t("filters.reset")}
+              title={t("legacy:filters.reset")}
             >
               <HiXMark size={16} />
             </S.ClearButton>
@@ -110,7 +110,7 @@ export default function TagSelect(props: TagSelectProps) {
                   ref={refs.searchInputRef}
                   value={search}
                   onChange={(e) => actions.setSearch(e.target.value)}
-                  placeholder={t("tagSelect.search_placeholder")}
+                  placeholder={t("settings:tagSelect.search_placeholder")}
                   autoComplete="off"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -181,8 +181,8 @@ export default function TagSelect(props: TagSelectProps) {
                 >
                   <HiPlus />
                   {props.isCreating
-                    ? t("tagSelect.create_button_pending")
-                    : t("tagSelect.create_button_with_name", { name: search })}
+                    ? t("settings:tagSelect.create_button_pending")
+                    : t("settings:tagSelect.create_button_with_name", { name: search })}
                 </S.CreateActionBtn>
               )}
 
@@ -195,7 +195,7 @@ export default function TagSelect(props: TagSelectProps) {
                     fontSize: "0.9rem",
                   }}
                 >
-                  {t("tagSelect.status_empty")}
+                  {t("settings:tagSelect.status_empty")}
                 </div>
               )}
             </S.List>
@@ -214,7 +214,7 @@ export default function TagSelect(props: TagSelectProps) {
                     }
                   }}
                 >
-                  {t("filters.reset")}
+                  {t("legacy:filters.reset")}
                 </S.FooterBtn>
               )}
               <S.FooterBtn
@@ -236,7 +236,7 @@ export default function TagSelect(props: TagSelectProps) {
                   }
                 }}
               >
-                {t("filters.done")}
+                {t("legacy:filters.done")}
               </S.FooterBtn>
             </S.FooterRow>
           </S.PortalMenu>,

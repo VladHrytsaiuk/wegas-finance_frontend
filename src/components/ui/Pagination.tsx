@@ -97,9 +97,9 @@ export const Pagination = ({
   return (
     <PaginationContainer className={className}>
       <PageInfo>
-        {t("pagination.page_info", { current: currentPage, total: pageCount })}
+        {t("common:pagination.page_info", { current: currentPage, total: pageCount })}
         <span style={{ marginLeft: "8px", opacity: 0.7 }}>
-          {t("pagination.total_count_info", { count: totalCount })}
+          {t("common:pagination.total_count_info", { count: totalCount })}
         </span>
       </PageInfo>
 
@@ -108,7 +108,7 @@ export const Pagination = ({
         <PaginationButton
           onClick={handleFirst}
           disabled={currentPage === 1 || isLoading}
-          title={t("pagination.tooltip_first")}
+          title={t("common:pagination.tooltip_first")}
         >
           <HiChevronDoubleLeft size={20} />
         </PaginationButton>
@@ -116,7 +116,7 @@ export const Pagination = ({
         <PaginationButton
           onClick={handlePrev}
           disabled={currentPage === 1 || isLoading}
-          title={t("pagination.tooltip_prev")}
+          title={t("common:pagination.tooltip_prev")}
         >
           <HiChevronLeft size={20} />
         </PaginationButton>
@@ -124,7 +124,7 @@ export const Pagination = ({
         <PaginationButton
           onClick={handleNext}
           disabled={currentPage === pageCount || isLoading}
-          title={t("pagination.tooltip_next")}
+          title={t("common:pagination.tooltip_next")}
         >
           <HiChevronRight size={20} />
         </PaginationButton>

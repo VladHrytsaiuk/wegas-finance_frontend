@@ -130,7 +130,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
     <BaseSelect
       triggerLabel={triggerLabel}
       placeholder={
-        placeholder || t("transactionForm.placeholder_select_account")
+        placeholder || t("transactions:transactionForm.placeholder_select_account")
       }
       onClear={value ? actions.handleClear : undefined}
       searchValue={search}
@@ -156,7 +156,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
       )}
 
       {accounts.length === 0 && (
-        <S.EmptyState>{t("categoryForm.search_not_found")}</S.EmptyState>
+        <S.EmptyState>{t("categories:categoryForm.search_not_found")}</S.EmptyState>
       )}
     </BaseSelect>
   );

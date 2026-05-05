@@ -33,25 +33,25 @@ export function useDebtFilters(availableCurrencies: string[]) {
       {
         key: "type",
         // Використовуємо існуючий ключ "Тип" з сторінки контрагентів
-        label: t("counterpartiesPage.filter_type_label"),
+        label: t("counterparties:counterpartiesPage.filter_type_label"),
         type: "toggle",
         options: [
           {
             value: "debtor",
             // "Мені винні" (з блоку Summary)
-            label: t("debtsPage.summary_owed_to_me"),
+            label: t("goals_debts:debtsPage.summary_owed_to_me"),
           },
           {
             value: "creditor",
             // "Я винен" (з блоку Summary)
-            label: t("debtsPage.summary_i_owe"),
+            label: t("goals_debts:debtsPage.summary_i_owe"),
           },
         ],
       },
       {
         key: "currency",
         // "Валюта" (з фільтру рахунків)
-        label: t("accountsFilter.currency_label"),
+        label: t("accounts:accountsFilter.currency_label"),
         type: "multi-select",
         options: availableCurrencies.map((c) => ({ value: c, label: c })),
       },
@@ -60,8 +60,8 @@ export function useDebtFilters(availableCurrencies: string[]) {
 
   const sortOptions = [
     // Використовуємо стандартні ключі сортування з counterpartiesPage
-    { value: "name-asc", label: t("counterpartiesPage.sort_name_asc") },
-    { value: "name-desc", label: t("counterpartiesPage.sort_name_desc") },
+    { value: "name-asc", label: t("counterparties:counterpartiesPage.sort_name_asc") },
+    { value: "name-desc", label: t("counterparties:counterpartiesPage.sort_name_desc") },
   ];
 
   return {

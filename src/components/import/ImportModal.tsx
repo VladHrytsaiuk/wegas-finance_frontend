@@ -70,8 +70,8 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
         <h2>
           <HiDocumentText color="var(--color-brand-600)" />
           {step === "upload"
-            ? t("accountDetailsPage.action_import_button")
-            : t("importModal.title_preview", "Перевірка даних")}
+            ? t("accounts:accountDetailsPage.action_import_button")
+            : t("export_import:importModal.title_preview", "Перевірка даних")}
         </h2>
       </S.Header>
 
@@ -114,12 +114,12 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
                         onChange={handleToggleAll}
                       />
                     </S.ThCheckbox>
-                    <S.ThDate>{t("exportMapping.table_date")}</S.ThDate>
-                    <S.ThNote>{t("exportMapping.table_note")}</S.ThNote>
+                    <S.ThDate>{t("export_import:exportMapping.table_date")}</S.ThDate>
+                    <S.ThNote>{t("export_import:exportMapping.table_note")}</S.ThNote>
                     <S.ThCategory>
-                      {t("exportMapping.table_category")}
+                      {t("export_import:exportMapping.table_category")}
                     </S.ThCategory>
-                    <S.ThAmount>{t("exportMapping.table_amount")}</S.ThAmount>
+                    <S.ThAmount>{t("export_import:exportMapping.table_amount")}</S.ThAmount>
                     <S.ThAction />
                   </tr>
                 </S.StickyThead>
@@ -143,7 +143,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
               </S.Table>
               {transactions.length === 0 && (
                 <S.EmptyState>
-                  {t("transactionsModal.status_empty")}
+                  {t("transactions:transactionsModal.status_empty")}
                 </S.EmptyState>
               )}
             </S.TableContainer>
@@ -157,7 +157,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
             <S.ErrorMessage>
               <HiExclamationCircle size={20} />
               <span>
-                {t("importModal.error_missing_categories", {
+                {t("export_import:importModal.error_missing_categories", {
                   count: invalidTransactionsCount,
                 })}
               </span>
@@ -169,7 +169,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
           <S.FooterLeftGroup>
             {step === "upload" ? (
               <Button variation="secondary" onClick={onClose}>
-                {t("accountForm.button_cancel")}
+                {t("accounts:accountForm.button_cancel")}
               </Button>
             ) : (
               <>
@@ -183,7 +183,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
                   </S.MagicButton>
                 )}
                 <Button variation="secondary" onClick={() => setStep("upload")}>
-                  {t("importModal.button_upload_other", "Завантажити інший")}
+                  {t("export_import:importModal.button_upload_other", "Завантажити інший")}
                 </Button>
                 <Button
                   disabled={
@@ -194,8 +194,8 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
                   onClick={() => importBatch()}
                 >
                   {isSaving
-                    ? t("accountForm.button_saving")
-                    : t("importModal.button_import_count", {
+                    ? t("accounts:accountForm.button_saving")
+                    : t("export_import:importModal.button_import_count", {
                         count: selectedIndices.size,
                       })}
                 </Button>

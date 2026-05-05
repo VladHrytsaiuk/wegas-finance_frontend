@@ -17,7 +17,7 @@ export const useAccountsPage = () => {
   const { setPageTitle, resetPageTitle } = useHeader();
 
   useEffect(() => {
-    setPageTitle(t("accountsPage.title"), t("accountsPage.subtitle"));
+    setPageTitle(t("accounts:accountsPage.title"), t("accounts:accountsPage.subtitle"));
     return () => resetPageTitle();
   }, [t, setPageTitle, resetPageTitle]);
 

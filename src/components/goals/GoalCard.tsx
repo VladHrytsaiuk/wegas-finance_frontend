@@ -53,7 +53,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
               e.stopPropagation();
               handlers.handleToggleStatus(goal);
             }}
-            title={isPaused ? t("goals.btn_resume") : t("goals.btn_pause")}
+            title={isPaused ? t("goals_debts:goals.btn_resume") : t("goals_debts:goals.btn_pause")}
           >
             {isPaused ? <HiPlay size={18} /> : <HiPause size={18} />}
           </S.ActionBtn>
@@ -64,7 +64,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
             e.stopPropagation();
             handlers.handleEdit(goal);
           }}
-          title={t("common.edit")}
+          title={t("common:common.edit")}
         >
           <HiPencil size={18} />
         </S.ActionBtn>
@@ -77,7 +77,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
                 e.preventDefault();
                 e.stopPropagation();
               }}
-              title={t("common.delete")}
+              title={t("common:common.delete")}
             >
               <HiTrash size={18} />
             </S.ActionBtn>
@@ -112,7 +112,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
                     })}
                   </>
                 ) : (
-                  t("goals.no_deadline")
+                  t("goals_debts:goals.no_deadline")
                 )}
               </S.Subtitle>
             </S.Info>
@@ -123,19 +123,19 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
           <S.AmountsRow>
             {isPaused ? (
               <S.BigStatusText $mode="paused">
-                {t("goals.status_paused", "НА ПАУЗІ")}
+                {t("goals_debts:goals.status_paused", "НА ПАУЗІ")}
               </S.BigStatusText>
             ) : isFailed ? (
               <S.BigStatusText $mode="overdue">
-                {t("goals.deadline_passed", "ПРОСТРОЧЕНО")}
+                {t("goals_debts:goals.deadline_passed", "ПРОСТРОЧЕНО")}
               </S.BigStatusText>
             ) : isOverdueVisual && !isCompleted ? (
               <S.BigStatusText $mode="overdue">
-                {t("goals.deadline_passed", "Дедлайн минув")}
+                {t("goals_debts:goals.deadline_passed", "Дедлайн минув")}
               </S.BigStatusText>
             ) : isCompleted ? (
               <S.BigStatusText $mode="done">
-                {t("goals.completed_text", "ЦІЛЬ ДОСЯГНУТА!")}
+                {t("goals_debts:goals.completed_text", "ЦІЛЬ ДОСЯГНУТА!")}
               </S.BigStatusText>
             ) : (
               <S.BigStatusText $mode="normal">
@@ -146,12 +146,12 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
             <S.AmountLabel>
               <span>
                 {isPaused
-                  ? t("goals.label_paused_desc", "Прогрес зупинено")
+                  ? t("goals_debts:goals.label_paused_desc", "Прогрес зупинено")
                   : isFailed || (isOverdueVisual && !isCompleted)
-                    ? t("goals.label_overdue_desc", "Час сплив")
+                    ? t("goals_debts:goals.label_overdue_desc", "Час сплив")
                     : isCompleted
-                      ? t("goals.label_success", "Вітаємо!")
-                      : t("goals.label_left", "Залишилось зібрати")}
+                      ? t("goals_debts:goals.label_success", "Вітаємо!")
+                      : t("goals_debts:goals.label_left", "Залишилось зібрати")}
               </span>
 
               {/* КНОПКА ПРОДОВЖИТИ */}
@@ -163,7 +163,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
                     handlers.handleExtend(goal);
                   }}
                 >
-                  <HiClock /> {t("goals.btn_extend", "Продовжити")}
+                  <HiClock /> {t("goals_debts:goals.btn_extend", "Продовжити")}
                 </S.ExtendButton>
               )}
             </S.AmountLabel>
@@ -196,7 +196,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
               {goal.percentage.toFixed(0)}%
             </span>
             <S.CollectedAmount>
-              {t("goals.label_collected")}:&nbsp;
+              {t("goals_debts:goals.label_collected")}:&nbsp;
               <strong>{formatMoney(current, goal.currency)}</strong>
               <span className="divider">/</span>
               <span>{formatMoney(target, goal.currency)}</span>
@@ -207,7 +207,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
         {/* SOURCES */}
         {goal.accounts && goal.accounts.length > 0 && (
           <S.SourcesSection>
-            <S.SourcesLabel>{t("goals.linked_accounts_label")}</S.SourcesLabel>
+            <S.SourcesLabel>{t("goals_debts:goals.linked_accounts_label")}</S.SourcesLabel>
             <S.SourcesList>
               {goal.accounts.map((acc: any) => (
                 <S.SourceChip

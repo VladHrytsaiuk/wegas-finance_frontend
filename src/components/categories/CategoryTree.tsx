@@ -128,7 +128,7 @@ const TreeNode = ({
                   $bg="var(--color-green-100)"
                   $color="var(--color-brand-600)"
                 >
-                  {t("categoryForm.type_income_short", "IN")}
+                  {t("categories:categoryForm.type_income_short", "IN")}
                 </S.Badge>
               )}
               {node.type === "expense" && (
@@ -136,7 +136,7 @@ const TreeNode = ({
                   $bg="var(--color-red-100)"
                   $color="var(--color-red-700)"
                 >
-                  {t("categoryForm.type_expense_short", "OUT")}
+                  {t("categories:categoryForm.type_expense_short", "OUT")}
                 </S.Badge>
               )}
             </S.Info>
@@ -147,7 +147,7 @@ const TreeNode = ({
               {onEdit && (
                 <S.ActionBtn
                   onClick={() => onEdit(node)}
-                  title={t("treeActions.edit")}
+                  title={t("legacy:treeActions.edit")}
                   tabIndex={-1}
                 >
                   <HiPencil />
@@ -157,7 +157,7 @@ const TreeNode = ({
                 <S.ActionBtn
                   className="delete"
                   onClick={() => onDelete(node.id, true)}
-                  title={t("treeActions.delete")}
+                  title={t("legacy:treeActions.delete")}
                   tabIndex={-1}
                 >
                   <HiTrash />

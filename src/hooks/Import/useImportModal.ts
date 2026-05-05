@@ -144,7 +144,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     } catch (err: any) {
       toast.error(
         err.response?.data?.error ||
-          t("importModal.error_upload", "Помилка завантаження файлу"),
+          t("export_import:importModal.error_upload", "Помилка завантаження файлу"),
       );
     } finally {
       setIsLoading(false);
@@ -174,7 +174,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     if (!fallbackCat && categories.length > 0) fallbackCat = categories[0];
     if (!fallbackCat) {
       toast.error(
-        t("importModal.error_no_categories", "Не знайдено жодної категорії"),
+        t("export_import:importModal.error_no_categories", "Не знайдено жодної категорії"),
       );
       return;
     }
@@ -192,7 +192,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     });
     setSelectedIndices(newSelected);
 
-    toast.success(t("importModal.success_fill", { name: fallbackCat.name }));
+    toast.success(t("export_import:importModal.success_fill", { name: fallbackCat.name }));
   };
 
   const handleSaveEdit = (updated: Partial<ExtendedTransaction>) => {
@@ -223,7 +223,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     },
     onSuccess: (data) => {
       toast.success(
-        t("importModal.success_import", {
+        t("export_import:importModal.success_import", {
           count: data?.count || selectedIndices.size,
         }),
       );
@@ -232,7 +232,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       onClose?.();
     },
     onError: (err: any) => {
-      toast.error(t("importModal.error_save") + ": " + err.message);
+      toast.error(t("export_import:importModal.error_save") + ": " + err.message);
     },
   });
 

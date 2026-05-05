@@ -42,7 +42,7 @@ export const ToggleFilter = ({
           $active={isAllSelected}
           onClick={() => handleSelect(null)}
         >
-          {t("filterComponent.toggle_all")}
+          {t("legacy:filterComponent.toggle_all")}
         </S.Button>
 
         {config.options?.map((opt) => (

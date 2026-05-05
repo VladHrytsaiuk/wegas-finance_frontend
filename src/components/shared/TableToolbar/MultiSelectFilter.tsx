@@ -74,7 +74,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
   const renderFlatList = () => {
     if (filteredFlatOptions.length === 0) {
       return (
-        <S.EmptyState>{t("filterComponent.status_not_found")}</S.EmptyState>
+        <S.EmptyState>{t("legacy:filterComponent.status_not_found")}</S.EmptyState>
       );
     }
     return filteredFlatOptions.map((opt) => {
@@ -150,7 +150,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
             <S.SearchContainer>
               <SearchInput
                 ref={searchInputRef}
-                placeholder={t("filterComponent.search_placeholder")}
+                placeholder={t("legacy:filterComponent.search_placeholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.stopPropagation()}
@@ -173,7 +173,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                   />
                 ) : (
                   <S.EmptyState>
-                    {t("categorySelect.status_not_found")}
+                    {t("categories:categorySelect.status_not_found")}
                   </S.EmptyState>
                 )
               ) : config.treeType === "counterparties" ? (
@@ -187,7 +187,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                   />
                 ) : (
                   <S.EmptyState>
-                    {t("counterpartySelect.status_not_found")}
+                    {t("counterparties:counterpartySelect.status_not_found")}
                   </S.EmptyState>
                 )
               ) : config.treeType === "accounts" ? (
@@ -210,7 +210,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                   type="button"
                   onClick={() => onChange([])}
                 >
-                  {t("filterComponent.clear_selection")}
+                  {t("legacy:filterComponent.clear_selection")}
                 </S.FooterBtn>
               )}
               <S.FooterBtn
@@ -218,7 +218,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                 type="button"
                 onClick={() => setIsOpen(false)}
               >
-                {t("filterComponent.range_button_ok")}
+                {t("legacy:filterComponent.range_button_ok")}
               </S.FooterBtn>
             </S.FooterRow>
           </PortalMenu>,

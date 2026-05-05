@@ -62,18 +62,18 @@ function ConfirmLogout({ onConfirm, onCloseModal }: ConfirmLogoutProps) {
   return (
     <StyledConfirm>
       {/* ➡️ ПЕРЕКЛАД ЗАГОЛОВКА */}
-      <h3>{t("auth.logout_confirm_title")}</h3>
+      <h3>{t("auth:auth.logout_confirm_title")}</h3>
       {/* ➡️ ПЕРЕКЛАД ПОВІДОМЛЕННЯ */}
-      <p>{t("auth.logout_confirm_message")}</p>
+      <p>{t("auth:auth.logout_confirm_message")}</p>
 
       <div>
         <CancelButton onClick={onCloseModal}>
           {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
-          {t("auth.logout_button_cancel")}
+          {t("auth:auth.logout_button_cancel")}
         </CancelButton>
         <ConfirmButton onClick={onConfirm}>
           {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
-          {t("auth.logout_button_confirm")}
+          {t("auth:auth.logout_button_confirm")}
         </ConfirmButton>
       </div>
     </StyledConfirm>

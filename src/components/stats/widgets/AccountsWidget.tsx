@@ -23,9 +23,9 @@ export const AccountsWidget = () => {
     <S.Card>
       <S.Header>
         <S.TitleGroup>
-          <S.Title>{t("dashboard.total_balance")}</S.Title>
+          <S.Title>{t("dashboard:dashboard.total_balance")}</S.Title>
           <S.ViewAllLink onClick={handleNavigateToAll}>
-            {t("dashboard.view_all")} <HiArrowLongRight />
+            {t("dashboard:dashboard.view_all")} <HiArrowLongRight />
           </S.ViewAllLink>
         </S.TitleGroup>
       </S.Header>
@@ -62,10 +62,10 @@ export const AccountsWidget = () => {
                     <S.Name>{acc.name}</S.Name>
                     <S.TypeText>
                       {acc.type === "card"
-                        ? t("accountForm.type_card")
+                        ? t("accounts:accountForm.type_card")
                         : acc.type === "cash"
-                          ? t("accountForm.type_cash")
-                          : t("accountForm.type_savings")}
+                          ? t("accounts:accountForm.type_cash")
+                          : t("accounts:accountForm.type_savings")}
                     </S.TypeText>
                   </S.Info>
 

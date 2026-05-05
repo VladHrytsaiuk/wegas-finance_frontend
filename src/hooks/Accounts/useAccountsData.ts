@@ -30,29 +30,29 @@ export function useAccountsData() {
   const createAccount = useMutation({
     mutationFn: createAccountApi,
     onSuccess: () => {
-      toast.success(t("accountsDataHook.alert_create_success"));
+      toast.success(t("accounts:accountsDataHook.alert_create_success"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
-    onError: () => toast.error(t("accountsDataHook.alert_create_error")),
+    onError: () => toast.error(t("accounts:accountsDataHook.alert_create_error")),
   });
 
   const updateAccount = useMutation({
     mutationFn: updateAccountApi,
     onSuccess: () => {
-      toast.success(t("accountsDataHook.alert_update_success"));
+      toast.success(t("accounts:accountsDataHook.alert_update_success"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
     onError: (err: any) =>
-      toast.error(err.message || t("accountsDataHook.alert_update_error")),
+      toast.error(err.message || t("accounts:accountsDataHook.alert_update_error")),
   });
 
   const deleteAccount = useMutation({
     mutationFn: deleteAccountApi,
     onSuccess: () => {
-      toast.success(t("accountsDataHook.alert_delete_success"));
+      toast.success(t("accounts:accountsDataHook.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
-    onError: () => toast.error(t("accountsDataHook.alert_delete_error")),
+    onError: () => toast.error(t("accounts:accountsDataHook.alert_delete_error")),
   });
 
   return {

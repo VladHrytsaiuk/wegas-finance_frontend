@@ -140,36 +140,36 @@ export default function AssetForm({
       <S.FormContainer as="form" onSubmit={handleSubmit(actions.onSubmit)}>
         <S.FormHeader>
           <S.FormTitle>
-            {assetToEdit ? t("assetForm.title_edit") : t("assetForm.title_new")}
+            {assetToEdit ? t("assets:assetForm.title_edit") : t("assets:assetForm.title_new")}
           </S.FormTitle>
         </S.FormHeader>
 
         <S.ScrollArea>
           <S.Grid columns="1fr 2fr">
             <S.FormGroup>
-              <S.Label>{t("assetForm.label_type")}</S.Label>
+              <S.Label>{t("assets:assetForm.label_type")}</S.Label>
               <Controller
                 name="type"
                 control={control}
                 render={({ field }) => (
                   <SimpleSelect
                     {...field}
-                    placeholder={t("assetForm.placeholder_type")}
+                    placeholder={t("assets:assetForm.placeholder_type")}
                     options={[
                       {
                         value: "electronics",
-                        label: t("assetForm.type_electronics"),
+                        label: t("assets:assetForm.type_electronics"),
                       },
                       {
                         value: "furniture",
-                        label: t("assetForm.type_furniture"),
+                        label: t("assets:assetForm.type_furniture"),
                       },
-                      { value: "car", label: t("assetForm.type_car") },
+                      { value: "car", label: t("assets:assetForm.type_car") },
                       {
                         value: "real_estate",
-                        label: t("assetForm.type_real_estate"),
+                        label: t("assets:assetForm.type_real_estate"),
                       },
-                      { value: "other", label: t("assetForm.type_other") },
+                      { value: "other", label: t("assets:assetForm.type_other") },
                     ]}
                   />
                 )}
@@ -177,11 +177,11 @@ export default function AssetForm({
             </S.FormGroup>
 
             <S.FormGroup>
-              <S.Label>{t("assetForm.label_name")}</S.Label>
+              <S.Label>{t("assets:assetForm.label_name")}</S.Label>
               <Input
                 type="text"
                 {...register("name", { required: true })}
-                placeholder={t("assetForm.placeholder_name")}
+                placeholder={t("assets:assetForm.placeholder_name")}
               />
             </S.FormGroup>
           </S.Grid>
@@ -189,7 +189,7 @@ export default function AssetForm({
           {isCar && (
             <>
               <S.SectionTitle>
-                <HiTruck /> {t("assetForm.section_car_details", "Автомобіль")}
+                <HiTruck /> {t("assets:assetForm.section_car_details", "Автомобіль")}
               </S.SectionTitle>
               <S.Grid columns="1.5fr 1fr 1fr">
                 <S.FormGroup>
@@ -197,12 +197,12 @@ export default function AssetForm({
                   <Input {...register("vin_code")} placeholder="WBA..." />
                 </S.FormGroup>
                 <S.FormGroup>
-                  <S.Label>{t("assetForm.label_mileage", "Пробіг")}</S.Label>
+                  <S.Label>{t("assets:assetForm.label_mileage", "Пробіг")}</S.Label>
                   <Input type="number" {...register("mileage")} />
                 </S.FormGroup>
                 <S.FormGroup>
                   <S.Label>
-                    {t("assetForm.label_insurance", "Страховка")}
+                    {t("assets:assetForm.label_insurance", "Страховка")}
                   </S.Label>
                   <Input type="date" {...register("insurance_expiry")} />
                 </S.FormGroup>
@@ -210,7 +210,7 @@ export default function AssetForm({
               <S.Grid columns="1fr 2fr">
                 <S.FormGroup>
                   <S.Label>
-                    {t("assetForm.label_last_service", "Останнє ТО")}
+                    {t("assets:assetForm.label_last_service", "Останнє ТО")}
                   </S.Label>
                   <Input type="date" {...register("last_service_date")} />
                 </S.FormGroup>
@@ -237,20 +237,20 @@ export default function AssetForm({
           {isRealEstate && (
             <>
               <S.SectionTitle>
-                <HiHome /> {t("assetForm.section_re_details", "Нерухомість")}
+                <HiHome /> {t("assets:assetForm.section_re_details", "Нерухомість")}
               </S.SectionTitle>
               <S.Grid columns="2fr 1fr 1fr">
                 <S.FormGroup>
-                  <S.Label>{t("assetForm.label_address", "Адреса")}</S.Label>
+                  <S.Label>{t("assets:assetForm.label_address", "Адреса")}</S.Label>
                   <Input {...register("address")} />
                 </S.FormGroup>
                 <S.FormGroup>
-                  <S.Label>{t("assetForm.label_area", "Площа (м²)")}</S.Label>
+                  <S.Label>{t("assets:assetForm.label_area", "Площа (м²)")}</S.Label>
                   <Input type="number" step="0.01" {...register("area")} />
                 </S.FormGroup>
                 <S.FormGroup>
                   <S.Label>
-                    {t("assetForm.label_cadastral", "Кадастр #")}
+                    {t("assets:assetForm.label_cadastral", "Кадастр #")}
                   </S.Label>
                   <Input {...register("cadastral_num")} />
                 </S.FormGroup>
@@ -259,12 +259,12 @@ export default function AssetForm({
           )}
 
           <S.SectionTitle>
-            <HiBanknotes /> {t("assetForm.section_finance", "Деталі")}
+            <HiBanknotes /> {t("assets:assetForm.section_finance", "Деталі")}
           </S.SectionTitle>
 
           <S.Grid columns="1fr 0.8fr 1fr">
             <S.FormGroup>
-              <S.Label>{t("assetForm.label_price")}</S.Label>
+              <S.Label>{t("assets:assetForm.label_price")}</S.Label>
               <Input
                 type="number"
                 step="0.01"
@@ -273,7 +273,7 @@ export default function AssetForm({
             </S.FormGroup>
 
             <S.FormGroup>
-              <S.Label>{t("assetForm.label_currency")}</S.Label>
+              <S.Label>{t("assets:assetForm.label_currency")}</S.Label>
               <Controller
                 name="currency"
                 control={control}
@@ -291,7 +291,7 @@ export default function AssetForm({
             </S.FormGroup>
 
             <S.FormGroup>
-              <S.Label>{t("assetForm.label_date")}</S.Label>
+              <S.Label>{t("assets:assetForm.label_date")}</S.Label>
               <Input
                 type="date"
                 {...register("purchase_date", { required: true })}
@@ -302,18 +302,18 @@ export default function AssetForm({
           {showStandardDetails && (
             <S.Grid columns="1fr 1fr">
               <S.FormGroup>
-                <S.Label>{t("assetForm.label_serial")}</S.Label>
+                <S.Label>{t("assets:assetForm.label_serial")}</S.Label>
                 <Input {...register("serial_number")} placeholder="S/N" />
               </S.FormGroup>
               <S.FormGroup>
-                <S.Label>{t("assetForm.label_warranty")}</S.Label>
+                <S.Label>{t("assets:assetForm.label_warranty")}</S.Label>
                 <Input type="date" {...register("warranty_end")} />
               </S.FormGroup>
             </S.Grid>
           )}
 
           <S.FormGroup>
-            <S.Label>{t("assetForm.label_note", "Примітка")}</S.Label>
+            <S.Label>{t("assets:assetForm.label_note", "Примітка")}</S.Label>
             <Input
               as="textarea"
               rows={2}
@@ -329,7 +329,7 @@ export default function AssetForm({
                 <HiOutlinePhoto
                   style={{ marginRight: "4px", verticalAlign: "middle" }}
                 />
-                {t("assetForm.label_files", "Фотографії")}
+                {t("assets:assetForm.label_files", "Фотографії")}
               </S.Label>
               <S.FileUploadContainer>
                 <S.FileUploadControls>
@@ -370,7 +370,7 @@ export default function AssetForm({
                         }}
                       >
                         <HiPaperClip />{" "}
-                        {t("assetForm.button_add_files", "Додати фото")}
+                        {t("assets:assetForm.button_add_files", "Додати фото")}
                       </Button>
                     </label>
                   )}
@@ -425,7 +425,7 @@ export default function AssetForm({
                 <HiDocumentText
                   style={{ marginRight: "4px", verticalAlign: "middle" }}
                 />
-                {t("assetForm.label_documents", "Документи (PDF, DOC)")}
+                {t("assets:assetForm.label_documents", "Документи (PDF, DOC)")}
               </S.Label>
               <S.FileUploadContainer>
                 <S.FileUploadControls>
@@ -450,7 +450,7 @@ export default function AssetForm({
                       }}
                     >
                       <HiOutlineDocumentPlus />{" "}
-                      {t("assetForm.button_add_doc", "Додати документ")}
+                      {t("assets:assetForm.button_add_doc", "Додати документ")}
                     </Button>
                   </label>
                   <S.FileCount>{totalDocs} вибрано</S.FileCount>
@@ -502,14 +502,14 @@ export default function AssetForm({
             type="button"
             onClick={handleCloseAttempt}
           >
-            {t("common.cancel")}
+            {t("common:common.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting || files.isCompressing}>
             {isSubmitting
-              ? t("common.saving")
+              ? t("common:common.saving")
               : assetToEdit
-                ? t("shared.save_changes")
-                : t("common.add")}
+                ? t("common:shared.save_changes")
+                : t("common:common.add")}
           </Button>
         </S.FormFooter>
       </S.FormContainer>

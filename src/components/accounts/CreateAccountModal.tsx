@@ -82,7 +82,7 @@ function CreateAccountModalContent() {
                 fontWeight: 600,
               }}
             >
-              {t("accountsPage.modal_create_title")}
+              {t("accounts:accountsPage.modal_create_title")}
             </h2>
 
             <AccountForm

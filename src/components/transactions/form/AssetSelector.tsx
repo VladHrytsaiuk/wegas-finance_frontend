@@ -81,7 +81,7 @@ export const AssetSelector = ({
               <HiOutlineCube /> {state.selectedAssetName}
             </div>
           ) : (
-            <S.Placeholder>{t("assetSelector.placeholder")}</S.Placeholder>
+            <S.Placeholder>{t("assets:assetSelector.placeholder")}</S.Placeholder>
           )}
         </S.ContentWrapper>
 
@@ -144,7 +144,7 @@ export const AssetSelector = ({
                   ref={refs.searchInputRef}
                   value={state.search}
                   onChange={(e) => actions.setSearch(e.target.value)}
-                  placeholder={t("assetSelector.search_placeholder")}
+                  placeholder={t("assets:assetSelector.search_placeholder")}
                   autoComplete="off"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && state.search) {
@@ -167,7 +167,7 @@ export const AssetSelector = ({
                   <div
                     style={{ display: "flex", gap: 8, alignItems: "center" }}
                   >
-                    <HiPencil size={16} /> {t("assetSelector.edit_draft")}:{" "}
+                    <HiPencil size={16} /> {t("assets:assetSelector.edit_draft")}:{" "}
                     {newAsset.name}
                   </div>
                 </S.SelectItem>
@@ -192,8 +192,8 @@ export const AssetSelector = ({
               {state.filteredAssets.length === 0 && !newAsset && (
                 <S.EmptyState>
                   {state.search
-                    ? t("assetSelector.press_enter_create")
-                    : t("assetSelector.list_empty")}
+                    ? t("assets:assetSelector.press_enter_create")
+                    : t("assets:assetSelector.list_empty")}
                 </S.EmptyState>
               )}
 
@@ -207,7 +207,7 @@ export const AssetSelector = ({
                     onClick={actions.handleStartCreate}
                   >
                     <HiPlus size={16} />{" "}
-                    {t("assetSelector.btn_create_named", {
+                    {t("assets:assetSelector.btn_create_named", {
                       name: state.search,
                     })}
                   </S.CreateActionBtn>

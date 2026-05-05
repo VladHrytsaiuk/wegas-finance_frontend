@@ -80,7 +80,7 @@ export const TransactionTableRow = memo(
         <Table.Cell className="col-note">
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {tx.receipt_img && (
-              <S.ReceiptBadge title={t("transactionsTable.has_receipt")}>
+              <S.ReceiptBadge title={t("transactions:transactionsTable.has_receipt")}>
                 <HiPaperClip size={14} />
               </S.ReceiptBadge>
             )}
@@ -119,7 +119,7 @@ export const TransactionTableRow = memo(
 
               <Modal.Window name="delete">
                 <ConfirmDelete
-                  resourceName={t("transactionsTable.resource_name")}
+                  resourceName={t("transactions:transactionsTable.resource_name")}
                   onConfirm={() => onDelete(tx.id)}
                 />
               </Modal.Window>
@@ -142,11 +142,11 @@ export const TransactionTableRow = memo(
                     to={`/transactions/${tx.id}/edit`}
                     state={{ background: location }}
                   >
-                    <HiPencil size={16} /> {t("common.edit")}
+                    <HiPencil size={16} /> {t("common:common.edit")}
                   </S.MenuItemLink>
                   <Modal.Open opens="delete">
                     <S.MenuItemButton $variant="delete">
-                      <HiTrash size={16} /> {t("common.delete")}
+                      <HiTrash size={16} /> {t("common:common.delete")}
                     </S.MenuItemButton>
                   </Modal.Open>
                 </S.MenuDropdown>
@@ -155,7 +155,7 @@ export const TransactionTableRow = memo(
               {/* Вікно підтвердження винесено СЮДИ, щоб воно не зникало при закритті меню */}
               <Modal.Window name="delete">
                 <ConfirmDelete
-                  resourceName={t("transactionsTable.resource_name")}
+                  resourceName={t("transactions:transactionsTable.resource_name")}
                   onConfirm={() => onDelete(tx.id)}
                 />
               </Modal.Window>

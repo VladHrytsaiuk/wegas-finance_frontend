@@ -46,7 +46,7 @@ function EditAccountModal() {
         <div style={{ width: "900px", maxWidth: "95vw" }}>
           {/* ✅ Локалізовано заголовок */}
           <h3 style={{ marginBottom: "1.5rem" }}>
-            {t("accountsPage.modal_edit_title")}
+            {t("accounts:accountsPage.modal_edit_title")}
           </h3>
 
           {isLoading ? (

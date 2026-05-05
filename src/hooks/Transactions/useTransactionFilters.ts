@@ -162,26 +162,26 @@ export function useTransactionFilters() {
     const config: FilterConfig[] = [
       {
         key: "type",
-        label: t("transactionFiltersHook.filter_type_label", "Тип"),
+        label: t("legacy:transactionFiltersHook.filter_type_label", "Тип"),
         type: "toggle",
         options: [
           {
             value: "expense",
-            label: t("transactionFiltersHook.filter_type_expense", "Витрати"),
+            label: t("legacy:transactionFiltersHook.filter_type_expense", "Витрати"),
           },
           {
             value: "income",
-            label: t("transactionFiltersHook.filter_type_income", "Доходи"),
+            label: t("legacy:transactionFiltersHook.filter_type_income", "Доходи"),
           },
           {
             value: "transfer",
-            label: t("transactionFiltersHook.filter_type_transfer", "Перекази"),
+            label: t("legacy:transactionFiltersHook.filter_type_transfer", "Перекази"),
           },
         ],
       },
       {
         key: "account",
-        label: t("transactionFiltersHook.filter_account_label", "Рахунок"),
+        label: t("legacy:transactionFiltersHook.filter_account_label", "Рахунок"),
         type: "multi-select",
         treeType: "accounts",
         rawData: accounts.map((acc: any) => {
@@ -200,7 +200,7 @@ export function useTransactionFilters() {
     if (categories.length > 0) {
       config.push({
         key: "category",
-        label: t("transactionFiltersHook.filter_category_label", "Категорія"),
+        label: t("legacy:transactionFiltersHook.filter_category_label", "Категорія"),
         type: "multi-select",
         treeType: "categories",
         rawData: categories,
@@ -234,7 +234,7 @@ export function useTransactionFilters() {
 
     config.push({
       key: "amount",
-      label: t("transactionFiltersHook.filter_amount_label", "Сума"),
+      label: t("legacy:transactionFiltersHook.filter_amount_label", "Сума"),
       type: "range",
     });
 
@@ -244,19 +244,19 @@ export function useTransactionFilters() {
   const sortOptions = [
     {
       value: "date-desc",
-      label: t("transactionFiltersHook.sort_date_desc", "Спочатку нові"),
+      label: t("legacy:transactionFiltersHook.sort_date_desc", "Спочатку нові"),
     },
     {
       value: "date-asc",
-      label: t("transactionFiltersHook.sort_date_asc", "Спочатку старі"),
+      label: t("legacy:transactionFiltersHook.sort_date_asc", "Спочатку старі"),
     },
     {
       value: "amount-desc",
-      label: t("transactionFiltersHook.sort_amount_desc", "Більша сума"),
+      label: t("legacy:transactionFiltersHook.sort_amount_desc", "Більша сума"),
     },
     {
       value: "amount-asc",
-      label: t("transactionFiltersHook.sort_amount_asc", "Менша сума"),
+      label: t("legacy:transactionFiltersHook.sort_amount_asc", "Менша сума"),
     },
   ];
 

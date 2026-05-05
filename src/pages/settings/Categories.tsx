@@ -47,7 +47,7 @@ function Categories() {
       <S.PageWrapper>
         {/* HEADER */}
         <S.HeaderRow>
-          <S.Title>{t("categoriesPage.title")}</S.Title>
+          <S.Title>{t("categories:categoriesPage.title")}</S.Title>
           {canManageStructure && (
             <S.HeaderActions>
               <Modal.Open opens="create-category">
@@ -56,7 +56,7 @@ function Categories() {
                   size="medium"
                   onClick={handleCreateClick}
                 >
-                  {t("categoriesPage.add_category_button")}
+                  {t("categories:categoriesPage.add_category_button")}
                 </Button>
               </Modal.Open>
             </S.HeaderActions>
@@ -68,7 +68,7 @@ function Categories() {
           <TableToolbar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            searchPlaceholder={t("categoriesPage.search_placeholder")}
+            searchPlaceholder={t("categories:categoriesPage.search_placeholder")}
             filtersConfig={filtersConfig}
             filterValues={filters}
             onFilterChange={(k, v) =>
@@ -84,9 +84,9 @@ function Categories() {
         {/* CONTENT */}
         <S.TreeContainer>
           {isLoading ? (
-            <S.EmptyState>{t("categoriesPage.status_loading")}</S.EmptyState>
+            <S.EmptyState>{t("categories:categoriesPage.status_loading")}</S.EmptyState>
           ) : categoryTreeRoots.length === 0 ? (
-            <S.EmptyState>{t("categoriesPage.status_not_found")}</S.EmptyState>
+            <S.EmptyState>{t("categories:categoriesPage.status_not_found")}</S.EmptyState>
           ) : (
             <CategoryTree
               categories={categoryTreeRoots}
@@ -104,11 +104,11 @@ function Categories() {
       {/* 1. Create */}
       <Modal.Window name="create-category">
         <S.ModalContent>
-          <S.ModalTitle>{t("categoriesPage.modal_create_title")}</S.ModalTitle>
+          <S.ModalTitle>{t("categories:categoriesPage.modal_create_title")}</S.ModalTitle>
           <CategoryForm
             categories={flatCategories}
             isLoading={isCreateLoading}
-            buttonLabel={t("categoriesPage.form_create_button")}
+            buttonLabel={t("categories:categoriesPage.form_create_button")}
             onSubmit={handleSave}
           />
         </S.ModalContent>
@@ -123,13 +123,13 @@ function Categories() {
           {editingCategory && (
             <>
               <S.ModalTitle>
-                {t("categoriesPage.modal_edit_title")}
+                {t("categories:categoriesPage.modal_edit_title")}
               </S.ModalTitle>
               <CategoryForm
                 initialData={editingCategory}
                 categories={flatCategories}
                 isLoading={isUpdateLoading}
-                buttonLabel={t("categoriesPage.form_edit_button")}
+                buttonLabel={t("categories:categoriesPage.form_edit_button")}
                 onSubmit={handleSave}
               />
             </>

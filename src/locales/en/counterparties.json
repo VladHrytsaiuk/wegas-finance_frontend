@@ -1,0 +1,85 @@
+{
+  "counterpartiesPage": {
+    "title": "Counterparties",
+    "add_category_button": "Category",
+    "add_counterparty_button": "Add",
+    "search_placeholder": "Search...",
+    "filter_type_label": "Type",
+    "filter_shop": "Shops",
+    "filter_person": "People",
+    "filter_other": "Other",
+    "sort_name_asc": "Name (A-Z)",
+    "sort_name_desc": "Name (Z-A)",
+    "status_loading": "Loading...",
+    "status_not_found": "Nothing found",
+    "resource_category": "Category",
+    "resource_counterparty": "Counterparty",
+    "delete_default_name": "Selected item"
+  },
+  "counterpartyCategoryForm": {
+    "title_edit": "Edit Category",
+    "title_new": "New Category",
+    "label_type": "Type",
+    "type_shop": "Shop",
+    "type_person": "Person",
+    "type_other": "Other",
+    "label_appearance": "Appearance",
+    "label_name": "Name",
+    "placeholder_name": "E.g., Fuel",
+    "button_cancel": "Cancel",
+    "button_save": "Save"
+  },
+  "counterpartySelect": {
+    "placeholder_default": "Select counterparty...",
+    "search_placeholder": "Search...",
+    "status_not_found": "Nothing found",
+    "create_new": "Create New",
+    "search_person": "Search people..."
+  },
+  "counterpartyTree": {
+    "group_shops": "Shops and Services",
+    "group_people": "People",
+    "group_other": "Other",
+    "default_label": "Subtype"
+  },
+  "counterpartyForm": {
+    "title_edit": "Edit Counterparty",
+    "title_new": "New Counterparty",
+    "label_type": "Counterparty Type",
+    "label_appearance": "Appearance",
+    "label_name": "Name",
+    "placeholder_name_person": "First Last Name",
+    "placeholder_name_default": "Name",
+    "required_name_error": "Please enter a name",
+    "label_category": "Category",
+    "category_not_found": "* Categories of this type are missing",
+    "label_note": "Note",
+    "placeholder_note": "Additional information...",
+    "button_cancel": "Cancel",
+    "button_save": "Save",
+    "button_saving": "Saving...",
+    "type_shop": "Shop",
+    "type_person": "Person",
+    "type_other": "Other",
+    "error_svg_only": "SVG files only",
+    "error_size_limit": "Max 20KB",
+    "logo_active_status": "Logo is active",
+    "logo_active_hint": "Icon and color will not be displayed",
+    "divider_or": "OR",
+    "button_upload_logo": "Upload brand logo (SVG)",
+    "person_icon_fixed": "Fixed Person Icon"
+  },
+  "counterpartyDataHook": {
+    "cat_create_success": "Category created",
+    "cat_update_success": "Category updated",
+    "cat_delete_success": "Category deleted",
+    "cat_delete_error": "Delete counterparties from this category first",
+    "cp_create_success": "Counterparty created",
+    "cp_update_success": "Counterparty updated",
+    "cp_delete_success": "Counterparty deleted"
+  },
+  "counterparties": {
+    "delete_success": "Counterparty deleted",
+    "update_success": "Counterparty updated"
+  }
+}

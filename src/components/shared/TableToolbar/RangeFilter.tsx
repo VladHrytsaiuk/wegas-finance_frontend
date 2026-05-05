@@ -53,11 +53,11 @@ export const RangeFilter = ({
             }}
           >
             <S.RangeContainer>
-              <S.RangeTitle>{t("filterComponent.range_title")}</S.RangeTitle>
+              <S.RangeTitle>{t("legacy:filterComponent.range_title")}</S.RangeTitle>
 
               <S.RangeInputs>
                 <S.SmallInput
-                  placeholder={t("filterComponent.range_placeholder_min")}
+                  placeholder={t("legacy:filterComponent.range_placeholder_min")}
                   type="number"
                   value={localMin}
                   onChange={(e) => setLocalMin(e.target.value)}
@@ -65,7 +65,7 @@ export const RangeFilter = ({
                 />
                 <S.Separator />
                 <S.SmallInput
-                  placeholder={t("filterComponent.range_placeholder_max")}
+                  placeholder={t("legacy:filterComponent.range_placeholder_max")}
                   type="number"
                   value={localMax}
                   onChange={(e) => setLocalMax(e.target.value)}
@@ -74,10 +74,10 @@ export const RangeFilter = ({
 
               <S.Footer>
                 <S.ResetButton onClick={reset}>
-                  {t("filterComponent.range_button_reset")}
+                  {t("legacy:filterComponent.range_button_reset")}
                 </S.ResetButton>
                 <S.ApplyButton onClick={apply}>
-                  {t("filterComponent.range_button_ok")}
+                  {t("legacy:filterComponent.range_button_ok")}
                 </S.ApplyButton>
               </S.Footer>
             </S.RangeContainer>

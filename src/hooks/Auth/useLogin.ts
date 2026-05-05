@@ -44,12 +44,12 @@ export const useLogin = ({ setToken }: UseLoginProps) => {
           console.warn("Settings sync failed:", err);
         });
 
-      toast.success(t("auth.login_alert_success", { name: data.user.name }));
+      toast.success(t("auth:auth.login_alert_success", { name: data.user.name }));
       navigate("/dashboard", { replace: true });
     },
     onError: (error: any) => {
       // Якщо бекенд повертає конкретну помилку текстом
-      const msg = error.response?.data?.error || t("auth.login_alert_error");
+      const msg = error.response?.data?.error || t("auth:auth.login_alert_error");
       toast.error(msg);
     },
   });

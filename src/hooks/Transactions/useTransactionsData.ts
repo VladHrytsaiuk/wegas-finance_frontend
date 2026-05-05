@@ -56,12 +56,12 @@ export function useTransactionsData(apiParams: any) {
   const { mutate: deleteTransaction, isPending: isDeleting } = useMutation({
     mutationFn: deleteTransactionApi,
     onSuccess: () => {
-      toast.success(t("transactionsDataHook.alert_delete_success"));
+      toast.success(t("transactions:transactionsDataHook.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
     },
-    onError: () => toast.error(t("transactionsDataHook.alert_delete_error")),
+    onError: () => toast.error(t("transactions:transactionsDataHook.alert_delete_error")),
   });
 
   return {

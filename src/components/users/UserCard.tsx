@@ -31,7 +31,7 @@ export function UserCard({ user, canManage }: UserCardProps) {
           {user.avatar_url ? (
             <img
               src={user.avatar_url}
-              alt={user.name || t("userCard.default_name")}
+              alt={user.name || t("settings:userCard.default_name")}
             />
           ) : (
             <HiOutlineUser />
@@ -52,13 +52,13 @@ export function UserCard({ user, canManage }: UserCardProps) {
       {canManage && (
         <ActionButtons>
           <Modal.Open opens={`edit-user-${user.id}`}>
-            <IconButton title={t("userCard.tooltip_edit")}>
+            <IconButton title={t("settings:userCard.tooltip_edit")}>
               <HiPencil />
             </IconButton>
           </Modal.Open>
 
           <Modal.Open opens={`delete-user-${user.id}`}>
-            <IconButton className="delete" title={t("userCard.tooltip_delete")}>
+            <IconButton className="delete" title={t("settings:userCard.tooltip_delete")}>
               <HiTrash />
             </IconButton>
           </Modal.Open>

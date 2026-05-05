@@ -1,0 +1,43 @@
+{
+  "statisticsPage": {
+    "title": "Детальна статистика",
+    "subtitle": "Аналізуйте свої фінанси глибше",
+    "filter_period": "Період",
+    "tab_categories": "Категорії",
+    "tab_counterparties": "Магазини",
+    "tab_tags": "Теги",
+    "trend_title_income": "Динаміка (Доходи)",
+    "trend_title_expense": "Динаміка (Витрати)",
+    "table_header_name": "Назва",
+    "table_header_percent": "Відсоток",
+    "table_header_amount": "Сума",
+    "table_no_data": "Даних немає",
+    "table_unnamed": "Без назви"
+  },
+  "utilityPage": {
+    "empty_title": "Послуг не знайдено",
+    "empty_desc": "Додайте свій перший лічильник або комунальну послугу, щоб почати відстежувати витрати.",
+    "add_btn": "Додати послугу",
+    "analytics_btn": "Аналітика",
+    "title": "Комунальні послуги"
+  },
+  "utility": {
+    "analytics_title": "Аналітика витрат",
+    "analytics_subtitle": "Динаміка комунальних платежів за останні 12 місяців",
+    "total_year": "Всього за рік",
+    "average_monthly": "Середній платіж / міс",
+    "table_date": "Дата",
+    "table_reading": "Показник",
+    "table_consumed": "Спожито",
+    "table_rate": "Тариф",
+    "table_amount": "Сума",
+    "table_status": "Статус",
+    "delete_error_title": "Неможливо видалити",
+    "not_found": "Лічильник не знайдено",
+    "current_debt": "Поточний борг",
+    "unpaid_desc": "За неоплачені показники",
+    "last_reading": "Останній показник",
+    "actual_rate": "Актуальний Тариф",
+    "per_unit": "за 1"
+  }
+}

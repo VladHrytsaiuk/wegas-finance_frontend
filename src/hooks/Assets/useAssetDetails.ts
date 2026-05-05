@@ -48,17 +48,17 @@ export const useAssetDetails = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteAsset,
     onSuccess: () => {
-      toast.success(t("assetDetails.alert_delete_success"));
+      toast.success(t("assets:assetDetails.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["assets"] });
       navigate("/assets");
     },
-    onError: () => toast.error(t("assetDetails.alert_delete_error")),
+    onError: () => toast.error(t("assets:assetDetails.alert_delete_error")),
   });
 
   // --- Effects ---
   useEffect(() => {
     if (asset) {
-      setPageTitle(t("accountDetailsPage.subtitle"), asset.name);
+      setPageTitle(t("accounts:accountDetailsPage.subtitle"), asset.name);
     }
   }, [asset, setPageTitle, t]);
 

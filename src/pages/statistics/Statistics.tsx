@@ -34,20 +34,20 @@ export const Statistics = () => {
                 $type="expense"
                 onClick={() => actions.setFlowType("expense")}
               >
-                {t("categoriesPage.filter_expense")}
+                {t("categories:categoriesPage.filter_expense")}
               </S.ToggleBtn>
               <S.ToggleBtn
                 $active={flowType === "income"}
                 $type="income"
                 onClick={() => actions.setFlowType("income")}
               >
-                {t("categoriesPage.filter_income")}
+                {t("categories:categoriesPage.filter_income")}
               </S.ToggleBtn>
             </S.TypeToggle>
 
             <WidgetControls
               variant="local"
-              currentLabel={filter.label || t("statisticsPage.filter_period")}
+              currentLabel={filter.label || t("stats_utility:statisticsPage.filter_period")}
               currentAccountIds={filter.accountIds}
               onFilterChange={actions.handleFilterChange}
               currentFrom={filter.from}
@@ -58,7 +58,7 @@ export const Statistics = () => {
               icon={<HiArrowDownTray size={18} />}
               onClick={() => actions.setIsExportModalOpen(true)}
             >
-              {t("exportPage.title")}
+              {t("export_import:exportPage.title")}
             </Button>
           </S.ControlsGroup>
         </S.Header>
@@ -68,8 +68,8 @@ export const Statistics = () => {
             type={flowType}
             title={
               flowType === "income"
-                ? t("statisticsPage.trend_title_income")
-                : t("statisticsPage.trend_title_expense")
+                ? t("stats_utility:statisticsPage.trend_title_income")
+                : t("stats_utility:statisticsPage.trend_title_expense")
             }
             color={flowType === "income" ? "#22c55e" : "#ef4444"}
             globalFilter={filter}
@@ -81,19 +81,19 @@ export const Statistics = () => {
             $active={activeTab === "category"}
             onClick={() => actions.setActiveTab("category")}
           >
-            {t("statisticsPage.tab_categories")}
+            {t("stats_utility:statisticsPage.tab_categories")}
           </S.Tab>
           <S.Tab
             $active={activeTab === "counterparty"}
             onClick={() => actions.setActiveTab("counterparty")}
           >
-            {t("statisticsPage.tab_counterparties")}
+            {t("stats_utility:statisticsPage.tab_counterparties")}
           </S.Tab>
           <S.Tab
             $active={activeTab === "tag"}
             onClick={() => actions.setActiveTab("tag")}
           >
-            {t("statisticsPage.tab_tags")}
+            {t("stats_utility:statisticsPage.tab_tags")}
           </S.Tab>
         </S.TabsContainer>
 

@@ -87,23 +87,23 @@ export const useExportPage = () => {
     () => [
       {
         key: "type",
-        label: t("categoriesPage.filter_type_label"),
+        label: t("categories:categoriesPage.filter_type_label"),
         type: "multi-select",
         options: [
           {
-            label: t("categoriesPage.filter_expense"),
+            label: t("categories:categoriesPage.filter_expense"),
             value: "expense",
             icon: "HiArrowTrendingDown",
             color: "#ef4444",
           },
           {
-            label: t("categoriesPage.filter_income"),
+            label: t("categories:categoriesPage.filter_income"),
             value: "income",
             icon: "HiArrowTrendingUp",
             color: "#22c55e",
           },
           {
-            label: t("transactionFiltersHook.filter_type_transfer"),
+            label: t("legacy:transactionFiltersHook.filter_type_transfer"),
             value: "transfer",
             icon: "HiArrowsRightLeft",
             color: "#3b82f6",
@@ -112,7 +112,7 @@ export const useExportPage = () => {
       },
       {
         key: "accountIds",
-        label: t("accountsFilter.owner_label"),
+        label: t("accounts:accountsFilter.owner_label"),
         type: "multi-select",
         options: (accounts || []).map((a: any) => ({
           label: a.name,
@@ -123,7 +123,7 @@ export const useExportPage = () => {
       },
       {
         key: "categoryIds",
-        label: t("categoriesPage.title"),
+        label: t("categories:categoriesPage.title"),
         type: "multi-select",
         treeType: "categories",
         rawData: categories || [],
@@ -131,7 +131,7 @@ export const useExportPage = () => {
       },
       {
         key: "counterpartyIds",
-        label: t("counterpartiesPage.title"),
+        label: t("counterparties:counterpartiesPage.title"),
         type: "multi-select",
         treeType: "counterparties",
         rawData: counterparties || [],
@@ -140,7 +140,7 @@ export const useExportPage = () => {
       },
       {
         key: "userIds",
-        label: t("exportPage.label_who"),
+        label: t("export_import:exportPage.label_who"),
         type: "multi-select",
         options: (users || []).map((u: any) => ({
           label: u.name,
@@ -165,7 +165,7 @@ export const useExportPage = () => {
   // --- Action: Export Transactions ---
   const handleExportTransactions = async () => {
     setLoading(true);
-    const toastId = toast.loading(t("exportPage.status_generating"));
+    const toastId = toast.loading(t("export_import:exportPage.status_generating"));
     try {
       const data = await getExportData({
         from: dateRange.from,
@@ -174,7 +174,7 @@ export const useExportPage = () => {
       });
 
       if (!data?.length) {
-        toast.error(t("exportPage.status_empty"), { id: toastId });
+        toast.error(t("export_import:exportPage.status_empty"), { id: toastId });
         return;
       }
 
@@ -184,11 +184,11 @@ export const useExportPage = () => {
       if (transFormat === "csv") generateCSV(data, fileName, t);
       if (transFormat === "pdf") generatePDF(data, fileName, t);
 
-      toast.success(t("exportPage.status_ready", { count: data.length }), {
+      toast.success(t("export_import:exportPage.status_ready", { count: data.length }), {
         id: toastId,
       });
     } catch (error) {
-      toast.error(t("exportPage.status_error"), { id: toastId });
+      toast.error(t("export_import:exportPage.status_error"), { id: toastId });
     } finally {
       setLoading(false);
     }

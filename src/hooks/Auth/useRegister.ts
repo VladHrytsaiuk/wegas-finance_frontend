@@ -19,18 +19,18 @@ export const useRegister = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: registerApi,
     onSuccess: () => {
-      toast.success(t("auth.register_alert_success"));
+      toast.success(t("auth:auth.register_alert_success"));
       navigate("/login");
     },
     onError: (error: AxiosError<any>) => {
       // 👇 Обробка помилки інвайт-коду
       if (error.response?.status === 403) {
         toast.error(
-          t("auth.error_invalid_invite_code", "Невірний код запрошення"),
+          t("auth:auth.error_invalid_invite_code", "Невірний код запрошення"),
         );
       } else {
         toast.error(
-          error.response?.data?.error || t("auth.register_alert_error"),
+          error.response?.data?.error || t("auth:auth.register_alert_error"),
         );
       }
     },

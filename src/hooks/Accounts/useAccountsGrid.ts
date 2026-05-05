@@ -42,7 +42,7 @@ export const useAccountsGrid = ({
           logoFile: "",
           // 🔥 Передаємо тип іконки (envelope, safe, jar)
           iconType: account.storage_type?.slug || "archive",
-          label: t("accountsTable.type_savings"),
+          label: t("accounts:accountsTable.type_savings"),
         };
       }
 
@@ -54,7 +54,7 @@ export const useAccountsGrid = ({
         bankId: "cash",
         logoFile: "",
         iconType: "cash", // Маркер для іконки готівки
-        label: t("accountsTable.type_cash"),
+        label: t("accounts:accountsTable.type_cash"),
       };
     },
     [t],
@@ -103,7 +103,7 @@ export const useAccountsGrid = ({
     });
 
     return sortedKeys.map((key) => {
-      let groupName = t("accountsFilter.group_other_cards");
+      let groupName = t("accounts:accountsFilter.group_other_cards");
 
       if (key.startsWith("card_")) {
         const bankId = key.replace("card_", "");
@@ -115,9 +115,9 @@ export const useAccountsGrid = ({
         else if (bankId === "raiffeisen") groupName = "Raiffeisen Bank";
         else if (bankId === "ukrsib") groupName = "Ukrsibbank";
       } else if (key === "cash") {
-        groupName = t("accountsTable.type_cash");
+        groupName = t("accounts:accountsTable.type_cash");
       } else if (key === "savings") {
-        groupName = t("accountsTable.type_savings");
+        groupName = t("accounts:accountsTable.type_savings");
       }
 
       const enhancedAccounts = newGroups[key].map((account) => {

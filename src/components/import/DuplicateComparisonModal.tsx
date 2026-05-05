@@ -27,11 +27,11 @@ export default function DuplicateComparisonModal({
   const translateType = (type: string) => {
     switch (type) {
       case "expense":
-        return t("transactionForm.type_expense");
+        return t("transactions:transactionForm.type_expense");
       case "income":
-        return t("transactionForm.type_income");
+        return t("transactions:transactionForm.type_income");
       case "transfer":
-        return t("transactionForm.type_transfer");
+        return t("transactions:transactionForm.type_transfer");
       default:
         return type;
     }
@@ -55,7 +55,7 @@ export default function DuplicateComparisonModal({
         {/* HEADER */}
         <S.Header>
           <S.HeaderTitle>
-            {t("importModal.duplicate_title", "Порівняння даних")}
+            {t("export_import:importModal.duplicate_title", "Порівняння даних")}
           </S.HeaderTitle>
           <S.CloseButton onClick={onClose} type="button">
             <HiXMark size={24} />
@@ -66,16 +66,16 @@ export default function DuplicateComparisonModal({
           {/* === НОВА ТРАНЗАКЦІЯ === */}
           <S.Column $bg="var(--color-brand-50)">
             <S.Title>
-              {t("importModal.duplicate_new", "Нова (з файлу)")}
+              {t("export_import:importModal.duplicate_new", "Нова (з файлу)")}
             </S.Title>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_date")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_date")}</S.Label>
               <S.Value>{formatDate(newTx.date)}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_type")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_type")}</S.Label>
               <div>
                 <S.Badge $type={newTx.type}>
                   {translateType(newTx.type)}
@@ -84,23 +84,23 @@ export default function DuplicateComparisonModal({
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_amount")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_amount")}</S.Label>
               <S.Value>{formatAmount(newTx.amount)}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("importModal.col_raw_desc", "Опис (Raw)")}</S.Label>
+              <S.Label>{t("export_import:importModal.col_raw_desc", "Опис (Raw)")}</S.Label>
               <S.Value>{newTx.description}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_counterparty")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_counterparty")}</S.Label>
               <S.Value>{newTx.counterparty_name || "—"}</S.Value>
             </S.Row>
 
             <S.Row>
               <S.Label>
-                {t("importModal.col_prediction", "Категорія (прогноз)")}
+                {t("export_import:importModal.col_prediction", "Категорія (прогноз)")}
               </S.Label>
               <S.Value>{newTx.predicted_category || "—"}</S.Value>
             </S.Row>
@@ -114,16 +114,16 @@ export default function DuplicateComparisonModal({
           {/* === ІСНУЮЧА ТРАНЗАКЦІЯ === */}
           <S.Column $bg="var(--color-yellow-50)">
             <S.Title>
-              {t("importModal.duplicate_existing", "Існуюча (в базі)")}
+              {t("export_import:importModal.duplicate_existing", "Існуюча (в базі)")}
             </S.Title>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_date")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_date")}</S.Label>
               <S.Value>{formatDate(existingTx.date)}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_type")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_type")}</S.Label>
               <div>
                 <S.Badge $type={existingTx.type}>
                   {translateType(existingTx.type)}
@@ -132,22 +132,22 @@ export default function DuplicateComparisonModal({
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_amount")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_amount")}</S.Label>
               <S.Value>{formatAmount(existingTx.amount)}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_note")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_note")}</S.Label>
               <S.Value>{existingTx.note || "—"}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_counterparty")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_counterparty")}</S.Label>
               <S.Value>{existingTx.counterparty?.name || "—"}</S.Value>
             </S.Row>
 
             <S.Row>
-              <S.Label>{t("exportMapping.table_category")}</S.Label>
+              <S.Label>{t("export_import:exportMapping.table_category")}</S.Label>
               <S.Value>{existingTx.category?.name || "—"}</S.Value>
             </S.Row>
           </S.Column>
@@ -156,7 +156,7 @@ export default function DuplicateComparisonModal({
         {/* FOOTER */}
         <S.Footer>
           <Button variation="secondary" onClick={onClose}>
-            {t("common.close", "Закрити")}
+            {t("common:common.close", "Закрити")}
           </Button>
         </S.Footer>
       </S.Card>

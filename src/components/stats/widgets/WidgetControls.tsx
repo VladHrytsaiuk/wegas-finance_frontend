@@ -116,138 +116,138 @@ export const WidgetControls = (props: Props) => {
                   <S.LeftColumn>
                     <S.ScrollArea>
                       <S.SectionTitle>
-                        {t("filters.period_label")}
+                        {t("legacy:filters.period_label")}
                       </S.SectionTitle>
                       <S.ChipsGrid>
                         <S.MiniChip
                           $active={isActivePeriod(
-                            t("filters.periods.this_month")
+                            t("legacy:filters.periods.this_month")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "this_month",
-                              t("filters.periods.this_month")
+                              t("legacy:filters.periods.this_month")
                             )
                           }
                         >
-                          {t("filters.chips.this_month")}
+                          {t("legacy:filters.chips.this_month")}
                         </S.MiniChip>
                         <S.MiniChip
                           $active={isActivePeriod(
-                            t("filters.periods.last_month")
+                            t("legacy:filters.periods.last_month")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "last_month",
-                              t("filters.periods.last_month")
+                              t("legacy:filters.periods.last_month")
                             )
                           }
                         >
-                          {t("filters.chips.last_month")}
+                          {t("legacy:filters.chips.last_month")}
                         </S.MiniChip>
                         <S.MiniChip
                           $active={isActivePeriod(
-                            t("filters.periods.this_week")
+                            t("legacy:filters.periods.this_week")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "this_week",
-                              t("filters.periods.this_week")
+                              t("legacy:filters.periods.this_week")
                             )
                           }
                         >
-                          {t("filters.periods.this_week")}
+                          {t("legacy:filters.periods.this_week")}
                         </S.MiniChip>
                         <S.MiniChip
                           $active={isActivePeriod(
-                            t("filters.periods.last_7_days")
+                            t("legacy:filters.periods.last_7_days")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "7_days",
-                              t("filters.periods.last_7_days")
+                              t("legacy:filters.periods.last_7_days")
                             )
                           }
                         >
-                          {t("filters.chips.7_days")}
+                          {t("legacy:filters.chips.7_days")}
                         </S.MiniChip>
                       </S.ChipsGrid>
                       <S.Divider />
                       <S.CompactList>
                         <S.MenuItem
-                          $active={isActivePeriod(t("filters.periods.today"))}
+                          $active={isActivePeriod(t("legacy:filters.periods.today"))}
                           onClick={() =>
-                            handlePeriod("today", t("filters.periods.today"))
+                            handlePeriod("today", t("legacy:filters.periods.today"))
                           }
                         >
                           <S.IconWrapper>
-                            {isActivePeriod(t("filters.periods.today")) ? (
+                            {isActivePeriod(t("legacy:filters.periods.today")) ? (
                               <HiCheck className="check" />
                             ) : (
                               <HiCalendarDays />
                             )}
                           </S.IconWrapper>{" "}
-                          {t("filters.periods.today")}
+                          {t("legacy:filters.periods.today")}
                         </S.MenuItem>
                         <S.MenuItem
                           $active={isActivePeriod(
-                            t("filters.periods.yesterday")
+                            t("legacy:filters.periods.yesterday")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "yesterday",
-                              t("filters.periods.yesterday")
+                              t("legacy:filters.periods.yesterday")
                             )
                           }
                         >
                           <S.IconWrapper>
-                            {isActivePeriod(t("filters.periods.yesterday")) ? (
+                            {isActivePeriod(t("legacy:filters.periods.yesterday")) ? (
                               <HiCheck className="check" />
                             ) : (
                               <HiCalendarDays />
                             )}
                           </S.IconWrapper>{" "}
-                          {t("filters.periods.yesterday")}
+                          {t("legacy:filters.periods.yesterday")}
                         </S.MenuItem>
                         <S.MenuItem
                           $active={isActivePeriod(
-                            t("filters.periods.this_year")
+                            t("legacy:filters.periods.this_year")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "this_year",
-                              t("filters.periods.this_year")
+                              t("legacy:filters.periods.this_year")
                             )
                           }
                         >
                           <S.IconWrapper>
-                            {isActivePeriod(t("filters.periods.this_year")) ? (
+                            {isActivePeriod(t("legacy:filters.periods.this_year")) ? (
                               <HiCheck className="check" />
                             ) : (
                               <HiCalendarDays />
                             )}
                           </S.IconWrapper>{" "}
-                          {t("filters.periods.this_year")}
+                          {t("legacy:filters.periods.this_year")}
                         </S.MenuItem>
                         <S.MenuItem
                           $active={isActivePeriod(
-                            t("filters.periods.all_time")
+                            t("legacy:filters.periods.all_time")
                           )}
                           onClick={() =>
                             handlePeriod(
                               "all_time",
-                              t("filters.periods.all_time")
+                              t("legacy:filters.periods.all_time")
                             )
                           }
                         >
                           <S.IconWrapper>
-                            {isActivePeriod(t("filters.periods.all_time")) ? (
+                            {isActivePeriod(t("legacy:filters.periods.all_time")) ? (
                               <HiCheck className="check" />
                             ) : (
                               <HiArrowPath />
                             )}
                           </S.IconWrapper>{" "}
-                          {t("filters.periods.all_time")}
+                          {t("legacy:filters.periods.all_time")}
                         </S.MenuItem>
                         <S.MenuItem
                           $highlight
@@ -256,7 +256,7 @@ export const WidgetControls = (props: Props) => {
                           <S.IconWrapper>
                             <HiCalendarDays />
                           </S.IconWrapper>{" "}
-                          {t("filters.custom_range")}
+                          {t("legacy:filters.custom_range")}
                         </S.MenuItem>
                       </S.CompactList>
                     </S.ScrollArea>
@@ -267,11 +267,11 @@ export const WidgetControls = (props: Props) => {
 
               <S.RightColumn>
                 <S.RightColumnHeader>
-                  <S.SectionTitle>{t("filters.accounts_label")}</S.SectionTitle>
+                  <S.SectionTitle>{t("legacy:filters.accounts_label")}</S.SectionTitle>
                   <S.SearchContainer>
                     <HiMagnifyingGlass />
                     <S.SearchInput
-                      placeholder={t("filters.search_placeholder")}
+                      placeholder={t("legacy:filters.search_placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       autoFocus
@@ -290,7 +290,7 @@ export const WidgetControls = (props: Props) => {
                         <HiCreditCard />
                       )}
                     </S.IconWrapper>{" "}
-                    {t("filters.all_accounts")}
+                    {t("legacy:filters.all_accounts")}
                   </S.MenuItem>
                   <S.Divider style={{ margin: "0 0 8px 0" }} />
                 </S.RightColumnHeader>
@@ -311,10 +311,10 @@ export const WidgetControls = (props: Props) => {
 
             <S.DropdownFooter>
               <S.ApplyButton onClick={() => setIsOpen(false)}>
-                <HiCheck /> {t("filters.done")}
+                <HiCheck /> {t("legacy:filters.done")}
               </S.ApplyButton>
               <S.ResetButton onClick={handleReset}>
-                <HiTrash /> {t("filters.reset")}
+                <HiTrash /> {t("legacy:filters.reset")}
               </S.ResetButton>
             </S.DropdownFooter>
           </S.MegaDropdown>,
@@ -327,7 +327,7 @@ export const WidgetControls = (props: Props) => {
           <S.Overlay onClick={() => setIsCalendarOpen(false)}>
             <S.CalendarContainer onClick={(e) => e.stopPropagation()}>
               <S.CalendarHeader>
-                <h3>{t("filters.select_period_title")}</h3>
+                <h3>{t("legacy:filters.select_period_title")}</h3>
                 <S.CloseBtn onClick={() => setIsCalendarOpen(false)}>
                   <HiXMark />
                 </S.CloseBtn>
@@ -348,7 +348,7 @@ export const WidgetControls = (props: Props) => {
               </S.StyledDayPickerWrapper>
               <S.CalendarFooter>
                 <S.ApplyBtn onClick={handleApplyCalendar}>
-                  {t("filters.apply")}
+                  {t("legacy:filters.apply")}
                 </S.ApplyBtn>
               </S.CalendarFooter>
             </S.CalendarContainer>

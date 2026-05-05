@@ -132,13 +132,13 @@ export const useCreateGoal = (
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       toast.success(
-        editingGoal ? t("goals.update_success") : t("goals.create_success"),
+        editingGoal ? t("goals_debts:goals.update_success") : t("goals_debts:goals.create_success"),
       );
       onClose();
     },
     onError: (err: any) => {
       console.error(err);
-      const msg = err.response?.data?.error || t("common.error_occurred");
+      const msg = err.response?.data?.error || t("common:common.error_occurred");
       toast.error(msg);
     },
   });

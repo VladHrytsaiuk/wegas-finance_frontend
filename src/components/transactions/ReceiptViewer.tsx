@@ -28,23 +28,23 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
         <S.ToolGroup>
           <S.ToolBtn
             onClick={handlers.handleZoomOut}
-            title={t("viewer.zoom_out")}
+            title={t("legacy:viewer.zoom_out")}
           >
             <HiMagnifyingGlassMinus />
           </S.ToolBtn>
-          <S.ToolBtn onClick={handlers.handleReset} title={t("viewer.reset")}>
+          <S.ToolBtn onClick={handlers.handleReset} title={t("legacy:viewer.reset")}>
             <HiArrowPath />
           </S.ToolBtn>
           <S.ToolBtn
             onClick={handlers.handleZoomIn}
-            title={t("viewer.zoom_in")}
+            title={t("legacy:viewer.zoom_in")}
           >
             <HiMagnifyingGlassPlus />
           </S.ToolBtn>
         </S.ToolGroup>
 
         {props.onClose && (
-          <S.ToolBtn onClick={props.onClose} title={t("common.close")}>
+          <S.ToolBtn onClick={props.onClose} title={t("common:common.close")}>
             <HiXMark />
           </S.ToolBtn>
         )}
@@ -64,7 +64,7 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
               e.stopPropagation();
               handlers.handlePrev();
             }}
-            title={t("pagination.tooltip_prev")}
+            title={t("common:pagination.tooltip_prev")}
           >
             <HiChevronLeft size={24} />
           </S.NavBtn>
@@ -86,7 +86,7 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
               e.stopPropagation();
               handlers.handleNext();
             }}
-            title={t("pagination.tooltip_next")}
+            title={t("common:pagination.tooltip_next")}
           >
             <HiChevronRight size={24} />
           </S.NavBtn>

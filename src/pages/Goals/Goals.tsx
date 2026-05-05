@@ -55,7 +55,7 @@ function Goals() {
 
   // Встановлення глобального заголовка та субтайтлу
   useEffect(() => {
-    setPageTitle(t("goals.title", "Фінансові цілі"), `Створіть власну ціль`);
+    setPageTitle(t("goals_debts:goals.title", "Фінансові цілі"), `Створіть власну ціль`);
 
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t, goals.length]);
@@ -67,7 +67,7 @@ function Goals() {
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("goals.search_placeholder", "Пошук цілей...")}
+        searchPlaceholder={t("goals_debts:goals.search_placeholder", "Пошук цілей...")}
         filtersConfig={filtersConfig}
         filterValues={filters}
         onFilterChange={handleFilterChange}
@@ -82,7 +82,7 @@ function Goals() {
           onClick={handleCreate}
           icon={<HiPlus />}
         >
-          {t("goals.button_add")}
+          {t("goals_debts:goals.button_add")}
         </Button>
       </TableToolbar>
 
@@ -101,12 +101,12 @@ function Goals() {
             <div>
               <h3>
                 {searchQuery
-                  ? t("common.no_results", "Нічого не знайдено")
-                  : t("goals.empty_title", "Список цілей порожній")}
+                  ? t("common:common.no_results", "Нічого не знайдено")
+                  : t("goals_debts:goals.empty_title", "Список цілей порожній")}
               </h3>
               <p>
                 {searchQuery
-                  ? t("common.try_adjusting_search", "Спробуйте змінити запит")
+                  ? t("common:common.try_adjusting_search", "Спробуйте змінити запит")
                   : t(
                       "goals.empty_desc",
                       "Створіть свою першу фінансову ціль, щоб почати відслідковувати прогрес.",
@@ -120,7 +120,7 @@ function Goals() {
                 onClick={handleCreate}
                 icon={<HiPlus />}
               >
-                {t("goals.button_create_first")}
+                {t("goals_debts:goals.button_create_first")}
               </Button>
             )}
           </S.EmptyState>

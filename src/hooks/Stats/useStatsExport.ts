@@ -28,12 +28,12 @@ export const useStatsExport = () => {
     periodLabel: string
   ) => {
     if (!Object.values(options).some(Boolean)) {
-      toast.error(t("statsExport.toast_select_block"));
+      toast.error(t("export_import:statsExport.toast_select_block"));
       return;
     }
 
     setLoading(true);
-    const toastId = toast.loading(t("statsExport.toast_collecting"));
+    const toastId = toast.loading(t("export_import:statsExport.toast_collecting"));
 
     try {
       const apiFilter = {
@@ -58,28 +58,28 @@ export const useStatsExport = () => {
           const bal = safeNum(dashboard.total_balance) / 100 || inc - exp;
 
           sheets.push({
-            name: t("statsExport.sheet_summary"),
+            name: t("export_import:statsExport.sheet_summary"),
             data: [
               {
-                [t("statsExport.col_indicator")]: t("statsExport.col_income"),
-                [t("statsExport.col_value")]: inc,
-                [t("statsExport.col_currency")]: "UAH",
+                [t("export_import:statsExport.col_indicator")]: t("export_import:statsExport.col_income"),
+                [t("export_import:statsExport.col_value")]: inc,
+                [t("export_import:statsExport.col_currency")]: "UAH",
               },
               {
-                [t("statsExport.col_indicator")]: t("statsExport.col_expense"),
-                [t("statsExport.col_value")]: exp,
-                [t("statsExport.col_currency")]: "UAH",
+                [t("export_import:statsExport.col_indicator")]: t("export_import:statsExport.col_expense"),
+                [t("export_import:statsExport.col_value")]: exp,
+                [t("export_import:statsExport.col_currency")]: "UAH",
               },
               {
-                [t("statsExport.col_indicator")]: t("statsExport.col_balance"),
-                [t("statsExport.col_value")]: bal,
-                [t("statsExport.col_currency")]: "UAH",
+                [t("export_import:statsExport.col_indicator")]: t("export_import:statsExport.col_balance"),
+                [t("export_import:statsExport.col_value")]: bal,
+                [t("export_import:statsExport.col_currency")]: "UAH",
               },
               {
-                [t("statsExport.col_indicator")]: t("statsExport.col_savings"),
-                [t("statsExport.col_value")]:
+                [t("export_import:statsExport.col_indicator")]: t("export_import:statsExport.col_savings"),
+                [t("export_import:statsExport.col_value")]:
                   inc > 0 ? ((bal / inc) * 100).toFixed(1) + "%" : "0%",
-                [t("statsExport.col_currency")]: "-",
+                [t("export_import:statsExport.col_currency")]: "-",
               },
             ],
           });
@@ -94,18 +94,18 @@ export const useStatsExport = () => {
           .sort((a: any, b: any) => safeNum(b.amount) - safeNum(a.amount))
           .slice(0, 15)
           .map((tx: any) => ({
-            [t("statsExport.col_date")]: new Date(tx.date).toLocaleDateString(
+            [t("export_import:statsExport.col_date")]: new Date(tx.date).toLocaleDateString(
               locale
             ),
-            [t("statsExport.col_amount")]: safeNum(tx.amount) / 100,
-            [t("statsExport.col_category")]:
-              tx.category?.name || t("exportMapping.no_category"),
-            [t("statsExport.col_shop")]: tx.counterparty?.name || "-",
-            [t("statsExport.col_comment")]: tx.comment || "",
+            [t("export_import:statsExport.col_amount")]: safeNum(tx.amount) / 100,
+            [t("export_import:statsExport.col_category")]:
+              tx.category?.name || t("export_import:exportMapping.no_category"),
+            [t("export_import:statsExport.col_shop")]: tx.counterparty?.name || "-",
+            [t("export_import:statsExport.col_comment")]: tx.comment || "",
           }));
 
         if (top.length)
-          sheets.push({ name: t("statsExport.sheet_top_expenses"), data: top });
+          sheets.push({ name: t("export_import:statsExport.sheet_top_expenses"), data: top });
       }
 
       // 3. CATEGORIES
@@ -116,13 +116,13 @@ export const useStatsExport = () => {
           apiFilter
         );
         const mapped = (data || []).map((i: any) => ({
-          [t("statsExport.col_category")]: i.name,
-          [t("statsExport.col_amount")]: safeNum(i.total) / 100,
+          [t("export_import:statsExport.col_category")]: i.name,
+          [t("export_import:statsExport.col_amount")]: safeNum(i.total) / 100,
           "%": i.percent ? `${i.percent}%` : "-",
         }));
         if (mapped.length)
           sheets.push({
-            name: t("statsExport.sheet_categories"),
+            name: t("export_import:statsExport.sheet_categories"),
             data: mapped,
           });
       }
@@ -135,11 +135,11 @@ export const useStatsExport = () => {
           apiFilter
         );
         const mapped = (data || []).map((i: any) => ({
-          [t("statsExport.col_shop")]: i.name,
-          [t("statsExport.col_amount")]: safeNum(i.total) / 100,
+          [t("export_import:statsExport.col_shop")]: i.name,
+          [t("export_import:statsExport.col_amount")]: safeNum(i.total) / 100,
         }));
         if (mapped.length)
-          sheets.push({ name: t("statsExport.sheet_shops"), data: mapped });
+          sheets.push({ name: t("export_import:statsExport.sheet_shops"), data: mapped });
       }
 
       // 5. TAGS
@@ -150,24 +150,24 @@ export const useStatsExport = () => {
           apiFilter
         );
         const mapped = (data || []).map((i: any) => ({
-          [t("statsExport.col_tag")]: i.name,
-          [t("statsExport.col_amount")]: safeNum(i.total) / 100,
+          [t("export_import:statsExport.col_tag")]: i.name,
+          [t("export_import:statsExport.col_amount")]: safeNum(i.total) / 100,
         }));
         if (mapped.length)
-          sheets.push({ name: t("statsExport.sheet_tags"), data: mapped });
+          sheets.push({ name: t("export_import:statsExport.sheet_tags"), data: mapped });
       }
 
       if (!sheets.length || sheets.every((s) => s.data.length === 0)) {
-        toast.error(t("statsExport.toast_no_data"), { id: toastId });
+        toast.error(t("export_import:statsExport.toast_no_data"), { id: toastId });
         return;
       }
 
       const fileName = `Finance_Stats_${new Date().toISOString().slice(0, 10)}`;
       await exportToExcel(sheets, fileName, periodLabel, t);
 
-      toast.success(t("statsExport.toast_success"), { id: toastId });
+      toast.success(t("export_import:statsExport.toast_success"), { id: toastId });
     } catch (error: any) {
-      toast.error(`${t("statsExport.toast_error")}: ${error.message}`, {
+      toast.error(`${t("export_import:statsExport.toast_error")}: ${error.message}`, {
         id: toastId,
       });
     } finally {

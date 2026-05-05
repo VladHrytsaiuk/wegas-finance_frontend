@@ -21,7 +21,7 @@ export const DeleteReceiptDialog = (props: DeleteReceiptDialogProps) => {
         <HiTrash />
       </S.IconWrapper>
 
-      <S.Title>{t("confirmDelete.title_prefix")}</S.Title>
+      <S.Title>{t("common:confirmDelete.title_prefix")}</S.Title>
 
       <S.Description>
         {t(
@@ -38,7 +38,7 @@ export const DeleteReceiptDialog = (props: DeleteReceiptDialogProps) => {
           disabled={isDeleting}
         >
           <HiPhoto style={{ marginRight: "8px" }} />
-          {t("receipts.delete_this", "Видалити це фото")}
+          {t("transactions:receipts.delete_this", "Видалити це фото")}
         </S.DeleteButton>
 
         {!isSinglePhoto && (
@@ -48,7 +48,7 @@ export const DeleteReceiptDialog = (props: DeleteReceiptDialogProps) => {
             disabled={isDeleting}
           >
             <HiRectangleStack style={{ marginRight: "8px" }} />
-            {t("receipts.delete_all", "Видалити всі фото")}
+            {t("transactions:receipts.delete_all", "Видалити всі фото")}
           </S.DeleteAllButton>
         )}
 
@@ -58,7 +58,7 @@ export const DeleteReceiptDialog = (props: DeleteReceiptDialogProps) => {
           onClick={onCloseModal}
           disabled={isDeleting}
         >
-          {t("confirmDelete.button_cancel")}
+          {t("common:confirmDelete.button_cancel")}
         </S.CancelButton>
       </S.ButtonGroup>
     </S.Container>

@@ -216,7 +216,7 @@ const CPTreeNode: React.FC<{
                 <S.ActionBtn
                   onClick={() => props.onEdit!(node)}
                   tabIndex={-1}
-                  title={t("treeActions.edit")}
+                  title={t("legacy:treeActions.edit")}
                 >
                   <HiPencil />
                 </S.ActionBtn>
@@ -226,7 +226,7 @@ const CPTreeNode: React.FC<{
                   className="delete"
                   onClick={() => props.onDelete!(node.id, node.type !== "item")}
                   tabIndex={-1}
-                  title={t("treeActions.delete")}
+                  title={t("legacy:treeActions.delete")}
                 >
                   <HiTrash />
                 </S.ActionBtn>

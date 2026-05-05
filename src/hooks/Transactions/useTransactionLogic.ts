@@ -211,20 +211,20 @@ export const useTransactionLogic = ({
   const { mutateAsync: uploadReceiptAsync, isPending: isUploading } =
     useMutation({
       mutationFn: uploadReceiptApi,
-      onError: () => toast.error(t("transactionForm.alert_error_default")),
+      onError: () => toast.error(t("transactions:transactionForm.alert_error_default")),
     });
   const { mutateAsync: deleteSinglePhotoAsync, isPending: isDeletingSingle } =
     useMutation({
       mutationFn: deleteTransactionPhotoApi,
-      onError: () => toast.error(t("transactionForm.alert_error_default")),
+      onError: () => toast.error(t("transactions:transactionForm.alert_error_default")),
     });
   const { mutate: deleteReceipt, isPending: isDeletingAll } = useMutation({
     mutationFn: deleteReceiptApi,
     onSuccess: () => {
-      toast.success(t("transactionForm.receipt_deleted"));
+      toast.success(t("transactions:transactionForm.receipt_deleted"));
       invalidationConfig();
     },
-    onError: () => toast.error(t("transactionForm.alert_error_default")),
+    onError: () => toast.error(t("transactions:transactionForm.alert_error_default")),
   });
 
   const validateForm = (): boolean => {
@@ -232,18 +232,18 @@ export const useTransactionLogic = ({
     let isValid = true;
 
     if (!form.accountId) {
-      newErrors.accountId = t("validation.required");
+      newErrors.accountId = t("common:validation.required");
       isValid = false;
     }
 
     const amountVal = parseFloat(localAmount);
     if (!localAmount || isNaN(amountVal) || amountVal <= 0) {
-      newErrors.amount = t("validation.invalid_amount");
+      newErrors.amount = t("common:validation.invalid_amount");
       isValid = false;
     }
 
     if (!form.date) {
-      newErrors.date = t("validation.required");
+      newErrors.date = t("common:validation.required");
       isValid = false;
     }
 
@@ -256,20 +256,20 @@ export const useTransactionLogic = ({
 
     if (form.type === "transfer") {
       if (!form.targetAccountId) {
-        newErrors.targetAccountId = t("validation.required");
+        newErrors.targetAccountId = t("common:validation.required");
         isValid = false;
       } else if (form.accountId === form.targetAccountId) {
-        newErrors.targetAccountId = t("validation.same_account");
+        newErrors.targetAccountId = t("common:validation.same_account");
         isValid = false;
       }
     } else if (isDebt) {
       if (!form.counterpartyId) {
-        newErrors.counterpartyId = t("validation.required");
+        newErrors.counterpartyId = t("common:validation.required");
         isValid = false;
       }
     } else {
       if (!form.categoryId) {
-        newErrors.categoryId = t("validation.required");
+        newErrors.categoryId = t("common:validation.required");
         isValid = false;
       }
     }
@@ -339,7 +339,7 @@ export const useTransactionLogic = ({
           id: transactionToEdit.id,
         });
         responseData = res;
-        toast.success(t("transactionForm.alert_update_success"));
+        toast.success(t("transactions:transactionForm.alert_update_success"));
       } else {
         let dataToSend = payload;
         const hasFiles =
@@ -363,7 +363,7 @@ export const useTransactionLogic = ({
 
         const res = await createTxAsync(dataToSend);
         responseData = res;
-        toast.success(t("transactionForm.alert_create_success"));
+        toast.success(t("transactions:transactionForm.alert_create_success"));
       }
 
       invalidationConfig();
@@ -377,7 +377,7 @@ export const useTransactionLogic = ({
         actions.setAmountStr("");
       }
     } catch (error: any) {
-      toast.error(error.message || t("transactionForm.alert_error_default"));
+      toast.error(error.message || t("transactions:transactionForm.alert_error_default"));
     } finally {
       setIsSubmitting(false);
       setConflictState(null);
@@ -387,7 +387,7 @@ export const useTransactionLogic = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      toast.error(t("transactionForm.alert_fix_errors"));
+      toast.error(t("transactions:transactionForm.alert_fix_errors"));
       return;
     }
 
@@ -426,7 +426,7 @@ export const useTransactionLogic = ({
         if (isEditSession && transactionToEdit) {
           for (const file of compressedFiles) {
             await uploadReceiptAsync({ id: transactionToEdit.id, file });
-            toast.success(t("transactionForm.photo_added_success"));
+            toast.success(t("transactions:transactionForm.photo_added_success"));
           }
           queryClient.invalidateQueries({
             queryKey: ["transaction", transactionToEdit.id],
@@ -439,7 +439,7 @@ export const useTransactionLogic = ({
         }
       } catch (err) {
         console.error("Upload error:", err);
-        toast.error(t("common.error_occurred", "Помилка обробки фотографій"));
+        toast.error(t("common:common.error_occurred", "Помилка обробки фотографій"));
       } finally {
         setIsCompressing(false);
         e.target.value = "";
@@ -469,12 +469,12 @@ export const useTransactionLogic = ({
       const newItems = [
         ...form.items,
         {
-          name: t("transactionForm.item_remainder_name"),
+          name: t("transactions:transactionForm.item_remainder_name"),
           quantity: 1,
           price_per_unit: conflictState.diff,
           total_amount: conflictState.diff,
           categoryId: form.categoryId,
-          comment: t("transactionForm.remainder_auto_note"),
+          comment: t("transactions:transactionForm.remainder_auto_note"),
         },
       ];
       executeMutation(buildPayload(newItems));

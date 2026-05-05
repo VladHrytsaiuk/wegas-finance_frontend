@@ -82,14 +82,14 @@ export default function WishItemCard({
                 >
                   <HiCheck />{" "}
                   {isBought
-                    ? t("wishlist.mark_planning", "Повернути в плани")
-                    : t("wishlist.mark_bought", "Позначити купленим")}
+                    ? t("shopping_wishlist:wishlist.mark_planning", "Повернути в плани")
+                    : t("shopping_wishlist:wishlist.mark_bought", "Позначити купленим")}
                 </S.MenuItem>
 
                 {/* 2. РЕДАГУВАТИ */}
                 <Modal.Open opens={`edit-${item.id}`}>
                   <S.MenuItem onClick={onCloseMenu}>
-                    <HiPencil /> {t("common.edit", "Редагувати")}
+                    <HiPencil /> {t("common:common.edit", "Редагувати")}
                   </S.MenuItem>
                 </Modal.Open>
 
@@ -102,7 +102,7 @@ export default function WishItemCard({
                 ></div>
                 <Modal.Open opens={`delete-${item.id}`}>
                   <S.MenuItem $variant="delete" onClick={onCloseMenu}>
-                    <HiTrash /> {t("common.delete", "Видалити")}
+                    <HiTrash /> {t("common:common.delete", "Видалити")}
                   </S.MenuItem>
                 </Modal.Open>
 
@@ -185,7 +185,7 @@ export default function WishItemCard({
           {item.url && (
             <S.LinkBtn
               onClick={() => window.open(item.url, "_blank")}
-              title={t("common.open_link", "Відкрити в магазині")}
+              title={t("common:common.open_link", "Відкрити в магазині")}
             >
               <HiArrowTopRightOnSquare size={18} />
             </S.LinkBtn>

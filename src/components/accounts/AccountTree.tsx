@@ -252,7 +252,7 @@ export const AccountTree = ({
   if (treeData.length === 0) {
     return (
       <div style={{ padding: "1rem", textAlign: "center", color: "gray" }}>
-        {t("ui.search_placeholder_default", "Нічого не знайдено")}
+        {t("common:ui.search_placeholder_default", "Нічого не знайдено")}
       </div>
     );
   }

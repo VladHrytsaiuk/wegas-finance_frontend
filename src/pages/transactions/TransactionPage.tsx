@@ -48,11 +48,11 @@ function TransactionPage() {
       <S.PageContainer>
         <S.BackButton onClick={handleBack}>
           <HiArrowLeft />
-          {t("transactionPage.back_button")}
+          {t("legacy:transactionPage.back_button")}
         </S.BackButton>
         <S.NotFoundContainer>
-          <h3>{t("transactionPage.not_found_title")}</h3>
-          <p>{t("transactionPage.not_found_message")}</p>
+          <h3>{t("legacy:transactionPage.not_found_title")}</h3>
+          <p>{t("legacy:transactionPage.not_found_message")}</p>
         </S.NotFoundContainer>
       </S.PageContainer>
     );
@@ -64,7 +64,7 @@ function TransactionPage() {
         <S.Header>
           <S.BackButton onClick={handleBack}>
             <HiArrowLeft />
-            {t("transactionPage.back_to_list")}
+            {t("legacy:transactionPage.back_to_list")}
           </S.BackButton>
 
           <S.ButtonGroup>
@@ -82,7 +82,7 @@ function TransactionPage() {
               }}
             >
               <HiPencil style={{ marginRight: "6px" }} />
-              {t("transactionPage.edit_button")}
+              {t("legacy:transactionPage.edit_button")}
             </Button>
 
             <Modal.Open opens="delete-transaction">
@@ -92,14 +92,14 @@ function TransactionPage() {
                 style={{ width: "auto", display: "flex", alignItems: "center" }}
               >
                 <HiTrash style={{ marginRight: "6px" }} />
-                {t("common.delete")}
+                {t("common:common.delete")}
               </Button>
             </Modal.Open>
           </S.ButtonGroup>
 
           <Modal.Window name="delete-transaction">
             <ConfirmDelete
-              resourceName={t("common.transaction")}
+              resourceName={t("common:common.transaction")}
               onConfirm={() => deleteTx(transactionId!)}
               disabled={isDeleting}
             />

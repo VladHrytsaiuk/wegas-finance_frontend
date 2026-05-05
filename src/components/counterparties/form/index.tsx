@@ -55,20 +55,20 @@ export default function CounterpartyForm({
 
       {/* 1. Type */}
       <S.FormRow>
-        <S.Label>{t("counterpartyForm.label_type")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyForm.label_type")}</S.Label>
         <TypeSelector selectedType={selectedType} onSelect={handleTypeSelect} />
       </S.FormRow>
 
       {/* 2. Appearance */}
       <S.FormRow>
-        <S.Label>{t("counterpartyForm.label_appearance")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyForm.label_appearance")}</S.Label>
 
         {isPerson && (
           <S.PersonStaticBadge>
             <S.IconContainer>
               <HiUser />
             </S.IconContainer>
-            <span>{t("counterpartyForm.person_icon_fixed")}</span>
+            <span>{t("counterparties:counterpartyForm.person_icon_fixed")}</span>
           </S.PersonStaticBadge>
         )}
 
@@ -79,10 +79,10 @@ export default function CounterpartyForm({
             </S.LogoBox>
             <S.LogoInfo>
               <S.LogoTextMain>
-                {t("counterpartyForm.logo_active_status")}
+                {t("counterparties:counterpartyForm.logo_active_status")}
               </S.LogoTextMain>
               <S.LogoTextSub>
-                {t("counterpartyForm.logo_active_hint")}
+                {t("counterparties:counterpartyForm.logo_active_hint")}
               </S.LogoTextSub>
             </S.LogoInfo>
             <Button
@@ -92,7 +92,7 @@ export default function CounterpartyForm({
               onClick={handleRemoveLogo}
               icon={<HiTrash />}
             >
-              {t("common.delete")}
+              {t("common:common.delete")}
             </Button>
           </S.LogoPreviewContainer>
         )}
@@ -111,7 +111,7 @@ export default function CounterpartyForm({
                 <S.DividerContainer>
                   <S.DividerLine />
                   <S.DividerText>
-                    {t("counterpartyForm.divider_or", "АБО")}
+                    {t("counterparties:counterpartyForm.divider_or", "АБО")}
                   </S.DividerText>
                   <S.DividerLine />
                 </S.DividerContainer>
@@ -131,7 +131,7 @@ export default function CounterpartyForm({
                   icon={<HiPhoto />}
                   style={{ width: "100%", justifyContent: "center" }}
                 >
-                  {t("counterpartyForm.button_upload_logo")}
+                  {t("counterparties:counterpartyForm.button_upload_logo")}
                 </Button>
               </>
             )}
@@ -141,11 +141,11 @@ export default function CounterpartyForm({
 
       {/* 3. Name */}
       <S.FormRow>
-        <S.Label>{t("counterpartyForm.label_name")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyForm.label_name")}</S.Label>
         <Input
-          placeholder={t("counterpartyForm.placeholder_name_default")}
+          placeholder={t("counterparties:counterpartyForm.placeholder_name_default")}
           {...register("name", {
-            required: t("counterpartyForm.required_name_error"),
+            required: t("counterparties:counterpartyForm.required_name_error"),
           })}
           autoComplete="off"
         />
@@ -156,7 +156,7 @@ export default function CounterpartyForm({
 
       {/* 4. Category */}
       <S.FormRow>
-        <S.Label>{t("counterpartyForm.label_category")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyForm.label_category")}</S.Label>
         <CategorySelect
           categories={availableCategories}
           value={currentCategoryId}
@@ -166,7 +166,7 @@ export default function CounterpartyForm({
 
       {/* 5. Note */}
       <S.FormRow>
-        <S.Label>{t("counterpartyForm.label_note")}</S.Label>
+        <S.Label>{t("counterparties:counterpartyForm.label_note")}</S.Label>
         <Input as="textarea" rows={3} {...register("note")} />
       </S.FormRow>
 
@@ -177,12 +177,12 @@ export default function CounterpartyForm({
           onClick={onClose}
           disabled={isLoading}
         >
-          {t("counterpartyForm.button_cancel")}
+          {t("counterparties:counterpartyForm.button_cancel")}
         </Button>
         <Button disabled={isLoading} type="submit">
           {isLoading
-            ? t("counterpartyForm.button_saving")
-            : t("counterpartyForm.button_save")}
+            ? t("counterparties:counterpartyForm.button_saving")
+            : t("counterparties:counterpartyForm.button_save")}
         </Button>
       </S.Footer>
     </S.Form>

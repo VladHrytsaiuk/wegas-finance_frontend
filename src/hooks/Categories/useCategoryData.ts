@@ -21,7 +21,7 @@ export function useCategoryData() {
     mutationFn: createCategoryApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("categoryDataHook.alert_create_success"));
+      toast.success(t("categories:categoryDataHook.alert_create_success"));
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
     // Додайте обробку помилок, якщо потрібно, хоча в оригіналі її немає
@@ -31,7 +31,7 @@ export function useCategoryData() {
     mutationFn: updateCategoryApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("categoryDataHook.alert_update_success"));
+      toast.success(t("categories:categoryDataHook.alert_update_success"));
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
     // Додайте обробку помилок
@@ -41,12 +41,12 @@ export function useCategoryData() {
     mutationFn: deleteCategoryApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("categoryDataHook.alert_delete_success"));
+      toast.success(t("categories:categoryDataHook.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
     onError: () =>
       // ➡️ ПЕРЕКЛАД
-      toast.error(t("categoryDataHook.alert_delete_error")),
+      toast.error(t("categories:categoryDataHook.alert_delete_error")),
   });
 
   return {

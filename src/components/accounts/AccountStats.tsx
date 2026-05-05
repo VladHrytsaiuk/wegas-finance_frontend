@@ -84,7 +84,7 @@ export const AccountStats = ({ stats, currency }: Props) => {
                 style={{ color: "var(--color-brand-500)" }}
                 size={16}
               />
-              {t("accountStats.income_label")}
+              {t("accounts:accountStats.income_label")}
             </StatLabel>
             <strong style={{ color: "var(--color-brand-600)" }}>
               +{formatMoney(stats.income, currency)}
@@ -101,7 +101,7 @@ export const AccountStats = ({ stats, currency }: Props) => {
                 style={{ color: "var(--color-red-700)" }}
                 size={16}
               />
-              {t("accountStats.expense_label")}
+              {t("accounts:accountStats.expense_label")}
             </StatLabel>
             <strong style={{ color: "var(--color-red-700)" }}>
               -{formatMoney(stats.expense, currency)}
@@ -112,7 +112,7 @@ export const AccountStats = ({ stats, currency }: Props) => {
 
       <ModalWrapper>
         <StatItem>
-          <StatLabel>{t("accountStats.turnover_label")}</StatLabel>
+          <StatLabel>{t("accounts:accountStats.turnover_label")}</StatLabel>
           <strong>{formatMoney(stats.totalTurnover, currency)}</strong>
         </StatItem>
       </ModalWrapper>

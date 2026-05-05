@@ -75,11 +75,11 @@ export const useCategoriesPage = () => {
     () => [
       {
         key: "type",
-        label: t("categoriesPage.filter_type_label"),
+        label: t("categories:categoriesPage.filter_type_label"),
         type: "toggle",
         options: [
-          { value: "expense", label: t("categoriesPage.filter_expense") },
-          { value: "income", label: t("categoriesPage.filter_income") },
+          { value: "expense", label: t("categories:categoriesPage.filter_expense") },
+          { value: "income", label: t("categories:categoriesPage.filter_income") },
         ],
       },
     ],
@@ -88,9 +88,9 @@ export const useCategoriesPage = () => {
 
   const sortOptions = useMemo(
     () => [
-      { value: "default", label: t("categoriesPage.sort_default") },
-      { value: "name-asc", label: t("categoriesPage.sort_name_asc") },
-      { value: "name-desc", label: t("categoriesPage.sort_name_desc") },
+      { value: "default", label: t("categories:categoriesPage.sort_default") },
+      { value: "name-asc", label: t("categories:categoriesPage.sort_name_asc") },
+      { value: "name-desc", label: t("categories:categoriesPage.sort_name_desc") },
     ],
     [t]
   );

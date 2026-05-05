@@ -77,7 +77,7 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
                     color: "var(--color-text-secondary)",
                     flexShrink: 0,
                   }}
-                  title={t("assetsPage.has_photo")}
+                  title={t("assets:assetsPage.has_photo")}
                 />
               )}
             </S.AssetName>
@@ -101,9 +101,9 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
 
       <Table.Cell>
         {item.is_sold ? (
-          <S.Badge $color="gray">{t("assetsPage.badge_sold")}</S.Badge>
+          <S.Badge $color="gray">{t("assets:assetsPage.badge_sold")}</S.Badge>
         ) : (
-          <S.Badge $color="blue">{t("assetsPage.badge_active")}</S.Badge>
+          <S.Badge $color="blue">{t("assets:assetsPage.badge_active")}</S.Badge>
         )}
       </Table.Cell>
 
@@ -112,7 +112,7 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
         <S.DesktopActions onClick={(e) => e.stopPropagation()}>
           <Modal.Open opens={`view-photo-${item.id}`}>
             <button
-              title={t("assetsPage.tooltip_photo")}
+              title={t("assets:assetsPage.tooltip_photo")}
               disabled={!hasPhoto}
               style={{ opacity: hasPhoto ? 1 : 0.3 }}
             >
@@ -121,13 +121,13 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
           </Modal.Open>
 
           <Modal.Open opens={`edit-asset-${item.id}`}>
-            <button title={t("assetsPage.tooltip_edit")}>
+            <button title={t("assets:assetsPage.tooltip_edit")}>
               <HiPencil size={18} />
             </button>
           </Modal.Open>
 
           <Modal.Open opens={`delete-asset-${item.id}`}>
-            <button className="delete" title={t("assetsPage.tooltip_delete")}>
+            <button className="delete" title={t("assets:assetsPage.tooltip_delete")}>
               <HiTrash size={18} />
             </button>
           </Modal.Open>
@@ -153,19 +153,19 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
                     style={{ opacity: hasPhoto ? 1 : 0.3 }}
                   >
                     <HiPhoto size={16} />{" "}
-                    {t("assetsPage.tooltip_photo" || "Фото")}
+                    {t("assets:assetsPage.tooltip_photo" || "Фото")}
                   </S.MenuItemButton>
                 </Modal.Open>
 
                 <Modal.Open opens={`edit-asset-${item.id}`}>
                   <S.MenuItemButton>
-                    <HiPencil size={16} /> {t("common.edit" || "Редагувати")}
+                    <HiPencil size={16} /> {t("common:common.edit" || "Редагувати")}
                   </S.MenuItemButton>
                 </Modal.Open>
 
                 <Modal.Open opens={`delete-asset-${item.id}`}>
                   <S.MenuItemButton $variant="delete">
-                    <HiTrash size={16} /> {t("common.delete" || "Видалити")}
+                    <HiTrash size={16} /> {t("common:common.delete" || "Видалити")}
                   </S.MenuItemButton>
                 </Modal.Open>
               </S.MenuDropdown>,

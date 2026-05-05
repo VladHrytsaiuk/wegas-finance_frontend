@@ -50,9 +50,9 @@ function Accounts() {
   } = useAccountsPage();
 
   if (isLoading)
-    return <S.LoadingState>{t("accountsPage.status_loading")}</S.LoadingState>;
+    return <S.LoadingState>{t("accounts:accountsPage.status_loading")}</S.LoadingState>;
   if (isError)
-    return <S.ErrorState>{t("accountsPage.status_error")}</S.ErrorState>;
+    return <S.ErrorState>{t("accounts:accountsPage.status_error")}</S.ErrorState>;
 
   return (
     <S.PageContainer>
@@ -61,7 +61,7 @@ function Accounts() {
           <TableToolbar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            searchPlaceholder={t("accountsPage.search_placeholder")}
+            searchPlaceholder={t("accounts:accountsPage.search_placeholder")}
             searchPosition="top"
             filtersConfig={filtersConfig}
             filterValues={filters}
@@ -89,7 +89,7 @@ function Accounts() {
                   }}
                 >
                   <HiPlus style={{ width: "20px", height: "20px" }} />
-                  <span>{t("accountsPage.button_add")}</span>
+                  <span>{t("accounts:accountsPage.button_add")}</span>
                 </Button>
               )}
             </S.ControlsGroup>
@@ -99,7 +99,7 @@ function Accounts() {
         {filteredAccounts.length === 0 ? (
           <S.EmptyState>
             <S.EmptyStateIcon>💳</S.EmptyStateIcon>
-            <div>{t("accountsPage.empty_title")}</div>
+            <div>{t("accounts:accountsPage.empty_title")}</div>
           </S.EmptyState>
         ) : (
           <>
@@ -125,7 +125,7 @@ function Accounts() {
 
         <Modal.Window name="delete-confirm">
           <ConfirmDelete
-            resourceName={t("accountsTable.delete_resource_name", {
+            resourceName={t("accounts:accountsTable.delete_resource_name", {
               name: accountToDeleteName,
             })}
             onConfirm={handleDeleteConfirm}

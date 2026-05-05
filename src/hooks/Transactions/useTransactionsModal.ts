@@ -64,20 +64,20 @@ export const useTransactionsModal = ({
     if (!isTypeFixed) {
       config.push({
         key: "type",
-        label: t("transactionsModal.filter_type"),
+        label: t("transactions:transactionsModal.filter_type"),
         type: "toggle",
         options: [
           {
             value: "expense",
-            label: t("transactionsModal.filter_option_expense"),
+            label: t("transactions:transactionsModal.filter_option_expense"),
           },
           {
             value: "income",
-            label: t("transactionsModal.filter_option_income"),
+            label: t("transactions:transactionsModal.filter_option_income"),
           },
           {
             value: "transfer",
-            label: t("transactionsModal.filter_option_transfer"),
+            label: t("transactions:transactionsModal.filter_option_transfer"),
           },
         ],
       });
@@ -86,7 +86,7 @@ export const useTransactionsModal = ({
     if (categories.length > 0) {
       config.push({
         key: "categories",
-        label: t("transactionsModal.filter_category"),
+        label: t("transactions:transactionsModal.filter_category"),
         type: "multi-select",
         treeType: "categories",
         rawData: categories,
@@ -96,7 +96,7 @@ export const useTransactionsModal = ({
     if (counterparties.length > 0) {
       config.push({
         key: "counterparties",
-        label: t("transactionsModal.filter_counterparty"),
+        label: t("transactions:transactionsModal.filter_counterparty"),
         type: "multi-select",
         treeType: "counterparties",
         rawData: counterparties,
@@ -106,10 +106,10 @@ export const useTransactionsModal = ({
   }, [categories, counterparties, t, initialFilters.type]);
 
   const sortOptions = [
-    { value: "date-desc", label: t("transactionsModal.sort_date_desc") },
-    { value: "date-asc", label: t("transactionsModal.sort_date_asc") },
-    { value: "amount-desc", label: t("transactionsModal.sort_amount_desc") },
-    { value: "amount-asc", label: t("transactionsModal.sort_amount_asc") },
+    { value: "date-desc", label: t("transactions:transactionsModal.sort_date_desc") },
+    { value: "date-asc", label: t("transactions:transactionsModal.sort_date_asc") },
+    { value: "amount-desc", label: t("transactions:transactionsModal.sort_amount_desc") },
+    { value: "amount-asc", label: t("transactions:transactionsModal.sort_amount_asc") },
   ];
 
   // --- API PARAMS ---
@@ -247,9 +247,9 @@ export const useTransactionsModal = ({
   const getTitle = () => {
     if (title) return title;
     const type = filters.type[0];
-    if (type === "income") return t("transactionsModal.title_history_income");
-    if (type === "expense") return t("transactionsModal.title_history_expense");
-    return t("transactionsModal.title_history_default");
+    if (type === "income") return t("transactions:transactionsModal.title_history_income");
+    if (type === "expense") return t("transactions:transactionsModal.title_history_expense");
+    return t("transactions:transactionsModal.title_history_default");
   };
 
   return {

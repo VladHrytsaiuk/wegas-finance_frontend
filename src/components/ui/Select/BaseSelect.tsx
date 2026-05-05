@@ -61,7 +61,7 @@ export const BaseSelect = ({
             <S.TextTruncate>{triggerLabel}</S.TextTruncate>
           ) : (
             <S.Placeholder>
-              {placeholder || t("ui.select_placeholder_default")}
+              {placeholder || t("common:ui.select_placeholder_default")}
             </S.Placeholder>
           )}
         </S.ContentWrapper>
@@ -72,7 +72,7 @@ export const BaseSelect = ({
               onClick={actions.handleClear}
               type="button"
               tabIndex={-1}
-              title={t("filterComponent.clear_selection")}
+              title={t("legacy:filterComponent.clear_selection")}
             >
               <HiXMark size={16} />
             </S.ClearButton>
@@ -118,7 +118,7 @@ export const BaseSelect = ({
                     ref={refs.searchInputRef}
                     value={searchValue}
                     onChange={(e) => onSearchChange(e.target.value)}
-                    placeholder={t("ui.search_placeholder_default")}
+                    placeholder={t("common:ui.search_placeholder_default")}
                     autoComplete="off"
                     onKeyDown={(e) => e.stopPropagation()}
                   />

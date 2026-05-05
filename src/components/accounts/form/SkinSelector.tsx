@@ -59,7 +59,7 @@ export function SkinSelector({
   return (
     <S.SkinSelectorContainer ref={containerRef} onKeyDown={handleKeyDown}>
       <S.SkinSelectorTitle>
-        {t("accountForm.title_select_design")}
+        {t("accounts:accountForm.title_select_design")}
       </S.SkinSelectorTitle>
 
       {/* BANK TABS */}
@@ -130,7 +130,7 @@ export function SkinSelector({
             }
           }}
         >
-          {t("accountForm.button_done")}
+          {t("accounts:accountForm.button_done")}
         </Button>
       </S.SkinSelectorFooter>
     </S.SkinSelectorContainer>

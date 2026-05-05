@@ -55,7 +55,7 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
             </div>
           ) : (
             <S.Placeholder>
-              {t("accountForm.select_type_placeholder", "Оберіть тип...")}
+              {t("accounts:accountForm.select_type_placeholder", "Оберіть тип...")}
             </S.Placeholder>
           )}
         </S.ContentWrapper>
@@ -117,7 +117,7 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
                   ref={refs.searchInputRef}
                   value={search}
                   onChange={(e) => actions.setSearch(e.target.value)}
-                  placeholder={t("ui.search_placeholder_default")}
+                  placeholder={t("common:ui.search_placeholder_default")}
                   autoComplete="off"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -159,7 +159,7 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
               {search && !exactMatch && (
                 <S.CreateActionBtn type="button" onClick={actions.handleCreate}>
                   <HiPlus />
-                  {t("tagSelect.create_button_with_name", { name: search })}
+                  {t("settings:tagSelect.create_button_with_name", { name: search })}
                 </S.CreateActionBtn>
               )}
 
@@ -172,7 +172,7 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
                     fontSize: "0.9rem",
                   }}
                 >
-                  {t("common.no_options")}
+                  {t("common:common.no_options")}
                 </div>
               )}
             </S.List>

@@ -112,15 +112,15 @@ export const useGoalsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
-      toast.success(t("goals.delete_success"));
+      toast.success(t("goals_debts:goals.delete_success"));
     },
-    onError: () => toast.error(t("goals.delete_error")),
+    onError: () => toast.error(t("goals_debts:goals.delete_error")),
   });
 
   const updateMutation = useMutation({
     mutationFn: (payload: any) => updateGoalApi(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["goals"] }),
-    onError: () => toast.error(t("common.error_occurred")),
+    onError: () => toast.error(t("common:common.error_occurred")),
   });
 
   const updateDateMutation = useMutation({
@@ -135,11 +135,11 @@ export const useGoalsPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["goals"] });
-      toast.success(t("goals.update_success"));
+      toast.success(t("goals_debts:goals.update_success"));
     },
     onError: (e) => {
       console.error(e);
-      toast.error(t("common.error_occurred"));
+      toast.error(t("common:common.error_occurred"));
     },
   });
 

@@ -203,7 +203,7 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
           >
             <ConfirmDelete
               resourceName={
-                t("transactionForm.resource_items_list") || "список товарів"
+                t("transactions:transactionForm.resource_items_list") || "список товарів"
               }
               onConfirm={handlers.handleConfirmClearItems}
               onCloseModal={() => actions.setIsClearModalOpen(false)}
@@ -260,8 +260,8 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
               <S.HeaderContainer>
                 <S.Title>
                   {state.isEditSession
-                    ? t("transactionForm.title_edit")
-                    : t("transactionForm.title_new")}
+                    ? t("transactions:transactionForm.title_edit")
+                    : t("transactions:transactionForm.title_new")}
                 </S.Title>
               </S.HeaderContainer>
 

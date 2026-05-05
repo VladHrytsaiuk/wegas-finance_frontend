@@ -80,7 +80,7 @@ export function useAccountDetails() {
     return {
       ...account,
       calculated_balance: account.calculated_balance ?? account.balance ?? 0,
-      user_name: account.user?.name || owner?.name || t("common.owner"),
+      user_name: account.user?.name || owner?.name || t("common:common.owner"),
       owner_name: owner?.name,
     };
   }, [account, users, t]);
@@ -115,11 +115,11 @@ export function useAccountDetails() {
     // Б. Логіка для Готівки та Скарбничок
     // Визначаємо тип іконки (slug) та назву (label)
     let iconType = "cash";
-    let label = t("accountsTable.type_cash");
+    let label = t("accounts:accountsTable.type_cash");
 
     if (account.type === "piggy_bank" || account.type === "savings") {
       iconType = account.storage_type?.slug || "archive"; // envelope, safe, jar...
-      label = account.storage_type?.name || t("accountsTable.type_savings");
+      label = account.storage_type?.name || t("accounts:accountsTable.type_savings");
     }
 
     return {
@@ -168,23 +168,23 @@ export function useAccountDetails() {
   const { mutate: deleteAccount, isPending: isDeleting } = useMutation({
     mutationFn: (id: string) => deleteAccountApi(id),
     onSuccess: () => {
-      toast.success(t("common.success_delete"));
+      toast.success(t("common:common.success_delete"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       navigate("/");
     },
     onError: (err: any) => {
-      toast.error(err.message || t("common.error_delete"));
+      toast.error(err.message || t("common:common.error_delete"));
     },
   });
 
   const { mutate: updateAccount, isPending: isUpdating } = useMutation({
     mutationFn: updateAccountApi,
     onSuccess: () => {
-      toast.success(t("accountDetailsHook.alert_update_success"));
+      toast.success(t("accounts:accountDetailsHook.alert_update_success"));
       queryClient.invalidateQueries({ queryKey: ["account", accountId] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
-    onError: () => toast.error(t("accountDetailsHook.alert_update_error")),
+    onError: () => toast.error(t("accounts:accountDetailsHook.alert_update_error")),
   });
 
   return {

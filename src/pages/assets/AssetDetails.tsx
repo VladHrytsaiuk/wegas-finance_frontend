@@ -80,12 +80,12 @@ export default function AssetDetails() {
     return (
       <S.NotFoundState>
         <HiOutlineCube size={64} color="var(--color-text-tertiary)" />
-        <h2>{t("assetDetails.not_found")}</h2>
+        <h2>{t("assets:assetDetails.not_found")}</h2>
         <Button
           variation="secondary"
           onClick={() => actions.navigate("/assets")}
         >
-          {t("transactionPage.back_to_list")}
+          {t("legacy:transactionPage.back_to_list")}
         </Button>
       </S.NotFoundState>
     );
@@ -107,7 +107,7 @@ export default function AssetDetails() {
           <S.HeaderLeft>
             <S.BackButton onClick={() => actions.navigate("/assets")}>
               <HiArrowLeft size={18} />
-              <span>{t("assetDetails.back_to_list")}</span>
+              <span>{t("assets:assetDetails.back_to_list")}</span>
             </S.BackButton>
             <S.AssetTitleBlock>
               <h1>{asset.name}</h1>
@@ -120,12 +120,12 @@ export default function AssetDetails() {
           <S.HeaderActions>
             <Modal.Open opens="edit-asset">
               <Button variation="secondary">
-                <HiPencil /> {t("assetDetails.edit_asset")}
+                <HiPencil /> {t("assets:assetDetails.edit_asset")}
               </Button>
             </Modal.Open>
             <Modal.Open opens="delete-asset">
               <Button variation="danger">
-                <HiTrash /> {t("assetDetails.delete_asset")}
+                <HiTrash /> {t("assets:assetDetails.delete_asset")}
               </Button>
             </Modal.Open>
           </S.HeaderActions>
@@ -136,10 +136,10 @@ export default function AssetDetails() {
           <S.StyledCard>
             <S.CardHeader>
               <HiCurrencyDollar size={24} />
-              <h3>{t("assetDetails.financial_info")}</h3>
+              <h3>{t("assets:assetDetails.financial_info")}</h3>
             </S.CardHeader>
             <S.MainValueBlock>
-              <span className="label">{t("assetDetails.current_value")}</span>
+              <span className="label">{t("assets:assetDetails.current_value")}</span>
               <span className="value">
                 {helpers.formatPrice(
                   asset.current_price || asset.price,
@@ -150,7 +150,7 @@ export default function AssetDetails() {
             <S.MetaDataGrid>
               <S.MetaItem>
                 <div className="icon-label">
-                  <HiCalendarDays /> {t("assetsPage.table_date")}
+                  <HiCalendarDays /> {t("assets:assetsPage.table_date")}
                 </div>
                 <div className="data">
                   {helpers.formatDate(asset.purchase_date)}
@@ -158,7 +158,7 @@ export default function AssetDetails() {
               </S.MetaItem>
               <S.MetaItem>
                 <div className="icon-label">
-                  <HiOutlineReceiptPercent /> {t("assetDetails.purchase_price")}
+                  <HiOutlineReceiptPercent /> {t("assets:assetDetails.purchase_price")}
                 </div>
                 <div className="data">
                   {helpers.formatPrice(asset.price, asset.currency)}
@@ -168,7 +168,7 @@ export default function AssetDetails() {
               {!isCar && !isRealEstate && (
                 <S.MetaItem $fullWidth>
                   <div className="icon-label">
-                    # {t("assetDetails.serial_number")}
+                    # {t("assets:assetDetails.serial_number")}
                   </div>
                   <S.MonoData className="data">
                     {asset.serial_number || "—"}
@@ -209,7 +209,7 @@ export default function AssetDetails() {
               ) : (
                 <S.PhotoPlaceholder>
                   <HiPhoto size={48} />
-                  <span>{t("assetDetails.photo_missing")}</span>
+                  <span>{t("assets:assetDetails.photo_missing")}</span>
                 </S.PhotoPlaceholder>
               )}
             </S.PhotoContainer>
@@ -221,14 +221,14 @@ export default function AssetDetails() {
           <S.StyledCard>
             <S.CardHeader>
               {isCar ? <HiTruck size={24} /> : <HiHome size={24} />}
-              <h3>{t("assetDetails.specifications_title")}</h3>
+              <h3>{t("assets:assetDetails.specifications_title")}</h3>
             </S.CardHeader>
             <S.MetaDataGrid>
               {isCar && (
                 <>
                   <S.MetaItem>
                     <div className="icon-label">
-                      <HiIdentification /> {t("assetDetails.mileage")}
+                      <HiIdentification /> {t("assets:assetDetails.mileage")}
                     </div>
                     <div className="data">
                       {asset.mileage
@@ -246,7 +246,7 @@ export default function AssetDetails() {
                   </S.MetaItem>
                   <S.MetaItem>
                     <div className="icon-label">
-                      <HiShieldCheck /> {t("assetDetails.insurance_expiry")}
+                      <HiShieldCheck /> {t("assets:assetDetails.insurance_expiry")}
                     </div>
                     <div className="data">
                       {helpers.formatDate(asset.insurance_expiry)}
@@ -255,7 +255,7 @@ export default function AssetDetails() {
                   <S.MetaItem>
                     <div className="icon-label">
                       <HiOutlineWrenchScrewdriver />{" "}
-                      {t("assetDetails.last_service")}
+                      {t("assets:assetDetails.last_service")}
                     </div>
                     <div className="data">
                       {helpers.formatDate(asset.last_service_date)}
@@ -267,13 +267,13 @@ export default function AssetDetails() {
                 <>
                   <S.MetaItem $fullWidth>
                     <div className="icon-label">
-                      <HiMapPin /> {t("assetDetails.address")}
+                      <HiMapPin /> {t("assets:assetDetails.address")}
                     </div>
                     <div className="data">{asset.address || "—"}</div>
                   </S.MetaItem>
                   <S.MetaItem>
                     <div className="icon-label">
-                      <HiSquare2Stack /> {t("assetDetails.area")}
+                      <HiSquare2Stack /> {t("assets:assetDetails.area")}
                     </div>
                     <div className="data">
                       {asset.area ? `${asset.area} m²` : "—"}
@@ -281,7 +281,7 @@ export default function AssetDetails() {
                   </S.MetaItem>
                   <S.MetaItem>
                     <div className="icon-label">
-                      <HiFingerPrint /> {t("assetDetails.cadastral_num")}
+                      <HiFingerPrint /> {t("assets:assetDetails.cadastral_num")}
                     </div>
                     <S.MonoData className="data">
                       {asset.cadastral_num || "—"}
@@ -298,14 +298,14 @@ export default function AssetDetails() {
           <S.StyledCard>
             <S.CardHeader>
               <HiOutlineCube size={24} />
-              <h3>{t("assetDetails.tco_title")}</h3>
+              <h3>{t("assets:assetDetails.tco_title")}</h3>
             </S.CardHeader>
 
             <S.TCOWrapper>
               <S.TCOBreakdown>
                 <S.TCORow>
                   <div className="label-group">
-                    <span>{t("assetDetails.tco_purchase")}</span>
+                    <span>{t("assets:assetDetails.tco_purchase")}</span>
                   </div>
                   <span className="value">
                     {helpers.formatPrice(stats.purchase, asset.currency)}
@@ -313,7 +313,7 @@ export default function AssetDetails() {
                 </S.TCORow>
                 <S.TCORow>
                   <div className="label-group">
-                    <span>{t("assetDetails.tco_maintenance")}</span>
+                    <span>{t("assets:assetDetails.tco_maintenance")}</span>
                   </div>
                   <span className="value expense">
                     + {helpers.formatPrice(stats.maintenance, asset.currency)}
@@ -322,7 +322,7 @@ export default function AssetDetails() {
               </S.TCOBreakdown>
 
               <S.TCOTotal>
-                <span className="label">{t("assetDetails.tco_total")}</span>
+                <span className="label">{t("assets:assetDetails.tco_total")}</span>
                 <span className="value">
                   {helpers.formatPrice(stats.tco, asset.currency)}
                 </span>
@@ -334,7 +334,7 @@ export default function AssetDetails() {
           <S.StyledCard $isInactive={!showWarranty || !warrantyInfo}>
             <S.CardHeader>
               <HiShieldCheck size={24} />
-              <h3>{t("assetDetails.warranty_title", "Гарантія")}</h3>
+              <h3>{t("assets:assetDetails.warranty_title", "Гарантія")}</h3>
             </S.CardHeader>
 
             {showWarranty && warrantyInfo ? (
@@ -351,12 +351,12 @@ export default function AssetDetails() {
                     {warrantyInfo.isExpired ? (
                       <>
                         <HiOutlineXCircle size={18} />{" "}
-                        {t("assetDetails.warranty_expired")}
+                        {t("assets:assetDetails.warranty_expired")}
                       </>
                     ) : warrantyInfo.percent > 85 ? (
                       <>
                         <HiOutlineExclamationCircle size={18} />{" "}
-                        {t("assetDetails.warranty_expiring")}
+                        {t("assets:assetDetails.warranty_expiring")}
                       </>
                     ) : (
                       <>
@@ -398,7 +398,7 @@ export default function AssetDetails() {
             <S.CardHeader>
               <HiDocumentText size={24} />
               <h3>
-                {t("assetDetails.documents_title", "Прикріплені документи")}
+                {t("assets:assetDetails.documents_title", "Прикріплені документи")}
               </h3>
             </S.CardHeader>
 
@@ -432,7 +432,7 @@ export default function AssetDetails() {
           <S.CardHeaderPadded>
             <S.CardHeader>
               <HiOutlineArrowTrendingUp size={24} />
-              <h3>{t("assetDetails.history_title")}</h3>
+              <h3>{t("assets:assetDetails.history_title")}</h3>
             </S.CardHeader>
           </S.CardHeaderPadded>
 
@@ -453,7 +453,7 @@ export default function AssetDetails() {
           ) : (
             <S.EmptyHistoryState>
               <HiOutlineWrenchScrewdriver size={48} />
-              <span>{t("assetDetails.history_empty")}</span>
+              <span>{t("assets:assetDetails.history_empty")}</span>
             </S.EmptyHistoryState>
           )}
         </S.StyledCard>
@@ -465,7 +465,7 @@ export default function AssetDetails() {
 
         <Modal.Window name="delete-asset">
           <ConfirmDelete
-            resourceName={t("assetsPage.resource_name", { name: asset.name })}
+            resourceName={t("assets:assetsPage.resource_name", { name: asset.name })}
             onConfirm={() => actions.handleDelete(asset.id)}
             disabled={state.isDeleting}
           />

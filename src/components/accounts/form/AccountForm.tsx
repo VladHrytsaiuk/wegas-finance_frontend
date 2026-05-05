@@ -147,7 +147,7 @@ export function AccountFormContent(props: AccountFormProps) {
   const ownerName = state.ownerId
     ? users.find((u: any) => u.id === state.ownerId)?.name
     : users.find((u: any) => u.id === currentUserId)?.name ||
-      t("accountForm.owner_me");
+      t("accounts:accountForm.owner_me");
 
   const selectedPaymentSystem = PAYMENT_SYSTEMS.find(
     (ps) => ps.value === state.paymentSystem,
@@ -174,7 +174,7 @@ export function AccountFormContent(props: AccountFormProps) {
   ];
 
   const ownerOptions = [
-    { value: "", label: t("accountForm.owner_me"), icon: <HiUser /> },
+    { value: "", label: t("accounts:accountForm.owner_me"), icon: <HiUser /> },
     ...users
       .filter((u: any) => u.id !== currentUserId)
       .map((u: any) => ({
@@ -248,8 +248,8 @@ export function AccountFormContent(props: AccountFormProps) {
   };
 
   const renderPreviewLabel = () => {
-    if (state.type === "cash") return t("accountForm.type_cash");
-    return selectedStorageType?.name || t("accountForm.type_savings");
+    if (state.type === "cash") return t("accounts:accountForm.type_cash");
+    return selectedStorageType?.name || t("accounts:accountForm.type_savings");
   };
 
   return (
@@ -292,7 +292,7 @@ export function AccountFormContent(props: AccountFormProps) {
           <div style={{ marginBottom: "0.5rem" }}>
             <label className="label">
               <LabelWithLock
-                label={t("accountForm.label_account_type")}
+                label={t("accounts:accountForm.label_account_type")}
                 isLocked={isSynced}
               />
             </label>
@@ -306,7 +306,7 @@ export function AccountFormContent(props: AccountFormProps) {
                 disabled={isSynced}
               >
                 <HiCreditCard style={{ marginRight: 6 }} />{" "}
-                {t("accountForm.type_card")}
+                {t("accounts:accountForm.type_card")}
               </S.SegmentButton>
               <S.SegmentButton
                 as="button"
@@ -316,7 +316,7 @@ export function AccountFormContent(props: AccountFormProps) {
                 disabled={isSynced}
               >
                 <HiOutlineBanknotes style={{ marginRight: 6 }} />{" "}
-                {t("accountForm.type_cash")}
+                {t("accounts:accountForm.type_cash")}
               </S.SegmentButton>
               <S.SegmentButton
                 as="button"
@@ -326,7 +326,7 @@ export function AccountFormContent(props: AccountFormProps) {
                 disabled={isSynced}
               >
                 <HiCurrencyDollar style={{ marginRight: 6 }} />{" "}
-                {t("accountForm.type_savings")}
+                {t("accounts:accountForm.type_savings")}
               </S.SegmentButton>
             </S.SegmentControl>
           </div>
@@ -336,7 +336,7 @@ export function AccountFormContent(props: AccountFormProps) {
         <div style={{ display: "flex", gap: "1rem" }}>
           {/* NAME */}
           <div style={{ flex: 1 }}>
-            <label className="label">{t("accountForm.label_name")}</label>
+            <label className="label">{t("accounts:accountForm.label_name")}</label>
             <Input
               value={state.name}
               onChange={(e) => {
@@ -345,8 +345,8 @@ export function AccountFormContent(props: AccountFormProps) {
               }}
               placeholder={
                 state.type === "card"
-                  ? t("accountForm.placeholder_name_card")
-                  : t("accountForm.placeholder_name_cash")
+                  ? t("accounts:accountForm.placeholder_name_card")
+                  : t("accounts:accountForm.placeholder_name_cash")
               }
               $hasError={!!state.errors.name}
             />
@@ -359,7 +359,7 @@ export function AccountFormContent(props: AccountFormProps) {
           <div style={{ width: "130px" }}>
             <label className="label">
               <LabelWithLock
-                label={t("accountForm.label_currency")}
+                label={t("accounts:accountForm.label_currency")}
                 isLocked={isSynced}
               />
             </label>
@@ -394,7 +394,7 @@ export function AccountFormContent(props: AccountFormProps) {
           <div style={{ display: "flex", gap: "1rem" }}>
             <div style={{ flex: 1 }}>
               <label className="label">
-                {t("accountForm.label_card_number")}
+                {t("accounts:accountForm.label_card_number")}
               </label>
               <Input
                 value={state.cardNumber}
@@ -529,8 +529,8 @@ export function AccountFormContent(props: AccountFormProps) {
             <LabelWithLock
               label={
                 state.isEditing
-                  ? t("accountForm.label_balance_adjust")
-                  : t("accountForm.label_balance_initial")
+                  ? t("accounts:accountForm.label_balance_adjust")
+                  : t("accounts:accountForm.label_balance_initial")
               }
               isLocked={isSynced}
             />
@@ -555,7 +555,7 @@ export function AccountFormContent(props: AccountFormProps) {
         {/* --- COLOR (FOR CASH & SAVINGS) --- */}
         {state.type !== "card" && (
           <div>
-            <label className="label">{t("accountForm.label_color")}</label>
+            <label className="label">{t("accounts:accountForm.label_color")}</label>
             <S.ColorGrid>
               {CASH_COLORS.map((c) => (
                 <S.ColorSwatch
@@ -573,9 +573,9 @@ export function AccountFormContent(props: AccountFormProps) {
 
         {/* --- OWNER --- */}
         <div>
-          <label className="label">{t("accountForm.label_owner")}</label>
+          <label className="label">{t("accounts:accountForm.label_owner")}</label>
           <BaseSelect
-            placeholder={t("accountForm.owner_placeholder")}
+            placeholder={t("accounts:accountForm.owner_placeholder")}
             triggerLabel={
               selectedOwnerOption ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -604,7 +604,7 @@ export function AccountFormContent(props: AccountFormProps) {
             onClick={onCloseModal || onClose}
             variation="secondary"
           >
-            {t("accountForm.button_cancel")}
+            {t("accounts:accountForm.button_cancel")}
           </Button>
 
           <Button
@@ -614,8 +614,8 @@ export function AccountFormContent(props: AccountFormProps) {
             title="Ctrl + Enter"
           >
             {state.isEditing
-              ? t("accountForm.button_save")
-              : t("accountForm.button_create")}
+              ? t("accounts:accountForm.button_save")
+              : t("accounts:accountForm.button_create")}
           </Button>
         </S.FooterRow>
       </S.Form>
@@ -623,7 +623,7 @@ export function AccountFormContent(props: AccountFormProps) {
       {/* --- RIGHT COLUMN: PREVIEW --- */}
       <S.RightColumn>
         <div>
-          <S.PreviewLabel>{t("accountForm.label_preview")}</S.PreviewLabel>
+          <S.PreviewLabel>{t("accounts:accountForm.label_preview")}</S.PreviewLabel>
           <S.PreviewSection>
             <div style={{ width: "100%", pointerEvents: "none" }}>
               {state.type === "card" ? (
@@ -655,7 +655,7 @@ export function AccountFormContent(props: AccountFormProps) {
                         letterSpacing: "1px",
                       }}
                     >
-                      {state.name || t("accountForm.default_card_name")}
+                      {state.name || t("accounts:accountForm.default_card_name")}
                     </div>
                     {ownerName && (
                       <CardOwner>
@@ -693,7 +693,7 @@ export function AccountFormContent(props: AccountFormProps) {
                 <CashCardStyled $color={state.color}>
                   <CashCardHeader>
                     <CashName>
-                      {state.name || t("accountForm.placeholder_name_cash")}
+                      {state.name || t("accounts:accountForm.placeholder_name_cash")}
                     </CashName>
 
                     <TypeBadge>
@@ -741,7 +741,7 @@ export function AccountFormContent(props: AccountFormProps) {
                 }}
                 title="Ctrl + I"
               >
-                <HiOutlineSwatch /> {t("accountForm.button_change_skin")}
+                <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
               </S.ChangeSkinBtn>
             </Modal.Open>
             <Modal.Window name="skin-selector-modal">

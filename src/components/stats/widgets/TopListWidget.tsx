@@ -36,7 +36,7 @@ export const TopListWidget = (props: Props) => {
         <S.Title>{props.title}</S.Title>
         <WidgetControls
           mini={true}
-          currentLabel={localFilter.label || t("filters.period_label")}
+          currentLabel={localFilter.label || t("legacy:filters.period_label")}
           currentAccountIds={localFilter.accountIds || []}
           onFilterChange={handleFilterUpdate}
           currentFrom={localFilter.from}
@@ -51,7 +51,7 @@ export const TopListWidget = (props: Props) => {
           <Spinner />
         </S.SpinnerWrapper>
       ) : processedData.length === 0 ? (
-        <S.EmptyState>{t("dashboard.no_data")}</S.EmptyState>
+        <S.EmptyState>{t("dashboard:dashboard.no_data")}</S.EmptyState>
       ) : (
         <S.List>
           {processedData.map((item, idx) => (

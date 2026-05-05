@@ -18,7 +18,7 @@ export const useTransactionsPage = () => {
 
   // Setup Title
   useEffect(() => {
-    setPageTitle(t("transactionsPage.title"), t("transactionsPage.subtitle"));
+    setPageTitle(t("transactions:transactionsPage.title"), t("transactions:transactionsPage.subtitle"));
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
 

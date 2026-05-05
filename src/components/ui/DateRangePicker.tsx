@@ -282,22 +282,22 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
       {mode === "range" && (
         <S.ShortcutsPanel>
           <S.ShortcutBtn onClick={() => actions.applyPreset("today")}>
-            {t("filters.periods.today")}
+            {t("legacy:filters.periods.today")}
           </S.ShortcutBtn>
           <S.ShortcutBtn onClick={() => actions.applyPreset("yesterday")}>
-            {t("filters.periods.yesterday")}
+            {t("legacy:filters.periods.yesterday")}
           </S.ShortcutBtn>
           <S.ShortcutBtn onClick={() => actions.applyPreset("last7")}>
-            {t("filters.periods.last_7_days")}
+            {t("legacy:filters.periods.last_7_days")}
           </S.ShortcutBtn>
           <S.ShortcutBtn onClick={() => actions.applyPreset("thisMonth")}>
-            {t("filters.periods.this_month")}
+            {t("legacy:filters.periods.this_month")}
           </S.ShortcutBtn>
           <S.ShortcutBtn onClick={() => actions.applyPreset("lastMonth")}>
-            {t("filters.periods.last_month")}
+            {t("legacy:filters.periods.last_month")}
           </S.ShortcutBtn>
           <S.ShortcutBtn onClick={() => actions.applyPreset("thisYear")}>
-            {t("filters.periods.this_year")}
+            {t("legacy:filters.periods.this_year")}
           </S.ShortcutBtn>
         </S.ShortcutsPanel>
       )}
@@ -339,11 +339,11 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
         <S.Footer>
           {!props.staticPicker && (
             <S.FooterBtn type="button" onClick={() => actions.setIsOpen(false)}>
-              {t("transactionForm.button_cancel")}
+              {t("transactions:transactionForm.button_cancel")}
             </S.FooterBtn>
           )}
           <S.ApplyBtn type="button" onClick={actions.handleApply}>
-            {t("filters.apply")}
+            {t("legacy:filters.apply")}
           </S.ApplyBtn>
         </S.Footer>
       </S.RightSide>
@@ -366,7 +366,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
               e.stopPropagation();
               actions.setIsOpen(!isOpen);
             }}
-            title={t("filters.select_period_title")}
+            title={t("legacy:filters.select_period_title")}
           >
             <HiCalendarDays size={20} />
           </S.IconButton>
@@ -378,7 +378,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
               onKeyDown={(e) => actions.handleKeyDown(e, "d")}
               onMouseDown={(e) => e.stopPropagation()}
               onFocus={(e) => e.target.select()}
-              placeholder={t("datePicker.placeholder_day")}
+              placeholder={t("common:datePicker.placeholder_day")}
               style={{ width: "24px" }}
               maxLength={2}
             />
@@ -390,7 +390,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
               onKeyDown={(e) => actions.handleKeyDown(e, "m")}
               onMouseDown={(e) => e.stopPropagation()}
               onFocus={(e) => e.target.select()}
-              placeholder={t("datePicker.placeholder_month")}
+              placeholder={t("common:datePicker.placeholder_month")}
               style={{ width: "24px" }}
               maxLength={2}
             />
@@ -402,7 +402,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
               onKeyDown={(e) => actions.handleKeyDown(e, "y")}
               onMouseDown={(e) => e.stopPropagation()}
               onFocus={(e) => e.target.select()}
-              placeholder={t("datePicker.placeholder_year")}
+              placeholder={t("common:datePicker.placeholder_year")}
               style={{ width: "42px" }}
               maxLength={4}
             />

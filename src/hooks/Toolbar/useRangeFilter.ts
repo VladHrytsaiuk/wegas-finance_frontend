@@ -50,8 +50,8 @@ export const useRangeFilter = ({
   const isActive = value.min !== "" || value.max !== "";
 
   const label = isActive
-    ? `${value.min || t("filterComponent.range_display_from")} - ${
-        value.max || t("filterComponent.range_display_to")
+    ? `${value.min || t("legacy:filterComponent.range_display_from")} - ${
+        value.max || t("legacy:filterComponent.range_display_to")
       }`
     : config.label;
 

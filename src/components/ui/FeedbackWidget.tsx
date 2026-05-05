@@ -12,6 +12,7 @@ import {
 import { sendFeedback } from "../../services/apiFeedback";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import { useEscapeKey } from "../../hooks/useEscapeKey";
+import { useTranslation } from "react-i18next";
 
 // --- 1. АНІМАЦІЇ ---
 
@@ -378,6 +379,7 @@ interface Props {
 }
 
 export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState("");
   const [contact, setContact] = useState("");
   const [priority, setPriority] = useState<PriorityLevel>("medium"); // Default priority
@@ -422,13 +424,13 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
 
     const availableSlots = 5 - images.length;
     if (availableSlots <= 0) {
-      alert("Максимум 5 зображень");
+      alert(t("common:feedback_modal.max_images_error"));
       return;
     }
 
     const filesToAdd = validImages.slice(0, availableSlots);
     if (validImages.length > availableSlots) {
-      alert(`Додано лише ${availableSlots} файл(ів). Максимум 5.`);
+      alert(t("common:feedback_modal.images_count_added", { count: availableSlots }));
     }
 
     setImages((prev) => [...prev, ...filesToAdd]);
@@ -533,7 +535,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
       {isDragging && !isSent && (
         <DragOverlay>
           <HiPhoto size={48} style={{ marginBottom: 10 }} />
-          <span>Відпустіть файл, щоб додати</span>
+          <span>{t("common:feedback_modal.drop_hint")}</span>
         </DragOverlay>
       )}
 
@@ -557,20 +559,22 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
           <SuccessIconBox>
             <HiCheckCircle />
           </SuccessIconBox>
-          <SuccessTitle>Відправлено!</SuccessTitle>
-          <SuccessMessage>Дякуємо за твій фідбек.</SuccessMessage>
+          <SuccessTitle>{t("common:feedback.success_title")}</SuccessTitle>
+          <SuccessMessage>
+            {t("common:feedback.success_message")}
+          </SuccessMessage>
         </SuccessContainer>
       ) : (
         <>
           <Header>
             <div>
-              <h4>Фідбек / Баг</h4>
+              <h4>{t("common:feedback.modal_title")}</h4>
             </div>
           </Header>
           <SubText>
-            Знайшов помилку чи маєш ідею? Напиши нам. <br />
+            {t("common:feedback_modal.subtitle")} <br />
             <span style={{ opacity: 0.7, fontSize: "0.75rem" }}>
-              (Можна вставити Ctrl+V або перетягнути фото)
+              {t("common:feedback_modal.hint")}
             </span>
           </SubText>
 
@@ -584,7 +588,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
                 onClick={() => setPriority("low")}
               >
                 <HiLightBulb size={16} />
-                Idea
+                {t("common:feedback_modal.type_idea")}
               </PriorityChip>
               <PriorityChip
                 type="button"
@@ -593,7 +597,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
                 onClick={() => setPriority("medium")}
               >
                 <HiInformationCircle size={16} />
-                Normal
+                {t("common:feedback_modal.type_normal")}
               </PriorityChip>
               <PriorityChip
                 type="button"
@@ -602,13 +606,13 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
                 onClick={() => setPriority("high")}
               >
                 <HiExclamationTriangle size={16} />
-                Critical
+                {t("common:feedback_modal.type_critical")}
               </PriorityChip>
             </PriorityContainer>
 
             <TextArea
               id="feedback-message"
-              placeholder="Опиши проблему або ідею..."
+              placeholder={t("common:feedback_modal.placeholder_description")}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
@@ -634,7 +638,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
                 <FileInputLabel>
                   <HiPhoto size={18} />
                   <span>
-                    Додати скріншот{" "}
+                    {t("common:feedback_modal.add_screenshot")}{" "}
                     {images.length > 0 && `(${images.length}/5)`}
                   </span>
                   <input
@@ -649,17 +653,17 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
 
             <Input
               type="text"
-              placeholder="Твій Telegram або Email (необов'язково)"
+              placeholder={t("common:feedback_modal.placeholder_contact")}
               value={contact}
               onChange={(e) => setContact(e.target.value)}
             />
 
             <SubmitButton type="submit" disabled={isLoading || !message.trim()}>
               {isLoading ? (
-                "Відправка..."
+                t("common:feedback_modal.sending")
               ) : (
                 <>
-                  Відправити{" "}
+                  {t("common:feedback_modal.submit_button")}{" "}
                   <HiPaperAirplane
                     size={16}
                     style={{ transform: "rotate(90deg) translateX(-2px)" }}

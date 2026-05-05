@@ -1,0 +1,38 @@
+{
+  "dashboardPage": {
+    "title": "Дашборд",
+    "greetings": "Привіт, {{name}}!",
+    "subtitle": "Ваш фінансовий огляд",
+    "edit_mode": "Редагувати",
+    "save_mode": "Готово",
+    "reset_layout": "Скинути",
+    "widget_trend_expenses": "Динаміка витрат",
+    "widget_top_categories": "Топ категорій",
+    "widget_top_shops": "Топ магазинів",
+    "filter_period_label": "Період",
+    "filter_period_month": "Цей місяць"
+  },
+  "recentTransactions": {
+    "status_loading": "Завантаження...",
+    "status_empty": "Немає транзакцій",
+    "default_name": "Транзакція"
+  },
+  "dashboard": {
+    "recent_transactions": "Останні операції",
+    "view_all": "Всі",
+    "no_data": "Даних немає",
+    "total_balance": "Баланс",
+    "income_period": "Доходи (період)",
+    "expense_period": "Витрати (період)",
+    "widget_top_categories": "Топ категорій",
+    "widget_top_shops": "Топ магазинів",
+    "widget_trend_expenses": "Динаміка витрат",
+    "filter_other": "Інше"
+  },
+  "filters": {
+    "periods": {
+      "expense_label": "Витрати",
+      "income_label": "Доходи"
+    }
+  }
+}

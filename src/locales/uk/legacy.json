@@ -1,0 +1,89 @@
+{
+  "treeActions": {
+    "edit": "Редагувати",
+    "delete": "Видалити"
+  },
+  "filterComponent": {
+    "search_placeholder": "Пошук...",
+    "status_not_found": "Нічого не знайдено",
+    "clear_selection": "Очистити вибір",
+    "range_title": "Діапазон сум",
+    "range_placeholder_min": "Від",
+    "range_placeholder_max": "До",
+    "range_button_reset": "Скинути",
+    "range_button_ok": "ОК",
+    "range_display_from": "Від",
+    "range_display_to": "До",
+    "toggle_all": "Всі"
+  },
+  "toolbar": {
+    "sort_label_prefix": "Сортувати за:",
+    "sort_default": "Сортування",
+    "clear_filters_tooltip": "Скинути фільтри",
+    "search_default_placeholder": "Пошук..."
+  },
+  "transactionFiltersHook": {
+    "filter_type_label": "Тип",
+    "filter_type_expense": "Витрати",
+    "filter_type_income": "Доходи",
+    "filter_type_transfer": "Перекази",
+    "filter_account_label": "Рахунок",
+    "filter_category_label": "Категорія",
+    "filter_counterparty_label": "Контрагент",
+    "filter_amount_label": "Сума",
+    "sort_date_desc": "Спочатку нові",
+    "sort_date_asc": "Спочатку старі",
+    "sort_amount_desc": "Сума: за спаданням",
+    "sort_amount_asc": "Сума: за зростанням"
+  },
+  "pageNotFound": {
+    "title": "Сторінку, яку ви шукаєте, не знайдено 😢",
+    "back_button": "Повернутися назад"
+  },
+  "transactionPage": {
+    "header_title": "Деталі транзакції",
+    "header_subtitle": "Операція від {{date}}",
+    "loading": "Завантаження...",
+    "back_to_list": "Назад до списку",
+    "back_button": "Назад",
+    "edit_button": "Редагувати",
+    "not_found_title": "Транзакцію не знайдено 🤷‍♂️",
+    "not_found_message": "Можливо, вона була видалена.",
+    "delete_success": "Транзакцію успішно видалено"
+  },
+  "filters": {
+    "period_label": "Період",
+    "accounts_label": "Рахунки",
+    "all_accounts": "Всі рахунки",
+    "accounts_selected": "{{count}} рах.",
+    "search_placeholder": "Пошук...",
+    "apply": "Застосувати",
+    "reset": "Скинути",
+    "done": "Готово",
+    "custom_range": "Власний період...",
+    "select_period_title": "Оберіть період",
+    "chips": {
+      "7_days": "7 дн.",
+      "30_days": "30 дн.",
+      "this_month": "Цей міс.",
+      "last_month": "Мин. міс.",
+      "year": "Рік"
+    },
+    "periods": {
+      "today": "Сьогодні",
+      "yesterday": "Вчора",
+      "this_week": "Цей тиждень",
+      "last_7_days": "Останні 7 днів",
+      "last_30_days": "Останні 30 днів",
+      "this_month": "Цей місяць",
+      "last_month": "Минулий місяць",
+      "this_year": "Цей рік",
+      "all_time": "Весь час"
+    }
+  },
+  "viewer": {
+    "zoom_in": "Збільшити",
+    "zoom_out": "Зменшити",
+    "reset": "Скинути вигляд"
+  }
+}

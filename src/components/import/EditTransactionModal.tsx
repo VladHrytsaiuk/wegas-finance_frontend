@@ -60,7 +60,7 @@ export default function EditTransactionModal({
       <S.Card onClick={(e) => e.stopPropagation()}>
         {/* HEADER */}
         <S.Header>
-          <S.Title>{t("transactionForm.title_edit")}</S.Title>
+          <S.Title>{t("transactions:transactionForm.title_edit")}</S.Title>
           <S.CloseButton onClick={onCancel}>
             <HiXMark size={24} />
           </S.CloseButton>
@@ -75,7 +75,7 @@ export default function EditTransactionModal({
               $activeColor="var(--color-red-600)"
               onClick={() => setType("expense")}
             >
-              {t("transactionForm.type_expense")}
+              {t("transactions:transactionForm.type_expense")}
             </S.SwitcherButton>
             <S.SwitcherButton
               type="button"
@@ -83,7 +83,7 @@ export default function EditTransactionModal({
               $activeColor="var(--color-brand-600)"
               onClick={() => setType("income")}
             >
-              {t("transactionForm.type_income")}
+              {t("transactions:transactionForm.type_income")}
             </S.SwitcherButton>
             <S.SwitcherButton
               type="button"
@@ -91,13 +91,13 @@ export default function EditTransactionModal({
               $activeColor="var(--color-blue-600)"
               onClick={() => setType("transfer")}
             >
-              {t("transactionForm.type_transfer")}
+              {t("transactions:transactionForm.type_transfer")}
             </S.SwitcherButton>
           </S.SwitcherContainer>
 
           {/* AMOUNT */}
           <S.FormField>
-            <S.Label>{t("transactionForm.label_amount")}</S.Label>
+            <S.Label>{t("transactions:transactionForm.label_amount")}</S.Label>
             <S.Input
               type="number"
               step="0.01"
@@ -109,7 +109,7 @@ export default function EditTransactionModal({
           {/* COUNTERPARTY */}
           {type !== "transfer" && (
             <S.FormField>
-              <S.Label>{t("transactionForm.label_counterparty")}</S.Label>
+              <S.Label>{t("transactions:transactionForm.label_counterparty")}</S.Label>
               <CounterpartySelect
                 counterparties={counterparties}
                 value={cpId}
@@ -136,7 +136,7 @@ export default function EditTransactionModal({
           {/* CATEGORY */}
           {type !== "transfer" && (
             <S.FormField>
-              <S.Label>{t("transactionForm.label_category")}</S.Label>
+              <S.Label>{t("transactions:transactionForm.label_category")}</S.Label>
               <CategorySelect
                 categories={categories.filter((c: any) => c.type === type)}
                 value={catId}
@@ -147,7 +147,7 @@ export default function EditTransactionModal({
 
           {/* DESCRIPTION */}
           <S.FormField>
-            <S.Label>{t("exportMapping.table_note")}</S.Label>
+            <S.Label>{t("export_import:exportMapping.table_note")}</S.Label>
             <S.Textarea
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
@@ -158,9 +158,9 @@ export default function EditTransactionModal({
         {/* FOOTER */}
         <S.Footer>
           <Button variation="secondary" onClick={onCancel}>
-            {t("accountForm.button_cancel")}
+            {t("accounts:accountForm.button_cancel")}
           </Button>
-          <Button onClick={handleSubmit}>{t("accountForm.button_save")}</Button>
+          <Button onClick={handleSubmit}>{t("accounts:accountForm.button_save")}</Button>
         </S.Footer>
       </S.Card>
     </S.Overlay>

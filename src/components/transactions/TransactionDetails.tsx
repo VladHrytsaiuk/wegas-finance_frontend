@@ -154,8 +154,8 @@ function TransactionDetails({
                   >
                     <div className="label">
                       {rawType === "transfer_in"
-                        ? t("common.sender")
-                        : t("common.you")}
+                        ? t("common:common.sender")
+                        : t("common:common.you")}
                       {account.currency ===
                         (rawType === "transfer_in"
                           ? partnerCurrency
@@ -169,7 +169,7 @@ function TransactionDetails({
                             fontSize: "0.65rem",
                           }}
                         >
-                          {t("common.current")}
+                          {t("common:common.current")}
                         </span>
                       )}
                     </div>
@@ -201,8 +201,8 @@ function TransactionDetails({
                   >
                     <div className="label">
                       {rawType === "transfer_in"
-                        ? t("common.you")
-                        : t("common.recipient")}
+                        ? t("common:common.you")
+                        : t("common:common.recipient")}
                       {account.currency ===
                         (rawType === "transfer_in"
                           ? myCurrency
@@ -216,7 +216,7 @@ function TransactionDetails({
                             fontSize: "0.65rem",
                           }}
                         >
-                          {t("common.current")}
+                          {t("common:common.current")}
                         </span>
                       )}
                     </div>
@@ -273,9 +273,9 @@ function TransactionDetails({
                   />
                 </S.RowIcon>
                 <S.RowContent>
-                  <div className="label">{t("common.account")}</div>
+                  <div className="label">{t("common:common.account")}</div>
                   <div className="value">
-                    {account?.name || t("common.deleted_account")}
+                    {account?.name || t("common:common.deleted_account")}
                   </div>
                 </S.RowContent>
               </S.DetailRow>
@@ -287,13 +287,13 @@ function TransactionDetails({
                   </S.RowIcon>
                   <S.RowContent>
                     <div className="label">
-                      {t("transactions.counterparty")}
+                      {t("transactions:transactions.counterparty")}
                     </div>
                     <div className="value">
-                      {counterparty?.name || t("shared.not_found")}
+                      {counterparty?.name || t("common:shared.not_found")}
                     </div>
                     <div className="sub-value">
-                      {t("transactions.debt_person")}
+                      {t("transactions:transactions.debt_person")}
                     </div>
                   </S.RowContent>
                 </S.DetailRow>
@@ -305,11 +305,11 @@ function TransactionDetails({
                   <S.RowContent>
                     <div className="label">
                       {rawType === "transfer_in"
-                        ? t("common.received_from")
-                        : t("common.transferred_to")}
+                        ? t("common:common.received_from")
+                        : t("common:common.transferred_to")}
                     </div>
                     <div className="value">
-                      {partnerAccountName || t("common.deleted_account")}
+                      {partnerAccountName || t("common:common.deleted_account")}
                     </div>
                   </S.RowContent>
                 </S.DetailRow>
@@ -343,7 +343,7 @@ function TransactionDetails({
                     </S.RowIcon>
                     <S.RowContent>
                       <div className="label">
-                        {t("transactions.counterparty")}
+                        {t("transactions:transactions.counterparty")}
                       </div>
                       <div className="value">
                         {/* 🟢 ТУТ ЗМІНА: Тільки реальний контрагент або "Не вказано" */}
@@ -354,7 +354,7 @@ function TransactionDetails({
                               fontStyle: "italic",
                             }}
                           >
-                            {t("shared.not_specified")}
+                            {t("common:shared.not_specified")}
                           </span>
                         )}
                       </div>
@@ -363,7 +363,7 @@ function TransactionDetails({
                       {!hasCounterparty && transaction.note && (
                         <div className="sub-value" style={{ marginTop: "4px" }}>
                           <span style={{ opacity: 0.7 }}>
-                            {t("transactions.bank_description")}:
+                            {t("transactions:transactions.bank_description")}:
                           </span>{" "}
                           {transaction.note}
                         </div>
@@ -377,10 +377,10 @@ function TransactionDetails({
                       <CategoryIcon name={category?.icon || "HiTag"} />
                     </S.RowIcon>
                     <S.RowContent>
-                      <div className="label">{t("common.category")}</div>
+                      <div className="label">{t("common:common.category")}</div>
                       <div className="value">
                         {category?.name ||
-                          t("transactionsTable.default_category")}
+                          t("transactions:transactionsTable.default_category")}
                       </div>
                     </S.RowContent>
                   </S.DetailRow>
@@ -408,7 +408,7 @@ function TransactionDetails({
             {/* --- CREATED BY --- */}
             {transaction.user && (
               <S.UserInfo>
-                <span>{t("transactionDetails.created_by")}</span>
+                <span>{t("transactions:transactionDetails.created_by")}</span>
                 <S.UserName>
                   {transaction.user.avatar_url ? (
                     <img
@@ -428,16 +428,16 @@ function TransactionDetails({
           {transaction.items && transaction.items.length > 0 && (
             <S.Section>
               <S.SectionTitle>
-                {t("transactionDetails.section_items_title", {
+                {t("transactions:transactionDetails.section_items_title", {
                   count: transaction.items.length,
                 })}
               </S.SectionTitle>
               <S.ItemsTable>
                 <thead>
                   <tr>
-                    <th>{t("transactionDetails.items_header_name")}</th>
+                    <th>{t("transactions:transactionDetails.items_header_name")}</th>
                     <th style={{ textAlign: "right" }}>
-                      {t("transactionDetails.items_header_amount")}
+                      {t("transactions:transactionDetails.items_header_amount")}
                     </th>
                   </tr>
                 </thead>

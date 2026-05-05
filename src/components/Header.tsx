@@ -158,14 +158,14 @@ const Avatar = styled.div`
 
 function Header() {
   const { t } = useTranslation();
-  const user = localStorage.getItem("user_name") || t("shared.user_default");
+  const user = localStorage.getItem("user_name") || t("common:shared.user_default");
   const { title, subtitle } = useHeader();
 
   // Отримуємо курси
   const { usd, eur, isLoading } = useExchangeRates();
 
-  const displayTitle = title || t("dashboardPage.greetings", { name: user });
-  const displaySubtitle = title ? subtitle : t("dashboardPage.subtitle");
+  const displayTitle = title || t("dashboard:dashboardPage.greetings", { name: user });
+  const displaySubtitle = title ? subtitle : t("dashboard:dashboardPage.subtitle");
 
   return (
     <StyledHeader>

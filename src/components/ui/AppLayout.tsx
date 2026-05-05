@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
-import { HiOutlineDevicePhoneMobile } from "react-icons/hi2"; // Перевір, чи є react-icons, якщо ні - видали іконку
+import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { SyncWidget } from "./Feedback/SyncWidget";
@@ -64,6 +65,8 @@ const MobileText = styled.p`
 `;
 
 function AppLayout() {
+  const { t } = useTranslation(["common"]);
+
   // 1. Стейт для перевірки мобільного пристрою
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -94,13 +97,10 @@ function AppLayout() {
     return (
       <MobilePlaceholder>
         <MobileIcon>
-          <HiOutlineDevicePhoneMobile /> {/* Або просто 📱 якщо немає іконок */}
+          <HiOutlineDevicePhoneMobile />
         </MobileIcon>
-        <MobileTitle>Мобільна версія в розробці</MobileTitle>
-        <MobileText>
-          Будь ласка, зайдіть з комп'ютера або планшета для повноцінної роботи з
-          WeGaS Finance.
-        </MobileText>
+        <MobileTitle>{t("common:system.mobile_in_dev")}</MobileTitle>
+        <MobileText>{t("common:system.mobile_desc")}</MobileText>
       </MobilePlaceholder>
     );
   }

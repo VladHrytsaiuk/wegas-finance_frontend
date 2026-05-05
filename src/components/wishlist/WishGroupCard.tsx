@@ -87,7 +87,7 @@ export default function WishGroupCard({
       <S.FolderInfo>
         <S.FolderTitle>{group.name}</S.FolderTitle>
         <S.FolderDescription>
-          {group.itemsCount} {t("wishlist.items_count", "бажань")}
+          {group.itemsCount} {t("shopping_wishlist:wishlist.items_count", "бажань")}
         </S.FolderDescription>
       </S.FolderInfo>
     </S.FolderCard>

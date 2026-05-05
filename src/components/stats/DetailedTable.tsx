@@ -23,17 +23,17 @@ export const DetailedTable = ({
   const { rows, t } = useDetailedTable({ data, totalSum, type });
 
   if (!data || data.length === 0)
-    return <S.Empty>{t("statisticsPage.table_no_data")}</S.Empty>;
+    return <S.Empty>{t("stats_utility:statisticsPage.table_no_data")}</S.Empty>;
 
   return (
     <S.TableWrapper>
       <S.TableHead>
-        <div>{t("statisticsPage.table_header_name")}</div>
+        <div>{t("stats_utility:statisticsPage.table_header_name")}</div>
         <div style={{ textAlign: "right" }}>
-          {t("statisticsPage.table_header_percent")}
+          {t("stats_utility:statisticsPage.table_header_percent")}
         </div>
         <div style={{ textAlign: "right" }}>
-          {t("statisticsPage.table_header_amount")}
+          {t("stats_utility:statisticsPage.table_header_amount")}
         </div>
       </S.TableHead>
 
@@ -51,7 +51,7 @@ export const DetailedTable = ({
               </S.IconBox>
 
               <S.NameText title={item.name}>
-                {item.name || t("statisticsPage.table_unnamed")}
+                {item.name || t("stats_utility:statisticsPage.table_unnamed")}
               </S.NameText>
             </S.NameCell>
 

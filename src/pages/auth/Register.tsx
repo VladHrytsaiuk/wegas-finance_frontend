@@ -21,35 +21,35 @@ function Register() {
 
   return (
     <AuthLayout
-      title={t("auth.register_title")}
-      subtitle={t("auth.register_subtitle")}
+      title={t("auth:auth.register_title")}
+      subtitle={t("auth:auth.register_subtitle")}
       footer={
         <>
-          {t("auth.register_footer_text")}{" "}
+          {t("auth:auth.register_footer_text")}{" "}
           <Link
             to="/login"
             style={{ color: "var(--color-brand-600)", fontWeight: 500 }}
           >
-            {t("auth.register_footer_link")}
+            {t("auth:auth.register_footer_link")}
           </Link>
         </>
       }
     >
       <AuthForm onSubmit={actions.handleSubmit}>
         <FormGroup>
-          <label htmlFor="name">{t("auth.register_label_name")}</label>
+          <label htmlFor="name">{t("auth:auth.register_label_name")}</label>
           <Input
             id="name"
             type="text"
             value={name}
             onChange={(e) => actions.setName(e.target.value)}
             disabled={isPending}
-            placeholder={t("auth.placeholder_name", "Влад")}
+            placeholder={t("auth:auth.placeholder_name", "Влад")}
           />
         </FormGroup>
 
         <FormGroup>
-          <label htmlFor="email">{t("auth.register_label_email")}</label>
+          <label htmlFor="email">{t("auth:auth.register_label_email")}</label>
           <Input
             id="email"
             type="email"
@@ -61,7 +61,7 @@ function Register() {
         </FormGroup>
 
         <FormGroup>
-          <label htmlFor="password">{t("auth.register_label_password")}</label>
+          <label htmlFor="password">{t("auth:auth.register_label_password")}</label>
           <div
             style={{
               position: "relative",
@@ -104,7 +104,7 @@ function Register() {
 
         <FormGroup>
           <label htmlFor="inviteCode">
-            {t("auth.register_label_invite_code", "Код запрошення")}
+            {t("auth:auth.register_label_invite_code", "Код запрошення")}
           </label>
           <Input
             id="inviteCode"
@@ -119,8 +119,8 @@ function Register() {
 
         <Button type="submit" $size="large" disabled={isPending}>
           {isPending
-            ? t("auth.register_button_pending")
-            : t("auth.register_button")}
+            ? t("auth:auth.register_button_pending")
+            : t("auth:auth.register_button")}
         </Button>
       </AuthForm>
     </AuthLayout>

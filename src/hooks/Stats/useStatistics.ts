@@ -27,7 +27,7 @@ export const useStatistics = () => {
 
   // --- Title Management ---
   useEffect(() => {
-    setPageTitle(t("statisticsPage.title"), t("statisticsPage.subtitle"));
+    setPageTitle(t("stats_utility:statisticsPage.title"), t("stats_utility:statisticsPage.subtitle"));
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
 
@@ -35,7 +35,7 @@ export const useStatistics = () => {
   const [filter, setFilter] = useState<StatsFilter>({
     from: startOfMonth(new Date()).getTime(),
     to: endOfMonth(new Date()).getTime(),
-    label: t("statisticsPage.filter_period"),
+    label: t("stats_utility:statisticsPage.filter_period"),
     accountIds: [],
   });
 

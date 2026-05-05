@@ -319,19 +319,19 @@ export const useAccountForm = ({
     const newErrors: FormErrors = {};
     let isValid = true;
     if (!name.trim()) {
-      newErrors.name = t("formValidation.error_asset_name");
+      newErrors.name = t("common:formValidation.error_asset_name");
       isValid = false;
     }
     if (balance !== "" && isNaN(Number(balance))) {
-      newErrors.balance = t("formValidation.error_enter_amount");
+      newErrors.balance = t("common:formValidation.error_enter_amount");
       isValid = false;
     }
     if (type === "card" && cardNumber && cardNumber.length !== 4) {
-      newErrors.cardNumber = t("accountForm.error_card_digits");
+      newErrors.cardNumber = t("accounts:accountForm.error_card_digits");
       isValid = false;
     }
     if (type === "savings" && !storageTypeId) {
-      newErrors.storageType = t("accountForm.error_select_type");
+      newErrors.storageType = t("accounts:accountForm.error_select_type");
       isValid = false;
     }
     setErrors(newErrors);

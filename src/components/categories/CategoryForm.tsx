@@ -59,7 +59,7 @@ export function CategoryForm(props: CategoryFormProps) {
     <S.FormContainer onSubmit={handleSubmit}>
       {/* 1. TYPE SELECTOR */}
       <S.FormGroup>
-        <S.Label>{t("categoryForm.label_type")}</S.Label>
+        <S.Label>{t("categories:categoryForm.label_type")}</S.Label>
         <S.TypeGrid>
           <S.TypeCard
             $active={type === "expense"}
@@ -68,7 +68,7 @@ export function CategoryForm(props: CategoryFormProps) {
             type="button"
           >
             <HiOutlineArrowTrendingDown />
-            <span>{t("categoryForm.type_expense")}</span>
+            <span>{t("categories:categoryForm.type_expense")}</span>
           </S.TypeCard>
           <S.TypeCard
             $active={type === "income"}
@@ -77,14 +77,14 @@ export function CategoryForm(props: CategoryFormProps) {
             type="button"
           >
             <HiOutlineArrowTrendingUp />
-            <span>{t("categoryForm.type_income")}</span>
+            <span>{t("categories:categoryForm.type_income")}</span>
           </S.TypeCard>
         </S.TypeGrid>
       </S.FormGroup>
 
       {/* 2. COLOR & ICON */}
       <S.FormGroup>
-        <S.Label>{t("categoryForm.label_appearance")}</S.Label>
+        <S.Label>{t("categories:categoryForm.label_appearance")}</S.Label>
         <ColorIconPicker
           color={color}
           icon={icon}
@@ -97,27 +97,27 @@ export function CategoryForm(props: CategoryFormProps) {
       <S.InputRow>
         {/* Name Input */}
         <S.FormGroup>
-          <S.Label>{t("categoryForm.label_name")}</S.Label>
+          <S.Label>{t("categories:categoryForm.label_name")}</S.Label>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={t("categoryForm.placeholder_name")}
+            placeholder={t("categories:categoryForm.placeholder_name")}
             required
           />
         </S.FormGroup>
 
         {/* Parent Select */}
         <S.FormGroup>
-          <S.Label>{t("categoryForm.label_parent")}</S.Label>
+          <S.Label>{t("categories:categoryForm.label_parent")}</S.Label>
           <BaseSelect
             triggerLabel={parentTriggerLabel}
-            placeholder={t("categoryForm.placeholder_parent_default")}
+            placeholder={t("categories:categoryForm.placeholder_parent_default")}
             onClear={parentId ? () => setParentId("") : undefined}
           >
             <S.SearchWrapper>
               <Input
                 autoFocus
-                placeholder={t("categoryForm.placeholder_search")}
+                placeholder={t("categories:categoryForm.placeholder_search")}
                 value={parentSearch}
                 onChange={(e) => setParentSearch(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
@@ -138,7 +138,7 @@ export function CategoryForm(props: CategoryFormProps) {
                 ))
               ) : (
                 <S.EmptyState>
-                  {t("categoryForm.search_not_found")}
+                  {t("categories:categoryForm.search_not_found")}
                 </S.EmptyState>
               )}
             </S.ScrollableList>
@@ -149,10 +149,10 @@ export function CategoryForm(props: CategoryFormProps) {
       {/* FOOTER */}
       <S.Footer>
         <Button type="button" variation="secondary" onClick={close}>
-          {t("categoryForm.button_cancel")}
+          {t("categories:categoryForm.button_cancel")}
         </Button>
         <Button type="submit" disabled={props.isLoading}>
-          {props.buttonLabel || t("categoryForm.button_save_default")}
+          {props.buttonLabel || t("categories:categoryForm.button_save_default")}
         </Button>
       </S.Footer>
     </S.FormContainer>

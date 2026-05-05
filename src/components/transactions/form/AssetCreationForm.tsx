@@ -47,11 +47,11 @@ export const AssetCreationForm = ({
   }, [newAsset?.warranty_end]);
 
   const ASSET_TYPES = [
-    { value: "electronics", label: t("assetForm.type_electronics") },
-    { value: "furniture", label: t("assetForm.type_furniture") },
-    { value: "real_estate", label: t("assetForm.type_real_estate") },
-    { value: "car", label: t("assetForm.type_car") },
-    { value: "other", label: t("assetForm.type_other") },
+    { value: "electronics", label: t("assets:assetForm.type_electronics") },
+    { value: "furniture", label: t("assets:assetForm.type_furniture") },
+    { value: "real_estate", label: t("assets:assetForm.type_real_estate") },
+    { value: "car", label: t("assets:assetForm.type_car") },
+    { value: "other", label: t("assets:assetForm.type_other") },
   ];
 
   const handleNewAssetChange = (field: string, value: any) => {
@@ -122,7 +122,7 @@ export const AssetCreationForm = ({
 
   return (
     <S.Wrapper ref={createFormRef} onKeyDownCapture={handleWrapperKeyDown}>
-      <S.Label>{t("assetSelector.create_title")}</S.Label>
+      <S.Label>{t("assets:assetSelector.create_title")}</S.Label>
       <S.CreateContainer>
         <S.Row>
           <S.IconBox>
@@ -130,7 +130,7 @@ export const AssetCreationForm = ({
           </S.IconBox>
           <S.InlineInput
             autoFocus
-            placeholder={t("assetForm.placeholder_name")}
+            placeholder={t("assets:assetForm.placeholder_name")}
             value={newAsset?.name || ""}
             onChange={(e) => handleNewAssetChange("name", e.target.value)}
             onKeyDown={handleKeyDown}
@@ -141,7 +141,7 @@ export const AssetCreationForm = ({
             <HiHashtag size={18} />
           </S.IconBox>
           <S.InlineInput
-            placeholder={t("assetForm.placeholder_serial")}
+            placeholder={t("assets:assetForm.placeholder_serial")}
             value={newAsset?.serial_number || ""}
             onChange={(e) =>
               handleNewAssetChange("serial_number", e.target.value)
@@ -155,7 +155,7 @@ export const AssetCreationForm = ({
           </S.IconBox>
           <div style={{ flex: 1 }}>
             <BaseSelect
-              placeholder={t("assetForm.placeholder_type")}
+              placeholder={t("assets:assetForm.placeholder_type")}
               triggerLabel={
                 ASSET_TYPES.find((t) => t.value === newAsset?.type)?.label
               }
@@ -213,7 +213,7 @@ export const AssetCreationForm = ({
                 color: "var(--color-text-secondary)",
               }}
             >
-              {t("assetForm.label_warranty_short", "Гарантія:")}
+              {t("assets:assetForm.label_warranty_short", "Гарантія:")}
             </span>
             <S.DateInput
               type="date"
@@ -229,7 +229,7 @@ export const AssetCreationForm = ({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             $hasFiles={(newAsset?.warrantyFiles?.length || 0) > 0}
-            title={t("assetForm.button_add_files")}
+            title={t("assets:assetForm.button_add_files")}
           >
             <input
               ref={fileInputRef}
@@ -253,7 +253,7 @@ export const AssetCreationForm = ({
             $variant="secondary"
             onClick={handleCancel}
           >
-            {t("assetForm.button_cancel")}
+            {t("assets:assetForm.button_cancel")}
           </S.ActionButton>
           <S.ActionButton
             ref={saveBtnRef}
@@ -261,7 +261,7 @@ export const AssetCreationForm = ({
             $variant="primary"
             onClick={handleSave}
           >
-            {t("assetForm.button_save")}
+            {t("assets:assetForm.button_save")}
           </S.ActionButton>
         </S.ButtonsRow>
       </S.CreateContainer>

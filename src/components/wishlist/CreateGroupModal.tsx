@@ -58,12 +58,12 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
   return (
     <S.ModalContainer style={S.ModalContainerOverrides}>
       <S.Header>
-        <S.Title>{t("wishlist.create_group", "Створити папку")}</S.Title>
+        <S.Title>{t("shopping_wishlist:wishlist.create_group", "Створити папку")}</S.Title>
       </S.Header>
       <S.Content>
         <S.Form onSubmit={handleSubmit} id="create-group-form">
           <S.FieldGroup>
-            <S.Label>{t("wishlist.group_name", "Назва папки")}</S.Label>
+            <S.Label>{t("shopping_wishlist:wishlist.group_name", "Назва папки")}</S.Label>
             <Input
               autoFocus
               required
@@ -74,12 +74,12 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
           </S.FieldGroup>
 
           <S.FieldGroup>
-            <S.Label>{t("common.privacy", "Хто бачить?")}</S.Label>
+            <S.Label>{t("common:common.privacy", "Хто бачить?")}</S.Label>
             <BaseSelect
               triggerLabel={
                 state.visibility === "private"
-                  ? t("shopping.private", "Тільки я")
-                  : t("shopping.public", "Сім'я (всі)")
+                  ? t("shopping_wishlist:shopping.private", "Тільки я")
+                  : t("shopping_wishlist:shopping.public", "Сім'я (всі)")
               }
             >
               <S.SelectOption
@@ -89,7 +89,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
                   actions.setHiddenFromIds([]);
                 }}
               >
-                {t("shopping.public", "Сім'я (всі)")}
+                {t("shopping_wishlist:shopping.public", "Сім'я (всі)")}
               </S.SelectOption>
               <S.SelectOption
                 $isSelected={state.visibility === "private"}
@@ -98,7 +98,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
                   actions.setHiddenFromIds([]);
                 }}
               >
-                {t("shopping.private", "Тільки я")}
+                {t("shopping_wishlist:shopping.private", "Тільки я")}
               </S.SelectOption>
             </BaseSelect>
           </S.FieldGroup>
@@ -106,7 +106,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
           {state.visibility === "public" && membersToHideFrom.length > 0 && (
             <S.FieldGroup>
               <S.Label>
-                {t("common.hide_from", "Приховати від (опціонально)")}
+                {t("common:common.hide_from", "Приховати від (опціонально)")}
               </S.Label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                 {membersToHideFrom.map((m) => (
@@ -132,7 +132,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
 
           <S.Section>
             <S.SectionTitle>
-              {t("wishlist.appearance", "Оформлення")}
+              {t("shopping_wishlist:wishlist.appearance", "Оформлення")}
             </S.SectionTitle>
             <ColorIconPicker
               color={state.color}
@@ -146,7 +146,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
 
       <S.FooterActions>
         <Button type="button" variation="secondary" onClick={onCloseModal}>
-          {t("common.cancel")}
+          {t("common:common.cancel")}
         </Button>
         <Button
           type="submit"
@@ -154,7 +154,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
           disabled={!state.name.trim()}
           form="create-group-form"
         >
-          {t("common.create")}
+          {t("common:common.create")}
         </Button>
       </S.FooterActions>
     </S.ModalContainer>

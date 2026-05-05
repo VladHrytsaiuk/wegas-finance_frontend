@@ -45,7 +45,7 @@ function Shopping() {
   // Встановлення глобального заголовка
   useEffect(() => {
     setPageTitle(
-      t("shopping.title", "Списки покупок"),
+      t("shopping_wishlist:shopping.title", "Списки покупок"),
       `Ваші списки покупок`, // <--- Додали субтайтл
     );
 
@@ -77,7 +77,7 @@ function Shopping() {
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("shopping.search_placeholder", "Пошук списків...")}
+        searchPlaceholder={t("shopping_wishlist:shopping.search_placeholder", "Пошук списків...")}
         filtersConfig={filtersConfig as any}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -98,7 +98,7 @@ function Shopping() {
         >
           <input
             type="text"
-            placeholder={t("shopping.new_list", "Створити новий список...")}
+            placeholder={t("shopping_wishlist:shopping.new_list", "Створити новий список...")}
             value={newListTitle}
             onChange={(e) => setNewListTitle(e.target.value)}
           />

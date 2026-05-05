@@ -85,9 +85,9 @@ export const useGeneralSettings = () => {
     });
 
     toast.promise(savePromise, {
-      loading: t("settingsPage.toast_loading", "Збереження..."),
-      success: t("settingsPage.toast_success", "Налаштування збережено!"),
-      error: t("settingsPage.toast_error", "Помилка збереження"),
+      loading: t("settings:settingsPage.toast_loading", "Збереження..."),
+      success: t("settings:settingsPage.toast_success", "Налаштування збережено!"),
+      error: t("settings:settingsPage.toast_error", "Помилка збереження"),
     });
   };
 

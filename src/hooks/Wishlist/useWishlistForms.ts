@@ -50,7 +50,7 @@ export const useWishlistItemForm = (
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error(t("wishlist.error_image_only", "Тільки зображення"));
+      toast.error(t("shopping_wishlist:wishlist.error_image_only", "Тільки зображення"));
       return;
     }
 
@@ -71,7 +71,7 @@ export const useWishlistItemForm = (
       reader.readAsDataURL(compressed);
     } catch (error) {
       console.error("Error compressing image:", error);
-      toast.error(t("common.error_occurred", "Помилка обробки фото"));
+      toast.error(t("common:common.error_occurred", "Помилка обробки фото"));
       setIsCompressing(false); // В разі помилки теж зупиняємо
     }
   };

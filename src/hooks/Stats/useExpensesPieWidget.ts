@@ -143,7 +143,7 @@ export const useExpensesPieWidget = ({
 
       if (othersTotal > 0) {
         result.push({
-          name: t("dashboard.filter_other", "Інше"),
+          name: t("dashboard:dashboard.filter_other", "Інше"),
           value: othersTotal,
           color: "#9ca3af",
         });
@@ -153,12 +153,12 @@ export const useExpensesPieWidget = ({
   }, [rawData, categories, counterparties, shouldFetch, activeTab, t]);
 
   const widgetTitle = useMemo(() => {
-    if (activeTab === "counterparty") return t("dashboard.widget_top_shops");
-    if (activeTab === "tag") return t("statisticsPage.tab_tags");
+    if (activeTab === "counterparty") return t("dashboard:dashboard.widget_top_shops");
+    if (activeTab === "tag") return t("stats_utility:statisticsPage.tab_tags");
 
     return type === "income"
-      ? t("dashboard.income_period")
-      : t("dashboard.widget_top_categories");
+      ? t("dashboard:dashboard.income_period")
+      : t("dashboard:dashboard.widget_top_categories");
   }, [activeTab, type, t]);
 
   return {

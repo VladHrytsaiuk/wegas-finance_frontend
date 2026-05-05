@@ -71,7 +71,7 @@ export function useDebtorDetails() {
       setAccounts(accData);
     } catch (error) {
       console.error(error);
-      toast.error(t("ui.error_loading"));
+      toast.error(t("common:ui.error_loading"));
     } finally {
       setIsLoading(false);
     }
@@ -90,10 +90,10 @@ export function useDebtorDetails() {
       const updatedCp = await getCounterpartyApi(id!);
       setCounterparty(updatedCp);
 
-      toast.success(t("transactions.delete_success"));
+      toast.success(t("transactions:transactions.delete_success"));
     } catch (error) {
       console.error(error);
-      toast.error(t("ui.error_action"));
+      toast.error(t("common:ui.error_action"));
     }
   };
 
@@ -102,10 +102,10 @@ export function useDebtorDetails() {
     setIsDeleting(true);
     try {
       await deleteCounterpartyApi(id);
-      toast.success(t("counterparties.delete_success"));
+      toast.success(t("counterparties:counterparties.delete_success"));
       navigate("/debts");
     } catch (error) {
-      toast.error(t("ui.error_action"));
+      toast.error(t("common:ui.error_action"));
     } finally {
       setIsDeleting(false);
     }
@@ -116,10 +116,10 @@ export function useDebtorDetails() {
     try {
       const updated = await updateCounterpartyApi(id!, data);
       setCounterparty(updated);
-      toast.success(t("counterparties.update_success"));
+      toast.success(t("counterparties:counterparties.update_success"));
       return true;
     } catch (error) {
-      toast.error(t("ui.error_action"));
+      toast.error(t("common:ui.error_action"));
       return false;
     } finally {
       setIsUpdating(false);
@@ -144,12 +144,12 @@ export function useDebtorDetails() {
         is_forgiveness: true, // 👈 ОБОВ'ЯЗКОВО: Це зупинить зміну твого балансу
       });
 
-      toast.success(t("debtsPage.forgive_success"));
+      toast.success(t("goals_debts:debtsPage.forgive_success"));
       fetchData(); // Оновити дані сторінки
       return true;
     } catch (error) {
       console.error(error);
-      toast.error(t("ui.error_action"));
+      toast.error(t("common:ui.error_action"));
       return false;
     } finally {
       setIsForgiving(false);

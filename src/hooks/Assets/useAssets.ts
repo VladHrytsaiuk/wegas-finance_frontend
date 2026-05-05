@@ -15,7 +15,7 @@ export const useAssets = () => {
 
   // --- Lifecycle & Title ---
   useEffect(() => {
-    setPageTitle(t("assetsPage.title"), t("assetsPage.subtitle"));
+    setPageTitle(t("assets:assetsPage.title"), t("assets:assetsPage.subtitle"));
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
 
@@ -29,11 +29,11 @@ export const useAssets = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteAsset,
     onSuccess: () => {
-      toast.success(t("assetsPage.alert_delete_success"));
+      toast.success(t("assets:assetsPage.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["assets"] });
     },
     onError: () => {
-      toast.error(t("assetsPage.alert_delete_error"));
+      toast.error(t("assets:assetsPage.alert_delete_error"));
     },
   });
 
@@ -48,13 +48,13 @@ export const useAssets = () => {
 
   // --- Helpers ---
   const formatPrice = (coins: number, currency: string) =>
-    new Intl.NumberFormat(t("common.locale", "uk-UA"), {
+    new Intl.NumberFormat(t("common:common.locale", "uk-UA"), {
       style: "currency",
       currency,
     }).format(coins / 100);
 
   const formatDate = (ts: number) =>
-    ts ? new Date(ts).toLocaleDateString(t("common.locale", "uk-UA")) : "-";
+    ts ? new Date(ts).toLocaleDateString(t("common:common.locale", "uk-UA")) : "-";
 
   const isWarrantyExpired = (date: number) => Date.now() > date;
 

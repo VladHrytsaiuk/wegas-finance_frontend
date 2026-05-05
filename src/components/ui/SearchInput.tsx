@@ -60,7 +60,7 @@ export function SearchInput({
   const { t } = useTranslation(); // ⬅️ ВИКОРИСТАННЯ ХУКА
 
   // ➡️ Використовуємо переклад, якщо placeholder не передано
-  const finalPlaceholder = placeholder || t("ui.search_placeholder_default");
+  const finalPlaceholder = placeholder || t("common:ui.search_placeholder_default");
 
   return (
     <StyledSearch>

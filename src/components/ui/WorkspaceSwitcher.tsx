@@ -109,7 +109,7 @@ export function WorkspaceSwitcher() {
           onClick={() => handleSwitch("finance")}
         >
           <HiOutlineBanknotes size={18} />
-          <ButtonText>{t("workspace.finance", "Фінанси")}</ButtonText>
+          <ButtonText>{t("navigation:workspaces.finance")}</ButtonText>
         </OptionButton>
 
         <OptionButton
@@ -117,7 +117,7 @@ export function WorkspaceSwitcher() {
           onClick={() => handleSwitch("investments")}
         >
           <HiOutlinePresentationChartLine size={18} />
-          <ButtonText>{t("workspace.investments", "Інвестиції")}</ButtonText>
+          <ButtonText>{t("navigation:workspaces.investments")}</ButtonText>
         </OptionButton>
       </Container>
     </>

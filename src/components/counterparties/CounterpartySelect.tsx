@@ -147,7 +147,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
             </S.TriggerContent>
           ) : (
             <S.Placeholder>
-              {t("counterpartySelect.placeholder_default")}
+              {t("counterparties:counterpartySelect.placeholder_default")}
             </S.Placeholder>
           )}
 
@@ -203,8 +203,8 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={
                       props.type === "person"
-                        ? t("counterpartySelect.search_person")
-                        : t("counterpartySelect.search_placeholder")
+                        ? t("counterparties:counterpartySelect.search_person")
+                        : t("counterparties:counterpartySelect.search_placeholder")
                     }
                     onKeyDown={handleInputKeyDown}
                     autoComplete="off"
@@ -227,7 +227,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
 
                 {treeData.length === 0 && (
                   <S.NotFoundMessage>
-                    {t("counterpartySelect.status_not_found")}
+                    {t("counterparties:counterpartySelect.status_not_found")}
                   </S.NotFoundMessage>
                 )}
 
@@ -241,7 +241,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
                     }}
                   >
                     <HiPlus />
-                    {t("counterpartySelect.create_new")} "{searchQuery}"
+                    {t("counterparties:counterpartySelect.create_new")} "{searchQuery}"
                   </S.CreateActionBtn>
                 )}
               </S.ScrollArea>

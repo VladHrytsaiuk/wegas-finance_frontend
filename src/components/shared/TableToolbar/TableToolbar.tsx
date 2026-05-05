@@ -98,7 +98,7 @@ export const TableToolbar = ({
   );
 
   const finalSearchPlaceholder =
-    searchPlaceholder || t("toolbar.search_default_placeholder");
+    searchPlaceholder || t("legacy:toolbar.search_default_placeholder");
 
   const hasDateFilter = dateRange && (dateRange.from || dateRange.to);
 

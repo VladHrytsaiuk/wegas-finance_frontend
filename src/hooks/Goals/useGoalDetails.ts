@@ -58,13 +58,13 @@ export function useGoalDetails() {
       daysLeft = differenceInCalendarDays(deadline, today);
 
       if (daysLeft < 0) {
-        daysLeftText = t("goals.deadline_passed", "Час вийшов");
+        daysLeftText = t("goals_debts:goals.deadline_passed", "Час вийшов");
         deadlineStatus = "error";
       } else if (daysLeft === 0) {
-        daysLeftText = t("common.today", "Сьогодні");
+        daysLeftText = t("common:common.today", "Сьогодні");
         deadlineStatus = "warning";
       } else {
-        daysLeftText = `${daysLeft} ${t("goalDetails.days_suffix", "дн.")}`;
+        daysLeftText = `${daysLeft} ${t("goals_debts:goalDetails.days_suffix", "дн.")}`;
         if (daysLeft < 7) deadlineStatus = "warning";
       }
     }
@@ -86,12 +86,12 @@ export function useGoalDetails() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteGoalApi(id),
     onSuccess: () => {
-      toast.success(t("goals.delete_success", "Ціль видалено"));
+      toast.success(t("goals_debts:goals.delete_success", "Ціль видалено"));
       queryClient.invalidateQueries({ queryKey: ["goals"] });
       navigate("/goals");
     },
     onError: () => {
-      toast.error(t("goals.delete_error", "Помилка видалення"));
+      toast.error(t("goals_debts:goals.delete_error", "Помилка видалення"));
     },
   });
 
@@ -101,10 +101,10 @@ export function useGoalDetails() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
       queryClient.invalidateQueries({ queryKey: ["goals"] });
-      toast.success(t("common.saved_success", "Статус оновлено"));
+      toast.success(t("common:common.saved_success", "Статус оновлено"));
     },
     onError: () => {
-      toast.error(t("common.error", "Сталася помилка"));
+      toast.error(t("common:common.error", "Сталася помилка"));
     },
   });
 

@@ -146,26 +146,26 @@ export const useAssetForm = ({
   // --- Мутації ---
   const createMutation = useMutation({
     mutationFn: async (values: any) => createAsset(prepareData(values)),
-    onError: () => toast.error(t("assetForm.error_create")),
+    onError: () => toast.error(t("assets:assetForm.error_create")),
   });
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, values }: { id: string; values: any }) =>
       updateAsset(id, prepareData(values)),
-    onError: () => toast.error(t("assetForm.error_update")),
+    onError: () => toast.error(t("assets:assetForm.error_update")),
   });
 
   const uploadPhotoMutation = useMutation({
     mutationFn: uploadAssetPhoto,
     onError: () =>
-      toast.error(t("assetForm.error_upload", "Помилка завантаження фото")),
+      toast.error(t("assets:assetForm.error_upload", "Помилка завантаження фото")),
   });
 
   const deletePhotoMutation = useMutation({
     mutationFn: async ({ id, path }: { id: string; path: string }) =>
       deleteAssetPhoto(id, path),
     onError: () =>
-      toast.error(t("common.error_occurred", "Помилка видалення фото")),
+      toast.error(t("common:common.error_occurred", "Помилка видалення фото")),
   });
 
   // 🔥 Нові мутації для документів
@@ -173,7 +173,7 @@ export const useAssetForm = ({
     mutationFn: uploadAssetDocument,
     onError: () =>
       toast.error(
-        t("assetForm.error_upload_doc", "Помилка завантаження документа"),
+        t("assets:assetForm.error_upload_doc", "Помилка завантаження документа"),
       ),
   });
 
@@ -181,7 +181,7 @@ export const useAssetForm = ({
     mutationFn: async ({ id, docId }: { id: string; docId: string }) =>
       deleteAssetDocument(id, docId),
     onError: () =>
-      toast.error(t("common.error_occurred", "Помилка видалення документа")),
+      toast.error(t("common:common.error_occurred", "Помилка видалення документа")),
   });
 
   // --- Хендлери для ФОТО ---
@@ -196,7 +196,7 @@ export const useAssetForm = ({
         setFiles((prev) => [...prev, ...compressedFiles]);
       } catch (error) {
         console.error("Помилка стиснення:", error);
-        toast.error(t("common.error_occurred", "Помилка обробки фотографій"));
+        toast.error(t("common:common.error_occurred", "Помилка обробки фотографій"));
       } finally {
         setIsCompressing(false);
         e.target.value = "";
@@ -289,8 +289,8 @@ export const useAssetForm = ({
 
       toast.success(
         assetToEdit
-          ? t("assetForm.alert_update_success")
-          : t("assetForm.alert_create_success"),
+          ? t("assets:assetForm.alert_update_success")
+          : t("assets:assetForm.alert_create_success"),
       );
 
       // Інвалідуємо кеш, щоб оновити дані всюди

@@ -62,8 +62,8 @@ export const useCounterpartyForm = ({
   const showIconPicker = !isPerson && !showLogoPreview;
 
   const title = defaultValues?.id
-    ? t("counterpartyForm.title_edit")
-    : t("counterpartyForm.title_new");
+    ? t("counterparties:counterpartyForm.title_edit")
+    : t("counterparties:counterpartyForm.title_new");
 
   // 5. Handlers
   const handleTypeSelect = (newType: string) => {
@@ -89,11 +89,11 @@ export const useCounterpartyForm = ({
     if (!file) return;
 
     if (file.type !== "image/svg+xml") {
-      toast.error(t("counterpartyForm.error_svg_only", "Тільки SVG файли"));
+      toast.error(t("counterparties:counterpartyForm.error_svg_only", "Тільки SVG файли"));
       return;
     }
     if (file.size > 20 * 1024) {
-      toast.error(t("counterpartyForm.error_size_limit", "Макс 20КБ"));
+      toast.error(t("counterparties:counterpartyForm.error_size_limit", "Макс 20КБ"));
       return;
     }
 

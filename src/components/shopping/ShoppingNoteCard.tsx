@@ -30,7 +30,7 @@ export default function ShoppingNoteCard({
 
   const author =
     users?.find((u) => String(u.id) === String(list.user_id))?.name ||
-    t("common.me", "Я");
+    t("common:common.me", "Я");
 
   const dateStr = list.created_at
     ? new Date(Number(list.created_at) * 1000).toLocaleDateString()
@@ -64,12 +64,12 @@ export default function ShoppingNoteCard({
           onChange={(e) => setTitle(e.target.value)}
           onBlur={handleTitleBlur}
           onKeyDown={handleTitleKeyDown}
-          placeholder={t("shopping.no_title", "Без назви")}
+          placeholder={t("shopping_wishlist:shopping.no_title", "Без назви")}
         />
         {completedItems.length > 0 && (
           <S.ActionButton
             onClick={() => handlers.clearCompleted(list.id)}
-            title={t("shopping.clear_completed")}
+            title={t("shopping_wishlist:shopping.clear_completed")}
             style={{ marginLeft: "8px" }}
           >
             <HiDocumentText size={18} />
@@ -104,7 +104,7 @@ export default function ShoppingNoteCard({
             </S.Checkbox>
             <S.AddItemInput
               type="text"
-              placeholder={t("shopping.add_item")}
+              placeholder={t("shopping_wishlist:shopping.add_item")}
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
             />
@@ -150,7 +150,7 @@ export default function ShoppingNoteCard({
           />
           <Modal>
             <Modal.Open opens={`delete-list-${list.id}`}>
-              <S.ActionButton className="danger" title={t("common.delete")}>
+              <S.ActionButton className="danger" title={t("common:common.delete")}>
                 <HiTrash size={18} />
               </S.ActionButton>
             </Modal.Open>

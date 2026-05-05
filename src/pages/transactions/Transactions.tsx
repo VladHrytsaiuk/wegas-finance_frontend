@@ -82,7 +82,7 @@ function Transactions() {
         <TableToolbar
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
-          searchPlaceholder={t("transactionsPage.search_placeholder")}
+          searchPlaceholder={t("transactions:transactionsPage.search_placeholder")}
           searchPosition="top"
           filtersConfig={filtersConfig}
           filterValues={filterValues}
@@ -101,7 +101,7 @@ function Transactions() {
                 size="medium"
                 icon={<HiArrowDownTray />}
               >
-                {t("exportPage.title")}
+                {t("export_import:exportPage.title")}
               </Button>
             </Modal.Open>
 
@@ -119,7 +119,7 @@ function Transactions() {
               }}
             >
               <HiPlus style={{ width: "20px", height: "20px" }} />
-              <span>{t("transactionsPage.button_add")}</span>
+              <span>{t("transactions:transactionsPage.button_add")}</span>
             </Button>
           </S.ActionButtons>
         </TableToolbar>
@@ -128,10 +128,10 @@ function Transactions() {
         {transactions.length === 0 && !isFetching ? (
           <S.EmptyStateContainer>
             <S.EmptyStateIcon>🔍</S.EmptyStateIcon>
-            <div>{t("transactionsPage.empty_title")}</div>
+            <div>{t("transactions:transactionsPage.empty_title")}</div>
             {hasActiveFilters && (
               <S.ClearFilterButton onClick={handleClearAll}>
-                {t("transactionsPage.empty_button_clear")}
+                {t("transactions:transactionsPage.empty_button_clear")}
               </S.ClearFilterButton>
             )}
           </S.EmptyStateContainer>

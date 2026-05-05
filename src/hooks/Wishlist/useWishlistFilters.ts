@@ -60,19 +60,19 @@ export const useWishlistFilters = (
       {
         key: "status",
         type: "multi-select",
-        label: t("wishlist.filter_status", "Статус"),
+        label: t("shopping_wishlist:wishlist.filter_status", "Статус"),
         options: [
           {
             value: "planning",
-            label: t("wishlist.status_planning", "В планах"),
+            label: t("shopping_wishlist:wishlist.status_planning", "В планах"),
           },
-          { value: "bought", label: t("wishlist.status_bought", "Придбано") },
+          { value: "bought", label: t("shopping_wishlist:wishlist.status_bought", "Придбано") },
         ],
       },
       {
         key: "availability",
         type: "multi-select",
-        label: t("wishlist.filter_availability", "Резерв"),
+        label: t("shopping_wishlist:wishlist.filter_availability", "Резерв"),
         options: [
           { value: "available", label: "Вільні" },
           { value: "reserved_by_me", label: "Зарезервовані мною" },
@@ -81,23 +81,23 @@ export const useWishlistFilters = (
       {
         key: "priority",
         type: "multi-select",
-        label: t("wishlist.filter_priority", "Пріоритет"),
+        label: t("shopping_wishlist:wishlist.filter_priority", "Пріоритет"),
         options: [
-          { value: "3", label: t("wishlist.priority_high", "Високий") },
-          { value: "2", label: t("wishlist.priority_medium", "Середній") },
-          { value: "1", label: t("wishlist.priority_low", "Низький") },
+          { value: "3", label: t("shopping_wishlist:wishlist.priority_high", "Високий") },
+          { value: "2", label: t("shopping_wishlist:wishlist.priority_medium", "Середній") },
+          { value: "1", label: t("shopping_wishlist:wishlist.priority_low", "Низький") },
         ],
       },
       {
         key: "group_id",
         type: "multi-select",
-        label: t("wishlist.filter_group", "Група"),
+        label: t("shopping_wishlist:wishlist.filter_group", "Група"),
         options: groups.map((g) => ({ value: g.id, label: g.name })),
       },
       {
         key: "author",
         type: "multi-select",
-        label: t("wishlist.filter_author", "Автор"),
+        label: t("shopping_wishlist:wishlist.filter_author", "Автор"),
         options: [
           { value: "me", label: "Створені мною" },
           { value: "others", label: "Спільні" },

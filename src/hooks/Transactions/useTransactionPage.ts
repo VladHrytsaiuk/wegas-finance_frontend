@@ -64,8 +64,8 @@ export const useTransactionPage = () => {
       });
 
       setPageTitle(
-        t("transactionPage.header_title"), // "Деталі транзакції"
-        t("transactionPage.header_subtitle", { date: dateStr }) // "Операція від..."
+        t("legacy:transactionPage.header_title"), // "Деталі транзакції"
+        t("legacy:transactionPage.header_subtitle", { date: dateStr }) // "Операція від..."
       );
     }
 
@@ -77,7 +77,7 @@ export const useTransactionPage = () => {
   const { mutate: deleteTx, isPending: isDeleting } = useMutation({
     mutationFn: deleteTransactionApi,
     onSuccess: () => {
-      toast.success(t("transactionPage.delete_success"));
+      toast.success(t("legacy:transactionPage.delete_success"));
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       // Повертаємось на список або попередню сторінку
       navigate("/transactions");

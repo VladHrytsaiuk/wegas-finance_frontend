@@ -28,7 +28,7 @@ export const useWishlistGroupFilters = (
     {
       key: "author",
       type: "multi-select",
-      label: t("wishlist.filter_author", "Автор"),
+      label: t("shopping_wishlist:wishlist.filter_author", "Автор"),
       options: [
         { value: "me", label: "Мої папки" },
         { value: "others", label: "Спільні папки" },
@@ -37,7 +37,7 @@ export const useWishlistGroupFilters = (
     {
       key: "visibility",
       type: "multi-select",
-      label: t("wishlist.filter_visibility", "Видимість"),
+      label: t("shopping_wishlist:wishlist.filter_visibility", "Видимість"),
       options: [
         { value: "public", label: "Публічні" },
         { value: "private", label: "Приватні" },

@@ -1,0 +1,47 @@
+{
+  "categoriesPage": {
+    "title": "Category Management",
+    "add_category_button": "Add Category",
+    "search_placeholder": "Search categories...",
+    "filter_type_label": "Type",
+    "filter_expense": "Expense",
+    "filter_income": "Income",
+    "sort_default": "Default",
+    "sort_name_asc": "Name (A-Z)",
+    "sort_name_desc": "Name (Z-A)",
+    "status_loading": "Loading...",
+    "status_not_found": "Nothing found",
+    "modal_create_title": "New Category",
+    "modal_edit_title": "Edit Category",
+    "form_create_button": "Create",
+    "form_edit_button": "Save Changes",
+    "confirm_delete_title": "Delete Category"
+  },
+  "categoryForm": {
+    "label_type": "Category Type",
+    "type_expense": "Expense",
+    "type_income": "Income",
+    "label_appearance": "Appearance",
+    "label_name": "Name",
+    "placeholder_name": "E.g., Groceries",
+    "label_parent": "Parent Category",
+    "placeholder_parent_default": "-- No parent category --",
+    "placeholder_search": "Search...",
+    "search_not_found": "Nothing found",
+    "button_cancel": "Cancel",
+    "button_save_default": "Save",
+    "type_income_short": "IN",
+    "type_expense_short": "OUT"
+  },
+  "categorySelect": {
+    "placeholder_default": "Select category...",
+    "search_placeholder": "Search...",
+    "status_not_found": "Nothing found"
+  },
+  "categoryDataHook": {
+    "alert_create_success": "Category created",
+    "alert_update_success": "Category updated",
+    "alert_delete_success": "Category deleted",
+    "alert_delete_error": "Cannot delete a category that has subcategories or transactions"
+  }
+}

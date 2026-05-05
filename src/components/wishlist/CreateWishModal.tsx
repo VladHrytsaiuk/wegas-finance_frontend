@@ -48,7 +48,7 @@ export default function CreateWishModal({
   return (
     <S.ModalContainer style={S.ModalContainerOverrides}>
       <S.Header>
-        <S.Title>{t("wishlist.add_item", "Додати бажання")}</S.Title>
+        <S.Title>{t("shopping_wishlist:wishlist.add_item", "Додати бажання")}</S.Title>
       </S.Header>
 
       <S.Content>
@@ -64,7 +64,7 @@ export default function CreateWishModal({
               <S.UploadPlaceholder>
                 <Spinner size="3rem" /> {/* Розмір можеш підібрати сам */}
                 <span style={{ marginTop: "8px" }}>
-                  {t("common.loading", "Завантаження...")}
+                  {t("common:common.loading", "Завантаження...")}
                 </span>
               </S.UploadPlaceholder>
             ) : state.photoPreview ? (
@@ -86,7 +86,7 @@ export default function CreateWishModal({
               // Якщо фото немає
               <S.UploadPlaceholder>
                 <HiCloudArrowUp />
-                <span>{t("wishlist.click_to_upload", "Фотографія")}</span>
+                <span>{t("shopping_wishlist:wishlist.click_to_upload", "Фотографія")}</span>
               </S.UploadPlaceholder>
             )}
             <input
@@ -99,7 +99,7 @@ export default function CreateWishModal({
           </S.ImageUploadContainer>
 
           <S.FieldGroup>
-            <S.Label>{t("wishlist.item_name", "Назва")}</S.Label>
+            <S.Label>{t("shopping_wishlist:wishlist.item_name", "Назва")}</S.Label>
             <Input
               autoFocus
               required
@@ -111,7 +111,7 @@ export default function CreateWishModal({
 
           <S.Row>
             <S.FieldGroup>
-              <S.Label>{t("wishlist.price", "Ціна")}</S.Label>
+              <S.Label>{t("shopping_wishlist:wishlist.price", "Ціна")}</S.Label>
               <Input
                 type="number"
                 min="0"
@@ -122,7 +122,7 @@ export default function CreateWishModal({
               />
             </S.FieldGroup>
             <S.FieldGroup>
-              <S.Label>{t("common.currency", "Валюта")}</S.Label>
+              <S.Label>{t("common:common.currency", "Валюта")}</S.Label>
               <BaseSelect triggerLabel={state.currency}>
                 {["UAH", "USD", "EUR"].map((c) => (
                   <S.SelectOption
@@ -138,7 +138,7 @@ export default function CreateWishModal({
           </S.Row>
 
           <S.FieldGroup>
-            <S.Label>{t("wishlist.link", "URL (необов'язково)")}</S.Label>
+            <S.Label>{t("shopping_wishlist:wishlist.link", "URL (необов'язково)")}</S.Label>
             <Input
               type="url"
               placeholder="https://..."
@@ -149,19 +149,19 @@ export default function CreateWishModal({
 
           <S.HalfRow>
             <S.FieldGroup>
-              <S.Label>{t("wishlist.group", "Папка")}</S.Label>
+              <S.Label>{t("shopping_wishlist:wishlist.group", "Папка")}</S.Label>
               <BaseSelect
                 triggerLabel={
                   state.groupId
                     ? groups.find((g) => g.id === state.groupId)?.name
-                    : t("wishlist.select_group_none", "Без папки")
+                    : t("shopping_wishlist:wishlist.select_group_none", "Без папки")
                 }
               >
                 <S.SelectOption
                   $isSelected={state.groupId === ""}
                   onClick={() => actions.setGroupId("")}
                 >
-                  {t("wishlist.select_group_none", "Без папки")}
+                  {t("shopping_wishlist:wishlist.select_group_none", "Без папки")}
                 </S.SelectOption>
                 {groups.map((g) => (
                   <S.SelectOption
@@ -176,33 +176,33 @@ export default function CreateWishModal({
             </S.FieldGroup>
 
             <S.FieldGroup>
-              <S.Label>{t("wishlist.priority", "Пріоритет")}</S.Label>
+              <S.Label>{t("shopping_wishlist:wishlist.priority", "Пріоритет")}</S.Label>
               <BaseSelect
                 triggerLabel={
                   state.priority === 3
-                    ? "🔥 " + t("wishlist.priority_high")
+                    ? "🔥 " + t("shopping_wishlist:wishlist.priority_high")
                     : state.priority === 2
-                      ? "⚡ " + t("wishlist.priority_medium")
-                      : "☕ " + t("wishlist.priority_low")
+                      ? "⚡ " + t("shopping_wishlist:wishlist.priority_medium")
+                      : "☕ " + t("shopping_wishlist:wishlist.priority_low")
                 }
               >
                 <S.SelectOption
                   $isSelected={state.priority === 1}
                   onClick={() => actions.setPriority(1)}
                 >
-                  ☕ {t("wishlist.priority_low")}
+                  ☕ {t("shopping_wishlist:wishlist.priority_low")}
                 </S.SelectOption>
                 <S.SelectOption
                   $isSelected={state.priority === 2}
                   onClick={() => actions.setPriority(2)}
                 >
-                  ⚡ {t("wishlist.priority_medium")}
+                  ⚡ {t("shopping_wishlist:wishlist.priority_medium")}
                 </S.SelectOption>
                 <S.SelectOption
                   $isSelected={state.priority === 3}
                   onClick={() => actions.setPriority(3)}
                 >
-                  🔥 {t("wishlist.priority_high")}
+                  🔥 {t("shopping_wishlist:wishlist.priority_high")}
                 </S.SelectOption>
               </BaseSelect>
             </S.FieldGroup>
@@ -212,7 +212,7 @@ export default function CreateWishModal({
 
       <S.FooterActions>
         <Button type="button" variation="secondary" onClick={onCloseModal}>
-          {t("common.cancel")}
+          {t("common:common.cancel")}
         </Button>
         <Button
           type="submit"
@@ -220,7 +220,7 @@ export default function CreateWishModal({
           disabled={!state.name.trim()}
           form="create-wish-form"
         >
-          {t("common.save")}
+          {t("common:common.save")}
         </Button>
       </S.FooterActions>
     </S.ModalContainer>

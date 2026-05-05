@@ -156,7 +156,7 @@ export function AccountActions({ account, onAction }: any) {
             style={{ flexShrink: 0 }}
             color={isLocked ? "gray" : "var(--color-brand-600)"}
           />
-          <span>{t("accountDetailsPage.action_income_button")}</span>
+          <span>{t("accounts:accountDetailsPage.action_income_button")}</span>
           {isLocked && <LockIcon />}
         </ActionBtn>
 
@@ -170,7 +170,7 @@ export function AccountActions({ account, onAction }: any) {
             style={{ flexShrink: 0 }}
             color={isLocked ? "gray" : "var(--color-red-700)"}
           />
-          <span>{t("accountDetailsPage.action_expense_button")}</span>
+          <span>{t("accounts:accountDetailsPage.action_expense_button")}</span>
           {isLocked && <LockIcon />}
         </ActionBtn>
 
@@ -184,7 +184,7 @@ export function AccountActions({ account, onAction }: any) {
             style={{ flexShrink: 0 }}
             color={isLocked ? "gray" : "var(--color-blue-600)"}
           />
-          <span>{t("accountDetailsPage.action_transfer_button")}</span>
+          <span>{t("accounts:accountDetailsPage.action_transfer_button")}</span>
           {isLocked && <LockIcon />}
         </ActionBtn>
 
@@ -197,7 +197,7 @@ export function AccountActions({ account, onAction }: any) {
                   style={{ flexShrink: 0 }}
                   color="var(--color-purple-600)"
                 />
-                <span>{t("accountDetailsPage.action_import_button")}</span>
+                <span>{t("accounts:accountDetailsPage.action_import_button")}</span>
               </ImportBtn>
             </Modal.Open>
             <Modal.Window name="import-modal">

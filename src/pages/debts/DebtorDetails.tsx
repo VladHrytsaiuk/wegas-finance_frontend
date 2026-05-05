@@ -111,13 +111,13 @@ function DebtorDetails() {
   };
 
   if (isLoading) return <Spinner />;
-  if (!counterparty) return <div>{t("ui.status_not_found")}</div>;
+  if (!counterparty) return <div>{t("common:ui.status_not_found")}</div>;
 
   return (
     <S.PageWrapper>
       <S.TopNav>
         <S.BackLink to="/debts">
-          <HiArrowLeft /> {t("common.return")}
+          <HiArrowLeft /> {t("common:common.return")}
         </S.BackLink>
       </S.TopNav>
 
@@ -133,10 +133,10 @@ function DebtorDetails() {
           <S.NameBlock>
             <h1>{counterparty.name}</h1>
             <span style={{ display: "flex", gap: "0.5rem", opacity: 0.8 }}>
-              {hasPositive ? t("debtsPage.summary_owed_to_me") : ""}
+              {hasPositive ? t("goals_debts:debtsPage.summary_owed_to_me") : ""}
               {hasPositive && hasNegative ? " • " : ""}
-              {hasNegative ? t("debtsPage.summary_i_owe") : ""}
-              {!hasPositive && !hasNegative ? t("debtsPage.empty_title") : ""}
+              {hasNegative ? t("goals_debts:debtsPage.summary_i_owe") : ""}
+              {!hasPositive && !hasNegative ? t("goals_debts:debtsPage.empty_title") : ""}
             </span>
           </S.NameBlock>
         </S.ProfileInfo>
@@ -145,21 +145,21 @@ function DebtorDetails() {
           <Modal>
             <Modal.Open opens="edit-cp">
               <Button variation="secondary" icon={<HiPencil />}>
-                {t("treeActions.edit")}
+                {t("legacy:treeActions.edit")}
               </Button>
             </Modal.Open>
 
             {hasDebt && (
               <Modal.Open opens="forgive-debt">
                 <Button variation="secondary" icon={<HiCheckCircle />}>
-                  {t("transactions.forgiven")}
+                  {t("transactions:transactions.forgiven")}
                 </Button>
               </Modal.Open>
             )}
 
             <Modal.Open opens="delete-cp">
               <Button variation="danger" icon={<HiTrash />}>
-                {t("common.delete")}
+                {t("common:common.delete")}
               </Button>
             </Modal.Open>
 
@@ -183,7 +183,7 @@ function DebtorDetails() {
               {hasDebt ? (
                 <S.DeleteWarningContainer>
                   <S.WarningIcon>🚫</S.WarningIcon>
-                  <h3>{t("common.delete")}</h3>
+                  <h3>{t("common:common.delete")}</h3>
                   <p style={{ color: "var(--color-text-secondary)" }}>
                     Ви не можете видалити боржника з активним балансом. Спочатку
                     спишіть борг або погасіть його.
@@ -215,11 +215,11 @@ function DebtorDetails() {
                 <S.BalanceLabel>
                   {isPositive ? (
                     <>
-                      <HiArrowUpRight /> {t("debtsPage.summary_owed_to_me")}
+                      <HiArrowUpRight /> {t("goals_debts:debtsPage.summary_owed_to_me")}
                     </>
                   ) : (
                     <>
-                      <HiArrowDownLeft /> {t("debtsPage.summary_i_owe")}
+                      <HiArrowDownLeft /> {t("goals_debts:debtsPage.summary_i_owe")}
                     </>
                   )}
                 </S.BalanceLabel>
@@ -244,7 +244,7 @@ function DebtorDetails() {
                           handleOpenTx("loan_repay", b.balance, b.currency)
                         }
                       >
-                        {t("debtsPage.btn_repay_to_me")}
+                        {t("goals_debts:debtsPage.btn_repay_to_me")}
                       </Button>
                       <Button
                         size="small"
@@ -252,7 +252,7 @@ function DebtorDetails() {
                         $fullWidth
                         onClick={() => handleOpenTx("loan_give")}
                       >
-                        {t("debtsPage.btn_lend")}
+                        {t("goals_debts:debtsPage.btn_lend")}
                       </Button>
                     </>
                   ) : (
@@ -265,7 +265,7 @@ function DebtorDetails() {
                           handleOpenTx("debt_repay", b.balance, b.currency)
                         }
                       >
-                        {t("debtsPage.btn_repay_my_debt")}
+                        {t("goals_debts:debtsPage.btn_repay_my_debt")}
                       </Button>
                       <Button
                         size="small"
@@ -273,7 +273,7 @@ function DebtorDetails() {
                         $fullWidth
                         onClick={() => handleOpenTx("debt_take")}
                       >
-                        {t("debtsPage.btn_borrow")}
+                        {t("goals_debts:debtsPage.btn_borrow")}
                       </Button>
                     </>
                   )}
@@ -288,7 +288,7 @@ function DebtorDetails() {
       <S.HistoryContainer>
         <S.SectionHeader>
           <S.SectionTitle>
-            {t("accountDetailsPage.history_section_title")}
+            {t("accounts:accountDetailsPage.history_section_title")}
           </S.SectionTitle>
           <Button
             size="small"
@@ -296,7 +296,7 @@ function DebtorDetails() {
             onClick={() => handleOpenTx("loan_give")}
             icon={<HiPlus />}
           >
-            {t("transactionsPage.button_add")}
+            {t("transactions:transactionsPage.button_add")}
           </Button>
         </S.SectionHeader>
 

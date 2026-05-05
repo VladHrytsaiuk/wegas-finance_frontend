@@ -14,7 +14,7 @@ export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
   const { assets, isLoading, isDeleting } = state;
 
-  if (isLoading) return <p>{t("shared.loading")}</p>;
+  if (isLoading) return <p>{t("common:shared.loading")}</p>;
 
   return (
     <S.PageContainer>
@@ -23,7 +23,7 @@ export default function Assets() {
           <Modal.Open opens="create-asset">
             <Button>
               <HiPlus />
-              <span>{t("assetsPage.button_add")}</span>
+              <span>{t("assets:assetsPage.button_add")}</span>
             </Button>
           </Modal.Open>
         </S.ActionsBar>
@@ -47,7 +47,7 @@ export default function Assets() {
             <div key={item.id}>
               <Modal.Window name={`delete-asset-${item.id}`}>
                 <ConfirmDelete
-                  resourceName={t("assetsPage.resource_name", {
+                  resourceName={t("assets:assetsPage.resource_name", {
                     name: item.name,
                   })}
                   onConfirm={() => actions.handleDelete(item.id)}

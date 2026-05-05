@@ -40,14 +40,14 @@ export default function UploadStep({
             $activeColor="var(--color-brand-600)"
             onClick={() => setBankType("privatbank")}
           >
-            {t("importModal.bank_privat", "ПриватБанк")}
+            {t("export_import:importModal.bank_privat", "ПриватБанк")}
           </S.SwitcherButton>
           <S.SwitcherButton
             $active={bankType === "monobank"}
             $activeColor="#000000"
             onClick={() => setBankType("monobank")}
           >
-            {t("importModal.bank_mono", "Monobank")}
+            {t("export_import:importModal.bank_mono", "Monobank")}
           </S.SwitcherButton>
         </S.SwitcherContainer>
       )}
@@ -56,10 +56,10 @@ export default function UploadStep({
       {lockedBankType && (
         <S.LockedHeader>
           <h3>
-            {t("importModal.import_from", "Імпорт з")}{" "}
+            {t("export_import:importModal.import_from", "Імпорт з")}{" "}
             {lockedBankType === "privatbank"
-              ? t("importModal.bank_privat")
-              : t("importModal.bank_mono")}
+              ? t("export_import:importModal.bank_privat")
+              : t("export_import:importModal.bank_mono")}
           </h3>
         </S.LockedHeader>
       )}
@@ -78,11 +78,11 @@ export default function UploadStep({
 
         <S.UploadText>
           <S.UploadTitle>
-            {t("importModal.upload_title", "Завантажте виписку")}
+            {t("export_import:importModal.upload_title", "Завантажте виписку")}
           </S.UploadTitle>
           <S.UploadSubtitle>
             {bankType === "privatbank"
-              ? t("importModal.upload_hint_privat", "Оберіть PDF файл")
+              ? t("export_import:importModal.upload_hint_privat", "Оберіть PDF файл")
               : t(
                   "importModal.upload_hint_mono",
                   "Рекомендовано CSV або PDF, XLS"
@@ -104,22 +104,22 @@ export default function UploadStep({
         <S.InstructionHeader>
           <HiInformationCircle size={18} color="var(--color-brand-500)" />
           <strong>
-            {t("importModal.instr_title", "Як отримати виписку?")}
+            {t("export_import:importModal.instr_title", "Як отримати виписку?")}
           </strong>
         </S.InstructionHeader>
 
         <S.InstructionList>
           {bankType === "privatbank" ? (
             <>
-              <li>{t("importModal.instr_privat_1")}</li>
-              <li>{t("importModal.instr_privat_2")}</li>
-              <li>{t("importModal.instr_privat_3")}</li>
+              <li>{t("export_import:importModal.instr_privat_1")}</li>
+              <li>{t("export_import:importModal.instr_privat_2")}</li>
+              <li>{t("export_import:importModal.instr_privat_3")}</li>
             </>
           ) : (
             <>
-              <li>{t("importModal.instr_mono_1")}</li>
-              <li>{t("importModal.instr_mono_2")}</li>
-              <li>{t("importModal.instr_mono_3")}</li>
+              <li>{t("export_import:importModal.instr_mono_1")}</li>
+              <li>{t("export_import:importModal.instr_mono_2")}</li>
+              <li>{t("export_import:importModal.instr_mono_3")}</li>
             </>
           )}
         </S.InstructionList>

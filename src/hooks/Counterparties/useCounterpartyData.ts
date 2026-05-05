@@ -32,7 +32,7 @@ export function useCounterpartyData() {
     mutationFn: createCpCategoryApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("counterpartyDataHook.cat_create_success"));
+      toast.success(t("counterparties:counterpartyDataHook.cat_create_success"));
       queryClient.invalidateQueries({ queryKey: ["counterparty-categories"] });
     },
   });
@@ -41,7 +41,7 @@ export function useCounterpartyData() {
     mutationFn: updateCpCategoryApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("counterpartyDataHook.cat_update_success"));
+      toast.success(t("counterparties:counterpartyDataHook.cat_update_success"));
       queryClient.invalidateQueries({ queryKey: ["counterparty-categories"] });
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
@@ -51,13 +51,13 @@ export function useCounterpartyData() {
     mutationFn: deleteCpCategoryApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("counterpartyDataHook.cat_delete_success"));
+      toast.success(t("counterparties:counterpartyDataHook.cat_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["counterparty-categories"] });
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
     onError: () =>
       // ➡️ ПЕРЕКЛАД
-      toast.error(t("counterpartyDataHook.cat_delete_error")),
+      toast.error(t("counterparties:counterpartyDataHook.cat_delete_error")),
   });
 
   // --- MUTATIONS: Counterparties ---
@@ -65,7 +65,7 @@ export function useCounterpartyData() {
     mutationFn: createCounterpartyApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("counterpartyDataHook.cp_create_success"));
+      toast.success(t("counterparties:counterpartyDataHook.cp_create_success"));
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
   });
@@ -74,7 +74,7 @@ export function useCounterpartyData() {
     mutationFn: updateCounterpartyApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("counterpartyDataHook.cp_update_success"));
+      toast.success(t("counterparties:counterpartyDataHook.cp_update_success"));
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
   });
@@ -83,7 +83,7 @@ export function useCounterpartyData() {
     mutationFn: deleteCounterpartyApi,
     onSuccess: () => {
       // ➡️ ПЕРЕКЛАД
-      toast.success(t("counterpartyDataHook.cp_delete_success"));
+      toast.success(t("counterparties:counterpartyDataHook.cp_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
   });

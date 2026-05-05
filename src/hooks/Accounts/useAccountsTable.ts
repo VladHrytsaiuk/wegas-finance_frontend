@@ -68,7 +68,7 @@ export const useAccountsTable = ({
     (groupKey: string) => {
       if (groupKey.startsWith("card_")) {
         const bankId = groupKey.replace("card_", "");
-        let label = t("accountsFilter.group_other_cards", "Інші картки");
+        let label = t("accounts:accountsFilter.group_other_cards", "Інші картки");
         let color = "#6b7280";
 
         // Проста логіка кольорів (можна розширити)
@@ -86,13 +86,13 @@ export const useAccountsTable = ({
 
       if (groupKey === "cash")
         return {
-          label: t("accountsTable.type_cash"),
+          label: t("accounts:accountsTable.type_cash"),
           color: "#10b981",
           isBank: false,
         };
       if (groupKey === "savings")
         return {
-          label: t("accountsTable.type_savings"),
+          label: t("accounts:accountsTable.type_savings"),
           color: "#8b5cf6",
           isBank: false,
         };
@@ -114,7 +114,7 @@ export const useAccountsTable = ({
   const getOwnerName = useCallback(
     (userId: string) => {
       const u = users.find((user: any) => user.id === userId);
-      return u ? u.name : t("accountsTable.owner_default_family");
+      return u ? u.name : t("accounts:accountsTable.owner_default_family");
     },
     [users, t],
   );
@@ -168,10 +168,10 @@ export const useAccountsTable = ({
 
   const translateAccountType = useCallback(
     (type: string) => {
-      if (type === "card") return t("accountsTable.type_card");
-      if (type === "cash") return t("accountsTable.type_cash");
+      if (type === "card") return t("accounts:accountsTable.type_card");
+      if (type === "cash") return t("accounts:accountsTable.type_cash");
       if (type === "savings" || type === "piggy_bank")
-        return t("accountsTable.type_savings");
+        return t("accounts:accountsTable.type_savings");
       return type;
     },
     [t],

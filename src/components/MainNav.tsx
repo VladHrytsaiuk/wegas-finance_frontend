@@ -152,77 +152,77 @@ function MainNav({ isCollapsed, onFeedbackClick }: MainNavProps) {
   const financeGroups = [
     {
       id: "analytics",
-      title: t("navGroups.analytics"),
+      title: t("navigation:navGroups.analytics"),
       items: [
         {
           to: "/dashboard",
           icon: <HiOutlineHome />,
-          label: t("general.dashboard"),
+          label: t("navigation:general.dashboard"),
         },
         {
           to: "/statistics",
           icon: <HiOutlineChartBar />,
-          label: t("general.statistics"),
+          label: t("navigation:general.statistics"),
         },
       ],
     },
     {
       id: "finance",
-      title: t("navGroups.finance"),
+      title: t("navigation:navGroups.finance"),
       items: [
         {
           to: "/transactions",
           icon: <HiOutlineBanknotes />,
-          label: t("general.transactions"),
+          label: t("navigation:general.transactions"),
         },
         {
           to: "/accounts",
           icon: <HiOutlineWallet />,
-          label: t("general.accounts"),
+          label: t("navigation:general.accounts"),
         },
         {
           to: "/debts",
           icon: <HiOutlineArrowsRightLeft />,
-          label: t("general.debts"),
+          label: t("navigation:general.debts"),
         },
       ],
     },
     // 👇 НОВА ГРУПА: ПЛАНУВАННЯ
     {
       id: "planning",
-      title: t("navGroups.planning", "Планування"), // Переклад: Planning
+      title: t("navigation:navGroups.planning", "Планування"), // Переклад: Planning
       items: [
         {
           to: "/shopping",
           icon: <HiOutlineShoppingCart />,
-          label: t("general.shoppingList", "Список покупок"), // Переклад: Shopping List
+          label: t("navigation:general.shoppingList", "Список покупок"), // Переклад: Shopping List
         },
-        { to: "/goals", icon: <HiOutlineTrophy />, label: t("general.goals") },
+        { to: "/goals", icon: <HiOutlineTrophy />, label: t("navigation:general.goals") },
         {
           to: "/wishlist",
           icon: <HiOutlineGift />,
-          label: t("general.wishlist", "Вішліст"),
+          label: t("navigation:general.wishlist", "Вішліст"),
         },
       ],
     },
     {
       id: "resources",
-      title: t("navGroups.resources"),
+      title: t("navigation:navGroups.resources"),
       items: [
         {
           to: "/assets",
           icon: <HiOutlineComputerDesktop />,
-          label: t("general.assets"),
+          label: t("navigation:general.assets"),
         },
         {
           to: "/medical",
           icon: <HiOutlineHeart />,
-          label: t("general.medical"),
+          label: t("navigation:general.medical"),
         },
         {
           to: "/utility",
           icon: <HiOutlineBolt />,
-          label: t("general.utility"),
+          label: t("navigation:general.utility"),
         },
       ],
     },
@@ -231,28 +231,28 @@ function MainNav({ isCollapsed, onFeedbackClick }: MainNavProps) {
   const investmentGroups = [
     {
       id: "portfolio",
-      title: t("navGroups.portfolio", "Портфель"),
+      title: t("navigation:navGroups.portfolio", "Портфель"),
       items: [
         {
           to: "/investments/dashboard",
           icon: <HiOutlinePresentationChartLine />,
-          label: t("general.overview", "Огляд"),
+          label: t("navigation:general.overview", "Огляд"),
         },
         {
           to: "/investments/portfolio",
           icon: <HiOutlineBriefcase />,
-          label: t("general.holdings", "Активи"),
+          label: t("navigation:general.holdings", "Активи"),
         },
       ],
     },
     {
       id: "market",
-      title: t("navGroups.tools", "Інструменти"),
+      title: t("navigation:navGroups.tools", "Інструменти"),
       items: [
         {
           to: "/investments/rebalance",
           icon: <HiOutlineScale />,
-          label: t("general.rebalance", "Ребаланс"),
+          label: t("navigation:general.rebalance", "Ребаланс"),
         },
       ],
     },
@@ -261,12 +261,12 @@ function MainNav({ isCollapsed, onFeedbackClick }: MainNavProps) {
   // СИСТЕМА + ФІДБЕК ТУТ
   const systemGroup = {
     id: "system",
-    title: t("navGroups.system"),
+    title: t("navigation:navGroups.system"),
     items: [
       {
         to: "/settings",
         icon: <HiOutlineCog6Tooth />,
-        label: t("general.settings"),
+        label: t("navigation:general.settings"),
       },
     ],
   };

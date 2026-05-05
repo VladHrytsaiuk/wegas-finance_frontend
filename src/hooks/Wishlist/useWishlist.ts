@@ -43,22 +43,22 @@ export const useWishlist = (filters?: any) => {
     mutationFn: createWishlistGroupApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-groups"] });
-      toast.success(t("wishlist.group_created", "Групу створено"));
+      toast.success(t("shopping_wishlist:wishlist.group_created", "Групу створено"));
     },
     onError: () =>
-      toast.error(t("common.error_occurred", "Помилка створення групи")),
+      toast.error(t("common:common.error_occurred", "Помилка створення групи")),
   });
 
   const updateGroup = useMutation({
     mutationFn: updateWishlistGroupApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-groups"] });
-      toast.success(t("wishlist.group_updated", "Групу оновлено"));
+      toast.success(t("shopping_wishlist:wishlist.group_updated", "Групу оновлено"));
     },
     onError: (err: any) => {
       toast.error(
         err.response?.data?.error ||
-          t("wishlist.error_update_group", "Помилка оновлення"),
+          t("shopping_wishlist:wishlist.error_update_group", "Помилка оновлення"),
       );
     },
   });
@@ -68,10 +68,10 @@ export const useWishlist = (filters?: any) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-groups"] });
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
-      toast.success(t("wishlist.group_deleted", "Групу видалено"));
+      toast.success(t("shopping_wishlist:wishlist.group_deleted", "Групу видалено"));
     },
     onError: () =>
-      toast.error(t("common.error_occurred", "Помилка видалення групи")),
+      toast.error(t("common:common.error_occurred", "Помилка видалення групи")),
   });
 
   // --- ITEMS MUTATIONS ---
@@ -89,9 +89,9 @@ export const useWishlist = (filters?: any) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
-      toast.success(t("wishlist.item_created", "Додано у вішліст"));
+      toast.success(t("shopping_wishlist:wishlist.item_created", "Додано у вішліст"));
     },
-    onError: () => toast.error(t("common.error_occurred", "Помилка додавання")),
+    onError: () => toast.error(t("common:common.error_occurred", "Помилка додавання")),
   });
 
   const updateItem = useMutation({
@@ -114,18 +114,18 @@ export const useWishlist = (filters?: any) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
-      toast.success(t("wishlist.item_updated", "Бажання оновлено"));
+      toast.success(t("shopping_wishlist:wishlist.item_updated", "Бажання оновлено"));
     },
-    onError: () => toast.error(t("common.error_occurred", "Помилка оновлення")),
+    onError: () => toast.error(t("common:common.error_occurred", "Помилка оновлення")),
   });
 
   const deleteItem = useMutation({
     mutationFn: deleteWishlistItemApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
-      toast.success(t("wishlist.item_deleted", "Видалено з вішліста"));
+      toast.success(t("shopping_wishlist:wishlist.item_deleted", "Видалено з вішліста"));
     },
-    onError: () => toast.error(t("common.error_occurred", "Помилка видалення")),
+    onError: () => toast.error(t("common:common.error_occurred", "Помилка видалення")),
   });
 
   // 🔥 НОВА МУТАЦІЯ: Резервація
@@ -136,7 +136,7 @@ export const useWishlist = (filters?: any) => {
       // Можна без тоста, або короткий
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.error || t("common.error_occurred"));
+      toast.error(err.response?.data?.error || t("common:common.error_occurred"));
     },
   });
 
@@ -146,7 +146,7 @@ export const useWishlist = (filters?: any) => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
     },
     onError: () =>
-      toast.error(t("common.error_occurred", "Помилка завантаження фото")),
+      toast.error(t("common:common.error_occurred", "Помилка завантаження фото")),
   });
 
   const deletePhoto = useMutation({
@@ -155,7 +155,7 @@ export const useWishlist = (filters?: any) => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
     },
     onError: () =>
-      toast.error(t("common.error_occurred", "Помилка видалення фото")),
+      toast.error(t("common:common.error_occurred", "Помилка видалення фото")),
   });
 
   return {

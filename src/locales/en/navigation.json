@@ -1,0 +1,41 @@
+{
+  "general": {
+    "dashboard": "Dashboard",
+    "statistics": "Statistics",
+    "transactions": "Transactions",
+    "accounts": "Accounts",
+    "settings": "Settings",
+    "debts": "Debts",
+    "assets": "Assets",
+    "medical": "Medical",
+    "utility": "Utilities",
+    "goals": "Goals",
+    "holdings": "Holdings",
+    "overview": "Overview",
+    "rebalance": "Rebalance",
+    "shoppingList": "Shopping List",
+    "wishlist": "Wishlist"
+  },
+  "navGroups": {
+    "analytics": "Analytics",
+    "finance": "Finance",
+    "resources": "Resources",
+    "system": "System",
+    "planning": "Planning",
+    "portfolio": "Portfolio",
+    "tools": "Tools"
+  },
+  "sidebar": {
+    "feedback_tooltip": "Leave feedback",
+    "new_transaction": "New Transaction"
+  },
+  "workspace": {
+    "finance": "Finance",
+    "investments": "Investments"
+  },
+  "feedback": "Feedback",
+  "workspaces": {
+    "finance": "Finances",
+    "investments": "Investments"
+  }
+}

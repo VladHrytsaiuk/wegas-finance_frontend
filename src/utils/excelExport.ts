@@ -24,12 +24,12 @@ export const exportToExcel = async (
     // --- 1. ШАПКА ЗВІТУ ---
     // Використовуємо ключі "exportPage.report_title_prefix" та "exportPage.period_label"
     const titleRow = worksheet.addRow([
-      `${t("exportPage.report_title_prefix")}: ${sheetData.name}`,
+      `${t("export_import:exportPage.report_title_prefix")}: ${sheetData.name}`,
     ]);
     titleRow.font = { bold: true, size: 14, color: { argb: "111827" } };
 
     const periodRow = worksheet.addRow([
-      `${t("exportPage.period_label")}: ${periodLabel}`,
+      `${t("export_import:exportPage.period_label")}: ${periodLabel}`,
     ]);
     periodRow.font = { italic: true, size: 11, color: { argb: "6B7280" } };
 

@@ -36,14 +36,14 @@ function PageNotFound() {
   return (
     <StyledPageNotFound>
       <Box>
-        <Title>{t("pageNotFound.title")}</Title>
+        <Title>{t("legacy:pageNotFound.title")}</Title>
 
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Button
             onClick={moveBack}
             style={{ width: "auto", padding: "1rem 2rem" }}
           >
-            &larr; {t("pageNotFound.back_button")}
+            &larr; {t("legacy:pageNotFound.back_button")}
           </Button>
         </div>
       </Box>

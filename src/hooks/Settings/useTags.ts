@@ -24,19 +24,19 @@ export const useTags = () => {
   const { mutate: create, isPending: isCreating } = useMutation({
     mutationFn: createTagApi,
     onSuccess: () => {
-      toast.success(t("tagsPage.alert_create_success"));
+      toast.success(t("settings:tagsPage.alert_create_success"));
       queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
-    onError: () => toast.error(t("tagsPage.alert_create_error")),
+    onError: () => toast.error(t("settings:tagsPage.alert_create_error")),
   });
 
   const { mutate: remove, isPending: isDeleting } = useMutation({
     mutationFn: deleteTagApi,
     onSuccess: () => {
-      toast.success(t("tagsPage.alert_delete_success"));
+      toast.success(t("settings:tagsPage.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
-    onError: () => toast.error(t("tagsPage.alert_delete_error")),
+    onError: () => toast.error(t("settings:tagsPage.alert_delete_error")),
   });
 
   // --- Filtering & Sorting Logic ---
@@ -58,9 +58,9 @@ export const useTags = () => {
 
   // --- Configs ---
   const sortOptions: FilterOption[] = [
-    { value: "default", label: t("tagsPage.sort_default") },
-    { value: "name-asc", label: t("tagsPage.sort_name_asc") },
-    { value: "name-desc", label: t("tagsPage.sort_name_desc") },
+    { value: "default", label: t("settings:tagsPage.sort_default") },
+    { value: "name-asc", label: t("settings:tagsPage.sort_name_asc") },
+    { value: "name-desc", label: t("settings:tagsPage.sort_name_desc") },
   ];
 
   const handleClearAll = () => {

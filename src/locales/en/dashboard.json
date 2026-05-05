@@ -1,0 +1,38 @@
+{
+  "dashboardPage": {
+    "title": "Dashboard",
+    "greetings": "Hello, {{name}}!",
+    "subtitle": "Your financial overview",
+    "edit_mode": "Edit",
+    "save_mode": "Done",
+    "reset_layout": "Reset",
+    "widget_trend_expenses": "Expense Dynamics",
+    "widget_top_categories": "Top Categories",
+    "widget_top_shops": "Top Shops",
+    "filter_period_label": "Period",
+    "filter_period_month": "This month"
+  },
+  "recentTransactions": {
+    "status_loading": "Loading...",
+    "status_empty": "No transactions",
+    "default_name": "Transaction"
+  },
+  "dashboard": {
+    "recent_transactions": "Recent transactions",
+    "view_all": "View all",
+    "no_data": "No data available",
+    "total_balance": "Total balance",
+    "income_period": "Income (period)",
+    "expense_period": "Expenses (period)",
+    "widget_top_categories": "Top categories",
+    "widget_top_shops": "Top shops",
+    "widget_trend_expenses": "Spending trend",
+    "filter_other": "Other"
+  },
+  "filters": {
+    "periods": {
+      "expense_label": "Expense",
+      "income_label": "Income"
+    }
+  }
+}

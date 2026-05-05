@@ -22,12 +22,12 @@ export const RecentTransactions = ({
     return sortTransactions(transactions);
   }, [transactions]);
 
-  if (loading) return <div>{t("recentTransactions.status_loading")}</div>;
+  if (loading) return <div>{t("dashboard:recentTransactions.status_loading")}</div>;
   if (!sortedTransactions.length)
     return (
       <Empty>
         <HiOutlineBanknotes size={32} />
-        <span>{t("recentTransactions.status_empty")}</span>
+        <span>{t("dashboard:recentTransactions.status_empty")}</span>
       </Empty>
     );
 

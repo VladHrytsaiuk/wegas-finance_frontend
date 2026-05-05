@@ -54,7 +54,7 @@ function AccountDetails() {
   } = useAccountDetails();
 
   useEffect(() => {
-    if (account) setPageTitle(account.name, t("accountDetailsPage.subtitle"));
+    if (account) setPageTitle(account.name, t("accounts:accountDetailsPage.subtitle"));
     return () => resetPageTitle();
   }, [account, setPageTitle, resetPageTitle, t]);
 
@@ -89,7 +89,7 @@ function AccountDetails() {
             <HiExclamationCircle />
           </S.ErrorIconBox>
           <S.ErrorTitle>
-            {t("accountDetailsPage.error_title", "Рахунок не знайдено")}
+            {t("accounts:accountDetailsPage.error_title", "Рахунок не знайдено")}
           </S.ErrorTitle>
           <S.ErrorDescription>
             {t(
@@ -104,10 +104,10 @@ function AccountDetails() {
               style={{ display: "flex", alignItems: "center", gap: "8px" }}
             >
               <HiChevronLeft />{" "}
-              {t("accountDetailsPage.back_to_list", "До списку рахунків")}
+              {t("accounts:accountDetailsPage.back_to_list", "До списку рахунків")}
             </Button>
             <Button onClick={() => window.location.reload()}>
-              {t("common.retry", "Оновити")}
+              {t("common:common.retry", "Оновити")}
             </Button>
           </S.ErrorActions>
         </S.ErrorContainer>
@@ -144,8 +144,8 @@ function AccountDetails() {
           <div style={{ flex: 1 }} />
 
           <Modal.Open opens="export-account">
-            <S.ActionButton title={t("exportPage.title")}>
-              <HiArrowDownTray size={18} /> <span>{t("exportPage.title")}</span>
+            <S.ActionButton title={t("export_import:exportPage.title")}>
+              <HiArrowDownTray size={18} /> <span>{t("export_import:exportPage.title")}</span>
             </S.ActionButton>
           </Modal.Open>
 
@@ -154,15 +154,15 @@ function AccountDetails() {
             state={{ background: location }}
             style={{ textDecoration: "none" }}
           >
-            <S.ActionButton title={t("accountDetailsPage.edit_button")}>
+            <S.ActionButton title={t("accounts:accountDetailsPage.edit_button")}>
               <HiOutlinePencil />{" "}
-              <span>{t("accountDetailsPage.edit_button")}</span>
+              <span>{t("accounts:accountDetailsPage.edit_button")}</span>
             </S.ActionButton>
           </Link>
 
           <Modal.Open opens="delete-account">
-            <S.ActionButton $variant="danger" title={t("common.delete")}>
-              <HiTrash size={18} /> <span>{t("common.delete")}</span>
+            <S.ActionButton $variant="danger" title={t("common:common.delete")}>
+              <HiTrash size={18} /> <span>{t("common:common.delete")}</span>
             </S.ActionButton>
           </Modal.Open>
         </S.TopNav>
@@ -210,7 +210,7 @@ function AccountDetails() {
                   </S.ProgressBarBg>
                   <S.GoalFooter>
                     <span>
-                      {t("goals.linked_goal_label", "Прив'язана ціль")}
+                      {t("goals_debts:goals.linked_goal_label", "Прив'язана ціль")}
                     </span>
                   </S.GoalFooter>
                 </S.GoalWidget>
@@ -220,7 +220,7 @@ function AccountDetails() {
               account.storage_type && (
                 <S.InfoCard>
                   <S.InfoLabel>
-                    {t("accountDetailsPage.storage_type_label", "Тип сховища")}
+                    {t("accounts:accountDetailsPage.storage_type_label", "Тип сховища")}
                   </S.InfoLabel>
                   <S.InfoValue>
                     {getStorageIcon(account.storage_type.slug)}
@@ -239,10 +239,10 @@ function AccountDetails() {
           <S.RightColumn>
             <S.SectionBox>
               <S.SectionHeader>
-                <h2>{t("accountDetailsPage.history_section_title")}</h2>
+                <h2>{t("accounts:accountDetailsPage.history_section_title")}</h2>
                 <Modal.Open opens="history-all">
                   <S.TextButton>
-                    {t("accountDetailsPage.history_all_button")}{" "}
+                    {t("accounts:accountDetailsPage.history_all_button")}{" "}
                     <HiChevronRight />
                   </S.TextButton>
                 </Modal.Open>
@@ -261,14 +261,14 @@ function AccountDetails() {
           <TransactionsModal
             accountId={accountId}
             initialFilters={{ type: ["income"] }}
-            title={t("accountStats.income_history_title")}
+            title={t("accounts:accountStats.income_history_title")}
           />
         </Modal.Window>
         <Modal.Window name="history-expense">
           <TransactionsModal
             accountId={accountId}
             initialFilters={{ type: ["expense"] }}
-            title={t("accountStats.expense_history_title")}
+            title={t("accounts:accountStats.expense_history_title")}
           />
         </Modal.Window>
         <Modal.Window name="history-all">

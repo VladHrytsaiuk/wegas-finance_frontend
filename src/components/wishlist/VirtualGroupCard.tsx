@@ -18,8 +18,8 @@ export default function VirtualGroupCard({
   const isMy = variant === "my";
   const color = isMy ? "var(--color-blue-500)" : "var(--color-purple-500)";
   const title = isMy
-    ? t("wishlist.my_wishes", "Мої бажання")
-    : t("wishlist.shared_wishes", "Спільні");
+    ? t("shopping_wishlist:wishlist.my_wishes", "Мої бажання")
+    : t("shopping_wishlist:wishlist.shared_wishes", "Спільні");
 
   return (
     <S.FolderCard $color={color} onClick={onClick}>
@@ -32,7 +32,7 @@ export default function VirtualGroupCard({
       <S.FolderInfo>
         <S.FolderTitle>{title}</S.FolderTitle>
         <S.FolderDescription>
-          {itemsCount} {t("wishlist.items_count", "бажань")}
+          {itemsCount} {t("shopping_wishlist:wishlist.items_count", "бажань")}
         </S.FolderDescription>
       </S.FolderInfo>
     </S.FolderCard>

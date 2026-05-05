@@ -54,7 +54,7 @@ export default function TransactionRow({
       {/* CHECKBOX */}
       <S.CellCenter>
         {tx.is_duplicate ? (
-          <div title={t("importModal.tip_exact_duplicate", "Точний дублікат")}>
+          <div title={t("export_import:importModal.tip_exact_duplicate", "Точний дублікат")}>
             <HiInformationCircle size={22} color="var(--color-text-tertiary)" />
           </div>
         ) : (
@@ -77,7 +77,7 @@ export default function TransactionRow({
             <HiCheck
               size={16}
               color="var(--color-brand-500)"
-              title={t("importModal.tip_found_db", "Знайдено в базі")}
+              title={t("export_import:importModal.tip_found_db", "Знайдено в базі")}
             />
           )}
         </S.MainInfo>
@@ -89,19 +89,19 @@ export default function TransactionRow({
             {tx.is_duplicate && (
               <S.StatusBadge $color="red">
                 <HiInformationCircle size={14} />{" "}
-                {t("importModal.status_in_db", "Вже в базі")}
+                {t("export_import:importModal.status_in_db", "Вже в базі")}
               </S.StatusBadge>
             )}
             {!tx.is_duplicate && tx.is_potential_duplicate && !isSelected && (
               <S.StatusBadge $color="yellow">
                 <HiExclamationTriangle size={14} />{" "}
-                {t("importModal.status_similar", "Схожа")}
+                {t("export_import:importModal.status_similar", "Схожа")}
               </S.StatusBadge>
             )}
             {!tx.is_duplicate && tx.is_potential_duplicate && isSelected && (
               <S.StatusBadge $color="green">
                 <HiCheckCircle size={14} />{" "}
-                {t("importModal.status_create_new", "Створити нову")}
+                {t("export_import:importModal.status_create_new", "Створити нову")}
               </S.StatusBadge>
             )}
 
@@ -110,7 +110,7 @@ export default function TransactionRow({
                 e.stopPropagation();
                 onShowDuplicate(tx, tx.existing_transaction!);
               }}
-              title={t("importModal.tip_compare", "Порівняти")}
+              title={t("export_import:importModal.tip_compare", "Порівняти")}
             >
               <HiEye size={18} />
             </S.CompareButton>
@@ -127,7 +127,7 @@ export default function TransactionRow({
         ) : (
           <S.MissingCategoryBadge onClick={() => onEdit(tx, idx)}>
             <HiQuestionMarkCircle size={14} />{" "}
-            {t("ui.select_placeholder_default")}
+            {t("common:ui.select_placeholder_default")}
           </S.MissingCategoryBadge>
         )}
       </td>

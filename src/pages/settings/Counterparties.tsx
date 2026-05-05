@@ -43,7 +43,7 @@ function Counterparties() {
       <S.PageWrapper>
         {/* --- Header --- */}
         <S.HeaderRow>
-          <S.Title>{t("counterpartiesPage.title")}</S.Title>
+          <S.Title>{t("counterparties:counterpartiesPage.title")}</S.Title>
           <S.HeaderActions>
             {canManageStructure && (
               <>
@@ -53,12 +53,12 @@ function Counterparties() {
                     variation="secondary"
                     size="medium"
                   >
-                    {t("counterpartiesPage.add_category_button")}
+                    {t("counterparties:counterpartiesPage.add_category_button")}
                   </Button>
                 </Modal.Open>
                 <Modal.Open opens="create-cp">
                   <Button icon={<HiPlus />} size="medium">
-                    {t("counterpartiesPage.add_counterparty_button")}
+                    {t("counterparties:counterpartiesPage.add_counterparty_button")}
                   </Button>
                 </Modal.Open>
               </>
@@ -71,7 +71,7 @@ function Counterparties() {
           <TableToolbar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            searchPlaceholder={t("counterpartiesPage.search_placeholder")}
+            searchPlaceholder={t("counterparties:counterpartiesPage.search_placeholder")}
             filtersConfig={filtersConfig}
             filterValues={filters}
             onFilterChange={(k, v) =>
@@ -88,11 +88,11 @@ function Counterparties() {
         <S.TreeContainer>
           {isLoadingCps ? (
             <S.EmptyState>
-              {t("counterpartiesPage.status_loading")}
+              {t("counterparties:counterpartiesPage.status_loading")}
             </S.EmptyState>
           ) : treeRoots.length === 0 ? (
             <S.EmptyState>
-              {t("counterpartiesPage.status_not_found")}
+              {t("counterparties:counterpartiesPage.status_not_found")}
             </S.EmptyState>
           ) : (
             <CounterpartyTree

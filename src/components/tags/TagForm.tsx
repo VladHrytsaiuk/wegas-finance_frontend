@@ -47,13 +47,13 @@ export function TagForm({ onSubmit, isLoading }: TagFormProps) {
           style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}
         >
           {/* ➡️ ПЕРЕКЛАД МІТКИ */}
-          {t("tagForm.label_name")}
+          {t("settings:tagForm.label_name")}
         </label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
           // ➡️ ПЕРЕКЛАД ПЛЕЙСХОЛДЕРА
-          placeholder={t("tagForm.placeholder_name")}
+          placeholder={t("settings:tagForm.placeholder_name")}
           autoFocus
         />
       </div>
@@ -63,7 +63,7 @@ export function TagForm({ onSubmit, isLoading }: TagFormProps) {
           style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}
         >
           {/* ➡️ ПЕРЕКЛАД МІТКИ */}
-          {t("tagForm.label_color")}
+          {t("settings:tagForm.label_color")}
         </label>
         <ColorGrid>
           {PRESET_COLORS.map((c) => (
@@ -88,11 +88,11 @@ export function TagForm({ onSubmit, isLoading }: TagFormProps) {
           style={{ width: "auto" }}
         >
           {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
-          {t("tagForm.button_cancel")}
+          {t("settings:tagForm.button_cancel")}
         </Button>
         <Button disabled={isLoading} style={{ width: "auto" }} type="submit">
           {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
-          {t("tagForm.button_add")}
+          {t("settings:tagForm.button_add")}
         </Button>
       </ButtonRow>
     </Form>

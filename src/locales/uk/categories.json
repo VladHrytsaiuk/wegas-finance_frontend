@@ -1,0 +1,47 @@
+{
+  "categoriesPage": {
+    "title": "Управління Категоріями",
+    "add_category_button": "Додати категорію",
+    "search_placeholder": "Пошук категорій...",
+    "filter_type_label": "Тип",
+    "filter_expense": "Витрати",
+    "filter_income": "Доходи",
+    "sort_default": "За замовчуванням",
+    "sort_name_asc": "Назва (А-Я)",
+    "sort_name_desc": "Назва (Я-А)",
+    "status_loading": "Завантаження...",
+    "status_not_found": "Нічого не знайдено",
+    "modal_create_title": "Нова категорія",
+    "modal_edit_title": "Редагувати категорію",
+    "form_create_button": "Створити",
+    "form_edit_button": "Зберегти зміни",
+    "confirm_delete_title": "Видалити категорію"
+  },
+  "categoryForm": {
+    "label_type": "Тип категорії",
+    "type_expense": "Витрати",
+    "type_income": "Доходи",
+    "label_appearance": "Вигляд",
+    "label_name": "Назва",
+    "placeholder_name": "Напр. Продукти",
+    "label_parent": "Батьківська категорія",
+    "placeholder_parent_default": "-- Без батьківської категорії --",
+    "placeholder_search": "Пошук...",
+    "search_not_found": "Нічого не знайдено",
+    "button_cancel": "Скасувати",
+    "button_save_default": "Зберегти",
+    "type_income_short": "IN",
+    "type_expense_short": "OUT"
+  },
+  "categorySelect": {
+    "placeholder_default": "Оберіть категорію...",
+    "search_placeholder": "Пошук...",
+    "status_not_found": "Нічого не знайдено"
+  },
+  "categoryDataHook": {
+    "alert_create_success": "Категорію створено",
+    "alert_update_success": "Категорію оновлено",
+    "alert_delete_success": "Категорію видалено",
+    "alert_delete_error": "Не можна видалити категорію, яка має підкатегорії або операції"
+  }
+}

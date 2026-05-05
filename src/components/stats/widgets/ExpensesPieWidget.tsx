@@ -44,7 +44,7 @@ export const ExpensesPieWidget = (props: Props) => {
         {shouldFetch && props.globalFilter && (
           <WidgetControls
             mini={true}
-            currentLabel={localFilter.label || t("filters.period_label")}
+            currentLabel={localFilter.label || t("legacy:filters.period_label")}
             currentAccountIds={localFilter.accountIds}
             onFilterChange={handleFilterUpdate}
             variant="local"
@@ -57,7 +57,7 @@ export const ExpensesPieWidget = (props: Props) => {
           <Spinner />
         </S.SpinnerWrapper>
       ) : chartData.length === 0 ? (
-        <S.EmptyState>{t("dashboard.no_data")}</S.EmptyState>
+        <S.EmptyState>{t("dashboard:dashboard.no_data")}</S.EmptyState>
       ) : (
         <S.ContentContainer>
           <S.ChartArea>
@@ -108,7 +108,7 @@ export const ExpensesPieWidget = (props: Props) => {
                 </PieChart>
               </ResponsiveContainer>
               <S.CenterLabel>
-                <span className="label">{t("dashboard.total_balance")}</span>
+                <span className="label">{t("dashboard:dashboard.total_balance")}</span>
               </S.CenterLabel>
             </S.AbsolutePieContainer>
           </S.ChartArea>

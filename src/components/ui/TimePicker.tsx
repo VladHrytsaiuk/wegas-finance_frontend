@@ -19,7 +19,7 @@ export const TimePicker = (props: Props) => {
         <S.IconButton
           type="button"
           onClick={actions.toggleOpen}
-          title={t("transactionForm.label_time")}
+          title={t("transactions:transactionForm.label_time")}
         >
           <HiClock size={20} />
         </S.IconButton>
@@ -60,7 +60,7 @@ export const TimePicker = (props: Props) => {
           >
             <S.ColumnsContainer>
               <S.Column>
-                <S.ColumnLabel>{t("timePicker.hours_short")}</S.ColumnLabel>
+                <S.ColumnLabel>{t("common:timePicker.hours_short")}</S.ColumnLabel>
                 <S.ScrollArea>
                   {hoursList.map((h) => (
                     <S.TimeItem
@@ -78,7 +78,7 @@ export const TimePicker = (props: Props) => {
               </S.Column>
               <S.Divider>:</S.Divider>
               <S.Column>
-                <S.ColumnLabel>{t("timePicker.minutes_short")}</S.ColumnLabel>
+                <S.ColumnLabel>{t("common:timePicker.minutes_short")}</S.ColumnLabel>
                 <S.ScrollArea>
                   {minutesList.map((m) => (
                     <S.TimeItem
@@ -100,7 +100,7 @@ export const TimePicker = (props: Props) => {
                 type="button"
                 onClick={() => actions.setIsOpen(false)}
               >
-                {t("dashboardPage.save_mode")}
+                {t("dashboard:dashboardPage.save_mode")}
               </S.ApplyBtn>
             </S.Footer>
           </S.PickerContainer>,

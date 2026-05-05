@@ -217,7 +217,7 @@ export const useDateRangePicker = (props: DatePickerProps) => {
     }
   };
 
-  let rangeLabel = t("filters.select_period_title");
+  let rangeLabel = t("legacy:filters.select_period_title");
   if (mode === "range") {
     const displayFrom = tempRange?.from || props.dateFrom;
     const displayTo = tempRange?.to || props.dateTo;

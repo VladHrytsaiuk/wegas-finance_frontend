@@ -89,8 +89,8 @@ export const TrendWidget = (props: Props) => {
         <S.TitleGroup>
           <S.Title>
             {activeType === "income"
-              ? t("dashboard.income_period")
-              : t("dashboard.widget_trend_expenses")}
+              ? t("dashboard:dashboard.income_period")
+              : t("dashboard:dashboard.widget_trend_expenses")}
           </S.Title>
           <S.TypeToggle>
             <S.ToggleBtn
@@ -98,21 +98,21 @@ export const TrendWidget = (props: Props) => {
               $color="#ef4444"
               onClick={() => setActiveType("expense")}
             >
-              {t("filters.periods.expense_label")}
+              {t("dashboard:filters.periods.expense_label")}
             </S.ToggleBtn>
             <S.ToggleBtn
               $active={activeType === "income"}
               $color="#22c55e"
               onClick={() => setActiveType("income")}
             >
-              {t("filters.periods.income_label")}
+              {t("dashboard:filters.periods.income_label")}
             </S.ToggleBtn>
           </S.TypeToggle>
         </S.TitleGroup>
 
         <WidgetControls
           mini={true}
-          currentLabel={localFilter.label || t("filters.period_label")}
+          currentLabel={localFilter.label || t("legacy:filters.period_label")}
           currentAccountIds={localFilter.accountIds}
           onFilterChange={handleFilterUpdate}
           variant="local"

@@ -19,10 +19,10 @@ function Tags() {
     <Modal>
       {/* HEADER */}
       <S.HeaderRow>
-        <S.SectionTitle>{t("tagsPage.title")}</S.SectionTitle>
+        <S.SectionTitle>{t("settings:tagsPage.title")}</S.SectionTitle>
         <Modal.Open opens="create-tag">
           <Button icon={<HiPlus />} size="medium">
-            {t("tagsPage.button_create_tag")}
+            {t("settings:tagsPage.button_create_tag")}
           </Button>
         </Modal.Open>
       </S.HeaderRow>
@@ -32,7 +32,7 @@ function Tags() {
         <TableToolbar
           searchQuery={searchQuery}
           onSearchChange={actions.setSearchQuery}
-          searchPlaceholder={t("tagsPage.search_placeholder")}
+          searchPlaceholder={t("settings:tagsPage.search_placeholder")}
           searchPosition="inline"
           filtersConfig={[]} // Теги поки не мають складних фільтрів
           filterValues={{}}
@@ -52,7 +52,7 @@ function Tags() {
       ) : (
         <S.TagList>
           {tags.length === 0 ? (
-            <S.EmptyState>{t("tagsPage.status_empty")}</S.EmptyState>
+            <S.EmptyState>{t("settings:tagsPage.status_empty")}</S.EmptyState>
           ) : (
             tags.map((tag: any) => (
               <TagItem
@@ -69,7 +69,7 @@ function Tags() {
       {/* CREATE MODAL */}
       <Modal.Window name="create-tag">
         <S.ModalContent>
-          <S.ModalTitle>{t("tagsPage.modal_create_title")}</S.ModalTitle>
+          <S.ModalTitle>{t("settings:tagsPage.modal_create_title")}</S.ModalTitle>
           <TagForm onSubmit={actions.create} isLoading={isCreating} />
         </S.ModalContent>
       </Modal.Window>

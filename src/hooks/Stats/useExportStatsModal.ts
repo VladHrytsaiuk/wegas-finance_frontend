@@ -47,7 +47,7 @@ export const useExportStatsModal = ({
   const accountsConfig = useMemo(
     () => ({
       key: "accountIds",
-      label: t("accountsFilter.owner_label"),
+      label: t("accounts:accountsFilter.owner_label"),
       type: "multi-select",
       options: (accounts || []).map((a: any) => ({
         label: a.name,
@@ -65,7 +65,7 @@ export const useExportStatsModal = ({
   };
 
   const handleExport = async () => {
-    const label = t("exportStatsModal.user_period");
+    const label = t("export_import:exportStatsModal.user_period");
     await generateReport(
       { from: dateRange.from, to: dateRange.to, accountIds: accountIds },
       options,

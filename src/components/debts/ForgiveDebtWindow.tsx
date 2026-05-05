@@ -38,12 +38,12 @@ export const ForgiveDebtWindow = ({
 
       {/* transactions.forgiven = "Списання боргу" */}
       <h3 style={{ fontSize: "1.25rem", fontWeight: 600 }}>
-        {t("transactions.forgiven")}
+        {t("transactions:transactions.forgiven")}
       </h3>
 
       {/* debtsPage.forgive_description = "Ви збираєтесь списати..." */}
       <p style={{ color: "var(--color-text-secondary)", lineHeight: 1.5 }}>
-        {t("debtsPage.forgive_description")}
+        {t("goals_debts:debtsPage.forgive_description")}
       </p>
 
       <div style={{ textAlign: "left" }}>
@@ -56,7 +56,7 @@ export const ForgiveDebtWindow = ({
             fontSize: "0.9rem",
           }}
         >
-          {t("debtsPage.technical_account")}:
+          {t("goals_debts:debtsPage.technical_account")}:
         </label>
 
         <AccountSelect
@@ -76,12 +76,12 @@ export const ForgiveDebtWindow = ({
       >
         {/* transactionForm.button_cancel = "Скасувати" */}
         <Button variation="secondary" onClick={close} disabled={isLoading}>
-          {t("transactionForm.button_cancel")}
+          {t("transactions:transactionForm.button_cancel")}
         </Button>
 
         {/* debtsPage.btn_confirm_forgive = "Списати назавжди" */}
         <Button disabled={!accountId || isLoading} onClick={handleConfirm}>
-          {isLoading ? t("shared.loading") : t("debtsPage.btn_confirm_forgive")}
+          {isLoading ? t("common:shared.loading") : t("goals_debts:debtsPage.btn_confirm_forgive")}
         </Button>
       </div>
     </div>

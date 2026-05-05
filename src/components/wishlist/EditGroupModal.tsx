@@ -65,12 +65,12 @@ export default function EditGroupModal({
   return (
     <S.ModalContainer style={S.ModalContainerOverrides}>
       <S.Header>
-        <S.Title>{t("wishlist.edit_group", "Редагувати папку")}</S.Title>
+        <S.Title>{t("shopping_wishlist:wishlist.edit_group", "Редагувати папку")}</S.Title>
       </S.Header>
       <S.Content>
         <S.Form onSubmit={handleSubmit} id="edit-group-form">
           <S.FieldGroup>
-            <S.Label>{t("wishlist.group_name", "Назва папки")}</S.Label>
+            <S.Label>{t("shopping_wishlist:wishlist.group_name", "Назва папки")}</S.Label>
             <Input
               autoFocus
               required
@@ -80,12 +80,12 @@ export default function EditGroupModal({
           </S.FieldGroup>
 
           <S.FieldGroup>
-            <S.Label>{t("common.privacy", "Хто бачить?")}</S.Label>
+            <S.Label>{t("common:common.privacy", "Хто бачить?")}</S.Label>
             <BaseSelect
               triggerLabel={
                 state.visibility === "private"
-                  ? t("shopping.private", "Тільки я")
-                  : t("shopping.public", "Сім'я (всі)")
+                  ? t("shopping_wishlist:shopping.private", "Тільки я")
+                  : t("shopping_wishlist:shopping.public", "Сім'я (всі)")
               }
             >
               <S.SelectOption
@@ -95,7 +95,7 @@ export default function EditGroupModal({
                   actions.setHiddenFromIds([]);
                 }}
               >
-                {t("shopping.public", "Сім'я (всі)")}
+                {t("shopping_wishlist:shopping.public", "Сім'я (всі)")}
               </S.SelectOption>
               <S.SelectOption
                 $isSelected={state.visibility === "private"}
@@ -104,14 +104,14 @@ export default function EditGroupModal({
                   actions.setHiddenFromIds([]);
                 }}
               >
-                {t("shopping.private", "Тільки я")}
+                {t("shopping_wishlist:shopping.private", "Тільки я")}
               </S.SelectOption>
             </BaseSelect>
           </S.FieldGroup>
 
           {state.visibility === "public" && membersToHideFrom.length > 0 && (
             <S.FieldGroup>
-              <S.Label>{t("common.hide_from", "Приховати від")}</S.Label>
+              <S.Label>{t("common:common.hide_from", "Приховати від")}</S.Label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                 {membersToHideFrom.map((m) => (
                   <S.SelectOption
@@ -136,7 +136,7 @@ export default function EditGroupModal({
 
           <S.Section>
             <S.SectionTitle>
-              {t("wishlist.appearance", "Оформлення")}
+              {t("shopping_wishlist:wishlist.appearance", "Оформлення")}
             </S.SectionTitle>
             <ColorIconPicker
               color={state.color}
@@ -150,7 +150,7 @@ export default function EditGroupModal({
 
       <S.FooterActions>
         <Button type="button" variation="secondary" onClick={onCloseModal}>
-          {t("common.cancel")}
+          {t("common:common.cancel")}
         </Button>
         <Button
           type="submit"
@@ -158,7 +158,7 @@ export default function EditGroupModal({
           disabled={!state.name.trim()}
           form="edit-group-form"
         >
-          {t("common.save")}
+          {t("common:common.save")}
         </Button>
       </S.FooterActions>
     </S.ModalContainer>

@@ -25,23 +25,23 @@ function Login({ setToken }: LoginProps) {
 
   return (
     <AuthLayout
-      title={t("auth.login_title")}
-      subtitle={t("auth.login_subtitle")}
+      title={t("auth:auth.login_title")}
+      subtitle={t("auth:auth.login_subtitle")}
       footer={
         <>
-          {t("auth.login_footer_text")}{" "}
+          {t("auth:auth.login_footer_text")}{" "}
           <Link
             to="/register"
             style={{ color: "var(--color-brand-600)", fontWeight: 500 }}
           >
-            {t("auth.login_footer_link")}
+            {t("auth:auth.login_footer_link")}
           </Link>
         </>
       }
     >
       <AuthForm onSubmit={actions.handleSubmit}>
         <FormGroup>
-          <label htmlFor="email">{t("auth.login_label_email")}</label>
+          <label htmlFor="email">{t("auth:auth.login_label_email")}</label>
           <Input
             id="email"
             type="email"
@@ -54,7 +54,7 @@ function Login({ setToken }: LoginProps) {
         </FormGroup>
 
         <FormGroup>
-          <label htmlFor="password">{t("auth.login_label_password")}</label>
+          <label htmlFor="password">{t("auth:auth.login_label_password")}</label>
           <div
             style={{
               position: "relative",
@@ -97,7 +97,7 @@ function Login({ setToken }: LoginProps) {
         </FormGroup>
 
         <Button type="submit" $size="large" disabled={isPending}>
-          {isPending ? t("auth.login_button_pending") : t("auth.login_button")}
+          {isPending ? t("auth:auth.login_button_pending") : t("auth:auth.login_button")}
         </Button>
       </AuthForm>
     </AuthLayout>

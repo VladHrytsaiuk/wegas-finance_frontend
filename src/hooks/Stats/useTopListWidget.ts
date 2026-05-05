@@ -111,7 +111,7 @@ export const useTopListWidget = ({
         ...item,
         displayColor,
         percent,
-        displayName: item.name || t("dashboard.filter_other", "Інше"),
+        displayName: item.name || t("dashboard:dashboard.filter_other", "Інше"),
       };
     });
   }, [data, categories, counterparties, entity, type, t]);

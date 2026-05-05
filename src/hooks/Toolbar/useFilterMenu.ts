@@ -39,7 +39,7 @@ export const useFilterMenu = ({ onFilterChange }: UseFilterMenuProps) => {
   const appliedRef = useRef<FilterState>({
     from: startOfMonth(new Date()).getTime(),
     to: endOfDay(new Date()).getTime(),
-    label: t("transactionsModal.sort_date_desc"), // Дефолтний лейбл
+    label: t("transactions:transactionsModal.sort_date_desc"), // Дефолтний лейбл
     accountIds: [],
   });
 
@@ -90,28 +90,28 @@ export const useFilterMenu = ({ onFilterChange }: UseFilterMenuProps) => {
       case "7days":
         from = startOfDay(subDays(now, 7));
         to = endOfDay(now);
-        label = t("importModal.period_7days", "Останні 7 днів");
+        label = t("export_import:importModal.period_7days", "Останні 7 днів");
         break;
       case "30days":
         from = startOfDay(subDays(now, 30));
         to = endOfDay(now);
-        label = t("importModal.period_30days", "Останні 30 днів");
+        label = t("export_import:importModal.period_30days", "Останні 30 днів");
         break;
       case "thisMonth":
         from = startOfMonth(now);
         to = endOfDay(now);
-        label = t("dashboardPage.filter_period_month", "Цей місяць");
+        label = t("dashboard:dashboardPage.filter_period_month", "Цей місяць");
         break;
       case "lastMonth":
         const last = subMonths(now, 1);
         from = startOfMonth(last);
         to = endOfMonth(last);
-        label = t("importModal.period_last_month", "Минулий місяць");
+        label = t("export_import:importModal.period_last_month", "Минулий місяць");
         break;
       case "year":
         from = startOfYear(now);
         to = endOfDay(now);
-        label = t("importModal.period_year", "Цей рік");
+        label = t("export_import:importModal.period_year", "Цей рік");
         break;
       default:
         return;

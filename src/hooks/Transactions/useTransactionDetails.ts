@@ -23,54 +23,54 @@ const getTxConfig = (type: string, t: any) => {
   const normalized = (type || "").toLowerCase().trim();
   const map: Record<string, any> = {
     expense: {
-      label: t("transactionDetails.type_expense"),
+      label: t("transactions:transactionDetails.type_expense"),
       color: "var(--color-red-600)",
       sign: "- ",
     },
     income: {
-      label: t("transactionDetails.type_income"),
+      label: t("transactions:transactionDetails.type_income"),
       color: "var(--color-green-600)",
       sign: "+ ",
     },
     transfer: {
-      label: t("transactionDetails.type_transfer"),
+      label: t("transactions:transactionDetails.type_transfer"),
       color: "var(--color-transfer-out)",
       sign: "- ",
     },
     transfer_out: {
-      label: t("transactionDetails.type_transfer"),
+      label: t("transactions:transactionDetails.type_transfer"),
       color: "var(--color-transfer-out)",
       sign: "- ",
     },
     transfer_in: {
-      label: t("transactionDetails.type_transfer"),
+      label: t("transactions:transactionDetails.type_transfer"),
       color: "var(--color-transfer-in)",
       sign: "+ ",
     },
     loan_give: {
-      label: t("transactions.loan_give"),
+      label: t("transactions:transactions.loan_give"),
       color: "var(--color-yellow-600)",
       sign: "- ",
     },
     debt_take: {
-      label: t("transactions.debt_take"),
+      label: t("transactions:transactions.debt_take"),
       color: "var(--color-yellow-600)",
       sign: "+ ",
     },
     loan_repay: {
-      label: t("transactions.loan_repay"),
+      label: t("transactions:transactions.loan_repay"),
       color: "var(--color-yellow-600)",
       sign: "+ ",
     },
     debt_repay: {
-      label: t("transactions.debt_repay"),
+      label: t("transactions:transactions.debt_repay"),
       color: "var(--color-yellow-600)",
       sign: "- ",
     },
   };
   return (
     map[normalized] || {
-      label: t("transactionsModal.default_tx_name"),
+      label: t("transactions:transactionsModal.default_tx_name"),
       color: "var(--color-text-secondary)",
       sign: "",
     }
@@ -198,13 +198,13 @@ export const useTransactionDetails = ({
   // --- Mutations ---
   const { mutateAsync: deleteAll, isPending: isDeletingAll } = useMutation({
     mutationFn: deleteReceiptApi,
-    onError: () => toast.error(t("transactionsDataHook.alert_delete_error")),
+    onError: () => toast.error(t("transactions:transactionsDataHook.alert_delete_error")),
   });
 
   const { mutateAsync: deleteSingle, isPending: isDeletingSingle } =
     useMutation({
       mutationFn: deleteTransactionPhotoApi,
-      onError: () => toast.error(t("transactionsDataHook.alert_delete_error")),
+      onError: () => toast.error(t("transactions:transactionsDataHook.alert_delete_error")),
     });
 
   const handleDeleteCurrent = async () => {
@@ -214,7 +214,7 @@ export const useTransactionDetails = ({
       } else {
         await deleteAll(transaction.id);
       }
-      toast.success(t("transactionPage.delete_success"));
+      toast.success(t("legacy:transactionPage.delete_success"));
       queryClient.invalidateQueries({
         queryKey: ["transaction", transaction.id],
       });
@@ -227,7 +227,7 @@ export const useTransactionDetails = ({
   const handleDeleteAll = async () => {
     try {
       await deleteAll(transaction.id);
-      toast.success(t("transactionPage.delete_success"));
+      toast.success(t("legacy:transactionPage.delete_success"));
       queryClient.invalidateQueries({
         queryKey: ["transaction", transaction.id],
       });

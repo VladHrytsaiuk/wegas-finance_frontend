@@ -70,7 +70,7 @@ function ConfirmCloseModal({ onConfirm, onCloseModal }: ConfirmCloseProps) {
 
   return (
     <StyledConfirm>
-      <h3>{t("common.unsaved_changes_title", "Незбережені зміни")}</h3>
+      <h3>{t("common:common.unsaved_changes_title", "Незбережені зміни")}</h3>
       <p>
         {t(
           "common.unsaved_changes_message",
@@ -80,11 +80,11 @@ function ConfirmCloseModal({ onConfirm, onCloseModal }: ConfirmCloseProps) {
 
       <div>
         <StayButton onClick={onCloseModal}>
-          {t("common.stay", "Продовжити редагування")}
+          {t("common:common.stay", "Продовжити редагування")}
         </StayButton>
 
         <LeaveButton onClick={onConfirm}>
-          {t("common.leave", "Закрити та втратити дані")}
+          {t("common:common.leave", "Закрити та втратити дані")}
         </LeaveButton>
       </div>
     </StyledConfirm>

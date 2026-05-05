@@ -50,11 +50,11 @@ export default function WishlistItems() {
     handleClearAll,
   } = useWishlistFilters(groupItems, groups);
 
-  let groupName = t("wishlist.group_unknown", "Папка");
+  let groupName = t("shopping_wishlist:wishlist.group_unknown", "Папка");
   if (groupId === "virtual-my") {
-    groupName = t("wishlist.my_wishes", "Мої бажання");
+    groupName = t("shopping_wishlist:wishlist.my_wishes", "Мої бажання");
   } else if (groupId === "virtual-shared") {
-    groupName = t("wishlist.shared_wishes", "Спільні бажання");
+    groupName = t("shopping_wishlist:wishlist.shared_wishes", "Спільні бажання");
   } else {
     const group = groups.find((g) => g.id === groupId);
     if (group) groupName = group.name;
@@ -71,14 +71,14 @@ export default function WishlistItems() {
     <S.PageContainer onClick={() => setOpenMenuId(null)}>
       <S.HeaderSection>
         <S.BackButton onClick={() => navigate("/wishlist")}>
-          <HiArrowLeft size={18} /> {t("common.return", "Назад")}
+          <HiArrowLeft size={18} /> {t("common:common.return", "Назад")}
         </S.BackButton>
       </S.HeaderSection>
 
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("wishlist.search_placeholder", "Пошук бажань...")}
+        searchPlaceholder={t("shopping_wishlist:wishlist.search_placeholder", "Пошук бажань...")}
         filtersConfig={filtersConfig}
         filterValues={filters}
         onFilterChange={handleFilterChange}
@@ -90,7 +90,7 @@ export default function WishlistItems() {
         <Modal>
           <Modal.Open opens="create-wish">
             <Button variation="primary" icon={<HiPlus />}>
-              {t("wishlist.btn_add_item", "Додати")}
+              {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
             </Button>
           </Modal.Open>
           <Modal.Window name="create-wish">
@@ -131,13 +131,13 @@ export default function WishlistItems() {
             <HiGift />
           </S.EmptyIconWrapper>
           <h3>
-            {searchQuery ? t("common.no_results") : t("wishlist.empty_title")}
+            {searchQuery ? t("common:common.no_results") : t("shopping_wishlist:wishlist.empty_title")}
           </h3>
           {!searchQuery && (
             <Modal>
               <Modal.Open opens="create-wish-empty">
                 <Button variation="primary" icon={<HiPlus />}>
-                  {t("wishlist.btn_add_item", "Додати")}
+                  {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
                 </Button>
               </Modal.Open>
               <Modal.Window name="create-wish-empty">

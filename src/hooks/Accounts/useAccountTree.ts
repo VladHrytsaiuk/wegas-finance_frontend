@@ -64,7 +64,7 @@ export function useAccountTree({
       const user = users.find((u) => u.id === userId);
       const userName = user
         ? user.name
-        : t("accountsTable.owner_default_family");
+        : t("accounts:accountsTable.owner_default_family");
 
       const groupedByType: Record<string, any[]> = {
         card: [],
@@ -136,7 +136,7 @@ export function useAccountTree({
       // Додаємо вузли
       const cardNode = createTypeNode(
         "card",
-        t("accountsTable.type_card"),
+        t("accounts:accountsTable.type_card"),
         "HiCreditCard",
         "var(--color-brand-600)",
       );
@@ -144,7 +144,7 @@ export function useAccountTree({
 
       const cashNode = createTypeNode(
         "cash",
-        t("accountsTable.type_cash"),
+        t("accounts:accountsTable.type_cash"),
         "HiBanknotes",
         "var(--color-green-600)",
       );
@@ -152,7 +152,7 @@ export function useAccountTree({
 
       const savingsNode = createTypeNode(
         "savings",
-        t("accountsTable.type_savings"),
+        t("accounts:accountsTable.type_savings"),
         "HiCurrencyDollar",
         "var(--color-yellow-600)",
       );

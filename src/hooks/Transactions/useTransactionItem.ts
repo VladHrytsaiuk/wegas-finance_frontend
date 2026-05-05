@@ -67,7 +67,7 @@ export const useTransactionItem = ({
 
     if (isDebtTake) {
       // 🔥 Якщо це нарахування боргу, рахунок не потрібен
-      accountName = t("transactions.acc_status_debt", "Нарахування (Борг)");
+      accountName = t("transactions:transactions.acc_status_debt", "Нарахування (Борг)");
       isAccountDeleted = false; // Вимикаємо червоний колір "Видалено"
     } else {
       const hasDeletedAt =
@@ -77,7 +77,7 @@ export const useTransactionItem = ({
       accountName =
         activeAccount?.name ||
         nestedAccount?.name ||
-        t("common.deleted_account");
+        t("common:common.deleted_account");
     }
 
     const txCurrency =
@@ -104,7 +104,7 @@ export const useTransactionItem = ({
     const isIncoming = config.sign === "+ ";
 
     // --- 3. Дефолти контенту ---
-    let title = t("transactionsTable.default_category");
+    let title = t("transactions:transactionsTable.default_category");
     let subtitle: string | null = null;
     let iconColor = "#6b7280";
     let iconName = "HiQuestionMarkCircle";
@@ -112,7 +112,7 @@ export const useTransactionItem = ({
 
     // --- 4. Визначення заголовків та іконок ---
     if (isForgiveness) {
-      title = t("transactions.forgiven");
+      title = t("transactions:transactions.forgiven");
       iconName = "Handshake";
       iconColor = "#9ca3af";
       if (tx.counterparty?.name) subtitle = tx.counterparty.name;
@@ -124,10 +124,10 @@ export const useTransactionItem = ({
         targetAccount && txCurrency !== targetAccount?.currency;
 
       if (isMultiCurrency) {
-        title = t("transactions.currency_exchange");
+        title = t("transactions:transactions.currency_exchange");
         iconName = "HiArrowsRightLeft";
       } else {
-        title = t("transactionsTable.transfer_main_text");
+        title = t("transactions:transactionsTable.transfer_main_text");
         iconName = isIncoming ? "HiArrowLeft" : "HiArrowRight";
       }
       iconColor = config.color;
@@ -141,14 +141,14 @@ export const useTransactionItem = ({
       // 🔥 БОРГИ: Налаштовуємо іконки та кольори
       title =
         tx.counterparty?.name ||
-        (isIncoming ? t("transactions.debt_in") : t("transactions.debt_out"));
+        (isIncoming ? t("transactions:transactions.debt_in") : t("transactions:transactions.debt_out"));
 
       // Підзаголовок: Тип операції
       subtitle = isDebtTake
-        ? t("transactions.debt_take_label", "Взяв у борг")
+        ? t("transactions:transactions.debt_take_label", "Взяв у борг")
         : isIncoming
-          ? t("transactions.repay_in_label", "Повернення")
-          : t("transactions.give_label", "Видача");
+          ? t("transactions:transactions.repay_in_label", "Повернення")
+          : t("transactions:transactions.give_label", "Видача");
 
       // 🔥 Встановлюємо іконки "Вхід" / "Вихід"
       iconName = isIncoming ? "DebtIn" : "DebtOut";

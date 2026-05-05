@@ -60,7 +60,7 @@ export default function TransactionsModal(props: TransactionsModalProps) {
         <TableToolbar
           searchQuery={searchQuery}
           onSearchChange={actions.setSearchQuery}
-          searchPlaceholder={t("transactionsModal.search_placeholder")}
+          searchPlaceholder={t("transactions:transactionsModal.search_placeholder")}
           filtersConfig={filtersConfig}
           filterValues={filters}
           onFilterChange={actions.handleFilterChange}
@@ -77,12 +77,12 @@ export default function TransactionsModal(props: TransactionsModalProps) {
             <Spinner />
           </S.SpinnerContainer>
         ) : transactions.length === 0 ? (
-          <S.EmptyState>{t("transactionsModal.status_empty")}</S.EmptyState>
+          <S.EmptyState>{t("transactions:transactionsModal.status_empty")}</S.EmptyState>
         ) : (
           <>
             {isFetching && !isLoading && (
               <S.LoadingIndicator>
-                {t("transactionsModal.status_loading")}
+                {t("transactions:transactionsModal.status_loading")}
               </S.LoadingIndicator>
             )}
 

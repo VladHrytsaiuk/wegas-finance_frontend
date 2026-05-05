@@ -38,15 +38,15 @@ export const RecentTransactionsWidget = (props: Props) => {
     <S.WidgetCard>
       <S.Header>
         <S.TitleGroup>
-          <S.Title>{t("dashboard.recent_transactions")}</S.Title>
+          <S.Title>{t("dashboard:dashboard.recent_transactions")}</S.Title>
           <S.ViewAllLink onClick={handleNavigateToAll}>
-            {t("dashboard.view_all")} <HiArrowLongRight />
+            {t("dashboard:dashboard.view_all")} <HiArrowLongRight />
           </S.ViewAllLink>
         </S.TitleGroup>
 
         <WidgetControls
           mini={true}
-          currentLabel={localFilter.label || t("filters.period_label")}
+          currentLabel={localFilter.label || t("legacy:filters.period_label")}
           currentAccountIds={localFilter.accountIds || []}
           onFilterChange={handleFilterUpdate}
           variant="local"
@@ -76,7 +76,7 @@ export const RecentTransactionsWidget = (props: Props) => {
           {recentItems.length === 0 && (
             <S.EmptyState>
               <HiOutlineBanknotes size={32} />
-              <span>{t("dashboard.no_data")}</span>
+              <span>{t("dashboard:dashboard.no_data")}</span>
             </S.EmptyState>
           )}
         </S.TableList>

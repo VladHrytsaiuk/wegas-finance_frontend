@@ -33,8 +33,8 @@ export const useCounterpartyCategoryForm = ({
 
   // Computed
   const title = defaultValues.id
-    ? t("counterpartyCategoryForm.title_edit")
-    : t("counterpartyCategoryForm.title_new");
+    ? t("counterparties:counterpartyCategoryForm.title_edit")
+    : t("counterparties:counterpartyCategoryForm.title_new");
 
   // Handlers
   const submitHandler = (data: any) => {

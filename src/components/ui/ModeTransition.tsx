@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import {
   HiOutlineBanknotes,
   HiOutlinePresentationChartLine,
@@ -52,6 +53,7 @@ export function ModeTransition({
   isNavigating,
   targetMode,
 }: ModeTransitionProps) {
+  const { t } = useTranslation();
   const isFinance = targetMode === "finance";
   const [mounted, setMounted] = useState(false);
 
@@ -90,7 +92,7 @@ export function ModeTransition({
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.3 }}
           >
-            {isFinance ? "Фінанси" : "Інвестиції"}
+            {isFinance ? t("navigation:workspaces.finance") : t("navigation:workspaces.investments")}
           </Title>
         </Overlay>
       )}

@@ -31,7 +31,7 @@ export const useShopping = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shopping-lists"] });
     },
-    onError: () => toast.error(t("common.error_occurred", "Помилка створення")),
+    onError: () => toast.error(t("common:common.error_occurred", "Помилка створення")),
   });
 
   const updateList = useMutation({
@@ -45,16 +45,16 @@ export const useShopping = () => {
     mutationFn: deleteShoppingListApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shopping-lists"] });
-      toast.success(t("shopping.list_deleted", "Список видалено"));
+      toast.success(t("shopping_wishlist:shopping.list_deleted", "Список видалено"));
     },
-    onError: () => toast.error(t("common.error_occurred", "Помилка видалення")),
+    onError: () => toast.error(t("common:common.error_occurred", "Помилка видалення")),
   });
 
   const clearCompleted = useMutation({
     mutationFn: clearCompletedInListApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shopping-lists"] });
-      toast.success(t("shopping.cleared", "Очищено"));
+      toast.success(t("shopping_wishlist:shopping.cleared", "Очищено"));
     },
   });
 
@@ -65,7 +65,7 @@ export const useShopping = () => {
       queryClient.invalidateQueries({ queryKey: ["shopping-lists"] });
     },
     onError: () =>
-      toast.error(t("common.error_occurred", "Не вдалося додати пункт")),
+      toast.error(t("common:common.error_occurred", "Не вдалося додати пункт")),
   });
 
   const toggleItem = useMutation({

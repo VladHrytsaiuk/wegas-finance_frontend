@@ -246,7 +246,7 @@ function Dashboard() {
   const [globalFilter, setGlobalFilter] = useState<StatsFilter>({
     from: startOfMonth(new Date()).getTime(),
     to: endOfMonth(new Date()).getTime(),
-    label: t("dashboardPage.filter_period_label"),
+    label: t("dashboard:dashboardPage.filter_period_label"),
     accountIds: [],
   });
 
@@ -265,10 +265,10 @@ function Dashboard() {
   }, [myAccountIds]);
 
   useEffect(() => {
-    const name = user?.name || t("shared.user_default");
+    const name = user?.name || t("common:shared.user_default");
     setPageTitle(
-      t("dashboardPage.greetings", { name }),
-      t("dashboardPage.subtitle"),
+      t("dashboard:dashboardPage.greetings", { name }),
+      t("dashboard:dashboardPage.subtitle"),
     );
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, user, t]);
@@ -290,24 +290,24 @@ function Dashboard() {
             $active={isEditMode}
             title={
               isEditMode
-                ? t("dashboardPage.save_mode")
-                : t("dashboardPage.edit_mode")
+                ? t("dashboard:dashboardPage.save_mode")
+                : t("dashboard:dashboardPage.edit_mode")
             }
           >
             {isEditMode ? <HiCheck /> : <HiPencil />}
             <ButtonLabel>
               {isEditMode
-                ? t("dashboardPage.save_mode")
-                : t("dashboardPage.edit_mode")}
+                ? t("dashboard:dashboardPage.save_mode")
+                : t("dashboard:dashboardPage.edit_mode")}
             </ButtonLabel>
           </EditButton>
           {isEditMode && (
             <EditButton
               onClick={handleResetLayout}
-              title={t("dashboardPage.reset_layout")}
+              title={t("dashboard:dashboardPage.reset_layout")}
             >
               <HiXMark />
-              <ButtonLabel>{t("dashboardPage.reset_layout")}</ButtonLabel>
+              <ButtonLabel>{t("dashboard:dashboardPage.reset_layout")}</ButtonLabel>
             </EditButton>
           )}
         </div>
@@ -316,7 +316,7 @@ function Dashboard() {
           variant="global"
           hasChanges={isDiverged}
           currentLabel={
-            globalFilter.label || t("dashboardPage.filter_period_label")
+            globalFilter.label || t("dashboard:dashboardPage.filter_period_label")
           }
           currentAccountIds={globalFilter.accountIds}
           onFilterChange={handleGlobalUpdate}
@@ -345,7 +345,7 @@ function Dashboard() {
         <GridItem key="balance">
           <WidgetInnerContainer $isEditMode={isEditMode}>
             <BalanceCard
-              label={t("dashboard.total_balance")}
+              label={t("dashboard:dashboard.total_balance")}
               value={formatMoney(balance, currency, language)}
             />
             {isEditMode && <DragOverlay className="drag-overlay" />}
@@ -355,7 +355,7 @@ function Dashboard() {
         <GridItem key="income">
           <WidgetInnerContainer $isEditMode={isEditMode}>
             <IncomeCard
-              label={t("dashboard.income_period")}
+              label={t("dashboard:dashboard.income_period")}
               value={formatMoney(income, currency, language)}
             />
             {isEditMode && <DragOverlay className="drag-overlay" />}
@@ -365,7 +365,7 @@ function Dashboard() {
         <GridItem key="expense">
           <WidgetInnerContainer $isEditMode={isEditMode}>
             <ExpenseCard
-              label={t("dashboard.expense_period")}
+              label={t("dashboard:dashboard.expense_period")}
               value={formatMoney(expense, currency, language)}
             />
             {isEditMode && <DragOverlay className="drag-overlay" />}
@@ -394,7 +394,7 @@ function Dashboard() {
           <WidgetInnerContainer $isEditMode={isEditMode}>
             <TrendWidget
               type="expense"
-              title={t("dashboardPage.widget_trend_expenses")}
+              title={t("dashboard:dashboardPage.widget_trend_expenses")}
               color="#ef4444"
               globalFilter={globalFilter}
               onDiverge={handleLocalChange}
@@ -419,7 +419,7 @@ function Dashboard() {
             <TopListWidget
               type="expense"
               entity="category"
-              title={t("dashboardPage.widget_top_categories")}
+              title={t("dashboard:dashboardPage.widget_top_categories")}
               globalFilter={globalFilter}
               onDiverge={handleLocalChange}
             />
@@ -432,7 +432,7 @@ function Dashboard() {
             <TopListWidget
               type="expense"
               entity="counterparty"
-              title={t("dashboardPage.widget_top_shops")}
+              title={t("dashboard:dashboardPage.widget_top_shops")}
               globalFilter={globalFilter}
               onDiverge={handleLocalChange}
             />

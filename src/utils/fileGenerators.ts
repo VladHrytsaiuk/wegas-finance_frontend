@@ -10,7 +10,7 @@ const mapTransactionToRow = (tx: any, t: any) => {
   return {
     date: format(new Date(tx.date), "dd.MM.yyyy"),
     type: t(`exportMapping.type_${tx.type}`),
-    category: tx.category?.name || t("exportMapping.no_category"),
+    category: tx.category?.name || t("export_import:exportMapping.no_category"),
     amount: (tx.amount / 100).toFixed(2),
     currency: tx.account?.currency || "UAH",
     account: tx.account?.name || "-",
@@ -21,21 +21,21 @@ const mapTransactionToRow = (tx: any, t: any) => {
 
 export const generateXLSX = async (data: any[], fileName: string, t: any) => {
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet(t("exportPage.title"));
+  const worksheet = workbook.addWorksheet(t("export_import:exportPage.title"));
 
   worksheet.columns = [
-    { header: t("exportMapping.table_date"), key: "date", width: 12 },
-    { header: t("exportMapping.table_type"), key: "type", width: 10 },
-    { header: t("exportMapping.table_category"), key: "category", width: 20 },
-    { header: t("exportMapping.table_amount"), key: "amount", width: 12 },
-    { header: t("exportMapping.table_currency"), key: "currency", width: 8 },
-    { header: t("exportMapping.table_account"), key: "account", width: 15 },
+    { header: t("export_import:exportMapping.table_date"), key: "date", width: 12 },
+    { header: t("export_import:exportMapping.table_type"), key: "type", width: 10 },
+    { header: t("export_import:exportMapping.table_category"), key: "category", width: 20 },
+    { header: t("export_import:exportMapping.table_amount"), key: "amount", width: 12 },
+    { header: t("export_import:exportMapping.table_currency"), key: "currency", width: 8 },
+    { header: t("export_import:exportMapping.table_account"), key: "account", width: 15 },
     {
-      header: t("exportMapping.table_counterparty"),
+      header: t("export_import:exportMapping.table_counterparty"),
       key: "counterparty",
       width: 20,
     },
-    { header: t("exportMapping.table_note"), key: "note", width: 25 },
+    { header: t("export_import:exportMapping.table_note"), key: "note", width: 25 },
   ];
 
   data.forEach((item) => worksheet.addRow(mapTransactionToRow(item, t)));
@@ -52,14 +52,14 @@ export const generateCSV = (data: any[], fileName: string, t: any) => {
   if (mapped.length === 0) return;
 
   const headers = [
-    t("exportMapping.table_date"),
-    t("exportMapping.table_type"),
-    t("exportMapping.table_category"),
-    t("exportMapping.table_amount"),
-    t("exportMapping.table_currency"),
-    t("exportMapping.table_account"),
-    t("exportMapping.table_counterparty"),
-    t("exportMapping.table_note"),
+    t("export_import:exportMapping.table_date"),
+    t("export_import:exportMapping.table_type"),
+    t("export_import:exportMapping.table_category"),
+    t("export_import:exportMapping.table_amount"),
+    t("export_import:exportMapping.table_currency"),
+    t("export_import:exportMapping.table_account"),
+    t("export_import:exportMapping.table_counterparty"),
+    t("export_import:exportMapping.table_note"),
   ];
 
   const csvContent = [
@@ -84,11 +84,11 @@ export const generatePDF = (data: any[], fileName: string, t: any) => {
   doc.setFont("Roboto");
 
   doc.setFontSize(18);
-  doc.text(t("exportPage.report_header"), 14, 22);
+  doc.text(t("export_import:exportPage.report_header"), 14, 22);
 
   doc.setFontSize(10);
   doc.text(
-    t("exportPage.report_created_at", {
+    t("export_import:exportPage.report_created_at", {
       date: format(new Date(), "dd.MM.yyyy"),
     }),
     14,
@@ -110,12 +110,12 @@ export const generatePDF = (data: any[], fileName: string, t: any) => {
   autoTable(doc, {
     head: [
       [
-        t("exportMapping.table_date"),
-        t("exportMapping.table_category"),
-        t("exportMapping.table_amount"),
-        t("exportMapping.table_account"),
-        t("exportMapping.table_counterparty"),
-        t("exportMapping.table_note"),
+        t("export_import:exportMapping.table_date"),
+        t("export_import:exportMapping.table_category"),
+        t("export_import:exportMapping.table_amount"),
+        t("export_import:exportMapping.table_account"),
+        t("export_import:exportMapping.table_counterparty"),
+        t("export_import:exportMapping.table_note"),
       ],
     ],
     body: tableData,

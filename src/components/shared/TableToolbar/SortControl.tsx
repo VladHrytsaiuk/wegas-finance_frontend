@@ -24,7 +24,7 @@ export const SortControl = ({ options, value, onChange }: SortControlProps) => {
   );
 
   const currentOption = options.find((o) => o.value === value);
-  const label = currentOption ? currentOption.label : t("toolbar.sort_default");
+  const label = currentOption ? currentOption.label : t("legacy:toolbar.sort_default");
 
   return (
     <div ref={triggerRef}>
@@ -35,7 +35,7 @@ export const SortControl = ({ options, value, onChange }: SortControlProps) => {
         onClick={() => setIsOpen(!isOpen)}
       >
         <HiArrowsUpDown />
-        <S.SortLabelPrefix>{t("toolbar.sort_label_prefix")}</S.SortLabelPrefix>
+        <S.SortLabelPrefix>{t("legacy:toolbar.sort_label_prefix")}</S.SortLabelPrefix>
         <S.SortLabelValue>{label}</S.SortLabelValue>
       </S.FilterButton>
 

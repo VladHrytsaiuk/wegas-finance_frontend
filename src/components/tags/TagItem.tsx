@@ -26,7 +26,7 @@ export function TagItem({ tag, onDelete, isDeleting }: TagItemProps) {
       <Modal.Open opens={`delete-tag-${tag.id}`}>
         <DeleteButton
           // ➡️ ПЕРЕКЛАД ПІДКАЗКИ
-          title={t("tagItem.tooltip_delete")}
+          title={t("settings:tagItem.tooltip_delete")}
         >
           <HiTrash />
         </DeleteButton>
@@ -35,7 +35,7 @@ export function TagItem({ tag, onDelete, isDeleting }: TagItemProps) {
       <Modal.Window name={`delete-tag-${tag.id}`}>
         <ConfirmDelete
           // ➡️ ПЕРЕКЛАД ІМЕНІ РЕСУРСУ (З ІНТЕРПОЛЯЦІЄЮ)
-          resourceName={t("tagItem.resource_name_delete", { name: tag.name })}
+          resourceName={t("settings:tagItem.resource_name_delete", { name: tag.name })}
           onConfirm={() => onDelete(tag.id)}
           disabled={isDeleting}
         />

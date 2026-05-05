@@ -1,0 +1,151 @@
+{
+  "viewToggle": {
+    "grid_view": "Картки",
+    "table_view": "Таблиця"
+  },
+  "themeSwitcher": {
+    "dark_mode": "🌙 Темний режим",
+    "light_mode": "☀️ Світлий режим"
+  },
+  "ui": {
+    "select_placeholder_default": "Оберіть...",
+    "search_placeholder_default": "Пошук...",
+    "full_page_loading": "Завантаження фінансів...",
+    "status_not_found": "Нічого не знайдено",
+    "error_action": "Дія не вдалася",
+    "error_loading": "Завантаження не вдалося"
+  },
+  "pagination": {
+    "page_info": "Сторінка {{current}} з {{total}}",
+    "total_count_info": "(Всього {{count}})",
+    "tooltip_prev": "Попередня сторінка",
+    "tooltip_next": "Наступна сторінка",
+    "tooltip_first": "Перша сторінка"
+  },
+  "confirmDelete": {
+    "title_prefix": "Видалити",
+    "message_part1": "Ви впевнені, що хочете видалити",
+    "message_part2": "? Цю дію неможливо скасувати.",
+    "button_cancel": "Скасувати",
+    "button_delete": "Видалити",
+    "button_deleting": "Видалення..."
+  },
+  "colorIconPicker": {
+    "tooltip_change_color": "Змінити колір",
+    "icon_prefix": "Іконка"
+  },
+  "formValidation": {
+    "error_select_account": "Оберіть рахунок",
+    "error_enter_amount": "Введіть суму",
+    "error_select_target_account": "Оберіть рахунок отримувача",
+    "error_accounts_must_differ": "Рахунки мають відрізнятися",
+    "error_asset_name": "Введіть назву нового активу",
+    "error_date_required": "Будь ласка, оберіть дату"
+  },
+  "shared": {
+    "save_changes": "Зберегти зміни",
+    "create": "Створити",
+    "loading": "Завантаження...",
+    "not_found": "Нічого не знайдено",
+    "user_default": "Користувач",
+    "delete": "Видалити",
+    "edit": "Редагувати",
+    "not_specified": "Не вказано"
+  },
+  "common": {
+    "delete": "Видалити",
+    "edit": "Редагувати",
+    "transaction": "транзакцію",
+    "sender": "Відправник",
+    "recipient": "Отримувач",
+    "you": "Ви",
+    "current": "поточний",
+    "account": "Рахунок",
+    "deleted_account": "Видалений рахунок",
+    "merchant": "Продавець",
+    "category": "Категорія",
+    "received_from": "Отримано від",
+    "transferred_to": "Переказано на",
+    "close": "Закрити",
+    "return": "Повернутись",
+    "currency_suffix": "грн",
+    "today": "Сьогодні",
+    "yesterday": "Вчора",
+    "add": "Додати",
+    "cancel": "Скасувати",
+    "confirm_change": "Підтвердити зміни",
+    "create": "Створити",
+    "currency": "Валюта",
+    "current_goal": "Поточна ціль",
+    "error": "Помилка",
+    "error_delete": "Помилка видалення",
+    "error_occurred": "Виникла помилка",
+    "hide_from": "Приховати від",
+    "leave": "Покинути",
+    "loading": "Завантаження...",
+    "locale": "Мова",
+    "me": "Я",
+    "no_options": "Немає варіантів",
+    "no_results": "Нічого не знайдено",
+    "open_link": "Відкрити посилання",
+    "owner": "Власник",
+    "privacy": "Конфіденційність",
+    "processing": "Обробка...",
+    "retry": "Повторити",
+    "save": "Зберегти",
+    "saved_success": "Успішно збережено",
+    "saving": "Збереження...",
+    "sort_az": "А-Я",
+    "sort_newest": "Спочатку нові",
+    "sort_oldest": "Спочатку старі",
+    "stay": "Залишитись",
+    "success_delete": "Успішно видалено",
+    "synced": "Синхронізовано",
+    "try_adjusting_search": "Спробуйте змінити параметри пошуку",
+    "unsaved_changes_title": "Незбережені зміни"
+  },
+  "datePicker": {
+    "placeholder_day": "ДД",
+    "placeholder_month": "ММ",
+    "placeholder_year": "РРРР"
+  },
+  "timePicker": {
+    "hours_short": "Год",
+    "minutes_short": "Хв"
+  },
+  "validation": {
+    "invalid_amount": "Невірна сума",
+    "required": "Обов'язкове поле",
+    "same_account": "Рахунки мають бути різними"
+  },
+  "feedback": {
+    "success_title": "Відправлено!",
+    "success_message": "Дякуємо за твій фідбек.",
+    "modal_title": "Фідбек / Баг",
+    "placeholder_description": "Опиши проблему або ідею...",
+    "placeholder_contact": "Твій Telegram або Email (необов'язково)",
+    "drop_hint": "Відпустіть файл, щоб додати"
+  },
+  "system": {
+    "mobile_in_dev": "Мобільна версія в розробці",
+    "loading_finances": "Завантаження фінансів...",
+    "not_found_utility": "Лічильник не знайдено",
+    "mobile_desc": "Будь ласка, зайдіть з комп'ютера або планшета для повноцінної роботи з WeGaS Finance."
+  },
+  "feedback_modal": {
+    "title": "Фідбек / Баг",
+    "subtitle": "Знайшов помилку чи маєш ідею? Напиши нам.",
+    "hint": "(Можна вставити Ctrl+V або перетягнути фото)",
+    "type_idea": "Ідея",
+    "type_normal": "Звичайний",
+    "type_critical": "Критичний",
+    "placeholder_description": "Опишіть проблему або ідею...",
+    "add_screenshot": "Додати скріншот",
+    "placeholder_contact": "Твій Telegram або Email (необов'язково)",
+    "submit_button": "Відправити",
+    "sending": "Відправка...",
+    "max_images_error": "Максимум 5 зображень",
+    "images_count_added": "Додано лише {} файл(ів). Максимум 5.",
+    "drop_hint": "Відпустіть файл, щоб додати"
+  }
+}

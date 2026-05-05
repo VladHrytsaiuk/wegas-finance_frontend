@@ -102,22 +102,22 @@ function ConfirmDelete({
   return (
     <StyledConfirmDelete>
       <h3>
-        {t("confirmDelete.title_prefix")} {resourceName}
+        {t("common:confirmDelete.title_prefix")} {resourceName}
       </h3>
       <p>
-        {t("confirmDelete.message_part1")} {resourceName}
-        {t("confirmDelete.message_part2")}
+        {t("common:confirmDelete.message_part1")} {resourceName}
+        {t("common:confirmDelete.message_part2")}
       </p>
 
       <div>
         <CancelButton disabled={disabled} onClick={onCloseModal}>
-          {t("confirmDelete.button_cancel")}
+          {t("common:confirmDelete.button_cancel")}
         </CancelButton>
 
         <DangerButton disabled={disabled} onClick={handleDelete}>
           {disabled
-            ? t("confirmDelete.button_deleting")
-            : t("confirmDelete.button_delete")}
+            ? t("common:confirmDelete.button_deleting")
+            : t("common:confirmDelete.button_delete")}
         </DangerButton>
       </div>
     </StyledConfirmDelete>

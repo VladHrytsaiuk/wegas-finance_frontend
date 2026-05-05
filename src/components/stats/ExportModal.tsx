@@ -31,7 +31,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
     <S.Overlay onClick={onClose}>
       <S.ModalContainer onClick={(e) => e.stopPropagation()}>
         <S.Header>
-          <S.Title>{t("exportStatsModal.title")}</S.Title>
+          <S.Title>{t("export_import:exportStatsModal.title")}</S.Title>
           <S.CloseBtn onClick={onClose}>
             <HiXMark size={24} />
           </S.CloseBtn>
@@ -40,7 +40,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
         <S.Content>
           <div>
             <S.SectionLabel>
-              {t("exportStatsModal.section_params")}
+              {t("export_import:exportStatsModal.section_params")}
             </S.SectionLabel>
             <S.ControlRow>
               <div style={{ flex: 1, minWidth: "220px" }}>
@@ -64,7 +64,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
 
           <div>
             <S.SectionLabel>
-              {t("exportStatsModal.section_structure")}
+              {t("export_import:exportStatsModal.section_structure")}
             </S.SectionLabel>
             <S.OptionsGrid>
               <S.OptionCard $checked={options.summary}>
@@ -76,7 +76,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiChartPie />
                 </div>
-                <span>{t("exportStatsModal.option_summary")}</span>
+                <span>{t("export_import:exportStatsModal.option_summary")}</span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.topTransactions}>
@@ -88,7 +88,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiListBullet />
                 </div>
-                <span>{t("exportStatsModal.option_top_transactions")}</span>
+                <span>{t("export_import:exportStatsModal.option_top_transactions")}</span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.categories}>
@@ -100,7 +100,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiChartPie />
                 </div>
-                <span>{t("exportStatsModal.option_categories")}</span>
+                <span>{t("export_import:exportStatsModal.option_categories")}</span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.counterparties}>
@@ -112,7 +112,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiBuildingStorefront />
                 </div>
-                <span>{t("exportStatsModal.option_counterparties")}</span>
+                <span>{t("export_import:exportStatsModal.option_counterparties")}</span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.tags}>
@@ -124,7 +124,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiTag />
                 </div>
-                <span>{t("exportStatsModal.option_tags")}</span>
+                <span>{t("export_import:exportStatsModal.option_tags")}</span>
               </S.OptionCard>
             </S.OptionsGrid>
           </div>
@@ -133,7 +133,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
             <HiTableCells size={20} style={{ color: "#107930" }} />
             <span
               dangerouslySetInnerHTML={{
-                __html: t("exportStatsModal.format_info"),
+                __html: t("export_import:exportStatsModal.format_info"),
               }}
             />
           </S.FormatInfo>
@@ -141,7 +141,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
 
         <S.Footer>
           <Button variation="secondary" onClick={onClose} disabled={loading}>
-            {t("exportStatsModal.button_cancel")}
+            {t("export_import:exportStatsModal.button_cancel")}
           </Button>
           <Button
             variation="primary"
@@ -149,8 +149,8 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
             disabled={loading}
           >
             {loading
-              ? t("exportStatsModal.button_generating")
-              : t("exportStatsModal.button_download")}
+              ? t("export_import:exportStatsModal.button_generating")
+              : t("export_import:exportStatsModal.button_download")}
           </Button>
         </S.Footer>
       </S.ModalContainer>

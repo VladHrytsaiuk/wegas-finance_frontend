@@ -150,7 +150,7 @@ function Debts() {
         <S.SummaryRow>
           <S.SummaryCard $type="positive">
             <S.SummaryLabel>
-              <HiArrowUpRight size={18} /> {t("debtsPage.summary_owed_to_me")}
+              <HiArrowUpRight size={18} /> {t("goals_debts:debtsPage.summary_owed_to_me")}
             </S.SummaryLabel>
             {renderSummaryValues(
               totalsOwedToMe,
@@ -161,14 +161,14 @@ function Debts() {
 
           <S.SummaryCard $type="negative">
             <S.SummaryLabel>
-              <HiArrowDownLeft size={18} /> {t("debtsPage.summary_i_owe")}
+              <HiArrowDownLeft size={18} /> {t("goals_debts:debtsPage.summary_i_owe")}
             </S.SummaryLabel>
             {renderSummaryValues(totalsIOwe, "var(--color-red-600)", "0.00")}
           </S.SummaryCard>
 
           <S.SummaryCard $type="neutral">
             <S.SummaryLabel>
-              <HiWallet size={18} /> {t("debtsPage.summary_balance")}
+              <HiWallet size={18} /> {t("goals_debts:debtsPage.summary_balance")}
             </S.SummaryLabel>
             {renderNetBalance()}
           </S.SummaryCard>
@@ -179,7 +179,7 @@ function Debts() {
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
-        searchPlaceholder={t("counterpartiesPage.search_placeholder")}
+        searchPlaceholder={t("counterparties:counterpartiesPage.search_placeholder")}
         filtersConfig={filtersConfig}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -195,7 +195,7 @@ function Debts() {
           icon={<HiPlus />}
           style={{ whiteSpace: "nowrap" }}
         >
-          {t("transactionsPage.button_add")}
+          {t("transactions:transactionsPage.button_add")}
         </Button>
       </TableToolbar>
 
@@ -207,7 +207,7 @@ function Debts() {
             <S.SectionHeader>
               <S.SectionTitle>
                 <HiArrowUpRight color="var(--color-green-600)" />
-                {t("debtsPage.section_positive")}
+                {t("goals_debts:debtsPage.section_positive")}
               </S.SectionTitle>
               <S.Badge $type="green">{positive.length}</S.Badge>
             </S.SectionHeader>
@@ -224,7 +224,7 @@ function Debts() {
                     </S.Avatar>
                     <S.Info>
                       <S.Name>{cp.name}</S.Name>
-                      <S.RoleLabel>{t("transactions.debt_person")}</S.RoleLabel>
+                      <S.RoleLabel>{t("transactions:transactions.debt_person")}</S.RoleLabel>
                     </S.Info>
                     <S.ArrowIconWrapper className="arrow-icon">
                       <HiChevronRight size={20} />
@@ -257,7 +257,7 @@ function Debts() {
                           onOpenTransaction(cp.id, "give", "positive")
                         }
                       >
-                        <HiArrowUpRight /> {t("debtsPage.btn_lend")}
+                        <HiArrowUpRight /> {t("goals_debts:debtsPage.btn_lend")}
                       </Button>
 
                       {/* 🔥 3. Передаємо баланс при кліку на Повернути */}
@@ -279,7 +279,7 @@ function Debts() {
                           );
                         }}
                       >
-                        <HiArrowDownLeft /> {t("debtsPage.btn_repay_to_me")}
+                        <HiArrowDownLeft /> {t("goals_debts:debtsPage.btn_repay_to_me")}
                       </Button>
                     </S.ActionButtons>
                   </S.CardBody>
@@ -295,7 +295,7 @@ function Debts() {
             <S.SectionHeader>
               <S.SectionTitle>
                 <HiArrowDownLeft color="var(--color-red-600)" />
-                {t("debtsPage.section_negative")}
+                {t("goals_debts:debtsPage.section_negative")}
               </S.SectionTitle>
               <S.Badge $type="red">{negative.length}</S.Badge>
             </S.SectionHeader>
@@ -312,7 +312,7 @@ function Debts() {
                     </S.Avatar>
                     <S.Info>
                       <S.Name>{cp.name}</S.Name>
-                      <S.RoleLabel>{t("transactions.debt_person")}</S.RoleLabel>
+                      <S.RoleLabel>{t("transactions:transactions.debt_person")}</S.RoleLabel>
                     </S.Info>
                     <S.ArrowIconWrapper className="arrow-icon">
                       <HiChevronRight size={20} />
@@ -347,7 +347,7 @@ function Debts() {
                           onOpenTransaction(cp.id, "give", "negative")
                         }
                       >
-                        <HiArrowDownLeft /> {t("debtsPage.btn_borrow")}
+                        <HiArrowDownLeft /> {t("goals_debts:debtsPage.btn_borrow")}
                       </Button>
 
                       {/* 🔥 3. Передаємо баланс при кліку на Повернути борг */}
@@ -367,7 +367,7 @@ function Debts() {
                           );
                         }}
                       >
-                        <HiArrowUpRight /> {t("debtsPage.btn_repay_my_debt")}
+                        <HiArrowUpRight /> {t("goals_debts:debtsPage.btn_repay_my_debt")}
                       </Button>
                     </S.ActionButtons>
                   </S.CardBody>
@@ -388,8 +388,8 @@ function Debts() {
               <HiWallet />
             </S.EmptyIconWrapper>
             <div>
-              <h3>{t("debtsPage.empty_title")}</h3>
-              <p>{t("debtsPage.empty_desc")}</p>
+              <h3>{t("goals_debts:debtsPage.empty_title")}</h3>
+              <p>{t("goals_debts:debtsPage.empty_desc")}</p>
             </div>
           </S.EmptyState>
         )}

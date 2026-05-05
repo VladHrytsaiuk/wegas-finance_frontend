@@ -74,18 +74,18 @@ function ConfirmUnlinkGoal({
           size={28}
           style={{ color: "var(--color-warning)" }}
         />
-        {t("accountForm.unlink_warning_title", "Зміна типу рахунку")}
+        {t("accounts:accountForm.unlink_warning_title", "Зміна типу рахунку")}
       </h3>
       <p>
         {t(
           "accountForm.unlink_warning_message",
-          `Цей рахунок зараз прив'язаний до цілі "${goalName || t("common.current_goal", "поточної цілі")}". Якщо ви зміните тип на інший, він буде від'єднаний, і її прогрес зменшиться. Ви впевнені?`,
+          `Цей рахунок зараз прив'язаний до цілі "${goalName || t("common:common.current_goal", "поточної цілі")}". Якщо ви зміните тип на інший, він буде від'єднаний, і її прогрес зменшиться. Ви впевнені?`,
         )}
       </p>
 
       <ActionButtons>
         <Button variation="secondary" onClick={onCloseModal} type="button">
-          {t("common.cancel", "Скасувати")}
+          {t("common:common.cancel", "Скасувати")}
         </Button>
         <WarningButton
           type="button"
@@ -94,7 +94,7 @@ function ConfirmUnlinkGoal({
             onCloseModal?.();
           }}
         >
-          {t("common.confirm_change", "Так, змінити тип")}
+          {t("common:common.confirm_change", "Так, змінити тип")}
         </WarningButton>
       </ActionButtons>
     </StyledConfirm>

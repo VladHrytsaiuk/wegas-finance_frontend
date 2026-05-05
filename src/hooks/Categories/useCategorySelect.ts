@@ -29,7 +29,7 @@ export function useCategorySelect({
   const [searchQuery, setSearchQuery] = useState("");
 
   const finalPlaceholder =
-    placeholder || t("categorySelect.placeholder_default");
+    placeholder || t("categories:categorySelect.placeholder_default");
 
   const selectedCategory = useMemo(
     () => categories.find((c) => c.id === value),

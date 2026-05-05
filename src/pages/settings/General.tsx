@@ -30,20 +30,20 @@ function General() {
   } = state;
 
   if (isLoading) {
-    return <S.Container>{t("shared.loading")}</S.Container>;
+    return <S.Container>{t("common:shared.loading")}</S.Container>;
   }
 
   return (
     <S.Container>
-      <S.SectionTitle>{t("settingsPage.title")}</S.SectionTitle>
+      <S.SectionTitle>{t("settings:settingsPage.title")}</S.SectionTitle>
 
       {/* Тема */}
       <S.FormGroup>
         <S.SettingRow>
           <S.Label>
-            <S.LabelText>{t("settingsPage.theme_label")}</S.LabelText>
+            <S.LabelText>{t("settings:settingsPage.theme_label")}</S.LabelText>
             <S.LabelDescription>
-              {t("settingsPage.theme_description")}
+              {t("settings:settingsPage.theme_description")}
             </S.LabelDescription>
           </S.Label>
           <S.SwitchButton
@@ -56,10 +56,10 @@ function General() {
 
       {/* Мова */}
       <S.FormGroup>
-        <label>{t("settingsPage.language_label")}</label>
+        <label>{t("settings:settingsPage.language_label")}</label>
         <BaseSelect
           triggerLabel={getTriggerLabel(languageOptions, localLanguage)}
-          placeholder={t("ui.select_placeholder_default")}
+          placeholder={t("common:ui.select_placeholder_default")}
         >
           {languageOptions.map((opt) => (
             <S.OptionItem
@@ -80,10 +80,10 @@ function General() {
 
       {/* Валюта */}
       <S.FormGroup>
-        <label htmlFor="currency">{t("settingsPage.currency_label")}</label>
+        <label htmlFor="currency">{t("settings:settingsPage.currency_label")}</label>
         <BaseSelect
           triggerLabel={getTriggerLabel(currencyOptions, localCurrency)}
-          placeholder={t("ui.select_placeholder_default")}
+          placeholder={t("common:ui.select_placeholder_default")}
         >
           {currencyOptions.map((opt) => (
             <S.OptionItem
@@ -100,21 +100,21 @@ function General() {
             </S.OptionItem>
           ))}
         </BaseSelect>
-        <S.HelperText>{t("settingsPage.currency_helper")}</S.HelperText>
+        <S.HelperText>{t("settings:settingsPage.currency_helper")}</S.HelperText>
       </S.FormGroup>
 
       <div style={{ marginTop: "2rem" }}>
         <Button variation="primary" onClick={actions.handleSave}>
-          {t("settingsPage.save_button")}
+          {t("settings:settingsPage.save_button")}
         </Button>
       </div>
 
       <S.DevZone>
         <S.SectionTitle style={{ fontSize: "1.1rem", marginTop: "3rem" }}>
-          {t("settingsPage.dev_zone_title")}
+          {t("settings:settingsPage.dev_zone_title")}
         </S.SectionTitle>
         <S.DevZoneDescription>
-          {t("settingsPage.dev_zone_description")}
+          {t("settings:settingsPage.dev_zone_description")}
         </S.DevZoneDescription>
         <Button
           variation="secondary"
@@ -126,8 +126,8 @@ function General() {
           }}
         >
           {isSeeding
-            ? t("settingsPage.dev_zone_seeding")
-            : t("settingsPage.dev_zone_button")}
+            ? t("settings:settingsPage.dev_zone_seeding")
+            : t("settings:settingsPage.dev_zone_button")}
         </Button>
       </S.DevZone>
     </S.Container>

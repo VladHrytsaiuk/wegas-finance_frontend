@@ -55,8 +55,8 @@ export default function UtilityAnalyticsPage() {
       </BackButton>
 
       <Header>
-        <h1>Аналітика витрат</h1>
-        {hasData && <p>Динаміка комунальних платежів за останні 12 місяців</p>}
+        <h1>{t("stats_utility:utility.analytics_title")}</h1>
+        {hasData && <p>{t("stats_utility:utility.analytics_subtitle")}</p>}
       </Header>
 
       {!hasData ? (
@@ -69,11 +69,11 @@ export default function UtilityAnalyticsPage() {
         <>
           <SummaryCards>
             <Card>
-              <CardTitle>Всього за рік</CardTitle>
+              <CardTitle>{t("stats_utility:utility.total_year")}</CardTitle>
               <CardValue>{formatMoney(totalYearCost * 100, "UAH")}</CardValue>
             </Card>
             <Card>
-              <CardTitle>Середній платіж / міс</CardTitle>
+              <CardTitle>{t("stats_utility:utility.average_monthly")}</CardTitle>
               {/* Передаємо проп замість інлайн стилю */}
               <CardValue $variant="neutral">
                 {formatMoney(avgMonthly * 100, "UAH")}

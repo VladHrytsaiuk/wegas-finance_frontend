@@ -1,0 +1,121 @@
+{
+  "settingsPage": {
+    "title": "Загальні налаштування",
+    "save_button": "Зберегти зміни",
+    "currency_label": "Основна валюта",
+    "currency_helper": "Ця валюта буде використовуватися за замовчуванням для відображення загального балансу.",
+    "language_label": "Мова інтерфейсу",
+    "theme_label": "Темна тема",
+    "theme_description": "Увімкнути темний режим інтерфейсу. Застосовується миттєво.",
+    "toast_loading": "Збереження налаштувань...",
+    "toast_success": "Налаштування успішно збережено! 🎉",
+    "toast_error": "Помилка при збереженні 😕",
+    "dev_zone_title": "Зона розробника 🛠️",
+    "dev_zone_description": "Використовуйте цю кнопку, щоб наповнити базу тестовими даними (Рахунки + Транзакції) після очищення бази.",
+    "dev_zone_button": "🎲 Згенерувати тестові дані",
+    "dev_zone_seeding": "Заповнення..."
+  },
+  "profilePage": {
+    "title_profile": "Особисті дані",
+    "title_change_password": "Зміна пароля",
+    "label_name": "Ваше ім'я",
+    "label_email": "Email",
+    "button_update_profile": "Зберегти зміни",
+    "button_change_password": "Змінити пароль",
+    "alert_profile_success": "Профіль оновлено",
+    "alert_profile_error": "Помилка оновлення.",
+    "pass_label_old": "Старий пароль",
+    "pass_label_new": "Новий пароль",
+    "pass_label_confirm": "Повторіть",
+    "pass_button_saving": "Змінюємо...",
+    "pass_button_save": "Змінити пароль",
+    "pass_button_cancel": "Скасувати",
+    "pass_alert_success": "Пароль успішно змінено",
+    "pass_alert_error": "Помилка зміни пароля",
+    "pass_error_mismatch": "Нові паролі не співпадають",
+    "pass_error_short": "Пароль занадто короткий",
+    "mono_title": "Інтеграція Monobank"
+  },
+  "settingsLayout": {
+    "header": "Налаштування",
+    "menu_general": "Загальні",
+    "menu_profile": "Профіль",
+    "menu_users": "Команда",
+    "menu_categories": "Категорії",
+    "menu_counterparties": "Контрагенти",
+    "menu_tags": "Теги",
+    "menu_export": "Експорт",
+    "menu_logout": "Вихід"
+  },
+  "tagsPage": {
+    "title": "Теги (Мітки)",
+    "button_create_tag": "Створити тег",
+    "search_placeholder": "Пошук тегів...",
+    "sort_default": "За замовчуванням",
+    "sort_name_asc": "Назва (А-Я)",
+    "sort_name_desc": "Назва (Я-А)",
+    "status_empty": "Нічого не знайдено.",
+    "modal_create_title": "Новий тег",
+    "alert_create_success": "Тег створено",
+    "alert_create_error": "Помилка створення",
+    "alert_delete_success": "Тег видалено",
+    "alert_delete_error": "Помилка видалення"
+  },
+  "usersPage": {
+    "title": "Команда Сім'ї",
+    "button_add_user": "Додати учасника",
+    "modal_add_title": "Новий учасник",
+    "modal_edit_title": "Редагувати учасника",
+    "alert_add_success": "Учасника додано!",
+    "alert_add_error": "Помилка додавання",
+    "alert_update_success": "Дані оновлено!",
+    "alert_update_error": "Помилка оновлення",
+    "alert_delete_success": "Учасника видалено",
+    "alert_delete_error": "Помилка видалення",
+    "resource_user": "користувача"
+  },
+  "tagForm": {
+    "label_name": "Назва тегу",
+    "placeholder_name": "#Відпустка",
+    "label_color": "Оберіть колір",
+    "button_cancel": "Скасувати",
+    "button_add": "Додати тег"
+  },
+  "tagItem": {
+    "tooltip_delete": "Видалити",
+    "resource_name_delete": "тег \"{{name}}\""
+  },
+  "tagSelect": {
+    "placeholder_default": "Додати теги...",
+    "search_placeholder": "Пошук тегу...",
+    "status_empty": "Немає тегів",
+    "create_button_default": "Створити",
+    "create_button_pending": "Створення...",
+    "create_button_with_name": "Створити \"{{name}}\""
+  },
+  "userCard": {
+    "tooltip_edit": "Редагувати",
+    "tooltip_delete": "Видалити",
+    "default_name": "Користувач"
+  },
+  "userForm": {
+    "label_name": "Ім'я",
+    "placeholder_name": "Ім'я учасника",
+    "label_email": "Email",
+    "label_password": "Пароль",
+    "label_new_password": "Новий пароль (необов'язково)",
+    "placeholder_password_default": "••••",
+    "label_role": "Роль",
+    "button_cancel": "Скасувати",
+    "button_save": "Зберегти",
+    "button_add": "Додати"
+  },
+  "userRoles": {
+    "admin_label": "Адміністратор",
+    "admin_desc": "Повний контроль: керування користувачами, рахунками та структурою.",
+    "member_label": "Учасник",
+    "member_desc": "Лише перегляд транзакцій та звітів.",
+    "child_label": "Дитина",
+    "child_desc": "Може переглядати та додавати транзакції."
+  }
+}

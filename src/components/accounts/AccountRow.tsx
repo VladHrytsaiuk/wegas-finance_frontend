@@ -137,7 +137,7 @@ export function AccountRow({
                   fontFamily: "monospace",
                 }}
               >
-                {t("accountsTable.card_placeholder", {
+                {t("accounts:accountsTable.card_placeholder", {
                   last_digits: acc.card_number,
                 })}
               </div>
@@ -222,7 +222,7 @@ export function AccountRow({
                     state={{ background: location }}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <HiPencil size={16} /> {t("shared.edit", "Редагувати")}
+                    <HiPencil size={16} /> {t("common:shared.edit", "Редагувати")}
                   </S.DropdownItem>
                   <S.DropdownItem
                     as="button"
@@ -233,7 +233,7 @@ export function AccountRow({
                       openDeleteConfirm("delete-confirm");
                     }}
                   >
-                    <HiTrash size={16} /> {t("shared.delete", "Видалити")}
+                    <HiTrash size={16} /> {t("common:shared.delete", "Видалити")}
                   </S.DropdownItem>
                 </S.DropdownMenu>
               )}

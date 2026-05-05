@@ -35,7 +35,7 @@ export const ItemRow = memo(
 
         {/* Назва */}
         <S.TableInput
-          placeholder={t("itemsTable.placeholder_name")}
+          placeholder={t("transactions:itemsTable.placeholder_name")}
           value={item.name}
           onChange={(e) => handleUpdateName(e.target.value)}
           autoFocus={!item.name}
@@ -48,7 +48,7 @@ export const ItemRow = memo(
             value={item.categoryId}
             onChange={handleManualCategoryChange}
             dropdownWidth="300px"
-            placeholder={t("categorySelect.placeholder_default")}
+            placeholder={t("categories:categorySelect.placeholder_default")}
           />
         </div>
 
@@ -78,7 +78,7 @@ export const ItemRow = memo(
 
         {/* Комент */}
         <S.TableInput
-          placeholder={t("itemsTable.placeholder_comment")}
+          placeholder={t("transactions:itemsTable.placeholder_comment")}
           value={item.comment || ""}
           onChange={(e) => handleUpdateComment(e.target.value)}
           style={{ fontStyle: "italic", color: "var(--color-text-secondary)" }}
@@ -89,7 +89,7 @@ export const ItemRow = memo(
           <S.DeleteButton
             type="button"
             onClick={handleRemove}
-            title={t("common.delete")}
+            title={t("common:common.delete")}
             tabIndex={-1}
           >
             <HiTrash size={16} />

@@ -1,0 +1,43 @@
+{
+  "statisticsPage": {
+    "title": "Detailed Statistics",
+    "subtitle": "Analyze your finances deeper",
+    "filter_period": "Period",
+    "tab_categories": "Categories",
+    "tab_counterparties": "Shops",
+    "tab_tags": "Tags",
+    "trend_title_income": "Trend (Income)",
+    "trend_title_expense": "Trend (Expense)",
+    "table_header_name": "Name",
+    "table_header_percent": "Percentage",
+    "table_header_amount": "Amount",
+    "table_no_data": "No data available",
+    "table_unnamed": "Unnamed"
+  },
+  "utilityPage": {
+    "empty_title": "No services found",
+    "empty_desc": "Add your first meter or utility service to start tracking expenses.",
+    "add_btn": "Add Utility",
+    "analytics_btn": "View Analytics",
+    "title": "Utilities"
+  },
+  "utility": {
+    "analytics_title": "Cost Analytics",
+    "analytics_subtitle": "Utility payment dynamics over the last 12 months",
+    "total_year": "Total for year",
+    "average_monthly": "Average per month",
+    "table_date": "Date",
+    "table_reading": "Reading",
+    "table_consumed": "Consumed",
+    "table_rate": "Rate",
+    "table_amount": "Amount",
+    "table_status": "Status",
+    "delete_error_title": "Cannot delete",
+    "not_found": "Utility not found",
+    "current_debt": "Current Debt",
+    "unpaid_desc": "For unpaid readings",
+    "last_reading": "Last Reading",
+    "actual_rate": "Actual Rate",
+    "per_unit": "per 1"
+  }
+}

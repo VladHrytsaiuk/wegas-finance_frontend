@@ -78,7 +78,7 @@ export function CategorySelect(props: CategorySelectProps) {
             </S.SearchIconPosition>
             <S.SearchInput
               autoFocus
-              placeholder={t("categorySelect.search_placeholder")}
+              placeholder={t("categories:categorySelect.search_placeholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={(e) => e.stopPropagation()}
@@ -98,7 +98,7 @@ export function CategorySelect(props: CategorySelectProps) {
               defaultExpandedIds={expandedIds}
             />
           ) : (
-            <S.EmptyState>{t("categorySelect.status_not_found")}</S.EmptyState>
+            <S.EmptyState>{t("categories:categorySelect.status_not_found")}</S.EmptyState>
           )}
         </S.ScrollArea>
       </S.DropdownContentWrapper>

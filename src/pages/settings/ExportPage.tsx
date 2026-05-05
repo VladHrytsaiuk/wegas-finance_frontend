@@ -32,8 +32,8 @@ export default function ExportPage() {
     <S.PageContainer>
       <S.Header>
         <S.HeaderTitle>
-          <h1>{t("exportPage.title")}</h1>
-          <p>{t("exportPage.subtitle")}</p>
+          <h1>{t("export_import:exportPage.title")}</h1>
+          <p>{t("export_import:exportPage.subtitle")}</p>
         </S.HeaderTitle>
         <Button
           size="medium"
@@ -42,8 +42,8 @@ export default function ExportPage() {
           icon={<HiArrowDownTray />}
         >
           {loading
-            ? t("exportPage.button_processing")
-            : t("exportPage.button_download")}
+            ? t("export_import:exportPage.button_processing")
+            : t("export_import:exportPage.button_download")}
         </Button>
       </S.Header>
 
@@ -52,19 +52,19 @@ export default function ExportPage() {
           $active={activeTab === "transactions"}
           onClick={() => actions.setActiveTab("transactions")}
         >
-          <HiListBullet /> {t("exportPage.tab_transactions")}
+          <HiListBullet /> {t("export_import:exportPage.tab_transactions")}
         </S.TabButton>
         <S.TabButton
           $active={activeTab === "stats"}
           onClick={() => actions.setActiveTab("stats")}
         >
-          <HiChartPie /> {t("exportPage.tab_stats")}
+          <HiChartPie /> {t("export_import:exportPage.tab_stats")}
         </S.TabButton>
       </S.TabsContainer>
 
       <S.ControlPanel>
         <div>
-          <S.Label>{t("exportPage.section_params")}</S.Label>
+          <S.Label>{t("export_import:exportPage.section_params")}</S.Label>
           <S.ControlRow>
             <S.DateRangeWrapper>
               <DateRangePicker
@@ -94,7 +94,7 @@ export default function ExportPage() {
         {activeTab === "transactions" ? (
           <>
             <div>
-              <S.Label>{t("exportPage.section_filters")}</S.Label>
+              <S.Label>{t("export_import:exportPage.section_filters")}</S.Label>
               <S.ControlRow>
                 <MultiSelectFilter
                   config={filterConfigs[0]}
@@ -126,7 +126,7 @@ export default function ExportPage() {
             </div>
 
             <S.FormatSection>
-              <S.Label>{t("exportPage.section_format")}</S.Label>
+              <S.Label>{t("export_import:exportPage.section_format")}</S.Label>
               <S.ControlRow>
                 <S.FormatButton
                   $active={transFormat === "xlsx"}
@@ -152,7 +152,7 @@ export default function ExportPage() {
         ) : (
           <>
             <div>
-              <S.Label>{t("exportPage.section_structure")}</S.Label>
+              <S.Label>{t("export_import:exportPage.section_structure")}</S.Label>
               <S.OptionsGrid>
                 <S.OptionCard $checked={statsOptions.summary}>
                   <input
@@ -163,7 +163,7 @@ export default function ExportPage() {
                   <div className="icon">
                     <HiChartPie />
                   </div>
-                  <span>{t("exportStatsModal.option_summary")}</span>
+                  <span>{t("export_import:exportStatsModal.option_summary")}</span>
                 </S.OptionCard>
 
                 <S.OptionCard $checked={statsOptions.categories}>
@@ -175,7 +175,7 @@ export default function ExportPage() {
                   <div className="icon">
                     <HiChartPie />
                   </div>
-                  <span>{t("exportStatsModal.option_categories")}</span>
+                  <span>{t("export_import:exportStatsModal.option_categories")}</span>
                 </S.OptionCard>
 
                 <S.OptionCard $checked={statsOptions.topTransactions}>
@@ -189,7 +189,7 @@ export default function ExportPage() {
                   <div className="icon">
                     <HiListBullet />
                   </div>
-                  <span>{t("exportPage.option_top_15")}</span>
+                  <span>{t("export_import:exportPage.option_top_15")}</span>
                 </S.OptionCard>
 
                 <S.OptionCard $checked={statsOptions.counterparties}>
@@ -201,7 +201,7 @@ export default function ExportPage() {
                   <div className="icon">
                     <HiBuildingStorefront />
                   </div>
-                  <span>{t("exportStatsModal.option_counterparties")}</span>
+                  <span>{t("export_import:exportStatsModal.option_counterparties")}</span>
                 </S.OptionCard>
 
                 <S.OptionCard $checked={statsOptions.tags}>
@@ -213,13 +213,13 @@ export default function ExportPage() {
                   <div className="icon">
                     <HiTag />
                   </div>
-                  <span>{t("exportStatsModal.option_tags")}</span>
+                  <span>{t("export_import:exportStatsModal.option_tags")}</span>
                 </S.OptionCard>
               </S.OptionsGrid>
             </div>
 
             <S.StatsInfo
-              dangerouslySetInnerHTML={{ __html: t("exportPage.stats_info") }}
+              dangerouslySetInnerHTML={{ __html: t("export_import:exportPage.stats_info") }}
             />
           </>
         )}

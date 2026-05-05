@@ -54,12 +54,12 @@ export const ItemsTable = ({
     <S.ItemsContainer>
       <S.ItemsHeader>
         <S.ItemsTitle>
-          {t("itemsTable.title_details")}
+          {t("transactions:itemsTable.title_details")}
           <S.CloseTableButton
             type="button"
             // 👇 ТУТ ВИКОРИСТОВУЄМО НОВУ ФУНКЦІЮ
             onClick={handleCloseAttempt}
-            title={t("common.close")}
+            title={t("common:common.close")}
           >
             <HiXMark />
           </S.CloseTableButton>
@@ -71,7 +71,7 @@ export const ItemsTable = ({
           type="button"
           onClick={actions.addItem}
         >
-          <HiPlus /> {t("itemsTable.button_add")}
+          <HiPlus /> {t("transactions:itemsTable.button_add")}
         </Button>
       </S.ItemsHeader>
 
@@ -79,12 +79,12 @@ export const ItemsTable = ({
         <S.TableInnerContent>
           <S.TableHeaderRow>
             <S.ColCenter>#</S.ColCenter>
-            <div>{t("itemsTable.header_item_name")}</div>
-            <div>{t("itemsTable.header_category")}</div>
-            <S.ColRight>{t("itemsTable.header_quantity")}</S.ColRight>
-            <S.ColRight>{t("itemsTable.header_price")}</S.ColRight>
-            <S.ColRight>{t("itemsTable.header_amount")}</S.ColRight>
-            <div>{t("itemsTable.header_note")}</div>
+            <div>{t("transactions:itemsTable.header_item_name")}</div>
+            <div>{t("transactions:itemsTable.header_category")}</div>
+            <S.ColRight>{t("transactions:itemsTable.header_quantity")}</S.ColRight>
+            <S.ColRight>{t("transactions:itemsTable.header_price")}</S.ColRight>
+            <S.ColRight>{t("transactions:itemsTable.header_amount")}</S.ColRight>
+            <div>{t("transactions:itemsTable.header_note")}</div>
             <div></div>
           </S.TableHeaderRow>
 
@@ -99,7 +99,7 @@ export const ItemsTable = ({
               />
             ))
           ) : (
-            <S.EmptyState>{t("itemsTable.status_empty")}</S.EmptyState>
+            <S.EmptyState>{t("transactions:itemsTable.status_empty")}</S.EmptyState>
           )}
         </S.TableInnerContent>
       </S.TableScrollWrapper>
@@ -113,7 +113,7 @@ export const ItemsTable = ({
             textTransform: "uppercase",
           }}
         >
-          {t("itemsTable.footer_total")}
+          {t("transactions:itemsTable.footer_total")}
         </span>
         <S.TotalAmount>
           {formatMoney(itemsTotal, displayCurrency, language)}

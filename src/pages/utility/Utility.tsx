@@ -54,7 +54,7 @@ function UtilityContent() {
   // Встановлення глобального заголовка
   useEffect(() => {
     setPageTitle(
-      t("utilityPage.title", "Комунальні послуги"),
+      t("stats_utility:utilityPage.title", "Комунальні послуги"),
       `Додайте свій лічильник`,
     );
     return () => resetPageTitle();
@@ -98,7 +98,7 @@ function UtilityContent() {
           icon={<HiChartBar />}
           onClick={() => navigate("analytics")}
         >
-          {t("utilityPage.analytics_btn", "Аналітика")}
+          {t("stats_utility:utilityPage.analytics_btn", "Аналітика")}
         </Button>
         <Button
           variation="primary"
@@ -109,7 +109,7 @@ function UtilityContent() {
             open("create-meter");
           }}
         >
-          {t("utilityPage.add_btn", "Додати послугу")}
+          {t("stats_utility:utilityPage.add_btn", "Додати послугу")}
         </Button>
       </TableToolbar>
 
@@ -147,7 +147,7 @@ function UtilityContent() {
             <HiCube />
           </S.EmptyIconWrapper>
           <div>
-            <h3>{t("utilityPage.empty_title", "Послуг не знайдено")}</h3>
+            <h3>{t("stats_utility:utilityPage.empty_title", "Послуг не знайдено")}</h3>
             <p>
               {t(
                 "utilityPage.empty_desc",

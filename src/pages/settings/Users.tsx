@@ -18,11 +18,11 @@ function Users() {
   return (
     <Modal>
       <S.HeaderRow>
-        <S.SectionTitle>{t("usersPage.title")}</S.SectionTitle>
+        <S.SectionTitle>{t("settings:usersPage.title")}</S.SectionTitle>
         {canManageTeam && (
           <Modal.Open opens="add-user">
             <Button icon={<HiOutlineUserPlus size="medium" />}>
-              {t("usersPage.button_add_user")}
+              {t("settings:usersPage.button_add_user")}
             </Button>
           </Modal.Open>
         )}
@@ -42,7 +42,7 @@ function Users() {
             {/* Edit User Modal */}
             <Modal.Window name={`edit-user-${user.id}`}>
               <S.ModalContent>
-                <S.ModalTitle>{t("usersPage.modal_edit_title")}</S.ModalTitle>
+                <S.ModalTitle>{t("settings:usersPage.modal_edit_title")}</S.ModalTitle>
                 <UserForm
                   initialData={user}
                   onSubmit={(data) => actions.handleUpdate(user.id, data)}
@@ -54,7 +54,7 @@ function Users() {
             {/* Delete User Modal */}
             <Modal.Window name={`delete-user-${user.id}`}>
               <ConfirmDelete
-                resourceName={`${t("usersPage.resource_user")} ${user.name}`}
+                resourceName={`${t("settings:usersPage.resource_user")} ${user.name}`}
                 onConfirm={() => actions.handleDelete(user.id)}
                 disabled={isDeleting}
               />
@@ -66,7 +66,7 @@ function Users() {
       {/* Add User Modal */}
       <Modal.Window name="add-user">
         <S.ModalContent>
-          <S.ModalTitle>{t("usersPage.modal_add_title")}</S.ModalTitle>
+          <S.ModalTitle>{t("settings:usersPage.modal_add_title")}</S.ModalTitle>
           <UserForm onSubmit={actions.addUser} isLoading={isAdding} />
         </S.ModalContent>
       </Modal.Window>

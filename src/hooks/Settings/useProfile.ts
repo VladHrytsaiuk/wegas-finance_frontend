@@ -34,7 +34,7 @@ export const useProfileForm = () => {
   const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
     mutationFn: updateProfileApi,
     onSuccess: (data) => {
-      toast.success(t("profilePage.alert_profile_success"));
+      toast.success(t("settings:profilePage.alert_profile_success"));
 
       if (data?.name) {
         localStorage.setItem("user_name", data.name);
@@ -44,7 +44,7 @@ export const useProfileForm = () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
     },
     onError: () => {
-      toast.error(t("profilePage.alert_profile_error"));
+      toast.error(t("settings:profilePage.alert_profile_error"));
     },
   });
 
@@ -82,14 +82,14 @@ export const useChangePasswordForm = () => {
   const { mutate: changePass, isPending } = useMutation({
     mutationFn: changePasswordApi,
     onSuccess: () => {
-      toast.success(t("profilePage.pass_alert_success"));
+      toast.success(t("settings:profilePage.pass_alert_success"));
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
       close();
     },
     onError: (err: any) => {
-      const defaultMsg = t("profilePage.pass_alert_error");
+      const defaultMsg = t("settings:profilePage.pass_alert_error");
       const msg = err.response?.data?.error || defaultMsg;
       toast.error(msg);
     },
@@ -99,11 +99,11 @@ export const useChangePasswordForm = () => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      toast.error(t("profilePage.pass_error_mismatch"));
+      toast.error(t("settings:profilePage.pass_error_mismatch"));
       return;
     }
     if (newPassword.length < 4) {
-      toast.error(t("profilePage.pass_error_short"));
+      toast.error(t("settings:profilePage.pass_error_short"));
       return;
     }
 

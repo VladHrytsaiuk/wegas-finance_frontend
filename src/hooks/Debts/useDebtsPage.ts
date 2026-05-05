@@ -49,8 +49,8 @@ export const useDebtsPage = () => {
   // 3. Page Title (Updated keys)
   useEffect(() => {
     setPageTitle(
-      t("debtsPage.title"), // "Борги та Позики"
-      t("debtsPage.subtitle") // "Облік боргів..."
+      t("goals_debts:debtsPage.title"), // "Борги та Позики"
+      t("goals_debts:debtsPage.subtitle") // "Облік боргів..."
     );
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);

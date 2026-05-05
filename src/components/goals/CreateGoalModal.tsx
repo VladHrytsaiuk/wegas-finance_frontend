@@ -110,7 +110,7 @@ function CreateGoalFormContent({
         <S.Container>
           <S.Header>
             <S.Title>
-              {editingGoal ? t("goals.edit_title") : t("goals.create_title")}
+              {editingGoal ? t("goals_debts:goals.edit_title") : t("goals_debts:goals.create_title")}
             </S.Title>
           </S.Header>
 
@@ -120,23 +120,23 @@ function CreateGoalFormContent({
                 {/* ЛІВА КОЛОНКА */}
                 <S.Column>
                   <S.SectionTitle>
-                    <HiCube /> {t("counterpartyForm.label_appearance")}
+                    <HiCube /> {t("counterparties:counterpartyForm.label_appearance")}
                   </S.SectionTitle>
 
                   <S.FieldGroup>
-                    <S.Label>{t("goals.label_name")}</S.Label>
+                    <S.Label>{t("goals_debts:goals.label_name")}</S.Label>
                     <Input
                       value={f.name}
                       onChange={(e) => f.setName(e.target.value)}
                       required
                       autoFocus={!showConfirm}
-                      placeholder={t("goals.placeholder_name")}
+                      placeholder={t("goals_debts:goals.placeholder_name")}
                     />
                   </S.FieldGroup>
 
                   <S.AmountRow>
                     <S.FieldGroup>
-                      <S.Label>{t("goals.label_amount")}</S.Label>
+                      <S.Label>{t("goals_debts:goals.label_amount")}</S.Label>
                       <Input
                         type="number"
                         value={f.amount}
@@ -147,7 +147,7 @@ function CreateGoalFormContent({
                       />
                     </S.FieldGroup>
                     <S.FieldGroup>
-                      <S.Label>{t("goals.filter_currency")}</S.Label>
+                      <S.Label>{t("goals_debts:goals.filter_currency")}</S.Label>
                       <BaseSelect
                         triggerLabel={f.currency}
                         disabled={!!editingGoal}
@@ -167,7 +167,7 @@ function CreateGoalFormContent({
                   </S.AmountRow>
 
                   <S.FieldGroup>
-                    <S.Label>{t("goals.label_deadline")}</S.Label>
+                    <S.Label>{t("goals_debts:goals.label_deadline")}</S.Label>
                     <S.DateInputWrapper>
                       <DateRangePicker
                         mode="single"
@@ -180,7 +180,7 @@ function CreateGoalFormContent({
                   {!editingGoal && (
                     <>
                       <S.SectionTitle style={{ marginTop: "1rem" }}>
-                        <HiCurrencyDollar /> {t("goals.section_link_account")}
+                        <HiCurrencyDollar /> {t("goals_debts:goals.section_link_account")}
                       </S.SectionTitle>
                       <S.FundingContainer>
                         <S.FundingCard
@@ -190,19 +190,19 @@ function CreateGoalFormContent({
                           <S.CardHeader>
                             <S.RadioCircle $isSelected={f.linkMode === "new"} />
                             <span style={{ fontWeight: 600 }}>
-                              {t("goals.link_mode_new")}
+                              {t("goals_debts:goals.link_mode_new")}
                             </span>
                           </S.CardHeader>
                           {f.linkMode === "new" && (
                             <S.CardContent onClick={(e) => e.stopPropagation()}>
                               <Input
-                                label={t("goals.label_new_account_name")}
+                                label={t("goals_debts:goals.label_new_account_name")}
                                 value={f.newAccountName}
                                 onChange={(e) =>
                                   f.setNewAccountName(e.target.value)
                                 }
                                 size="small"
-                                placeholder={t("goals.placeholder_name")}
+                                placeholder={t("goals_debts:goals.placeholder_name")}
                               />
                             </S.CardContent>
                           )}
@@ -217,7 +217,7 @@ function CreateGoalFormContent({
                               $isSelected={f.linkMode === "existing"}
                             />
                             <span style={{ fontWeight: 600 }}>
-                              {t("goals.link_mode_existing")}
+                              {t("goals_debts:goals.link_mode_existing")}
                             </span>
                           </S.CardHeader>
                           {f.linkMode === "existing" && (
@@ -226,7 +226,7 @@ function CreateGoalFormContent({
                                 triggerLabel={
                                   availableAccounts.find(
                                     (a) => a.id === f.selectedAccountId,
-                                  )?.name || t("ui.select_placeholder_default")
+                                  )?.name || t("common:ui.select_placeholder_default")
                                 }
                               >
                                 {availableAccounts.length === 0 ? (
@@ -237,7 +237,7 @@ function CreateGoalFormContent({
                                       textAlign: "center",
                                     }}
                                   >
-                                    {t("ui.status_not_found")}
+                                    {t("common:ui.status_not_found")}
                                   </div>
                                 ) : (
                                   availableAccounts.map((acc) => (
@@ -289,7 +289,7 @@ function CreateGoalFormContent({
                               $isSelected={f.linkMode === "none"}
                             />
                             <span style={{ fontWeight: 600 }}>
-                              {t("goals.link_mode_none")}
+                              {t("goals_debts:goals.link_mode_none")}
                             </span>
                           </S.CardHeader>
                         </S.FundingCard>
@@ -301,10 +301,10 @@ function CreateGoalFormContent({
                 {/* ПРАВА КОЛОНКА */}
                 <S.Column>
                   <S.SectionTitle>
-                    <HiPhoto /> {t("assetForm.label_files_short")}
+                    <HiPhoto /> {t("assets:assetForm.label_files_short")}
                   </S.SectionTitle>
                   <S.FieldGroup>
-                    <S.Label>{t("assetForm.label_files_short")}</S.Label>
+                    <S.Label>{t("assets:assetForm.label_files_short")}</S.Label>
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -322,7 +322,7 @@ function CreateGoalFormContent({
                         <S.UploadPlaceholder>
                           <Spinner size="3rem" />
                           <span style={{ marginTop: "8px" }}>
-                            {t("common.loading", "Завантаження...")}
+                            {t("common:common.loading", "Завантаження...")}
                           </span>
                         </S.UploadPlaceholder>
                       ) : f.photoPreview ? (
@@ -348,7 +348,7 @@ function CreateGoalFormContent({
                         <S.UploadPlaceholder>
                           <HiCloudArrowUp size={40} />
                           <span>
-                            {t("counterpartyForm.button_upload_logo")}
+                            {t("counterparties:counterpartyForm.button_upload_logo")}
                           </span>
                         </S.UploadPlaceholder>
                       )}
@@ -358,7 +358,7 @@ function CreateGoalFormContent({
                   {/* СЕКЦІЯ ПРИВАТНОСТІ */}
                   <S.FieldGroup>
                     <S.Label>
-                      {t("goals.label_visibility", "Видимість")}
+                      {t("goals_debts:goals.label_visibility", "Видимість")}
                     </S.Label>
                     <div style={{ display: "flex", gap: "1rem" }}>
                       <S.FundingCard
@@ -377,7 +377,7 @@ function CreateGoalFormContent({
                         >
                           <HiGlobeAlt size={18} />
                           <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                            {t("goals.visibility_public", "Сім'я")}
+                            {t("goals_debts:goals.visibility_public", "Сім'я")}
                           </span>
                         </div>
                       </S.FundingCard>
@@ -397,7 +397,7 @@ function CreateGoalFormContent({
                         >
                           <HiLockClosed size={18} />
                           <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                            {t("goals.visibility_private", "Приватна")}
+                            {t("goals_debts:goals.visibility_private", "Приватна")}
                           </span>
                         </div>
                       </S.FundingCard>
@@ -501,16 +501,16 @@ function CreateGoalFormContent({
                   </S.FieldGroup>
 
                   <S.FieldGroup>
-                    <S.Label>{t("counterpartyForm.label_note")}</S.Label>
+                    <S.Label>{t("counterparties:counterpartyForm.label_note")}</S.Label>
                     <S.TextArea
                       value={f.description}
                       onChange={(e) => f.setDescription(e.target.value)}
-                      placeholder={t("counterpartyForm.placeholder_note")}
+                      placeholder={t("counterparties:counterpartyForm.placeholder_note")}
                     />
                   </S.FieldGroup>
                   <S.FieldGroup>
                     <S.Label>
-                      <HiLink /> {t("goals.label_link")}
+                      <HiLink /> {t("goals_debts:goals.label_link")}
                     </S.Label>
                     <Input
                       value={f.externalLink}
@@ -520,7 +520,7 @@ function CreateGoalFormContent({
                   </S.FieldGroup>
                   <S.FieldGroup>
                     <S.Label>
-                      {t("goals.label_color")} & {t("goals.label_icon")}
+                      {t("goals_debts:goals.label_color")} & {t("goals_debts:goals.label_icon")}
                     </S.Label>
                     <ColorIconPicker
                       color={f.color}
@@ -541,7 +541,7 @@ function CreateGoalFormContent({
               onClick={handleCloseAttempt}
               disabled={isLoading}
             >
-              {t("common.close")}
+              {t("common:common.close")}
             </Button>
             <Button
               variation="primary"
@@ -552,9 +552,9 @@ function CreateGoalFormContent({
               {isLoading ? (
                 <Spinner size="small" />
               ) : editingGoal ? (
-                t("shared.save_changes")
+                t("common:shared.save_changes")
               ) : (
-                t("goals.button_create_first")
+                t("goals_debts:goals.button_create_first")
               )}
             </Button>
           </S.Footer>

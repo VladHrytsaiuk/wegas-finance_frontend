@@ -113,12 +113,12 @@ export const FormContent: React.FC<FormContentProps> = ({
     mutationFn: createTagApi,
     onSuccess: (newTag) => {
       toast.success(
-        t("transactionForm.alert_tag_create_success", { name: newTag.name }),
+        t("transactions:transactionForm.alert_tag_create_success", { name: newTag.name }),
       );
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       actions.setTagIds([...form.tagIds, newTag.id]);
     },
-    onError: () => toast.error(t("transactionForm.alert_tag_create_error")),
+    onError: () => toast.error(t("transactions:transactionForm.alert_tag_create_error")),
   });
 
   const activeAccount = accounts.find(
@@ -259,7 +259,7 @@ export const FormContent: React.FC<FormContentProps> = ({
         <div>
           <S.Label>
             <LabelWithLock
-              label={t("transactionForm.label_from_account")}
+              label={t("transactions:transactionForm.label_from_account")}
               isLocked={isLocked}
             />
           </S.Label>
@@ -284,8 +284,8 @@ export const FormContent: React.FC<FormContentProps> = ({
             <S.AmountLabelInner>
               <span>
                 {isMultiCurrency
-                  ? t("transactionForm.label_sent_amount")
-                  : t("transactionForm.label_amount")}
+                  ? t("transactions:transactionForm.label_sent_amount")
+                  : t("transactions:transactionForm.label_amount")}
               </span>
               {isLocked && (
                 <S.LockIconWrapper title="Синхронізовані дані">
@@ -318,7 +318,7 @@ export const FormContent: React.FC<FormContentProps> = ({
         <div>
           <S.Label>
             <LabelWithLock
-              label={t("transactionForm.label_date")}
+              label={t("transactions:transactionForm.label_date")}
               isLocked={isLocked}
             />
           </S.Label>
@@ -337,7 +337,7 @@ export const FormContent: React.FC<FormContentProps> = ({
         <div>
           <S.Label>
             <LabelWithLock
-              label={t("transactionForm.label_time")}
+              label={t("transactions:transactionForm.label_time")}
               isLocked={isLocked}
             />
           </S.Label>
@@ -351,13 +351,13 @@ export const FormContent: React.FC<FormContentProps> = ({
         {form.type === "transfer" ? (
           <>
             <S.TransferDetailsHeader>
-              <HiArrowRight /> {t("transactionForm.transfer_details_text")}
+              <HiArrowRight /> {t("transactions:transactionForm.transfer_details_text")}
             </S.TransferDetailsHeader>
             <S.RowGroup $columns={isMultiCurrency ? "6fr 4fr" : "1fr"}>
               <div>
                 <S.Label>
                   <LabelWithLock
-                    label={t("transactionForm.label_to_account")}
+                    label={t("transactions:transactionForm.label_to_account")}
                     isLocked={isTransferLocked}
                   />
                 </S.Label>
@@ -392,7 +392,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                 <S.InputWrapper>
                   <S.Label>
                     <S.AmountLabelInner>
-                      <span>{t("transactionForm.label_received_amount")}</span>
+                      <span>{t("transactions:transactionForm.label_received_amount")}</span>
                       {isTransferLocked && <HiLockClosed />}
                       {targetCurrency && (
                         <S.CurrencyHint>({targetCurrency})</S.CurrencyHint>
@@ -427,7 +427,7 @@ export const FormContent: React.FC<FormContentProps> = ({
           <S.RowGroup $columns={isDebt ? "2fr 1fr" : "1fr 1fr 1fr"}>
             {!isDebt && (
               <div>
-                <S.Label>{t("transactionForm.label_category")}</S.Label>
+                <S.Label>{t("transactions:transactionForm.label_category")}</S.Label>
                 <CategorySelect
                   categories={availableCategories}
                   value={form.categoryId}
@@ -444,7 +444,7 @@ export const FormContent: React.FC<FormContentProps> = ({
             )}
             <div>
               <S.Label>
-                {t("transactionForm.label_counterparty")}
+                {t("transactions:transactionForm.label_counterparty")}
                 {isDebt && <S.RequiredStar> *</S.RequiredStar>}
               </S.Label>
               <CounterpartySelect
@@ -461,7 +461,7 @@ export const FormContent: React.FC<FormContentProps> = ({
               )}
             </div>
             <div>
-              <S.Label>{t("transactionForm.label_tags")}</S.Label>
+              <S.Label>{t("transactions:transactionForm.label_tags")}</S.Label>
               <TagSelect
                 tags={tags}
                 value={form.tagIds}
@@ -483,8 +483,8 @@ export const FormContent: React.FC<FormContentProps> = ({
           >
             <HiCube />
             {form.isAssetPanelOpen
-              ? t("transactionForm.hide_asset_option", "Прибрати актив")
-              : t("transactionForm.add_asset_option", "Додати актив")}
+              ? t("transactions:transactionForm.hide_asset_option", "Прибрати актив")
+              : t("transactions:transactionForm.add_asset_option", "Додати актив")}
             {form.isAssetPanelOpen ? <HiChevronUp /> : <HiChevronDown />}
           </S.DetailsTriggerButton>
 
@@ -506,7 +506,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                   <S.Label>
                     <S.AssetMileageLabelInner>
                       <HiTruck />
-                      {t("transactionForm.label_mileage", "Пробіг (км)")}
+                      {t("transactions:transactionForm.label_mileage", "Пробіг (км)")}
                     </S.AssetMileageLabelInner>
                   </S.Label>
 
@@ -557,7 +557,7 @@ export const FormContent: React.FC<FormContentProps> = ({
               onClick={() => actions.setShowDetails(true)}
             >
               <HiListBullet size={18} />
-              <span>{t("transactionForm.details_button_show")}</span>
+              <span>{t("transactions:transactionForm.details_button_show")}</span>
             </S.DetailsTriggerButton>
           ) : (
             <ItemsTable
@@ -587,7 +587,7 @@ export const FormContent: React.FC<FormContentProps> = ({
             <S.CompressingState>
               <Spinner size="1.5rem" />
               <S.CompressingText>
-                {t("common.processing", "Обробка фото...")}
+                {t("common:common.processing", "Обробка фото...")}
               </S.CompressingText>
             </S.CompressingState>
           ) : (
@@ -609,7 +609,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                   ) : (
                     <>
                       <HiPaperClip />
-                      {t("transactionForm.add_photo", "Додати фото")}
+                      {t("transactions:transactionForm.add_photo", "Додати фото")}
                     </>
                   )}
                 </S.UploadButtonInner>
@@ -621,7 +621,7 @@ export const FormContent: React.FC<FormContentProps> = ({
         <S.FooterNoteWrapper>
           <S.StyledTextarea
             rows={1}
-            placeholder={t("transactionForm.placeholder_note_default")}
+            placeholder={t("transactions:transactionForm.placeholder_note_default")}
             value={form.note}
             onChange={(e) => actions.setNote(e.target.value)}
           />
@@ -629,7 +629,7 @@ export const FormContent: React.FC<FormContentProps> = ({
 
         <S.ButtonsGroup>
           <Button variation="secondary" type="button" onClick={onCloseModal}>
-            {t("transactionForm.button_cancel")}
+            {t("transactions:transactionForm.button_cancel")}
           </Button>
           <Button
             size="medium"
@@ -645,11 +645,11 @@ export const FormContent: React.FC<FormContentProps> = ({
           >
             {state.isEditSession
               ? state.isSubmitting
-                ? t("transactionForm.button_updating")
-                : t("transactionForm.button_update")
+                ? t("transactions:transactionForm.button_updating")
+                : t("transactions:transactionForm.button_update")
               : state.isSubmitting
-                ? t("transactionForm.button_saving")
-                : t("transactionForm.button_save")}
+                ? t("transactions:transactionForm.button_saving")
+                : t("transactions:transactionForm.button_save")}
           </Button>
         </S.ButtonsGroup>
       </S.Footer>

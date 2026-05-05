@@ -44,15 +44,15 @@ export const AccountCard = ({ account, skin }: AccountCardProps) => {
     // Інакше фолбек
     switch (iconType) {
       case "envelope":
-        return t("accountTypes.envelope", "Конверт");
+        return t("accounts:accountTypes.envelope", "Конверт");
       case "safe":
-        return t("accountTypes.safe", "Сейф");
+        return t("accounts:accountTypes.safe", "Сейф");
       case "jar":
-        return t("accountTypes.jar", "Банка");
+        return t("accounts:accountTypes.jar", "Банка");
       case "cash":
-        return t("accountsTable.type_cash");
+        return t("accounts:accountsTable.type_cash");
       default:
-        return t("accountsTable.type_savings");
+        return t("accounts:accountsTable.type_savings");
     }
   };
 
@@ -76,7 +76,7 @@ export const AccountCard = ({ account, skin }: AccountCardProps) => {
             {account.is_synced && (
               <S.SyncBadge
                 $variant="card"
-                title={t("common.synced", "Синхронізовано")}
+                title={t("common:common.synced", "Синхронізовано")}
               >
                 <HiArrowPath size={14} />
               </S.SyncBadge>

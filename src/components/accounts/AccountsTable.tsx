@@ -38,11 +38,11 @@ export function AccountsTable({
     <Table>
       <Table.Header>
         <tr>
-          <th>{t("accountsTable.header_account")}</th>
-          <th>{t("accountsTable.header_type")}</th>
-          <th>{t("accountsTable.header_owner")}</th>
+          <th>{t("accounts:accountsTable.header_account")}</th>
+          <th>{t("accounts:accountsTable.header_type")}</th>
+          <th>{t("accounts:accountsTable.header_owner")}</th>
           <th style={{ textAlign: "right" }}>
-            {t("accountsTable.header_balance")}
+            {t("accounts:accountsTable.header_balance")}
           </th>
           {canManage && <th style={{ width: "80px" }}></th>}
         </tr>

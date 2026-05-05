@@ -219,7 +219,7 @@ function Sidebar({
         <FeedbackButton
           $collapsed={isCollapsed}
           onClick={() => setIsFeedbackOpen(!isFeedbackOpen)}
-          title="Залишити відгук"
+          title={t("navigation:sidebar.feedback_tooltip")}
         >
           {/* Обгортка для іконки, щоб центрувати як в нижній кнопці */}
           <div
@@ -235,7 +235,7 @@ function Sidebar({
           </div>
 
           {!isCollapsed && (
-            <FeedbackLabel $collapsed={isCollapsed}>Фідбек</FeedbackLabel>
+            <FeedbackLabel $collapsed={isCollapsed}>{t("navigation:feedback")}</FeedbackLabel>
           )}
         </FeedbackButton>
 
@@ -244,13 +244,13 @@ function Sidebar({
           to="/transactions/new"
           state={{ background: location }}
           $collapsed={isCollapsed}
-          title={isCollapsed ? t("sidebar.new_transaction") : ""}
+          title={isCollapsed ? t("navigation:sidebar.new_transaction") : ""}
         >
           <ButtonIconBox>
             <HiPlus size={20} />
           </ButtonIconBox>
           <ButtonLabel $collapsed={isCollapsed}>
-            {t("sidebar.new_transaction")}
+            {t("navigation:sidebar.new_transaction")}
           </ButtonLabel>
         </AnimatedButton>
       </SidebarFooter>

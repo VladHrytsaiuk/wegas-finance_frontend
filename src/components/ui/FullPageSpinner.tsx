@@ -39,7 +39,7 @@ function FullPageSpinner() {
     <StyledFullPage>
       <Spinner />
       {/* ➡️ ПЕРЕКЛАД ТЕКСТУ */}
-      <Text>{t("ui.full_page_loading")}</Text>
+      <Text>{t("common:ui.full_page_loading")}</Text>
     </StyledFullPage>
   );
 }

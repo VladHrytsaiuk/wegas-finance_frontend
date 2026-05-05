@@ -28,9 +28,9 @@ export const useTransactionsTable = ({
       const upperLabel = label.toUpperCase();
 
       if (upperLabel === "ВЧОРА" || upperLabel === "YESTERDAY")
-        return t("filters.periods.yesterday");
+        return t("legacy:filters.periods.yesterday");
       if (upperLabel === "СЬОГОДНІ" || upperLabel === "TODAY")
-        return t("filters.periods.today");
+        return t("legacy:filters.periods.today");
 
       if (language === "en") {
         return label

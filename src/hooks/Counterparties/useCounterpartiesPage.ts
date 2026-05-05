@@ -63,9 +63,9 @@ export const useCounterpartiesPage = () => {
 
     let name = "";
     const categoryNameDefault =
-      t("counterpartiesPage.resource_category") || "Category";
+      t("counterparties:counterpartiesPage.resource_category") || "Category";
     const counterpartyNameDefault =
-      t("counterpartiesPage.resource_counterparty") || "Counterparty";
+      t("counterparties:counterpartiesPage.resource_counterparty") || "Counterparty";
 
     if (isCategory) {
       const cat = categories.find((c: any) => c.id === id);
@@ -93,20 +93,20 @@ export const useCounterpartiesPage = () => {
     () => [
       {
         key: "type",
-        label: t("counterpartiesPage.filter_type_label") || "Type",
+        label: t("counterparties:counterpartiesPage.filter_type_label") || "Type",
         type: "toggle",
         options: [
           {
             value: "shop",
-            label: t("counterpartiesPage.filter_shop") || "Shop",
+            label: t("counterparties:counterpartiesPage.filter_shop") || "Shop",
           },
           {
             value: "person",
-            label: t("counterpartiesPage.filter_person") || "Person",
+            label: t("counterparties:counterpartiesPage.filter_person") || "Person",
           },
           {
             value: "other",
-            label: t("counterpartiesPage.filter_other") || "Other",
+            label: t("counterparties:counterpartiesPage.filter_other") || "Other",
           },
         ],
       },
@@ -118,11 +118,11 @@ export const useCounterpartiesPage = () => {
     () => [
       {
         value: "name-asc",
-        label: t("counterpartiesPage.sort_name_asc") || "Name (A-Z)",
+        label: t("counterparties:counterpartiesPage.sort_name_asc") || "Name (A-Z)",
       },
       {
         value: "name-desc",
-        label: t("counterpartiesPage.sort_name_desc") || "Name (Z-A)",
+        label: t("counterparties:counterpartiesPage.sort_name_desc") || "Name (Z-A)",
       },
     ],
     [t]

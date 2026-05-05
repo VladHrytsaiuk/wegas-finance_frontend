@@ -1,0 +1,151 @@
+{
+  "viewToggle": {
+    "grid_view": "Cards",
+    "table_view": "Table"
+  },
+  "themeSwitcher": {
+    "dark_mode": "🌙 Dark Mode",
+    "light_mode": "☀️ Light Mode"
+  },
+  "ui": {
+    "select_placeholder_default": "Select...",
+    "search_placeholder_default": "Search...",
+    "full_page_loading": "Loading finances...",
+    "status_not_found": "Nothing found",
+    "error_action": "Action failed",
+    "error_loading": "Loading failed"
+  },
+  "pagination": {
+    "page_info": "Page {{current}} of {{total}}",
+    "total_count_info": "(Total {{count}})",
+    "tooltip_prev": "Previous page",
+    "tooltip_next": "Next page",
+    "tooltip_first": "First Page"
+  },
+  "confirmDelete": {
+    "title_prefix": "Delete",
+    "message_part1": "Are you sure you want to delete this",
+    "message_part2": "? This action cannot be undone.",
+    "button_cancel": "Cancel",
+    "button_delete": "Delete",
+    "button_deleting": "Deleting..."
+  },
+  "colorIconPicker": {
+    "tooltip_change_color": "Change color",
+    "icon_prefix": "Icon"
+  },
+  "formValidation": {
+    "error_select_account": "Select an account",
+    "error_enter_amount": "Enter an amount",
+    "error_select_target_account": "Select recipient account",
+    "error_accounts_must_differ": "Accounts must differ",
+    "error_asset_name": "Please enter asset name",
+    "error_date_required": "Please select a date"
+  },
+  "shared": {
+    "save_changes": "Save Changes",
+    "create": "Create",
+    "loading": "Loading...",
+    "not_found": "Nothing found",
+    "user_default": "User",
+    "delete": "Delete",
+    "edit": "Edit",
+    "not_specified": "Not specified"
+  },
+  "common": {
+    "delete": "Delete",
+    "edit": "Edit",
+    "transaction": "transaction",
+    "sender": "Sender",
+    "recipient": "Recipient",
+    "you": "You",
+    "current": "current",
+    "account": "Account",
+    "deleted_account": "Deleted account",
+    "merchant": "Merchant",
+    "category": "Category",
+    "received_from": "Received from",
+    "transferred_to": "Transferred to",
+    "close": "Close",
+    "return": "Go back",
+    "currency_suffix": "UAH",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "add": "Add",
+    "cancel": "Cancel",
+    "confirm_change": "Confirm Changes",
+    "create": "Create",
+    "currency": "Currency",
+    "current_goal": "Current Goal",
+    "error": "Error",
+    "error_delete": "Deletion Error",
+    "error_occurred": "An error occurred",
+    "hide_from": "Hide from",
+    "leave": "Leave",
+    "loading": "Loading...",
+    "locale": "Language",
+    "me": "Me",
+    "no_options": "No options",
+    "no_results": "No results",
+    "open_link": "Open Link",
+    "owner": "Owner",
+    "privacy": "Privacy",
+    "processing": "Processing...",
+    "retry": "Retry",
+    "save": "Save",
+    "saved_success": "Saved successfully",
+    "saving": "Saving...",
+    "sort_az": "A-Z",
+    "sort_newest": "Newest",
+    "sort_oldest": "Oldest",
+    "stay": "Stay",
+    "success_delete": "Deleted successfully",
+    "synced": "Synced",
+    "try_adjusting_search": "Try adjusting your search",
+    "unsaved_changes_title": "Unsaved Changes"
+  },
+  "datePicker": {
+    "placeholder_day": "DD",
+    "placeholder_month": "MM",
+    "placeholder_year": "YYYY"
+  },
+  "timePicker": {
+    "hours_short": "Hr",
+    "minutes_short": "Min"
+  },
+  "validation": {
+    "invalid_amount": "Invalid amount",
+    "required": "Required field",
+    "same_account": "Accounts must be different"
+  },
+  "feedback": {
+    "success_title": "Sent!",
+    "success_message": "Thank you for your feedback.",
+    "modal_title": "Feedback / Bug",
+    "placeholder_description": "Describe the problem or idea...",
+    "placeholder_contact": "Your Telegram or Email (optional)",
+    "drop_hint": "Drop file to add"
+  },
+  "system": {
+    "mobile_in_dev": "Mobile version in development",
+    "loading_finances": "Loading finances...",
+    "not_found_utility": "Utility not found",
+    "mobile_desc": "Please log in from a computer or tablet for full access to WeGaS Finance."
+  },
+  "feedback_modal": {
+    "title": "Feedback / Bug",
+    "subtitle": "Found a bug or have an idea? Write to us.",
+    "hint": "(You can paste with Ctrl+V or drag and drop a photo)",
+    "type_idea": "Idea",
+    "type_normal": "Normal",
+    "type_critical": "Critical",
+    "placeholder_description": "Describe the problem or idea...",
+    "add_screenshot": "Add screenshot",
+    "placeholder_contact": "Your Telegram or Email (optional)",
+    "submit_button": "Send",
+    "sending": "Sending...",
+    "max_images_error": "Maximum 5 images",
+    "images_count_added": "Added only {} file(s). Maximum 5.",
+    "drop_hint": "Drop file to add"
+  }
+}

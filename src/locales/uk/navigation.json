@@ -1,0 +1,41 @@
+{
+  "general": {
+    "dashboard": "Головна",
+    "statistics": "Статистика",
+    "transactions": "Транзакції",
+    "accounts": "Рахунки",
+    "settings": "Налаштування",
+    "debts": "Борги",
+    "assets": "Активи",
+    "medical": "Медицина",
+    "utility": "Комуналка",
+    "goals": "Цілі",
+    "holdings": "Володіння",
+    "overview": "Огляд",
+    "rebalance": "Ребалансування",
+    "shoppingList": "Список покупок",
+    "wishlist": "Список бажань"
+  },
+  "navGroups": {
+    "analytics": "Аналітика",
+    "finance": "Фінанси",
+    "resources": "Ресурси",
+    "system": "Система",
+    "planning": "Планування",
+    "portfolio": "Портфель",
+    "tools": "Інструменти"
+  },
+  "sidebar": {
+    "feedback_tooltip": "Залишити відгук",
+    "new_transaction": "Нова транзакція"
+  },
+  "workspace": {
+    "finance": "Фінанси",
+    "investments": "Інвестиції"
+  },
+  "feedback": "Фідбек",
+  "workspaces": {
+    "finance": "Фінанси",
+    "investments": "Інвестиції"
+  }
+}

@@ -36,7 +36,7 @@ export const TransactionsTable = ({
       <Table>
         <Table.Empty>
           <HiOutlineBanknotes size={32} style={{ opacity: 0.5 }} />
-          <span>{t("transactionsTable.empty")}</span>
+          <span>{t("transactions:transactionsTable.empty")}</span>
         </Table.Empty>
       </Table>
     );
@@ -48,13 +48,13 @@ export const TransactionsTable = ({
         <Table.Header>
           <tr>
             <th style={{ width: 60 }} />
-            <th>{t("transactionsTable.header_category_description")}</th>
+            <th>{t("transactions:transactionsTable.header_category_description")}</th>
             <th className="col-account">
-              {t("transactionsTable.header_account")}
+              {t("transactions:transactionsTable.header_account")}
             </th>
-            <th className="col-note">{t("transactionsTable.header_note")}</th>
+            <th className="col-note">{t("transactions:transactionsTable.header_note")}</th>
             <th style={{ textAlign: "right" }}>
-              {t("transactionsTable.header_amount")}
+              {t("transactions:transactionsTable.header_amount")}
             </th>
             <th className="col-actions" />
           </tr>

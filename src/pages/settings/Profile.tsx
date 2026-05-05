@@ -54,7 +54,7 @@ function ChangePasswordForm() {
   return (
     <S.PasswordForm onSubmit={actions.handleSubmit}>
       <div>
-        <S.Label>{t("profilePage.pass_label_old")}</S.Label>
+        <S.Label>{t("settings:profilePage.pass_label_old")}</S.Label>
         <Input
           type="password"
           // 🔥 Важливо для браузера: це поточний пароль
@@ -67,7 +67,7 @@ function ChangePasswordForm() {
 
       <S.PasswordGrid>
         <div>
-          <S.Label>{t("profilePage.pass_label_new")}</S.Label>
+          <S.Label>{t("settings:profilePage.pass_label_new")}</S.Label>
           <Input
             type="password"
             // 🔥 Важливо: це новий пароль
@@ -77,7 +77,7 @@ function ChangePasswordForm() {
           />
         </div>
         <div>
-          <S.Label>{t("profilePage.pass_label_confirm")}</S.Label>
+          <S.Label>{t("settings:profilePage.pass_label_confirm")}</S.Label>
           <Input
             type="password"
             // 🔥 Важливо: підтвердження нового пароля
@@ -90,14 +90,14 @@ function ChangePasswordForm() {
 
       <S.ModalActions>
         <S.CancelButton type="button" onClick={actions.closeModal}>
-          {t("profilePage.pass_button_cancel")}
+          {t("settings:profilePage.pass_button_cancel")}
         </S.CancelButton>
 
         {/* 🔥 КРИТИЧНО: Додано type="submit", інакше форма не відправиться */}
         <Button type="submit" style={{ width: "auto" }} disabled={isPending}>
           {isPending
-            ? t("profilePage.pass_button_saving")
-            : t("profilePage.pass_button_save")}
+            ? t("settings:profilePage.pass_button_saving")
+            : t("settings:profilePage.pass_button_save")}
         </Button>
       </S.ModalActions>
     </S.PasswordForm>
@@ -197,11 +197,11 @@ function Profile() {
 
   return (
     <Modal>
-      <S.SectionTitle>{t("profilePage.title_profile")}</S.SectionTitle>
+      <S.SectionTitle>{t("settings:profilePage.title_profile")}</S.SectionTitle>
 
       <S.Form onSubmit={actions.handleUpdateProfile}>
         <S.FormGroup>
-          <S.Label>{t("profilePage.label_name")}</S.Label>
+          <S.Label>{t("settings:profilePage.label_name")}</S.Label>
           <Input
             value={name}
             onChange={(e) => actions.setName(e.target.value)}
@@ -209,7 +209,7 @@ function Profile() {
           />
         </S.FormGroup>
         <S.FormGroup>
-          <S.Label>{t("profilePage.label_email")}</S.Label>
+          <S.Label>{t("settings:profilePage.label_email")}</S.Label>
           <Input
             type="email"
             value={email}
@@ -222,7 +222,7 @@ function Profile() {
           <Modal.Open opens="change-password">
             <S.SecondaryButton type="button">
               <HiKey />
-              {t("profilePage.button_change_password")}
+              {t("settings:profilePage.button_change_password")}
             </S.SecondaryButton>
           </Modal.Open>
 
@@ -231,7 +231,7 @@ function Profile() {
             style={{ width: "auto" }}
             disabled={isUpdating}
           >
-            {t("profilePage.button_update_profile")}
+            {t("settings:profilePage.button_update_profile")}
           </Button>
         </S.ButtonGroup>
       </S.Form>
@@ -319,7 +319,7 @@ function Profile() {
       {/* --- MODALS --- */}
       <Modal.Window name="change-password">
         <S.PasswordFormContainer>
-          <S.ModalTitle>{t("profilePage.title_change_password")}</S.ModalTitle>
+          <S.ModalTitle>{t("settings:profilePage.title_change_password")}</S.ModalTitle>
           <ChangePasswordForm />
         </S.PasswordFormContainer>
       </Modal.Window>

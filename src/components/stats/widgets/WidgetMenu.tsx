@@ -29,22 +29,22 @@ export const WidgetMenu = ({ onRangeChange, currentLabel }: Props) => {
       {isOpen && (
         <S.Dropdown>
           <S.MenuItem
-            $active={currentLabel === t("filters.periods.this_month")}
+            $active={currentLabel === t("legacy:filters.periods.this_month")}
             onClick={() => handleSelect("thisMonth")}
           >
-            {t("filters.periods.this_month")}
+            {t("legacy:filters.periods.this_month")}
           </S.MenuItem>
           <S.MenuItem
-            $active={currentLabel === t("filters.periods.last_month")}
+            $active={currentLabel === t("legacy:filters.periods.last_month")}
             onClick={() => handleSelect("lastMonth")}
           >
-            {t("filters.periods.last_month")}
+            {t("legacy:filters.periods.last_month")}
           </S.MenuItem>
           <S.MenuItem
-            $active={currentLabel === t("filters.periods.this_year")}
+            $active={currentLabel === t("legacy:filters.periods.this_year")}
             onClick={() => handleSelect("year")}
           >
-            {t("filters.periods.this_year")}
+            {t("legacy:filters.periods.this_year")}
           </S.MenuItem>
         </S.Dropdown>
       )}

@@ -35,7 +35,7 @@ export function CounterpartyModals({
   };
 
   const resourceName =
-    itemToDelete?.name || t("counterpartiesPage.delete_default_name");
+    itemToDelete?.name || t("counterparties:counterpartiesPage.delete_default_name");
 
   return (
     <>

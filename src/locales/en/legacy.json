@@ -1,0 +1,89 @@
+{
+  "treeActions": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "filterComponent": {
+    "search_placeholder": "Search...",
+    "status_not_found": "Nothing found",
+    "clear_selection": "Clear selection",
+    "range_title": "Amount Range",
+    "range_placeholder_min": "Min",
+    "range_placeholder_max": "Max",
+    "range_button_reset": "Reset",
+    "range_button_ok": "OK",
+    "range_display_from": "From",
+    "range_display_to": "To",
+    "toggle_all": "All"
+  },
+  "toolbar": {
+    "sort_label_prefix": "Sort by:",
+    "sort_default": "Sorting",
+    "clear_filters_tooltip": "Reset filters",
+    "search_default_placeholder": "Search..."
+  },
+  "transactionFiltersHook": {
+    "filter_type_label": "Type",
+    "filter_type_expense": "Expense",
+    "filter_type_income": "Income",
+    "filter_type_transfer": "Transfers",
+    "filter_account_label": "Account",
+    "filter_category_label": "Category",
+    "filter_counterparty_label": "Counterparties",
+    "filter_amount_label": "Amount",
+    "sort_date_desc": "Newest first",
+    "sort_date_asc": "Oldest first",
+    "sort_amount_desc": "Amount: high to low",
+    "sort_amount_asc": "Amount: low to high"
+  },
+  "pageNotFound": {
+    "title": "The page you are looking for could not be found 😢",
+    "back_button": "Go back"
+  },
+  "transactionPage": {
+    "header_title": "Transaction details",
+    "header_subtitle": "Transaction from {{date}}",
+    "loading": "Loading...",
+    "back_to_list": "Back to list",
+    "back_button": "Back",
+    "edit_button": "Edit",
+    "not_found_title": "Transaction not found 🤷‍♂️",
+    "not_found_message": "Perhaps it was deleted.",
+    "delete_success": "Transaction deleted successfully"
+  },
+  "filters": {
+    "period_label": "Period",
+    "accounts_label": "Accounts",
+    "all_accounts": "All accounts",
+    "accounts_selected": "{{count}} accs.",
+    "search_placeholder": "Search...",
+    "apply": "Apply",
+    "reset": "Reset",
+    "done": "Done",
+    "custom_range": "Custom period...",
+    "select_period_title": "Select period",
+    "chips": {
+      "7_days": "7d",
+      "30_days": "30d",
+      "this_month": "This mo.",
+      "last_month": "Last mo.",
+      "year": "Year"
+    },
+    "periods": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "this_week": "This week",
+      "last_7_days": "Last 7 days",
+      "last_30_days": "Last 30 days",
+      "this_month": "This month",
+      "last_month": "Last month",
+      "this_year": "This year",
+      "all_time": "All time"
+    }
+  },
+  "viewer": {
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out",
+    "reset": "Reset view"
+  }
+}

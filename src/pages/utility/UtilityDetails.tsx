@@ -170,18 +170,18 @@ function UtilityDetailsContent() {
 
         <S.StatsGrid>
           <S.StatCard>
-            <h3>Поточний борг</h3>
+            <h3>{t("stats_utility:utility.current_debt")}</h3>
             <S.StatValue
               $isDebt={totalDebt > 0}
               className={totalDebt === 0 ? "green" : ""}
             >
               {formatMoney(totalDebt, meter.currency)}
             </S.StatValue>
-            <S.StatSub>За неоплачені показники</S.StatSub>
+            <S.StatSub>{t("stats_utility:utility.unpaid_desc")}</S.StatSub>
           </S.StatCard>
 
           <S.StatCard>
-            <h3>Останній показник</h3>
+            <h3>{t("stats_utility:utility.last_reading")}</h3>
             <S.StatValue>
               {meter.last_reading_value ?? 0} {meter.unit}
             </S.StatValue>
@@ -193,7 +193,7 @@ function UtilityDetailsContent() {
           </S.StatCard>
 
           <S.StatCard>
-            <h3>Актуальний Тариф</h3>
+            <h3>{t("stats_utility:utility.actual_rate")}</h3>
             <S.StatValue>
               {formatMoney(meter.tariff * 100, meter.currency)}
             </S.StatValue>
@@ -205,12 +205,12 @@ function UtilityDetailsContent() {
           <Table>
             <Table.Header>
               <tr>
-                <th>Дата</th>
-                <th>Показник</th>
-                <th>Спожито</th>
-                <th>Тариф</th>
-                <th>Сума</th>
-                <th>Статус</th>
+                <th>{t("stats_utility:utility.table_date")}</th>
+                <th>{t("stats_utility:utility.table_reading")}</th>
+                <th>{t("stats_utility:utility.table_consumed")}</th>
+                <th>{t("stats_utility:utility.table_rate")}</th>
+                <th>{t("stats_utility:utility.table_amount")}</th>
+                <th>{t("stats_utility:utility.table_status")}</th>
                 {/* Використовуємо Styled Component замість inline */}
                 <S.ActionHeader></S.ActionHeader>
               </tr>

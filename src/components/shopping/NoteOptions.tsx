@@ -77,7 +77,7 @@ export function NoteOptions({
         type="button"
         onClick={() => state.setIsColorOpen((v) => !v)}
         $isActive={state.isColorOpen}
-        title={t("shopping.change_color")}
+        title={t("shopping_wishlist:shopping.change_color")}
       >
         <HiOutlineSwatch size={18} />
       </S.IconButton>
@@ -133,14 +133,14 @@ export function NoteOptions({
             $selected={visibility === "public"}
             onClick={actions.handleSetPublic}
           >
-            <HiUsers /> {t("shopping.public", "Сім'я (всі)")}
+            <HiUsers /> {t("shopping_wishlist:shopping.public", "Сім'я (всі)")}
           </S.MenuItem>
 
           <S.MenuItem
             $selected={visibility === "private"}
             onClick={actions.handleSetPrivate}
           >
-            <HiLockClosed /> {t("shopping.private", "Тільки я")}
+            <HiLockClosed /> {t("shopping_wishlist:shopping.private", "Тільки я")}
           </S.MenuItem>
 
           {otherUsers.length > 0 && (
@@ -159,7 +159,7 @@ export function NoteOptions({
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
                   <HiEyeSlash />
-                  <span>{t("shopping.hide_from", "Приховати від:")}</span>
+                  <span>{t("shopping_wishlist:shopping.hide_from", "Приховати від:")}</span>
                 </div>
                 {state.isHiddenListOpen ? (
                   <HiChevronUp size={16} />

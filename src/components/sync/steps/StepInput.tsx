@@ -18,7 +18,7 @@ export default function StepInput({ state, actions, onClose }: any) {
             alt="Monobank"
             style={{ width: "28px", height: "28px", borderRadius: "50%" }}
           />
-          {t("profilePage.mono_title", "Синхронізація з Monobank")}
+          {t("settings:profilePage.mono_title", "Синхронізація з Monobank")}
         </S.Title>
       </S.HeaderRow>
 

@@ -84,7 +84,7 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
       ...Array.from(bankOptionsMap.values()),
       {
         value: "other",
-        label: t("accountsFilter.bank_other", "Інші"),
+        label: t("accounts:accountsFilter.bank_other", "Інші"),
         // 🔥 Змінюємо icon_default на HiCreditCard
         // SmartIcon не знайде файл /banks/HiCreditCard.svg і автоматично
         // відмалює іконку HiCreditCard з вашого ICON_MAP
@@ -95,23 +95,23 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     return [
       {
         key: "type",
-        label: t("accountsFilter.type_label"),
+        label: t("accounts:accountsFilter.type_label"),
         type: "toggle",
         options: [
-          { value: "card", label: t("accountsFilter.type_card") },
-          { value: "cash", label: t("accountsFilter.type_cash") },
-          { value: "savings", label: t("accountsFilter.type_savings") },
+          { value: "card", label: t("accounts:accountsFilter.type_card") },
+          { value: "cash", label: t("accounts:accountsFilter.type_cash") },
+          { value: "savings", label: t("accounts:accountsFilter.type_savings") },
         ],
       },
       {
         key: "bank",
-        label: t("accountsFilter.bank_label"),
+        label: t("accounts:accountsFilter.bank_label"),
         type: "multi-select",
         options: bankOptions,
       },
       {
         key: "currency",
-        label: t("accountsFilter.currency_label"),
+        label: t("accounts:accountsFilter.currency_label"),
         type: "multi-select",
         options: [
           { value: "UAH", label: "UAH" },
@@ -121,34 +121,34 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
       },
       {
         key: "status",
-        label: t("accountsFilter.status_label"),
+        label: t("accounts:accountsFilter.status_label"),
         type: "multi-select",
         options: [
-          { value: "positive", label: t("accountsFilter.status_positive") },
-          { value: "negative", label: t("accountsFilter.status_negative") },
-          { value: "zero", label: t("accountsFilter.status_zero") },
+          { value: "positive", label: t("accounts:accountsFilter.status_positive") },
+          { value: "negative", label: t("accounts:accountsFilter.status_negative") },
+          { value: "zero", label: t("accounts:accountsFilter.status_zero") },
         ],
       },
       {
         key: "owner",
-        label: t("accountsFilter.owner_label"),
+        label: t("accounts:accountsFilter.owner_label"),
         type: "multi-select",
         options: userOptions,
       },
       {
         key: "balance",
-        label: t("accountsFilter.balance_label"),
+        label: t("accounts:accountsFilter.balance_label"),
         type: "range",
       },
     ];
   }, [users, t]);
 
   const sortOptions = [
-    { value: "default", label: t("accountsFilter.sort_default") },
-    { value: "balance-desc", label: t("accountsFilter.sort_balance_desc") },
-    { value: "balance-asc", label: t("accountsFilter.sort_balance_asc") },
-    { value: "name-asc", label: t("accountsFilter.sort_name_asc") },
-    { value: "name-desc", label: t("accountsFilter.sort_name_desc") },
+    { value: "default", label: t("accounts:accountsFilter.sort_default") },
+    { value: "balance-desc", label: t("accounts:accountsFilter.sort_balance_desc") },
+    { value: "balance-asc", label: t("accounts:accountsFilter.sort_balance_asc") },
+    { value: "name-asc", label: t("accounts:accountsFilter.sort_name_asc") },
+    { value: "name-desc", label: t("accounts:accountsFilter.sort_name_desc") },
   ];
 
   // --- LOGIC (Фільтрація та Сортування) ---
@@ -242,9 +242,9 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     const groups: Record<string, any[]> = {};
 
     // Ключі для груп (мають збігатися з тим, що очікує Grid, або просто для відображення)
-    const KEY_OTHER = t("accountsFilter.group_other_cards");
-    const KEY_CASH = t("accountsFilter.group_cash");
-    const KEY_SAVINGS = t("accountsFilter.group_savings");
+    const KEY_OTHER = t("accounts:accountsFilter.group_other_cards");
+    const KEY_CASH = t("accounts:accountsFilter.group_cash");
+    const KEY_SAVINGS = t("accounts:accountsFilter.group_savings");
 
     // Ініціалізуємо основні групи, щоб вони були в певному порядку (опціонально)
     groups["Monobank"] = [];

@@ -12,7 +12,7 @@ export const useSettingsLayout = () => {
 
   // Встановлюємо заголовок "Налаштування"
   useEffect(() => {
-    setPageTitle(t("settingsLayout.header"), "");
+    setPageTitle(t("settings:settingsLayout.header"), "");
     return () => resetPageTitle();
   }, [t, setPageTitle, resetPageTitle]);
 

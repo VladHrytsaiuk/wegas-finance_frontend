@@ -44,17 +44,17 @@ export function UserForm({
   return (
     <FormLayout onSubmit={handleSubmit}>
       <div>
-        <label>{t("userForm.label_name")}</label>
+        <label>{t("settings:userForm.label_name")}</label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={t("userForm.placeholder_name")}
+          placeholder={t("settings:userForm.placeholder_name")}
           required
         />
       </div>
 
       <div>
-        <label>{t("userForm.label_email")}</label>
+        <label>{t("settings:userForm.label_email")}</label>
         <Input
           type="email"
           value={email}
@@ -67,21 +67,21 @@ export function UserForm({
       <div>
         <label>
           {isEditSession
-            ? t("userForm.label_new_password")
-            : t("userForm.label_password")}
+            ? t("settings:userForm.label_new_password")
+            : t("settings:userForm.label_password")}
         </label>
         <Input
           type="text"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder={t("userForm.placeholder_password_default")}
+          placeholder={t("settings:userForm.placeholder_password_default")}
           required={!isEditSession}
         />
       </div>
 
       <div>
         <label style={{ marginBottom: "0.5rem", display: "block" }}>
-          {t("userForm.label_role")}
+          {t("settings:userForm.label_role")}
         </label>
         <div
           style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
@@ -126,10 +126,10 @@ export function UserForm({
           onClick={close}
           style={{ width: "auto" }}
         >
-          {t("userForm.button_cancel")}
+          {t("settings:userForm.button_cancel")}
         </Button>
         <Button style={{ width: "auto" }} disabled={isLoading} type="submit">
-          {isEditSession ? t("userForm.button_save") : t("userForm.button_add")}
+          {isEditSession ? t("settings:userForm.button_save") : t("settings:userForm.button_add")}
         </Button>
       </ButtonRow>
     </FormLayout>

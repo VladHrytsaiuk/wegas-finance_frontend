@@ -45,7 +45,7 @@ export const useWidgetControls = ({
   const dropdownWidth = hidePeriod ? 320 : 600;
   const dateLocale = i18n.language === "uk" ? uk : enUS;
 
-  const finalCurrentLabel = currentLabel || t("filters.period_label");
+  const finalCurrentLabel = currentLabel || t("legacy:filters.period_label");
 
   // Dropdown positioning
   const { triggerRef, menuRef, style } = useDropdownPosition(
@@ -73,8 +73,8 @@ export const useWidgetControls = ({
   const getButtonText = () => {
     const accountsText =
       currentAccountIds.length === 0
-        ? t("filters.all_accounts")
-        : t("filters.accounts_selected", { count: currentAccountIds.length });
+        ? t("legacy:filters.all_accounts")
+        : t("legacy:filters.accounts_selected", { count: currentAccountIds.length });
 
     if (hidePeriod) return accountsText;
     return `${finalCurrentLabel} • ${accountsText}`;
@@ -148,7 +148,7 @@ export const useWidgetControls = ({
       const now = new Date();
       updates.from = startOfMonth(now).getTime();
       updates.to = endOfMonth(now).getTime();
-      updates.label = t("filters.periods.this_month");
+      updates.label = t("legacy:filters.periods.this_month");
     }
     onFilterChange(updates);
     setSearchTerm("");

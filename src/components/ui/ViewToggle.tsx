@@ -53,7 +53,7 @@ export const ViewToggle = ({ view, onChange }: ViewToggleProps) => {
         $active={view === "grid"}
         onClick={() => onChange("grid")}
         // ➡️ ПЕРЕКЛАД ПІДКАЗКИ
-        title={t("viewToggle.grid_view")}
+        title={t("common:viewToggle.grid_view")}
       >
         <HiSquares2X2 />
       </ToggleButton>
@@ -61,7 +61,7 @@ export const ViewToggle = ({ view, onChange }: ViewToggleProps) => {
         $active={view === "table"}
         onClick={() => onChange("table")}
         // ➡️ ПЕРЕКЛАД ПІДКАЗКИ
-        title={t("viewToggle.table_view")}
+        title={t("common:viewToggle.table_view")}
       >
         <HiListBullet />
       </ToggleButton>

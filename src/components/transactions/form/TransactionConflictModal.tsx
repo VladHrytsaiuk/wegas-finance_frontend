@@ -46,8 +46,8 @@ export default function TransactionConflictModal({
             <HiExclamationTriangle />
           </S.WarningIconWrapper>
           <div>
-            <S.Title>{t("transactionForm.conflict_title")}</S.Title>
-            <S.Subtitle>{t("transactionForm.conflict_subtitle")}</S.Subtitle>
+            <S.Title>{t("transactions:transactionForm.conflict_title")}</S.Title>
+            <S.Subtitle>{t("transactions:transactionForm.conflict_subtitle")}</S.Subtitle>
           </div>
         </S.Header>
 
@@ -55,22 +55,22 @@ export default function TransactionConflictModal({
         <S.Content>
           <S.ComparisonGrid>
             <S.AmountBox>
-              <span>{t("transactionForm.label_amount")}</span>
+              <span>{t("transactions:transactionForm.label_amount")}</span>
               <span>{formatPrice(data.total)}</span>
             </S.AmountBox>
 
             <S.DividerIcon>≠</S.DividerIcon>
 
             <S.AmountBox $isSuccess>
-              <span>{t("transactionForm.label_items_sum")}</span>
+              <span>{t("transactions:transactionForm.label_items_sum")}</span>
               <span>{formatPrice(data.itemsSum)}</span>
             </S.AmountBox>
           </S.ComparisonGrid>
 
           <S.DiffBox>
-            <span>{t("transactionForm.conflict_diff_label")}</span>
+            <span>{t("transactions:transactionForm.conflict_diff_label")}</span>
             <strong>
-              {formatPrice(data.diff)} {t("common.currency_suffix")}
+              {formatPrice(data.diff)} {t("common:common.currency_suffix")}
             </strong>
           </S.DiffBox>
         </S.Content>
@@ -85,7 +85,7 @@ export default function TransactionConflictModal({
               style={{ backgroundColor: "var(--color-brand-600)" }}
             >
               <HiPlus size={18} />
-              {t("transactionForm.btn_add_remainder")}
+              {t("transactions:transactionForm.btn_add_remainder")}
             </S.ActionButton>
           )}
 
@@ -95,7 +95,7 @@ export default function TransactionConflictModal({
             onClick={onUpdateTotal}
           >
             <HiCalculator size={18} />
-            {t("transactionForm.btn_use_items")} ({formatPrice(data.itemsSum)})
+            {t("transactions:transactionForm.btn_use_items")} ({formatPrice(data.itemsSum)})
           </S.ActionButton>
 
           <S.SecondaryActions>
@@ -106,7 +106,7 @@ export default function TransactionConflictModal({
               onClick={onIgnore}
               style={{ justifyContent: "center" }}
             >
-              {t("transactionForm.btn_ignore")}
+              {t("transactions:transactionForm.btn_ignore")}
             </Button>
 
             {/* Option 4: Cancel */}
@@ -116,7 +116,7 @@ export default function TransactionConflictModal({
               onClick={onCancel}
               style={{ justifyContent: "center" }}
             >
-              {t("common.return")}
+              {t("common:common.return")}
             </Button>
           </S.SecondaryActions>
         </S.Actions>

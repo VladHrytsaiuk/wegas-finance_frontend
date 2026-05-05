@@ -42,7 +42,7 @@ export default function WishlistGroups() {
 
   useEffect(() => {
     setPageTitle(
-      t("wishlist.title", "Список бажань"),
+      t("shopping_wishlist:wishlist.title", "Список бажань"),
       "Створіть власний список бажань",
     );
     return () => resetPageTitle();
@@ -55,7 +55,7 @@ export default function WishlistGroups() {
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("wishlist.search_folders", "Пошук папок...")}
+        searchPlaceholder={t("shopping_wishlist:wishlist.search_folders", "Пошук папок...")}
         filtersConfig={filtersConfig}
         filterValues={filters}
         onFilterChange={handleFilterChange}
@@ -68,7 +68,7 @@ export default function WishlistGroups() {
           <Modal>
             <Modal.Open opens="create-group">
               <Button variation="secondary" icon={<HiFolderPlus />}>
-                {t("wishlist.btn_add_group", "Група")}
+                {t("shopping_wishlist:wishlist.btn_add_group", "Група")}
               </Button>
             </Modal.Open>
             <Modal.Window name="create-group">
@@ -89,7 +89,7 @@ export default function WishlistGroups() {
           <Modal>
             <Modal.Open opens="create-wish">
               <Button variation="primary" icon={<HiPlus />}>
-                {t("wishlist.btn_add_item", "Додати")}
+                {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
               </Button>
             </Modal.Open>
             <Modal.Window name="create-wish">
@@ -139,8 +139,8 @@ export default function WishlistGroups() {
             {searchQuery ||
             filters.author.length > 0 ||
             filters.visibility.length > 0
-              ? t("common.no_results", "Нічого не знайдено")
-              : t("wishlist.empty_folders_title", "Поки що пусто")}
+              ? t("common:common.no_results", "Нічого не знайдено")
+              : t("shopping_wishlist:wishlist.empty_folders_title", "Поки що пусто")}
           </h3>
           <p>
             {searchQuery ||
@@ -161,7 +161,7 @@ export default function WishlistGroups() {
               <Modal>
                 <Modal.Open opens="create-group-empty">
                   <Button variation="secondary" icon={<HiFolderPlus />}>
-                    {t("wishlist.btn_add_group", "Створити групу")}
+                    {t("shopping_wishlist:wishlist.btn_add_group", "Створити групу")}
                   </Button>
                 </Modal.Open>
                 <Modal.Window name="create-group-empty">

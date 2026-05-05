@@ -91,14 +91,14 @@ export default function ExtendGoalModal({
           <HiXMark size={24} />
         </S.CloseBtn>
 
-        <S.Title>{t("goals.extend_title", "Продовжити термін")}</S.Title>
+        <S.Title>{t("goals_debts:goals.extend_title", "Продовжити термін")}</S.Title>
         <S.Description>
-          {t("goals.extend_desc", "Вкажіть нову дату завершення.")}
+          {t("goals_debts:goals.extend_desc", "Вкажіть нову дату завершення.")}
         </S.Description>
 
         <S.Form onSubmit={handleSubmit}>
           <div>
-            <S.Label>{t("goals.label_new_date", "Нова дата")}</S.Label>
+            <S.Label>{t("goals_debts:goals.label_new_date", "Нова дата")}</S.Label>
 
             <DateRangePicker
               mode="single"
@@ -136,10 +136,10 @@ export default function ExtendGoalModal({
 
           <S.Footer>
             <Button type="button" variation="secondary" onClick={onClose}>
-              {t("common.cancel")}
+              {t("common:common.cancel")}
             </Button>
             <Button type="submit" variation="primary" icon={<HiCalendar />}>
-              {t("common.save")}
+              {t("common:common.save")}
             </Button>
           </S.Footer>
         </S.Form>

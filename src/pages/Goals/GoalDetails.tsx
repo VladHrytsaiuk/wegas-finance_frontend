@@ -50,17 +50,17 @@ export default function GoalDetails() {
         <S.HeaderSection>
           <S.BackButton onClick={actions.handleBack}>
             <HiArrowLeft size={18} />
-            <span>{t("common.return")}</span>
+            <span>{t("common:common.return")}</span>
           </S.BackButton>
         </S.HeaderSection>
         <S.NotFoundContainer>
           <S.NotFoundIcon>
             <HiOutlineFlag />
           </S.NotFoundIcon>
-          <h3>{t("goals.not_found_title")}</h3>
-          <p>{t("goals.not_found_message")}</p>
+          <h3>{t("goals_debts:goals.not_found_title")}</h3>
+          <p>{t("goals_debts:goals.not_found_message")}</p>
           <Button variation="secondary" onClick={actions.handleBack}>
-            {t("common.return")}
+            {t("common:common.return")}
           </Button>
         </S.NotFoundContainer>
       </S.PageContainer>
@@ -92,7 +92,7 @@ export default function GoalDetails() {
           <S.HeaderLeft>
             <S.BackButton onClick={actions.handleBack}>
               <HiArrowLeft size={20} />
-              <span>{t("common.return")}</span>
+              <span>{t("common:common.return")}</span>
             </S.BackButton>
 
             <S.GoalTitleBlock>
@@ -117,7 +117,7 @@ export default function GoalDetails() {
                   onClick={actions.handleToggleStatus}
                   disabled={isToggling}
                 >
-                  <HiPlay /> {t("goals.btn_resume")}
+                  <HiPlay /> {t("goals_debts:goals.btn_resume")}
                 </S.ResumeButton>
               ) : (
                 <Button
@@ -125,7 +125,7 @@ export default function GoalDetails() {
                   onClick={actions.handleToggleStatus}
                   disabled={isToggling}
                 >
-                  <HiPause /> {t("goals.btn_pause")}
+                  <HiPause /> {t("goals_debts:goals.btn_pause")}
                 </Button>
               ))}
 
@@ -133,11 +133,11 @@ export default function GoalDetails() {
               variation="secondary"
               onClick={() => actions.setIsEditModalOpen(true)}
             >
-              <HiPencil /> {t("common.edit")}
+              <HiPencil /> {t("common:common.edit")}
             </Button>
             <Modal.Open opens="delete-goal">
               <Button variation="danger">
-                <HiTrash /> {t("common.delete")}
+                <HiTrash /> {t("common:common.delete")}
               </Button>
             </Modal.Open>
           </S.HeaderActions>
@@ -148,14 +148,14 @@ export default function GoalDetails() {
           <S.StyledCard>
             <S.CardHeader>
               <HiChartBar size={24} />
-              <h3>{t("goalDetails.title_section_finance")}</h3>
+              <h3>{t("goals_debts:goalDetails.title_section_finance")}</h3>
             </S.CardHeader>
 
             <S.MainValueBlock>
               <span className="label">
                 {isCompleted
-                  ? t("goalDetails.status_reached")
-                  : t("goalDetails.label_remaining")}
+                  ? t("goals_debts:goalDetails.status_reached")
+                  : t("goals_debts:goalDetails.label_remaining")}
               </span>
               <span className="value">
                 {isCompleted
@@ -168,7 +168,7 @@ export default function GoalDetails() {
               <div className="meta">
                 <span>{percentage.toFixed(1)}%</span>
                 <span>
-                  {t("goalDetails.label_collected")}:{" "}
+                  {t("goals_debts:goalDetails.label_collected")}:{" "}
                   {formatMoney(goal.current_amount, goal.currency)}
                 </span>
               </div>
@@ -180,7 +180,7 @@ export default function GoalDetails() {
             <S.MetaDataGrid>
               <S.MetaItem>
                 <div className="icon-label">
-                  <HiCalendarDays /> {t("goalDetails.date_start")}
+                  <HiCalendarDays /> {t("goals_debts:goalDetails.date_start")}
                 </div>
                 <div className="data">
                   {format(new Date(goal.date_start), "d MMM yyyy", {
@@ -191,7 +191,7 @@ export default function GoalDetails() {
 
               <S.MetaItem>
                 <div className="icon-label">
-                  <HiClock /> {t("goalDetails.time_left", "Залишилось часу")}
+                  <HiClock /> {t("goals_debts:goalDetails.time_left", "Залишилось часу")}
                 </div>
                 <div className="data">
                   {goal.date_deadline ? (
@@ -199,12 +199,12 @@ export default function GoalDetails() {
                       {daysLeftText}
                     </S.DeadlineValue>
                   ) : (
-                    <S.EmptyValue>∞ {t("goals.no_deadline")}</S.EmptyValue>
+                    <S.EmptyValue>∞ {t("goals_debts:goals.no_deadline")}</S.EmptyValue>
                   )}
                 </div>
                 {goal.date_deadline && (
                   <S.DeadlineDate>
-                    {t("goalDetails.date_deadline")}:{" "}
+                    {t("goals_debts:goalDetails.date_deadline")}:{" "}
                     {format(new Date(goal.date_deadline), "d MMM yyyy", {
                       locale: uk,
                     })}
@@ -222,7 +222,7 @@ export default function GoalDetails() {
               ) : (
                 <S.PhotoPlaceholder>
                   <HiPhoto size={64} />
-                  <span>{t("goalDetails.photo_empty")}</span>
+                  <span>{t("goals_debts:goalDetails.photo_empty")}</span>
                 </S.PhotoPlaceholder>
               )}
             </S.PhotoContainer>
@@ -234,34 +234,34 @@ export default function GoalDetails() {
           <S.StyledCard>
             <S.CardHeader>
               <HiOutlineFlag size={24} />
-              <h3>{t("goalDetails.title_section_info")}</h3>
+              <h3>{t("goals_debts:goalDetails.title_section_info")}</h3>
             </S.CardHeader>
 
             <S.MetaItem>
               <div className="icon-label">
-                {t("goalDetails.note_description")}
+                {t("goals_debts:goalDetails.note_description")}
               </div>
               {goal.description ? (
                 <div className="data">{goal.description}</div>
               ) : (
                 <S.EmptyValue>
-                  <HiDocumentText /> {t("goalDetails.note_empty")}
+                  <HiDocumentText /> {t("goals_debts:goalDetails.note_empty")}
                 </S.EmptyValue>
               )}
             </S.MetaItem>
 
             <S.MetaSpacer>
               <div className="icon-label">
-                <HiLink /> {t("goalDetails.link_external")}
+                <HiLink /> {t("goals_debts:goalDetails.link_external")}
               </div>
               {goal.external_link ? (
                 <a href={goal.external_link} target="_blank" rel="noreferrer">
-                  {t("goalDetails.link_visit")} &rarr;
+                  {t("goals_debts:goalDetails.link_visit")} &rarr;
                 </a>
               ) : (
                 <S.EmptyValue>
                   <HiLinkSlash />{" "}
-                  {t("goalDetails.link_empty", "Посилання відсутнє")}
+                  {t("goals_debts:goalDetails.link_empty", "Посилання відсутнє")}
                 </S.EmptyValue>
               )}
             </S.MetaSpacer>
@@ -271,7 +271,7 @@ export default function GoalDetails() {
             <S.AccountHeaderWrapper>
               <S.CardHeader>
                 <HiArchiveBox size={24} />
-                <h3>{t("goalDetails.title_section_accounts")}</h3>
+                <h3>{t("goals_debts:goalDetails.title_section_accounts")}</h3>
               </S.CardHeader>
             </S.AccountHeaderWrapper>
 
@@ -293,7 +293,7 @@ export default function GoalDetails() {
                 ))
               ) : (
                 <S.EmptyStateSmall>
-                  {t("goalDetails.accounts_empty")}
+                  {t("goals_debts:goalDetails.accounts_empty")}
                 </S.EmptyStateSmall>
               )}
             </S.ScrollableList>
@@ -301,7 +301,7 @@ export default function GoalDetails() {
             {goal.accounts && goal.accounts.length > 0 && (
               <S.CardFooter>
                 <span className="label">
-                  {t("goalDetails.total_balance", "Всього:")}
+                  {t("goals_debts:goalDetails.total_balance", "Всього:")}
                 </span>
                 <span className="total">
                   {formatMoney(goal.current_amount, goal.currency)}

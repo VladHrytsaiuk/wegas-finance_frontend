@@ -71,20 +71,20 @@ export function useShoppingFilters(initialLists: ShoppingList[]) {
   const filtersConfig = [
     {
       key: "visibility",
-      label: t("shopping.filter_visibility", "Приватність"),
+      label: t("shopping_wishlist:shopping.filter_visibility", "Приватність"),
       type: "multi-select",
       options: [
-        { value: "public", label: t("shopping.public", "Сім'я") },
-        { value: "private", label: t("shopping.private", "Тільки я") },
-        { value: "hidden", label: t("shopping.hidden", "Приховано") },
+        { value: "public", label: t("shopping_wishlist:shopping.public", "Сім'я") },
+        { value: "private", label: t("shopping_wishlist:shopping.private", "Тільки я") },
+        { value: "hidden", label: t("shopping_wishlist:shopping.hidden", "Приховано") },
       ],
     },
   ];
 
   const sortOptions = [
-    { value: "date-desc", label: t("common.sort_newest", "Спочатку нові") },
-    { value: "date-asc", label: t("common.sort_oldest", "Спочатку старі") },
-    { value: "title-asc", label: t("common.sort_az", "Назва (А-Я)") },
+    { value: "date-desc", label: t("common:common.sort_newest", "Спочатку нові") },
+    { value: "date-asc", label: t("common:common.sort_oldest", "Спочатку старі") },
+    { value: "title-asc", label: t("common:common.sort_az", "Назва (А-Я)") },
   ];
 
   const handleFilterChange = (key: string, val: any) => {

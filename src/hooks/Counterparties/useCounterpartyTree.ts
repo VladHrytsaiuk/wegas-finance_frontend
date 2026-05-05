@@ -88,7 +88,7 @@ export function useCounterpartyTree({
     // 3. Create Root Groups
     const rootShops: CounterpartyTreeNode = {
       id: "root_shops",
-      name: t("counterpartyTree.group_shops") || "Shops",
+      name: t("counterparties:counterpartyTree.group_shops") || "Shops",
       type: "group",
       iconName: "HiShoppingCart",
       color: "#6366f1",
@@ -99,7 +99,7 @@ export function useCounterpartyTree({
 
     const rootPeople: CounterpartyTreeNode = {
       id: "root_people",
-      name: t("counterpartyTree.group_people") || "People",
+      name: t("counterparties:counterpartyTree.group_people") || "People",
       type: "group",
       iconName: "HiUser",
       color: "#a78bfa",
@@ -110,7 +110,7 @@ export function useCounterpartyTree({
 
     const rootOther: CounterpartyTreeNode = {
       id: "root_other",
-      name: t("counterpartyTree.group_other") || "Other",
+      name: t("counterparties:counterpartyTree.group_other") || "Other",
       type: "group",
       iconName: "HiTag",
       color: "#94a3b8",
