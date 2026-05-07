@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { HiPlus, HiFlag } from "react-icons/hi2";
 
 // Components
@@ -14,6 +14,7 @@ import { useGoalsPage } from "../../hooks/Goals/useGoalsPage";
 import { useGoalsFilter } from "../../hooks/Goals/useGoalsFilter";
 import { useHeader } from "../../context/HeaderContext"; // Імпорт хедера
 import * as S from "./Goals.styles";
+import type { Goal } from "../../types";
 
 function Goals() {
   const {
@@ -45,17 +46,46 @@ function Goals() {
 
   const { setPageTitle, resetPageTitle } = useHeader();
 
+  // Стабілізуємо хендлери для GoalCard
+  const handleToggleStatusStable = useCallback(
+    (goal: Goal) => handleToggleStatus(goal),
+    [handleToggleStatus],
+  );
+  const handleEditStable = useCallback(
+    (goal: Goal) => handleEdit(goal),
+    [handleEdit],
+  );
+  const handleDeleteStable = useCallback(
+    (id: string) => handleDelete(id),
+    [handleDelete],
+  );
+  const handleExtendStable = useCallback(
+    (goal: Goal) => handleExtend(goal),
+    [handleExtend],
+  );
+
   // Групуємо хендлери, щоб зручно передати їх у GoalCard
-  const cardHandlers = {
-    handleToggleStatus,
-    handleEdit,
-    handleDelete,
-    handleExtend,
-  };
+  const cardHandlers = useMemo(
+    () => ({
+      handleToggleStatus: handleToggleStatusStable,
+      handleEdit: handleEditStable,
+      handleDelete: handleDeleteStable,
+      handleExtend: handleExtendStable,
+    }),
+    [
+      handleToggleStatusStable,
+      handleEditStable,
+      handleDeleteStable,
+      handleExtendStable,
+    ],
+  );
 
   // Встановлення глобального заголовка та субтайтлу
   useEffect(() => {
-    setPageTitle(t("goals_debts:goals.title", "Фінансові цілі"), `Створіть власну ціль`);
+    setPageTitle(
+      t("goals_debts:goals.title", "Фінансові цілі"),
+      `Створіть власну ціль`,
+    );
 
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t, goals.length]);
@@ -67,7 +97,10 @@ function Goals() {
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("goals_debts:goals.search_placeholder", "Пошук цілей...")}
+        searchPlaceholder={t(
+          "goals_debts:goals.search_placeholder",
+          "Пошук цілей...",
+        )}
         filtersConfig={filtersConfig}
         filterValues={filters}
         onFilterChange={handleFilterChange}
@@ -106,7 +139,10 @@ function Goals() {
               </h3>
               <p>
                 {searchQuery
-                  ? t("common:common.try_adjusting_search", "Спробуйте змінити запит")
+                  ? t(
+                      "common:common.try_adjusting_search",
+                      "Спробуйте змінити запит",
+                    )
                   : t(
                       "goals.empty_desc",
                       "Створіть свою першу фінансову ціль, щоб почати відслідковувати прогрес.",
@@ -138,7 +174,7 @@ function Goals() {
 
       <ExtendGoalModal
         isOpen={!!extendingGoal}
-        onClose={() => handleExtend(null as any)}
+        onClose={() => handleExtend(null as unknown as Goal)}
         currentDeadline={extendingGoal?.date_deadline || null}
         onConfirm={(date) => {
           if (extendingGoal) {

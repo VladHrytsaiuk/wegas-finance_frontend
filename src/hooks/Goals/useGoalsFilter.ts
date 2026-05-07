@@ -44,33 +44,36 @@ export function useGoalsFilter(goals: any[]) {
     [t],
   );
 
-  const sortOptions = [
-    {
-      value: "deadline-asc",
-      label: t("goals_debts:goals.sort_deadline_asc", "Дедлайн (спочатку ближні)"),
-    },
-    {
-      value: "deadline-desc",
-      label: t("goals_debts:goals.sort_deadline_desc", "Дедлайн (спочатку дальні)"),
-    },
-    {
-      value: "progress-desc",
-      label: t("goals_debts:goals.sort_progress_desc", "Прогрес (високий -> низький)"),
-    },
-    {
-      value: "progress-asc",
-      label: t("goals_debts:goals.sort_progress_asc", "Прогрес (низький -> високий)"),
-    },
-    {
-      value: "amount-desc",
-      label: t("goals_debts:goals.sort_amount_desc", "Сума (велика -> мала)"),
-    },
-    {
-      value: "amount-asc",
-      label: t("goals_debts:goals.sort_amount_asc", "Сума (мала -> велика)"),
-    },
-    { value: "name-asc", label: t("goals_debts:goals.sort_name_asc", "Назва (А-Я)") },
-  ];
+  const sortOptions = useMemo(
+    () => [
+      {
+        value: "deadline-asc",
+        label: t("goals_debts:goals.sort_deadline_asc", "Дедлайн (спочатку ближні)"),
+      },
+      {
+        value: "deadline-desc",
+        label: t("goals_debts:goals.sort_deadline_desc", "Дедлайн (спочатку дальні)"),
+      },
+      {
+        value: "progress-desc",
+        label: t("goals_debts:goals.sort_progress_desc", "Прогрес (високий -> низький)"),
+      },
+      {
+        value: "progress-asc",
+        label: t("goals_debts:goals.sort_progress_asc", "Прогрес (низький -> високий)"),
+      },
+      {
+        value: "amount-desc",
+        label: t("goals_debts:goals.sort_amount_desc", "Сума (велика -> мала)"),
+      },
+      {
+        value: "amount-asc",
+        label: t("goals_debts:goals.sort_amount_asc", "Сума (мала -> велика)"),
+      },
+      { value: "name-asc", label: t("goals_debts:goals.sort_name_asc", "Назва (А-Я)") },
+    ],
+    [t],
+  );
 
   // --- LOGIC ---
   const filteredGoals = useMemo(() => {

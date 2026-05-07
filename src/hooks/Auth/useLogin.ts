@@ -42,6 +42,7 @@ export const useLogin = ({ setToken }: UseLoginProps) => {
         })
         .catch((err) => {
           console.warn("Settings sync failed:", err);
+          toast.error(t("common:errors.settings_sync_failed", "Не вдалося синхронізувати налаштування"));
         });
 
       toast.success(t("auth:auth.login_alert_success", { name: data.user.name }));

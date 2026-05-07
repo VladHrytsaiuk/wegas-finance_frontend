@@ -1,9 +1,8 @@
-import {
+import React, {
   useState,
   useEffect,
   useMemo,
   useCallback,
-  forwardRef,
 } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -120,7 +119,7 @@ interface GridItemProps {
   [key: string]: any;
 }
 
-const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
+const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
   ({ style, className, children, ...props }, ref) => {
     const isStatic = className?.includes("static");
     return (

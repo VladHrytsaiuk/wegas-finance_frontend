@@ -190,9 +190,17 @@ function Sidebar({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [navigate, location]);
 
+  const toggleLabel = isCollapsed
+    ? t("navigation:sidebar.expand", "Розгорнути")
+    : t("navigation:sidebar.collapse", "Згорнути");
+
   return (
     <StyledSidebar $collapsed={isCollapsed}>
-      <ToggleButton onClick={onToggle}>
+      <ToggleButton
+        onClick={onToggle}
+        aria-label={toggleLabel}
+        title={toggleLabel}
+      >
         {isCollapsed ? (
           <HiChevronRight size={14} />
         ) : (
@@ -220,6 +228,7 @@ function Sidebar({
           $collapsed={isCollapsed}
           onClick={() => setIsFeedbackOpen(!isFeedbackOpen)}
           title={t("navigation:sidebar.feedback_tooltip")}
+          aria-label={t("navigation:sidebar.feedback_tooltip")}
         >
           {/* Обгортка для іконки, щоб центрувати як в нижній кнопці */}
           <div
@@ -235,7 +244,9 @@ function Sidebar({
           </div>
 
           {!isCollapsed && (
-            <FeedbackLabel $collapsed={isCollapsed}>{t("navigation:feedback")}</FeedbackLabel>
+            <FeedbackLabel $collapsed={isCollapsed}>
+              {t("navigation:feedback")}
+            </FeedbackLabel>
           )}
         </FeedbackButton>
 
@@ -245,6 +256,7 @@ function Sidebar({
           state={{ background: location }}
           $collapsed={isCollapsed}
           title={isCollapsed ? t("navigation:sidebar.new_transaction") : ""}
+          aria-label={t("navigation:sidebar.new_transaction")}
         >
           <ButtonIconBox>
             <HiPlus size={20} />

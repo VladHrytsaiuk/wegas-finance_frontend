@@ -61,11 +61,14 @@ export function useUtilityFilters(meters: UtilityMeter[]) {
   );
 
   // Опції для dropdown сортування, які тепер керують групуванням
-  const sortOptions = [
-    { value: "group-asset", label: "По нерухомості" },
-    { value: "group-type", label: "По типу послуг" },
-    { value: "name-asc", label: "А-Я (Списком)" },
-  ];
+  const sortOptions = useMemo(
+    () => [
+      { value: "group-asset", label: "По нерухомості" },
+      { value: "group-type", label: "По типу послуг" },
+      { value: "name-asc", label: "А-Я (Списком)" },
+    ],
+    [],
+  );
 
   // 1. Спочатку фільтруємо
   const filteredMeters = useMemo(() => {

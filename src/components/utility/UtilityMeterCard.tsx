@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   HiBolt,
   HiCube,
@@ -11,7 +12,8 @@ import {
 } from "react-icons/hi2";
 import { Button } from "../ui/Button";
 import { formatMoney } from "../../utils/helpers";
-import * as S from "../../pages/utility/Utility.styles"; // Переконайся, що шлях правильний
+import * as S from "../../pages/utility/Utility.styles";
+import type { UtilityMeter } from "../../types";
 
 // Перенесли сюди конфіг іконок, бо він потрібен тільки картці
 const getTypeConfig = (type: string) => {
@@ -34,14 +36,14 @@ const getTypeConfig = (type: string) => {
 };
 
 interface UtilityMeterCardProps {
-  meter: any;
-  onClick: () => void;
-  onEdit: () => void;
-  onPay: () => void;
-  onAddReading: () => void;
+  meter: UtilityMeter;
+  onClick: (id: string) => void;
+  onEdit: (meter: UtilityMeter) => void;
+  onPay: (meter: UtilityMeter) => void;
+  onAddReading: (meter: UtilityMeter) => void;
 }
 
-export default function UtilityMeterCard({
+export default memo(function UtilityMeterCard({
   meter,
   onClick,
   onEdit,
@@ -52,20 +54,20 @@ export default function UtilityMeterCard({
 
   const balances = meter.counterparty?.balances || [];
   const mainBalance =
-    balances.find((b: any) => b.currency === meter.currency)?.balance || 0;
+    balances.find((b) => b.currency === meter.currency)?.balance || 0;
 
   const hasDebt = mainBalance < 0;
   const debtAmount = Math.abs(mainBalance);
 
   return (
-    <S.MeterCard onClick={onClick}>
+    <S.MeterCard onClick={() => onClick(meter.id)}>
       <S.CardTop>
         <S.IconBadge $color={color}>{icon}</S.IconBadge>
         <S.Actions>
           <S.ActionButton
             onClick={(e) => {
               e.stopPropagation();
-              onEdit();
+              onEdit(meter);
             }}
           >
             <HiPencil size={18} />
@@ -108,7 +110,11 @@ export default function UtilityMeterCard({
         </div>
         <S.FooterActions onClick={(e) => e.stopPropagation()}>
           {hasDebt && (
-            <Button variation="secondary" size="small" onClick={onPay}>
+            <Button
+              variation="secondary"
+              size="small"
+              onClick={() => onPay(meter)}
+            >
               Оплатити
             </Button>
           )}
@@ -116,7 +122,7 @@ export default function UtilityMeterCard({
             variation="primary"
             size="small"
             icon={<HiPlus />}
-            onClick={onAddReading}
+            onClick={() => onAddReading(meter)}
           >
             Внести
           </Button>
@@ -124,4 +130,4 @@ export default function UtilityMeterCard({
       </S.Footer>
     </S.MeterCard>
   );
-}
+});

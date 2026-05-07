@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Button } from "./Button";
 import { useTranslation } from "react-i18next";
+import { useEscapeKey } from "../../hooks/useEscapeKey";
 
 const StyledConfirmDelete = styled.div`
   width: 100%;
@@ -93,6 +95,14 @@ function ConfirmDelete({
   onCloseModal,
 }: ConfirmDeleteProps) {
   const { t } = useTranslation();
+  const cancelBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEscapeKey(() => onCloseModal?.());
+
+  useEffect(() => {
+    // Фокусуємо кнопку скасування при відкритті для безпеки
+    cancelBtnRef.current?.focus();
+  }, []);
 
   const handleDelete = () => {
     onConfirm();
@@ -100,7 +110,7 @@ function ConfirmDelete({
   };
 
   return (
-    <StyledConfirmDelete>
+    <StyledConfirmDelete role="alertdialog" aria-modal="true">
       <h3>
         {t("common:confirmDelete.title_prefix")} {resourceName}
       </h3>
@@ -110,7 +120,11 @@ function ConfirmDelete({
       </p>
 
       <div>
-        <CancelButton disabled={disabled} onClick={onCloseModal}>
+        <CancelButton
+          disabled={disabled}
+          onClick={onCloseModal}
+          ref={cancelBtnRef}
+        >
           {t("common:confirmDelete.button_cancel")}
         </CancelButton>
 

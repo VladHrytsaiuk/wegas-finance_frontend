@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled, { css } from "styled-components";
 
 // 1. Описуємо варіанти стилів (кольори)
@@ -104,7 +104,7 @@ const StyledButton = styled.button<StyleProps>`
 `;
 
 // 5. Інтерфейс компонента (розширює стандартні атрибути кнопки)
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variation?: keyof typeof variations;
   size?: keyof typeof sizes;
   active?: boolean;
@@ -112,19 +112,34 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 // 6. Експортований React-компонент
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  icon,
-  variation = "primary",
-  size = "medium",
-  type = "button", // Дефолтний тип
-  ...props
-}) => {
-  return (
-    <StyledButton $variation={variation} $size={size} type={type} {...props}>
-      {/* Якщо іконка передана — рендеримо її */}
-      {icon && <span>{icon}</span>}
-      {children}
-    </StyledButton>
-  );
-};
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      children,
+      icon,
+      variation = "primary",
+      size = "medium",
+      active,
+      type = "button",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <StyledButton
+        $variation={variation}
+        $size={size}
+        $active={active}
+        type={type}
+        ref={ref}
+        {...props}
+      >
+        {/* Якщо іконка передана — рендеримо її */}
+        {icon && <span>{icon}</span>}
+        {children}
+      </StyledButton>
+    );
+  }
+);
+
+Button.displayName = "Button";

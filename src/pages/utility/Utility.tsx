@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { HiPlus, HiCube, HiChartBar } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next"; // Додав імпорт t, якщо його не було
+import { useTranslation } from "react-i18next";
 
 import { Button } from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
@@ -13,12 +13,13 @@ import CreateTransactionModal from "../../components/transactions/CreateTransact
 
 import { useUtilityMeters } from "../../hooks/Utility/useUtility";
 import { useUtilityFilters } from "../../hooks/Utility/useUtilityFilters";
-import { useHeader } from "../../context/HeaderContext"; // Імпорт хедера
+import { useHeader } from "../../context/HeaderContext";
 import * as S from "./Utility.styles";
 
 import CreateMeterForm from "../../components/utility/CreateMeterModal";
 import AddReadingForm from "../../components/utility/AddReadingModal";
-import UtilityMeterCard from "../../components/utility/UtilityMeterCard"; // Наш новий компонент
+import UtilityMeterCard from "../../components/utility/UtilityMeterCard";
+import type { UtilityMeter } from "../../types";
 
 export default function Utility() {
   return (
@@ -49,7 +50,37 @@ function UtilityContent() {
     groupedMeters,
   } = useUtilityFilters(meters);
 
-  const [activeMeter, setActiveMeter] = useState<any>(null);
+  const [activeMeter, setActiveMeter] = useState<UtilityMeter | null>(null);
+
+  // Стабілізуємо хендлери для UtilityMeterCard
+  const handleMeterClick = useCallback(
+    (id: string) => navigate(`/utility/${id}`),
+    [navigate],
+  );
+
+  const handleMeterEdit = useCallback(
+    (meter: UtilityMeter) => {
+      setActiveMeter(meter);
+      open("create-meter");
+    },
+    [open],
+  );
+
+  const handleMeterPay = useCallback(
+    (meter: UtilityMeter) => {
+      setActiveMeter(meter);
+      open("pay-utility-debt");
+    },
+    [open],
+  );
+
+  const handleMeterAddReading = useCallback(
+    (meter: UtilityMeter) => {
+      setActiveMeter(meter);
+      open("add-reading");
+    },
+    [open],
+  );
 
   // Встановлення глобального заголовка
   useEffect(() => {
@@ -71,7 +102,7 @@ function UtilityContent() {
   const getActiveDebt = () => {
     if (!activeMeter?.counterparty?.balances) return 0;
     const balance = activeMeter.counterparty.balances.find(
-      (b: any) => b.currency === activeMeter.currency,
+      (b) => b.currency === activeMeter.currency,
     );
     return balance && balance.balance < 0 ? Math.abs(balance.balance) : 0;
   };
@@ -121,19 +152,10 @@ function UtilityContent() {
               <UtilityMeterCard
                 key={meter.id}
                 meter={meter}
-                onClick={() => navigate(`/utility/${meter.id}`)}
-                onEdit={() => {
-                  setActiveMeter(meter);
-                  open("create-meter");
-                }}
-                onPay={() => {
-                  setActiveMeter(meter);
-                  open("pay-utility-debt");
-                }}
-                onAddReading={() => {
-                  setActiveMeter(meter);
-                  open("add-reading");
-                }}
+                onClick={handleMeterClick}
+                onEdit={handleMeterEdit}
+                onPay={handleMeterPay}
+                onAddReading={handleMeterAddReading}
               />
             ))}
           </S.Grid>
@@ -147,7 +169,9 @@ function UtilityContent() {
             <HiCube />
           </S.EmptyIconWrapper>
           <div>
-            <h3>{t("stats_utility:utilityPage.empty_title", "Послуг не знайдено")}</h3>
+            <h3>
+              {t("stats_utility:utilityPage.empty_title", "Послуг не знайдено")}
+            </h3>
             <p>
               {t(
                 "utilityPage.empty_desc",
@@ -164,13 +188,13 @@ function UtilityContent() {
       </Modal.Window>
 
       <Modal.Window name="add-reading">
-        <AddReadingForm meter={activeMeter} onCloseModal={close} />
+        <AddReadingForm meter={activeMeter as UtilityMeter} onCloseModal={close} />
       </Modal.Window>
 
       <Modal.Window name="delete-confirm">
         <ConfirmDelete
           resourceName={activeMeter?.name || "послугу"}
-          onConfirm={() => remove(activeMeter.id)}
+          onConfirm={() => activeMeter && remove(activeMeter.id)}
         />
       </Modal.Window>
 
@@ -182,7 +206,7 @@ function UtilityContent() {
           onSuccess={handlePaymentSuccess}
           initialData={{
             type: "debt_repay",
-            counterparty_id: activeMeter.counterparty_id,
+            counterparty_id: activeMeter.counterparty_id || "",
             amount: getActiveDebt(),
             note: `Оплата послуг: ${activeMeter.name}`,
           }}

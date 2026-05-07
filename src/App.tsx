@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -10,55 +11,55 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
 import { GlobalStyle } from "./styles/GlobalStyle";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import Dashboard from "./pages/dashboard/Dashboard";
-import Accounts from "./pages/accounts/Accounts";
-import Transactions from "./pages/transactions/Transactions";
-import TransactionPage from "./pages/transactions/TransactionPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AppLayout from "./components/ui/AppLayout";
-
-// Налаштування
-import SettingsLayout from "./pages/settings/SettingsLayout";
-import General from "./pages/settings/General";
-import Profile from "./pages/settings/Profile";
-import Categories from "./pages/settings/Categories";
-import Tags from "./pages/settings/Tags";
-import PageNotFound from "./pages/PageNotFound";
-import Users from "./pages/settings/Users";
-import AccountDetails from "./pages/accounts/AccountDetails";
-import Export from "./pages/settings/ExportPage";
-import Counterparties from "./pages/settings/Counterparties";
-import InvestmentDashboard from "./pages/investments/InvestmentDashboard"; // Імпорт
 import { ThemeProvider } from "./context/ThemeContext";
 import { SettingsProvider } from "./context/SettingsContext";
-import { Statistics } from "./pages/statistics/Statistics";
 import { HeaderProvider } from "./context/HeaderContext";
-import { WorkspaceProvider } from "./context/WorkspaceContext"; // 👈 1. Додано імпорт
-
-// Модалки
-import CreateTransactionModal from "./components/transactions/CreateTransactionModal";
-import EditTransactionModal from "./components/transactions/EditTransactionModal";
-import CreateAccountModal from "./components/accounts/CreateAccountModal";
-import EditAccountModal from "./components/accounts/EditAccountModal";
-import ExportModal from "./components/stats/ExportModal";
-
-// Сторінки
-import Assets from "./pages/assets/Assets";
-import AssetDetails from "./pages/assets/AssetDetails";
-import Debts from "./pages/debts/Debts";
-import DebtorDetails from "./pages/debts/DebtorDetails";
-import Utility from "./pages/utility/Utility";
-import UtilityDetails from "./pages/utility/UtilityDetails";
-import UtilityAnalyticsPage from "./pages/utility/UtilityAnalyticsPage";
-import UtilityMeterAnalyticsPage from "./pages/utility/UtilityMeterAnalyticsPage";
+import { WorkspaceProvider } from "./context/WorkspaceContext";
 import { SyncProvider } from "./context/SyncContext";
-import Goals from "./pages/Goals/Goals";
-import GoalDetails from "./pages/Goals/GoalDetails";
-import Shopping from "./pages/Shopping/Shopping";
-import WishlistGroups from "./pages/wishlist/WishlistGroups";
-import WishlistItems from "./pages/wishlist/WishlistItems";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import AppLayout from "./components/ui/AppLayout";
+import Spinner from "./components/ui/Spinner";
+
+// --- LAZY LOADED PAGES ---
+const Login = lazy(() => import("./pages/auth/Login"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const Accounts = lazy(() => import("./pages/accounts/Accounts"));
+const Transactions = lazy(() => import("./pages/transactions/Transactions"));
+const TransactionPage = lazy(() => import("./pages/transactions/TransactionPage"));
+const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
+const General = lazy(() => import("./pages/settings/General"));
+const Profile = lazy(() => import("./pages/settings/Profile"));
+const Categories = lazy(() => import("./pages/settings/Categories"));
+const Tags = lazy(() => import("./pages/settings/Tags"));
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
+const Users = lazy(() => import("./pages/settings/Users"));
+const AccountDetails = lazy(() => import("./pages/accounts/AccountDetails"));
+const Export = lazy(() => import("./pages/settings/ExportPage"));
+const Counterparties = lazy(() => import("./pages/settings/Counterparties"));
+const InvestmentDashboard = lazy(() => import("./pages/investments/InvestmentDashboard"));
+const Statistics = lazy(() => import("./pages/statistics/Statistics").then(m => ({ default: m.Statistics })));
+const Assets = lazy(() => import("./pages/assets/Assets"));
+const AssetDetails = lazy(() => import("./pages/assets/AssetDetails"));
+const Debts = lazy(() => import("./pages/debts/Debts"));
+const DebtorDetails = lazy(() => import("./pages/debts/DebtorDetails"));
+const Utility = lazy(() => import("./pages/utility/Utility"));
+const UtilityDetails = lazy(() => import("./pages/utility/UtilityDetails"));
+const UtilityAnalyticsPage = lazy(() => import("./pages/utility/UtilityAnalyticsPage"));
+const UtilityMeterAnalyticsPage = lazy(() => import("./pages/utility/UtilityMeterAnalyticsPage"));
+const Goals = lazy(() => import("./pages/Goals/Goals"));
+const GoalDetails = lazy(() => import("./pages/Goals/GoalDetails"));
+const Shopping = lazy(() => import("./pages/Shopping/Shopping"));
+const WishlistGroups = lazy(() => import("./pages/wishlist/WishlistGroups"));
+const WishlistItems = lazy(() => import("./pages/wishlist/WishlistItems"));
+
+// --- LAZY LOADED MODALS ---
+const CreateTransactionModal = lazy(() => import("./components/transactions/CreateTransactionModal"));
+const EditTransactionModal = lazy(() => import("./components/transactions/EditTransactionModal"));
+const CreateAccountModal = lazy(() => import("./components/accounts/CreateAccountModal"));
+const EditAccountModal = lazy(() => import("./components/accounts/EditAccountModal"));
+const ExportModal = lazy(() => import("./components/stats/ExportModal"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -91,7 +92,7 @@ function AppRoutes() {
   const background = location.state && location.state.background;
 
   return (
-    <>
+    <Suspense fallback={<Spinner />}>
       <Routes location={background || location}>
         <Route
           element={
@@ -172,7 +173,7 @@ function AppRoutes() {
           <Route path="statistics/export" element={<ExportModal />} />
         </Routes>
       )}
-    </>
+    </Suspense>
   );
 }
 

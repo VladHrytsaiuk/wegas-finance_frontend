@@ -31,6 +31,7 @@ import {
   CardTitle,
   CardValue,
 } from "./UtilityAnalyticsPage.styles"; // шлях умовний
+import { t } from "i18next";
 
 // Виносимо конфігурацію Recharts за межі компонента, щоб уникнути inline об'єктів
 const legendStyle = { paddingTop: "20px" };
@@ -73,7 +74,9 @@ export default function UtilityAnalyticsPage() {
               <CardValue>{formatMoney(totalYearCost * 100, "UAH")}</CardValue>
             </Card>
             <Card>
-              <CardTitle>{t("stats_utility:utility.average_monthly")}</CardTitle>
+              <CardTitle>
+                {t("stats_utility:utility.average_monthly")}
+              </CardTitle>
               {/* Передаємо проп замість інлайн стилю */}
               <CardValue $variant="neutral">
                 {formatMoney(avgMonthly * 100, "UAH")}

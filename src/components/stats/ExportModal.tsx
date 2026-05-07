@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   HiXMark,
@@ -14,6 +15,7 @@ import { MultiSelectFilter } from "../shared/TableToolbar/MultiSelectFilter";
 import { Button } from "../ui/Button";
 
 import { useExportStatsModal } from "../../hooks/Stats/useExportStatsModal";
+import { useEscapeKey } from "../../hooks/useEscapeKey";
 import * as S from "./ExportModal.styles";
 
 interface ExportStatsModalProps {
@@ -27,13 +29,32 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
   const { state, actions, t } = useExportStatsModal(props);
   const { dateRange, accountIds, options, accountsConfig, loading } = state;
   const { onClose } = props;
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEscapeKey(onClose);
+
+  useEffect(() => {
+    closeBtnRef.current?.focus();
+  }, []);
 
   return createPortal(
     <S.Overlay onClick={onClose}>
-      <S.ModalContainer onClick={(e) => e.stopPropagation()}>
+      <S.ModalContainer
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         <S.Header>
-          <S.Title>{t("export_import:exportStatsModal.title")}</S.Title>
-          <S.CloseBtn onClick={onClose}>
+          <S.Title id="modal-title">
+            {t("export_import:exportStatsModal.title")}
+          </S.Title>
+          <S.CloseBtn
+            onClick={onClose}
+            ref={closeBtnRef}
+            aria-label={t("common:ui.close", "Закрити")}
+            title={t("common:ui.close", "Закрити")}
+          >
             <HiXMark size={24} />
           </S.CloseBtn>
         </S.Header>
@@ -77,7 +98,9 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiChartPie />
                 </div>
-                <span>{t("export_import:exportStatsModal.option_summary")}</span>
+                <span>
+                  {t("export_import:exportStatsModal.option_summary")}
+                </span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.topTransactions}>
@@ -89,7 +112,9 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiListBullet />
                 </div>
-                <span>{t("export_import:exportStatsModal.option_top_transactions")}</span>
+                <span>
+                  {t("export_import:exportStatsModal.option_top_transactions")}
+                </span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.categories}>
@@ -101,7 +126,9 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiChartPie />
                 </div>
-                <span>{t("export_import:exportStatsModal.option_categories")}</span>
+                <span>
+                  {t("export_import:exportStatsModal.option_categories")}
+                </span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.counterparties}>
@@ -113,7 +140,9 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
                 <div className="icon">
                   <HiBuildingStorefront />
                 </div>
-                <span>{t("export_import:exportStatsModal.option_counterparties")}</span>
+                <span>
+                  {t("export_import:exportStatsModal.option_counterparties")}
+                </span>
               </S.OptionCard>
 
               <S.OptionCard $checked={options.tags}>

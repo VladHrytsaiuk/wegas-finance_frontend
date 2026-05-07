@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   HiFlag,
@@ -28,7 +29,7 @@ interface GoalCardProps {
   };
 }
 
-export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
+export default memo(function GoalCard({ goal, t, handlers }: GoalCardProps) {
   const navigate = useNavigate();
 
   const target = Number(goal.target_amount) || 0;
@@ -227,4 +228,4 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
       </S.CardLink>
     </S.GoalCard>
   );
-}
+});

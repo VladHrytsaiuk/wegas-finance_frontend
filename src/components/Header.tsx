@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { HiOutlineUser } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useHeader } from "../context/HeaderContext";
 import { WorkspaceSwitcher } from "./ui/WorkspaceSwitcher";
-import { useExchangeRates } from "../hooks/useExchangeRates"; // Імпортуємо хук
+import { useExchangeRates } from "../hooks/useExchangeRates";
 // --- STYLES ---
 const StyledHeader = styled.header`
   background-color: var(--color-bg-page);
@@ -158,6 +159,7 @@ const Avatar = styled.div`
 
 function Header() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const user = localStorage.getItem("user_name") || t("common:shared.user_default");
   const { title, subtitle } = useHeader();
 
@@ -195,7 +197,17 @@ function Header() {
           </RatesWidget>
         )}
 
-        <UserArea>
+        <UserArea
+          role="button"
+          tabIndex={0}
+          aria-label={t("common:shared.user_profile", "Профіль користувача")}
+          onClick={() => navigate("/settings")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate("/settings");
+            }
+          }}
+        >
           <UserName>{user}</UserName>
           <Avatar>
             <HiOutlineUser />

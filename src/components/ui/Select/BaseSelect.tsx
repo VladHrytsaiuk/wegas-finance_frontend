@@ -73,6 +73,7 @@ export const BaseSelect = ({
               type="button"
               tabIndex={-1}
               title={t("legacy:filterComponent.clear_selection")}
+              aria-label={t("legacy:filterComponent.clear_selection")}
             >
               <HiXMark size={16} />
             </S.ClearButton>
