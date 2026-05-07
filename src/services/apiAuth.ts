@@ -1,7 +1,32 @@
 import api from "./Axios";
 
-export const loginApi = async ({ email, password }: any) => {
-  const response = await api.post(`/login`, { email, password });
+export interface LoginPayload {
+  email: string;
+  password?: string;
+}
+
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password?: string;
+  invite_code?: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role_id: string;
+  };
+}
+
+export const loginApi = async ({
+  email,
+  password,
+}: LoginPayload): Promise<AuthResponse> => {
+  const response = await api.post<AuthResponse>(`/login`, { email, password });
   return response.data;
 };
 
@@ -11,8 +36,8 @@ export const registerApi = async ({
   email,
   password,
   invite_code,
-}: any) => {
-  const response = await api.post(`/users`, {
+}: RegisterPayload): Promise<AuthResponse> => {
+  const response = await api.post<AuthResponse>(`/users`, {
     name,
     email,
     password,

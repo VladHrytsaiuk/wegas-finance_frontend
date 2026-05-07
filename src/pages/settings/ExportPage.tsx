@@ -7,6 +7,7 @@ import {
   HiBuildingStorefront,
   HiTag,
 } from "react-icons/hi2";
+import { Trans } from "react-i18next";
 
 import { DateRangePicker } from "../../components/ui/DateRangePicker";
 import { MultiSelectFilter } from "../../components/shared/TableToolbar/MultiSelectFilter";
@@ -218,9 +219,12 @@ export default function ExportPage() {
               </S.OptionsGrid>
             </div>
 
-            <S.StatsInfo
-              dangerouslySetInnerHTML={{ __html: t("export_import:exportPage.stats_info") }}
-            />
+            <S.StatsInfo>
+              <Trans
+                i18nKey="export_import:exportPage.stats_info"
+                components={{ strong: <strong /> }}
+              />
+            </S.StatsInfo>
           </>
         )}
       </S.ControlPanel>

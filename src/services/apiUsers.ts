@@ -13,12 +13,12 @@ export interface UserProfile {
 }
 
 // Отримати дані про себе (хто залогінився)
-export const getMeApi = async () => {
-  const response = await api.get("/users/me");
+export const getMeApi = async (): Promise<UserProfile> => {
+  const response = await api.get<UserProfile>("/users/me");
   return response.data;
 };
 export const getFamilyMembers = async (): Promise<UserProfile[]> => {
-  const { data } = await api.get("/users");
+  const { data } = await api.get<UserProfile[]>("/users");
   return data;
 };
 
@@ -26,8 +26,8 @@ export const getFamilyMembers = async (): Promise<UserProfile[]> => {
 export const updateProfileApi = async (data: {
   name: string;
   email: string;
-}) => {
-  const response = await api.put("/users/me", data);
+}): Promise<UserProfile> => {
+  const response = await api.put<UserProfile>("/users/me", data);
   return response.data;
 };
 
@@ -35,24 +35,33 @@ export const updateProfileApi = async (data: {
 export const changePasswordApi = async (data: {
   old_password: string;
   new_password: string;
-}) => {
-  const response = await api.put("/users/password", data);
+}): Promise<{ message: string }> => {
+  const response = await api.put<{ message: string }>("/users/password", data);
   return response.data;
 };
 
 // --- УПРАВЛІННЯ КОМАНДОЮ (СІМ'ЄЮ) ---
 
 // Отримати список всіх членів сім'ї
-export const getUsersApi = async () => {
-  const response = await api.get("/users");
+export const getUsersApi = async (): Promise<UserProfile[]> => {
+  const response = await api.get<UserProfile[]>("/users");
   return response.data;
 };
 
+export interface CreateUserData {
+  name: string;
+  email: string;
+  password?: string;
+  role_id: string;
+}
+
+// ... (other functions remain the same)
+
 // Додати нового члена в МОЮ сім'ю
 // ВАЖЛИВО: Маршрут змінено на /family/users
-export const addUserApi = async (data: any) => {
+export const addUserApi = async (data: CreateUserData): Promise<UserProfile> => {
   // data: { name, email, password, role_id }
-  const response = await api.post("/family/users", data);
+  const response = await api.post<UserProfile>("/family/users", data);
   return response.data;
 };
 
@@ -62,14 +71,16 @@ export const updateUserApi = async ({
   ...data
 }: {
   id: string;
-  [key: string]: any;
-}) => {
-  const response = await api.put(`/users/${id}`, data);
+  name?: string;
+  email?: string;
+  role_id?: string;
+}): Promise<UserProfile> => {
+  const response = await api.put<UserProfile>(`/users/${id}`, data);
   return response.data;
 };
 
 // Видалити користувача з сім'ї
-export const deleteUserApi = async (id: string) => {
-  const response = await api.delete(`/users/${id}`);
+export const deleteUserApi = async (id: string): Promise<{ message: string }> => {
+  const response = await api.delete<{ message: string }>(`/users/${id}`);
   return response.data;
 };

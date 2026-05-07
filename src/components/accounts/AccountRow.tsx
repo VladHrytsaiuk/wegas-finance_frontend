@@ -16,10 +16,18 @@ import {
 import { useTranslation } from "react-i18next";
 import Table from "../ui/Table";
 import * as S from "./AccountsTable.styles";
+import type { Account } from "../../types";
+
+export interface AccountStyleInfo {
+  bg: string;
+  color: string;
+  miniLogo: string | null;
+  iconType: string | null;
+}
 
 interface AccountRowProps {
-  acc: any;
-  styleInfo: any;
+  acc: Account;
+  styleInfo: AccountStyleInfo;
   canManage: boolean;
   onClick: (id: string) => void;
   onDelete: (id: string) => void;

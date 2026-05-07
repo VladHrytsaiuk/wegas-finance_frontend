@@ -59,9 +59,6 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         startupRetriesRef.current += 1;
 
         if (startupRetriesRef.current < 4) {
-          console.log(
-            `⏳ Чекаємо на старт бекенда... спроба ${startupRetriesRef.current}`,
-          );
           return; // ІГНОРУЄМО цю відповідь, залишаємо "З'єднання..."
         }
 
@@ -90,9 +87,8 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         hasNotifiedRef.current = true;
         isRunningRef.current = false;
 
-        console.log("✅ Синхронізація завершена");
         successSound.currentTime = 0;
-        successSound.play().catch((e) => console.warn("Звук заблоковано:", e));
+        successSound.play().catch(() => {});
         toast.success("Дані оновлено!");
       }
 

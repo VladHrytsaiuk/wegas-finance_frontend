@@ -1,18 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-// import styled from "styled-components";
 import { getMeApi } from "../services/apiUsers";
 import FullPageSpinner from "./ui/FullPageSpinner";
-
-// const FullPage = styled.div`
-//   height: 100vh;
-//   background-color: var(--color-bg-page);
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   color: var(--color-text-secondary);
-// `;
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();

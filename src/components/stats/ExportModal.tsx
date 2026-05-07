@@ -7,6 +7,7 @@ import {
   HiTag,
   HiTableCells,
 } from "react-icons/hi2";
+import { Trans } from "react-i18next";
 
 import { DateRangePicker } from "../ui/DateRangePicker";
 import { MultiSelectFilter } from "../shared/TableToolbar/MultiSelectFilter";
@@ -131,11 +132,12 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
 
           <S.FormatInfo>
             <HiTableCells size={20} style={{ color: "#107930" }} />
-            <span
-              dangerouslySetInnerHTML={{
-                __html: t("export_import:exportStatsModal.format_info"),
-              }}
-            />
+            <span>
+              <Trans
+                i18nKey="export_import:exportStatsModal.format_info"
+                components={{ strong: <strong /> }}
+              />
+            </span>
           </S.FormatInfo>
         </S.Content>
 

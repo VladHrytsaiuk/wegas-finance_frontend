@@ -18,8 +18,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // ➡️ ФУНКЦІЯ ДЛЯ СИНХРОННОЇ ІНІЦІАЛІЗАЦІЇ (Твій правильний код)
 const getInitialTheme = (): Theme => {
-  const savedTheme = localStorage.getItem("app-theme") as Theme;
-  if (savedTheme) {
+  const savedTheme = localStorage.getItem("app-theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
     document.documentElement.setAttribute("data-theme", savedTheme);
     return savedTheme;
   }

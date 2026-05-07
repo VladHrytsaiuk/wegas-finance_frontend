@@ -3,13 +3,13 @@ import {
   useEffect,
   useMemo,
   useCallback,
-  useRef,
   forwardRef,
 } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { HiPencil, HiCheck, HiXMark } from "react-icons/hi2";
-import * as GridLayoutPkg from "react-grid-layout";
+import { Responsive, WidthProvider } from "react-grid-layout/legacy";
+import type { ResponsiveLayouts as Layouts } from "react-grid-layout/legacy";
 import { useTranslation } from "react-i18next";
 
 import "react-grid-layout/css/styles.css";
@@ -42,60 +42,11 @@ import {
   ButtonLabel,
 } from "./Dashboard.styles";
 
-// @ts-ignore
-const Responsive =
-  GridLayoutPkg.Responsive || GridLayoutPkg.default?.Responsive;
-
-const withMyWidth = (Component: any) => {
-  return (props: any) => {
-    const [width, setWidth] = useState<number | null>(null);
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const handleResize = () => {
-        if (ref.current) setWidth(ref.current.offsetWidth);
-      };
-      const resizeObserver = new ResizeObserver(() => handleResize());
-      if (ref.current) {
-        resizeObserver.observe(ref.current);
-        handleResize();
-      }
-      window.addEventListener("resize", handleResize);
-      return () => {
-        resizeObserver.disconnect();
-        window.removeEventListener("resize", handleResize);
-      };
-    }, []);
-
-    return (
-      <div
-        ref={ref}
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-        }}
-      >
-        {width !== null && (
-          <Component
-            width={width}
-            {...props}
-            style={{ height: "100%", flex: 1 }}
-          />
-        )}
-      </div>
-    );
-  };
-};
-
-const ResponsiveGridLayout = Responsive
-  ? withMyWidth(Responsive)
-  : () => <div style={{ color: "red" }}>Grid Error</div>;
+// Create the responsive grid with width provider
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // 🔥 ФІНАЛЬНА СІТКА v10: Виправлено баг RGL зі стрибком віджета вниз
-const defaultLayouts = {
+const defaultLayouts: Layouts = {
   lg: [
     { i: "balance", x: 0, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
     { i: "income", x: 4, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
@@ -149,7 +100,6 @@ const defaultLayouts = {
     { i: "top_categories", x: 0, y: 40, w: 4, h: 9, minH: 6, minW: 2 },
     { i: "top_counterparties", x: 0, y: 49, w: 4, h: 9, minH: 6, minW: 2 },
   ],
-  // 🔥 ДОДАНО БРЕЙКПОІНТ XXS: Це забороняє бібліотеці "вгадувати" координати і ламати сітку
   xxs: [
     { i: "balance", x: 0, y: 0, w: 2, h: 3, minH: 2, minW: 2 },
     { i: "income", x: 0, y: 3, w: 2, h: 3, minH: 2, minW: 2 },
@@ -163,8 +113,15 @@ const defaultLayouts = {
   ],
 };
 
-const GridItem = forwardRef(
-  ({ style, className, children, ...props }: any, ref: any) => {
+interface GridItemProps {
+  style?: React.CSSProperties;
+  className?: string;
+  children?: React.ReactNode;
+  [key: string]: any;
+}
+
+const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
+  ({ style, className, children, ...props }, ref) => {
     const isStatic = className?.includes("static");
     return (
       <GridItemContainer
@@ -192,7 +149,7 @@ function Dashboard() {
 
   const [layouts, setLayouts] = useState(() => {
     try {
-      const saved = localStorage.getItem("dashboard_layout_v7"); // 🔥 Змінив ключ, щоб сітка точно оновилась у всіх
+      const saved = localStorage.getItem("dashboard_layout_v7");
       return saved ? JSON.parse(saved) : defaultLayouts;
     } catch (e) {
       return defaultLayouts;
@@ -211,12 +168,18 @@ function Dashboard() {
   }, [layouts, isEditMode]);
 
   const onLayoutChange = useCallback(
-    (currentLayout: any, allLayouts: any) => {
+    (_currentLayout: any, allLayouts: any) => {
       if (!isEditMode) return;
+      
+      // Guard: only update if layouts actually changed
+      const layoutsStr = JSON.stringify(layouts);
+      const allLayoutsStr = JSON.stringify(allLayouts);
+      if (layoutsStr === allLayoutsStr) return;
+
       setLayouts(allLayouts);
-      localStorage.setItem("dashboard_layout_v7", JSON.stringify(allLayouts));
+      localStorage.setItem("dashboard_layout_v7", allLayoutsStr);
     },
-    [isEditMode],
+    [isEditMode, layouts],
   );
 
   const handleResetLayout = () => {
@@ -250,7 +213,6 @@ function Dashboard() {
     accountIds: [],
   });
 
-  // 🔥 Завантажуємо дані для нових карток
   const {
     totals: { balance, income, expense },
     meta: { currency, language },
@@ -279,10 +241,19 @@ function Dashboard() {
   };
   const handleLocalChange = () => setIsDiverged(true);
 
+  // Memoize static grid props to prevent re-renders
+  const breakpoints = useMemo(() => ({ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }), []);
+  const cols = useMemo(() => ({ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }), []);
+  const margin = useMemo(() => [20, 20] as [number, number], []);
+  const containerPadding = useMemo(() => [0, 0] as [number, number], []);
+
   if (isUserLoading || isAccLoading) return <Spinner />;
 
   return (
-    <DashboardContainer $isEditMode={isEditMode} $isMounted={isMounted}>
+    <DashboardContainer
+      $isEditMode={isEditMode}
+      $isMounted={isMounted}
+    >
       <FilterBar>
         <div style={{ display: "flex", gap: "10px" }}>
           <EditButton
@@ -330,18 +301,18 @@ function Dashboard() {
       <ResponsiveGridLayout
         className="layout"
         layouts={controlledLayouts}
-        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        breakpoints={breakpoints}
+        cols={cols}
         rowHeight={30}
-        margin={[20, 20]}
-        containerPadding={[0, 0]}
+        margin={margin}
+        containerPadding={containerPadding}
         onLayoutChange={onLayoutChange}
         isDraggable={isEditMode}
         isResizable={isEditMode}
         draggableHandle=".drag-overlay"
         useCSSTransforms={true}
+        measureBeforeMount={false}
       >
-        {/* 🔥 ТРИ НОВІ КАРТКИ */}
         <GridItem key="balance">
           <WidgetInnerContainer $isEditMode={isEditMode}>
             <BalanceCard
@@ -372,7 +343,6 @@ function Dashboard() {
           </WidgetInnerContainer>
         </GridItem>
 
-        {/* СТАРІ ВІДЖЕТИ */}
         <GridItem key="accounts">
           <WidgetInnerContainer $isEditMode={isEditMode}>
             <AccountsWidget />

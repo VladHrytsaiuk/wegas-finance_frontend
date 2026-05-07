@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 // Додав ключові слова, які зустрічаються в bank_name
 const SUPPORTED_BANKS = ["privat", "monobank"];
 
-interface Account {
+export interface Account {
   id: string;
   type: string;
   name: string;

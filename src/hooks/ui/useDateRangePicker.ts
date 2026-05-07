@@ -46,8 +46,6 @@ export const useDateRangePicker = (props: DatePickerProps) => {
 
   // --- 1. ІНІЦІАЛІЗАЦІЯ ---
   useEffect(() => {
-    // console.log("🔄 [Hook] Mounted/Updated with props:", { from: props.dateFrom, to: props.dateTo });
-
     if (mode === "range") {
       setTempRange({
         from: props.dateFrom ? new Date(props.dateFrom) : undefined,
@@ -69,12 +67,8 @@ export const useDateRangePicker = (props: DatePickerProps) => {
 
   // --- 2. INTERNAL HELPER: SEND DATA UP ---
   const sendDataToParent = (from?: Date, to?: Date) => {
-    // console.log("🚀 [Hook] Sending to Parent:", { from, to });
-
     if (props.onChange) {
       props.onChange({ from, to });
-    } else {
-      console.error("❌ [Hook] ERROR: props.onChange is missing!");
     }
 
     if (props.onDateChange && from) {

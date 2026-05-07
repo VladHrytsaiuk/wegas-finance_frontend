@@ -98,7 +98,7 @@ export const statsService = {
     accountIds: string[],
     filter?: RecentParams,
   ): Promise<Transaction[]> => {
-    const params: any = {
+    const params: Record<string, string | number> = {
       account_ids: accountIds.join(","),
     };
 
@@ -109,9 +109,6 @@ export const statsService = {
     if (filter?.to !== undefined) {
       params.to = filter.to;
     }
-
-    // 👇 ДОДАЙТЕ ЦЕЙ LOG, щоб побачити в консолі браузера, що ми шлемо
-    console.log("📡 API Request /recent Params:", params);
 
     const response = await api.get<Transaction[]>("/dashboard/recent", {
       params,
