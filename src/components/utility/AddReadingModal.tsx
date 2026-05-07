@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { format } from "date-fns";
 import { HiCalendar, HiCalculator, HiCurrencyDollar } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
@@ -52,6 +53,7 @@ interface Props {
 }
 
 export default function AddReadingForm({ onCloseModal, meter }: Props) {
+  const { t } = useTranslation();
   const { addReading } = useUtilityReadings(meter?.id);
 
   const {
@@ -89,29 +91,31 @@ export default function AddReadingForm({ onCloseModal, meter }: Props) {
       <h3
         style={{ marginBottom: "1.5rem", fontSize: "1.3rem", fontWeight: 600 }}
       >
-        Внести показники: {meter?.name}
+        {t("stats_utility:addReadingModal.title", { name: meter?.name })}
       </h3>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <InfoBox>
-          Попередній показник:{" "}
+          {t("stats_utility:addReadingModal.prev_reading")}{" "}
           <strong>
             {meter?.last_reading_value ?? 0} {meter?.unit}
           </strong>
         </InfoBox>
 
         <Input
-          label="Дата зняття"
+          label={t("stats_utility:addReadingModal.date_label")}
           type="date"
           icon={<HiCalendar />}
           {...register("date", { required: true })}
         />
 
         <Input
-          label={`Поточні цифри (${meter?.unit})`}
+          label={t("stats_utility:addReadingModal.current_value_label", {
+            unit: meter?.unit,
+          })}
           type="number"
           step="0.01"
           icon={<HiCalculator />}
-          placeholder="Більше ніж попередні"
+          placeholder={t("stats_utility:addReadingModal.placeholder_value")}
           {...register("value", { required: true })}
           autoFocus
         />
@@ -119,11 +123,12 @@ export default function AddReadingForm({ onCloseModal, meter }: Props) {
         {/* 🔥 БЛОК ЗМІНИ ТАРИФУ */}
         <TariffBox>
           <div className="hint">
-            Якщо тариф змінився, введіть нову ціну. Вона збережеться для цього
-            місяця та оновить лічильник.
+            {t("stats_utility:addReadingModal.tariff_hint")}
           </div>
           <Input
-            label={`Тариф (${meter?.currency})`}
+            label={t("stats_utility:addReadingModal.tariff_label", {
+              currency: meter?.currency,
+            })}
             type="number"
             step="0.0001" // Більша точність для газу/електрики
             icon={<HiCurrencyDollar />}
@@ -141,10 +146,10 @@ export default function AddReadingForm({ onCloseModal, meter }: Props) {
           }}
         >
           <Button variation="secondary" onClick={onCloseModal} type="button">
-            Скасувати
+            {t("common:common.cancel")}
           </Button>
           <Button variation="primary" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? <Spinner size="small" /> : "Зберегти"}
+            {isSubmitting ? <Spinner size="small" /> : t("common:common.save")}
           </Button>
         </div>
       </Form>

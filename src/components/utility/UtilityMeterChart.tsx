@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import { getMeterStats } from "../../services/apiUtility";
 import Spinner from "../ui/Spinner";
 import { CustomTooltip } from "./ChartConfig";
@@ -39,6 +40,7 @@ interface Props {
   currency: string;
 }
 export default function UtilityMeterChart({ meterId, unit, currency }: Props) {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["utilityStatsMeter", meterId],
     queryFn: () => getMeterStats(meterId),
@@ -56,7 +58,7 @@ export default function UtilityMeterChart({ meterId, unit, currency }: Props) {
 
   return (
     <ChartContainer>
-      <h3>Динаміка споживання та витрат</h3>
+      <h3>{t("stats_utility:utility.analytics_dynamics")}</h3>
       <ResponsiveContainer width="100%" height="100%">
         {/* Ключ змушує Recharts скинути внутрішній стейт при зміні ID або довжини даних */}
         <ComposedChart
@@ -95,7 +97,7 @@ export default function UtilityMeterChart({ meterId, unit, currency }: Props) {
           <Bar
             yAxisId="left"
             dataKey="total_consumption"
-            name="Спожито"
+            name={t("stats_utility:utility.chart_consumption")}
             barSize={30}
             fill="var(--color-brand-200)"
             radius={[4, 4, 0, 0]}
@@ -106,7 +108,7 @@ export default function UtilityMeterChart({ meterId, unit, currency }: Props) {
             yAxisId="right"
             type="monotone"
             dataKey="total_cost"
-            name="Вартість"
+            name={t("stats_utility:utility.chart_cost")}
             stroke="#ef4444"
             strokeWidth={2}
             dot={{ r: 4 }}

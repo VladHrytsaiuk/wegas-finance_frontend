@@ -21,18 +21,20 @@ import {
 // Hooks & Styles
 import { useMeterAnalytics } from "../../hooks/Utility/useUtilityMeterAnalyticsPage";
 import * as S from "./UtilityMeterAnalyticsPage.styles";
+import { useTranslation } from "react-i18next";
 
 export default function UtilityMeterAnalyticsPage() {
   const { meter, stats, isLoading, hasData, handleBack, meterId } =
     useMeterAnalytics();
+  const { t } = useTranslation();
 
   if (isLoading) return <Spinner />;
-  if (!meter) return <div>Лічильник не знайдено</div>;
+  if (!meter) return <div>{t("stats_utility:utility.not_found")}</div>;
 
   return (
     <S.PageContainer>
       <S.BackButton onClick={handleBack}>
-        <HiArrowLeft /> Назад до лічильника
+        <HiArrowLeft /> {t("stats_utility:utility.back_to_meter")}
       </S.BackButton>
 
       <S.Header>
@@ -48,7 +50,7 @@ export default function UtilityMeterAnalyticsPage() {
       {!hasData ? (
         <S.ChartCard>
           <S.EmptyStateWrapper>
-            Даних для аналітики ще немає. Внесіть хоча б два показники.
+            {t("stats_utility:utility.analytics_meter_empty")}
           </S.EmptyStateWrapper>
         </S.ChartCard>
       ) : (
@@ -103,7 +105,7 @@ export default function UtilityMeterAnalyticsPage() {
                 <Bar
                   yAxisId="left"
                   dataKey="total_consumption"
-                  name="Споживання"
+                  name={t("stats_utility:utility.chart_consumption")}
                   barSize={40}
                   fill={CHART_COLORS.water}
                   isAnimationActive={false}
@@ -113,7 +115,7 @@ export default function UtilityMeterAnalyticsPage() {
                   yAxisId="right"
                   type="monotone"
                   dataKey="total_cost"
-                  name="Вартість"
+                  name={t("stats_utility:utility.chart_cost")}
                   stroke={CHART_COLORS.gas}
                   strokeWidth={2}
                   dot={{ r: 4 }}

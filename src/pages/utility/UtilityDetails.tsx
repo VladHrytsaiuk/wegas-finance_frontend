@@ -31,6 +31,7 @@ import { useUtilityDetails } from "../../hooks/Utility/useUtilityDetails";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./UtilityDetails.styles";
 import { patchUtilityReading } from "../../services/apiUtility";
+import { useTranslation } from "react-i18next";
 
 export default function UtilityDetails() {
   return (
@@ -45,12 +46,13 @@ function UtilityDetailsContent() {
   const { open, close, openName } = useModal();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { remove } = useUtilityMeters();
 
   const [activeReading, setActiveReading] = useState<any>(null);
 
   if (state.isLoading) return <Spinner />;
-  if (!data.meter) return <div>Лічильник не знайдено</div>;
+  if (!data.meter) return <div>{t("stats_utility:utility.not_found")}</div>;
 
   const { meter, readings, totalDebt, lastReadingDate } = data;
 
@@ -68,7 +70,7 @@ function UtilityDetailsContent() {
         (typeof response === "string" ? response : null);
 
       if (!txId) {
-        toast.error("Помилка при створенні транзакції");
+        toast.error(t("stats_utility:utility.error_tx_create"));
         return;
       }
 
@@ -83,7 +85,7 @@ function UtilityDetailsContent() {
         ),
       );
 
-      toast.success("Весь борг успішно погашено!");
+      toast.success(t("stats_utility:utility.success_pay_all"));
       // Тут можна винести ці інвалідації в окремий метод хука, але поки залишимо так
       queryClient.invalidateQueries({ queryKey: ["utilityReadings"] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
@@ -91,7 +93,7 @@ function UtilityDetailsContent() {
       close();
     } catch (error) {
       console.error(error);
-      toast.error("Сталася помилка при оновленні статусів");
+      toast.error(t("stats_utility:utility.error_status_update"));
     }
   };
 
@@ -106,7 +108,7 @@ function UtilityDetailsContent() {
       <S.PageContainer>
         <S.BackButton onClick={actions.handleBack}>
           <HiArrowLeft />
-          Назад до списку
+          {t("stats_utility:utility.back_to_list")}
         </S.BackButton>
 
         <S.Header>
@@ -114,11 +116,15 @@ function UtilityDetailsContent() {
             <h1>{meter.name}</h1>
             <S.SubTitle>
               <span>
-                {meter.type} • {meter.asset?.name || "Без об'єкту"}
+                {meter.type} •{" "}
+                {meter.asset?.name || t("stats_utility:utility.no_asset")}
                 {meter.counterparty ? ` • ${meter.counterparty.name}` : ""}
               </span>
               {meter.personal_account && (
-                <span className="account">О/Р: {meter.personal_account}</span>
+                <span className="account">
+                  {t("stats_utility:utility.personal_account_label")}:{" "}
+                  {meter.personal_account}
+                </span>
               )}
             </S.SubTitle>
           </S.TitleBlock>
@@ -127,20 +133,20 @@ function UtilityDetailsContent() {
             <S.ActionRow>
               <S.IconButton
                 onClick={() => navigate("analytics")}
-                title="Аналітика витрат"
+                title={t("stats_utility:utility.tooltip_analytics")}
               >
                 <HiChartBar />
               </S.IconButton>
               <S.IconButton
                 onClick={() => open("edit-meter")}
-                title="Редагувати"
+                title={t("stats_utility:utility.tooltip_edit")}
               >
                 <HiPencil />
               </S.IconButton>
               <S.IconButton
                 className="danger"
                 onClick={() => open("delete-meter")}
-                title="Видалити"
+                title={t("stats_utility:utility.tooltip_delete")}
               >
                 <HiTrash />
               </S.IconButton>
@@ -153,7 +159,9 @@ function UtilityDetailsContent() {
                   icon={<HiBanknotes />}
                   onClick={() => open("pay-all")}
                 >
-                  Оплатити борг ({formatMoney(totalDebt, meter.currency)})
+                  {t("stats_utility:utility.btn_pay_debt", {
+                    amount: formatMoney(totalDebt, meter.currency),
+                  })}
                 </Button>
               )}
 
@@ -162,7 +170,7 @@ function UtilityDetailsContent() {
                 icon={<HiCalendar />}
                 onClick={() => open("add-reading")}
               >
-                Внести показник
+                {t("stats_utility:utility.btn_add_reading")}
               </Button>
             </S.ActionRow>
           </S.ActionsColumn>
@@ -188,7 +196,7 @@ function UtilityDetailsContent() {
             <S.StatSub>
               {lastReadingDate && lastReadingDate > 0
                 ? formatDateSafe(lastReadingDate)
-                : "Дані відсутні"}
+                : t("stats_utility:utility.no_data")}
             </S.StatSub>
           </S.StatCard>
 
@@ -197,7 +205,9 @@ function UtilityDetailsContent() {
             <S.StatValue>
               {formatMoney(meter.tariff * 100, meter.currency)}
             </S.StatValue>
-            <S.StatSub>за 1 {meter.unit}</S.StatSub>
+            <S.StatSub>
+              {t("stats_utility:utility.per_unit")} {meter.unit}
+            </S.StatSub>
           </S.StatCard>
         </S.StatsGrid>
 
@@ -263,14 +273,18 @@ function UtilityDetailsContent() {
                               onClick={() =>
                                 navigate(`/transactions/${paymentTxId}`)
                               }
-                              title="Відкрити транзакцію оплати"
+                              title={t(
+                                "stats_utility:utility.tooltip_view_payment",
+                              )}
                             >
-                              <HiCheckCircle /> Оплачено{" "}
+                              <HiCheckCircle />{" "}
+                              {t("stats_utility:utility.status_paid")}{" "}
                               <HiArrowTopRightOnSquare size={14} />
                             </S.TransactionLink>
                           ) : (
                             <>
-                              <HiCheckCircle /> Оплачено
+                              <HiCheckCircle />{" "}
+                              {t("stats_utility:utility.status_paid")}
                             </>
                           )
                         ) : (
@@ -281,7 +295,8 @@ function UtilityDetailsContent() {
                                 open("pay-reading");
                               }}
                             >
-                              <HiExclamationCircle /> Оплатити
+                              <HiExclamationCircle />{" "}
+                              {t("stats_utility:utility.btn_pay")}
                             </S.PayButton>
 
                             {accrualTxId && (
@@ -290,7 +305,9 @@ function UtilityDetailsContent() {
                                   e.stopPropagation();
                                   navigate(`/transactions/${accrualTxId}`);
                                 }}
-                                title="Відкрити транзакцію нарахування"
+                                title={t(
+                                  "stats_utility:utility.tooltip_view_accrual",
+                                )}
                               >
                                 <HiArrowTopRightOnSquare size={14} />
                               </S.SecondaryTransactionLink>
@@ -326,24 +343,23 @@ function UtilityDetailsContent() {
           {totalDebt > 0 ? (
             <S.DeleteWarningContainer>
               <S.WarningIcon>🚫</S.WarningIcon>
-              <h3>Неможливо видалити</h3>
+              <h3>{t("stats_utility:utility.delete_error_title")}</h3>
               <p>
-                На цьому лічильнику є непогашений борг (
-                {formatMoney(totalDebt, meter.currency)}).
-                <br />
-                Спочатку оплатіть його або видаліть показники.
+                {t("stats_utility:utility.delete_error_desc", {
+                  amount: formatMoney(totalDebt, meter.currency),
+                })}
               </p>
               <Button
                 variation="secondary"
                 onClick={close}
                 style={{ marginTop: "1rem" }}
               >
-                Зрозуміло
+                {t("stats_utility:utility.btn_understand")}
               </Button>
             </S.DeleteWarningContainer>
           ) : (
             <ConfirmDelete
-              resourceName={`послугу "${meter.name}"`}
+              resourceName={`${t("stats_utility:utility.resource_name")} "${meter.name}"`}
               onConfirm={handleDeleteMeter}
             />
           )}
@@ -355,7 +371,7 @@ function UtilityDetailsContent() {
 
         <Modal.Window name="delete-reading">
           <ConfirmDelete
-            resourceName="показник"
+            resourceName={t("stats_utility:utility.resource_reading")}
             onConfirm={actions.handleDeleteConfirm}
           />
         </Modal.Window>
@@ -374,7 +390,10 @@ function UtilityDetailsContent() {
             type: "debt_repay",
             counterparty_id: meter.counterparty_id,
             amount: activeReading.calculated_cost,
-            note: `Оплата ${meter.name}: показник ${activeReading.value}`,
+            note: t("stats_utility:utility.payment_reading_note", {
+              name: meter.name,
+              value: activeReading.value,
+            }),
           }}
           onSuccess={async (response) => {
             if (activeReading) {
@@ -407,7 +426,9 @@ function UtilityDetailsContent() {
             type: "debt_repay",
             counterparty_id: meter.counterparty_id,
             amount: totalDebt,
-            note: `Повна оплата заборгованості: ${meter.name}`,
+            note: t("stats_utility:utility.payment_full_note", {
+              name: meter.name,
+            }),
           }}
           onSuccess={handlePayAllSuccess}
         />

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import { useUtilityMeters } from "./useUtility"; // Ваш існуючий хук
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
@@ -15,6 +16,7 @@ export const useCreateMeterForm = ({
   onCloseModal,
   meterToEdit,
 }: UseCreateMeterFormProps) => {
+  const { t } = useTranslation();
   const { create, update } = useUtilityMeters();
   const isEdit = !!meterToEdit;
 
@@ -64,6 +66,8 @@ export const useCreateMeterForm = ({
 
   const utilityProviders = allCounterparties.filter((cp: any) => {
     const catName = cp.category?.name || "";
+    // Note: These category names are usually hardcoded in backend or set during seeding.
+    // Keeping logic as is but ideally these would be IDs.
     return catName.includes("Комунальн") || catName === "Інтернет";
   });
 
@@ -111,7 +115,7 @@ export const useCreateMeterForm = ({
 
   const onSubmit = (data: any) => {
     if (!currentCP) {
-      toast.error("Оберіть постачальника послуг!");
+      toast.error(t("stats_utility:utility.toast_select_provider"));
       return;
     }
 

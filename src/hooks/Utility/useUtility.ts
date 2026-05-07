@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   getMeters,
   createMeter,
@@ -15,6 +16,7 @@ import {
 
 // 1. Список лічильників
 export function useUtilityMeters() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: meters = [], isLoading } = useQuery({
@@ -26,7 +28,7 @@ export function useUtilityMeters() {
     mutationFn: createMeter,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
-      toast.success("Послугу додано успішно");
+      toast.success(t("stats_utility:utility.toast_create_success"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -36,7 +38,7 @@ export function useUtilityMeters() {
       updateMeter(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
-      toast.success("Послугу оновлено");
+      toast.success(t("stats_utility:utility.toast_update_success"));
     },
   });
 
@@ -44,7 +46,7 @@ export function useUtilityMeters() {
     mutationFn: deleteMeter,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
-      toast.success("Послугу видалено");
+      toast.success(t("stats_utility:utility.toast_delete_success"));
     },
   });
 
@@ -63,6 +65,7 @@ export function useUtilityMeter(id: string) {
 
 // 3. Показники
 export function useUtilityReadings(meterId: string | null) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: readings = [], isLoading } = useQuery({
@@ -76,10 +79,13 @@ export function useUtilityReadings(meterId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityReadings", meterId] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
-      toast.success("Показник додано");
+      toast.success(t("stats_utility:utility.toast_reading_add_success"));
     },
     onError: (err: any) =>
-      toast.error(err?.response?.data?.error || "Не вдалося додати показник"),
+      toast.error(
+        err?.response?.data?.error ||
+          t("stats_utility:utility.toast_reading_add_error"),
+      ),
   });
 
   const { mutate: removeReading } = useMutation({
@@ -87,7 +93,7 @@ export function useUtilityReadings(meterId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityReadings", meterId] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
-      toast.success("Показник видалено");
+      toast.success(t("stats_utility:utility.toast_reading_delete_success"));
     },
   });
 
@@ -96,6 +102,7 @@ export function useUtilityReadings(meterId: string | null) {
 
 // 4. Дії з показниками (Оплата / Статус)
 export function useUtilityReadingActions() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   // Зміна статусу "Оплачено/Борг" (використовується в UtilityDetails)
@@ -105,8 +112,10 @@ export function useUtilityReadingActions() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityReadings"] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] }); // Оновлюємо борг на картці
+      toast.success(t("stats_utility:utility.toast_status_update_success"));
     },
-    onError: (err: any) => toast.error("Помилка оновлення статусу"),
+    onError: (err: any) =>
+      toast.error(t("stats_utility:utility.toast_status_update_error")),
   });
 
   // Оплата через гаманець (якщо раптом знадобиться прямий виклик API, а не через форму)
@@ -117,7 +126,7 @@ export function useUtilityReadingActions() {
       queryClient.invalidateQueries({ queryKey: ["utilityReadings"] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
-      toast.success("Оплату проведено успішно");
+      toast.success(t("stats_utility:utility.toast_pay_success"));
     },
     onError: (err: any) => toast.error(err.message),
   });

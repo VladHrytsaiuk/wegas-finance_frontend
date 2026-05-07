@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import {
   HiBolt,
   HiBeaker,
@@ -21,45 +22,6 @@ import { BaseSelect } from "../ui/Select/BaseSelect";
 import ConfirmCloseModal from "../ui/ConfirmCloseModal";
 import { Overlay, StyledModal } from "../ui/Modal";
 import { useCreateMeterForm } from "../../hooks/Utility/useCreateMeterForm";
-
-const SERVICE_TYPES = [
-  {
-    value: "electricity",
-    label: "Електроенергія",
-    unit: "kW",
-    icon: <HiBolt color="#f59e0b" />,
-  },
-  {
-    value: "water",
-    label: "Водопостачання",
-    unit: "m3",
-    icon: <HiBeaker color="#3b82f6" />,
-  },
-  {
-    value: "gas",
-    label: "Газопостачання",
-    unit: "m3",
-    icon: <HiFire color="#ef4444" />,
-  },
-  {
-    value: "internet",
-    label: "Інтернет / ТБ",
-    unit: "міс",
-    icon: <HiWifi color="#10b981" />,
-  },
-  {
-    value: "rent",
-    label: "Квартплата / Оренда",
-    unit: "міс",
-    icon: <HiHome color="#6366f1" />,
-  },
-  {
-    value: "heating",
-    label: "Опалення",
-    unit: "Gcal",
-    icon: <HiSun color="#f97316" />,
-  },
-];
 
 const Form = styled.form`
   display: flex;
@@ -113,8 +75,51 @@ interface Props {
 }
 
 export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
+  const { t } = useTranslation();
   // 🔥 Локальний стейт для підтвердження
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const SERVICE_TYPES = useMemo(
+    () => [
+      {
+        value: "electricity",
+        label: t("stats_utility:serviceTypes.electricity"),
+        unit: "kW",
+        icon: <HiBolt color="#f59e0b" />,
+      },
+      {
+        value: "water",
+        label: t("stats_utility:serviceTypes.water"),
+        unit: "m3",
+        icon: <HiBeaker color="#3b82f6" />,
+      },
+      {
+        value: "gas",
+        label: t("stats_utility:serviceTypes.gas"),
+        unit: "m3",
+        icon: <HiFire color="#ef4444" />,
+      },
+      {
+        value: "internet",
+        label: t("stats_utility:serviceTypes.internet"),
+        unit: t("stats_utility:serviceTypes.unit_month"),
+        icon: <HiWifi color="#10b981" />,
+      },
+      {
+        value: "rent",
+        label: t("stats_utility:serviceTypes.rent"),
+        unit: t("stats_utility:serviceTypes.unit_month"),
+        icon: <HiHome color="#6366f1" />,
+      },
+      {
+        value: "heating",
+        label: t("stats_utility:serviceTypes.heating"),
+        unit: "Gcal",
+        icon: <HiSun color="#f97316" />,
+      },
+    ],
+    [t],
+  );
 
   // Підключаємо наш новий хук
   const { form, assets, data, actions, isDirty } = useCreateMeterForm({
@@ -209,14 +214,18 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
             fontWeight: "bold",
           }}
         >
-          {data.isEdit ? "Редагувати послугу" : "Додати нову послугу"}
+          {data.isEdit
+            ? t("stats_utility:createMeterModal.title_edit")
+            : t("stats_utility:createMeterModal.title_add")}
         </h2>
 
         <Form onSubmit={handleSubmit(actions.onSubmit)}>
           <div>
-            <SectionLabel>Назва</SectionLabel>
+            <SectionLabel>
+              {t("stats_utility:createMeterModal.name_label")}
+            </SectionLabel>
             <Input
-              placeholder="Напр. Світло (Квартира)"
+              placeholder={t("stats_utility:createMeterModal.placeholder_name")}
               {...register("name", { required: true })}
               autoFocus
             />
@@ -224,14 +233,17 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
 
           <FormRow>
             <div>
-              <SectionLabel>Тип послуги</SectionLabel>
+              <SectionLabel>
+                {t("stats_utility:createMeterModal.type_label")}
+              </SectionLabel>
               <BaseSelect
                 triggerLabel={
                   <div
                     style={{ display: "flex", alignItems: "center", gap: 8 }}
                   >
                     {activeTypeConfig?.icon}{" "}
-                    {activeTypeConfig?.label || "Оберіть тип"}
+                    {activeTypeConfig?.label ||
+                      t("stats_utility:createMeterModal.placeholder_type")}
                   </div>
                 }
               >
@@ -250,9 +262,11 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               </BaseSelect>
             </div>
             <div>
-              <SectionLabel>Одиниця</SectionLabel>
+              <SectionLabel>
+                {t("stats_utility:createMeterModal.unit_label")}
+              </SectionLabel>
               <Input
-                placeholder="kW, m3"
+                placeholder={t("stats_utility:createMeterModal.placeholder_unit")}
                 {...register("unit", { required: true })}
               />
             </div>
@@ -260,7 +274,9 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
 
           <FormRow>
             <div>
-              <SectionLabel>Тариф (за 1 од.)</SectionLabel>
+              <SectionLabel>
+                {t("stats_utility:createMeterModal.tariff_label")}
+              </SectionLabel>
               <Input
                 type="number"
                 step="0.0001"
@@ -269,9 +285,13 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               />
             </div>
             <div>
-              <SectionLabel>Номер рахунку</SectionLabel>
+              <SectionLabel>
+                {t("stats_utility:createMeterModal.account_number_label")}
+              </SectionLabel>
               <Input
-                placeholder="З квитанції"
+                placeholder={t(
+                  "stats_utility:createMeterModal.placeholder_account",
+                )}
                 {...register("personal_account")}
               />
             </div>
@@ -279,7 +299,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
 
           <SelectorWrapper>
             <SectionLabel>
-              Прив'язати до об'єкту (Нерухомість / Авто)
+              {t("stats_utility:createMeterModal.asset_label")}
             </SectionLabel>
             <AssetSelector
               transactionType="expense"
@@ -292,7 +312,9 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
           </SelectorWrapper>
 
           <SelectorWrapper>
-            <SectionLabel>Постачальник послуг *</SectionLabel>
+            <SectionLabel>
+              {t("stats_utility:createMeterModal.provider_label")}
+            </SectionLabel>
             <CounterpartySelect
               counterparties={data.utilityProviders}
               value={currentCP}
@@ -317,10 +339,10 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               onClick={handleCloseAttempt}
               type="button"
             >
-              Скасувати
+              {t("common:common.cancel")}
             </Button>
             <Button variation="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Збереження..." : "Зберегти"}
+              {isSubmitting ? t("common:shared.saving") : t("common:common.save")}
             </Button>
           </div>
         </Form>

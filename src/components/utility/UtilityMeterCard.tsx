@@ -9,6 +9,7 @@ import {
   HiHome,
   HiPlus,
 } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "../../pages/utility/Utility.styles"; // Переконайся, що шлях правильний
@@ -49,6 +50,7 @@ export default function UtilityMeterCard({
   onAddReading,
 }: UtilityMeterCardProps) {
   const { icon, color } = getTypeConfig(meter.type);
+  const { t } = useTranslation();
 
   const balances = meter.counterparty?.balances || [];
   const mainBalance =
@@ -81,7 +83,7 @@ export default function UtilityMeterCard({
               <HiBuildingOffice size={14} /> {meter.counterparty.name}
             </>
           ) : (
-            `Рах: ${meter.personal_account || "—"}`
+            `${t("stats_utility:utility.personal_account_short")}: ${meter.personal_account || "—"}`
           )}
         </S.MeterSubtitle>
 
@@ -92,7 +94,7 @@ export default function UtilityMeterCard({
 
         {hasDebt && (
           <S.DebtBadge>
-            Борг: {formatMoney(debtAmount, meter.currency)}
+            {t("stats_utility:utility.debt_label")}: {formatMoney(debtAmount, meter.currency)}
           </S.DebtBadge>
         )}
       </S.CardContent>
@@ -101,7 +103,7 @@ export default function UtilityMeterCard({
 
       <S.Footer>
         <div style={{ flex: 1 }}>
-          <div className="label">Тариф</div>
+          <div className="label">{t("stats_utility:utility.table_rate")}</div>
           <div className="val">
             {formatMoney(meter.tariff * 100, meter.currency)}
           </div>
@@ -109,7 +111,7 @@ export default function UtilityMeterCard({
         <S.FooterActions onClick={(e) => e.stopPropagation()}>
           {hasDebt && (
             <Button variation="secondary" size="small" onClick={onPay}>
-              Оплатити
+              {t("stats_utility:utility.btn_pay")}
             </Button>
           )}
           <Button
@@ -118,7 +120,7 @@ export default function UtilityMeterCard({
             icon={<HiPlus />}
             onClick={onAddReading}
           >
-            Внести
+            {t("stats_utility:utility.btn_add_reading_short")}
           </Button>
         </S.FooterActions>
       </S.Footer>

@@ -2,11 +2,13 @@ import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useUtilityMeter, useUtilityReadings } from "./useUtility";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 // 🔥 Імпортуємо новий метод API
 import { patchUtilityReading } from "../../services/apiUtility";
 
 export const useUtilityDetails = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -63,10 +65,10 @@ export const useUtilityDetails = () => {
       await queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
       await queryClient.invalidateQueries({ queryKey: ["counterparties"] });
 
-      toast.success("Статус показника оновлено");
+      toast.success(t("stats_utility:utility.toast_status_update_success"));
     } catch (err) {
       console.error(err);
-      toast.error("Не вдалося оновити статус показника");
+      toast.error(t("stats_utility:utility.toast_status_update_error"));
     }
   };
 

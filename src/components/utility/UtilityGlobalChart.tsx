@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import { getGlobalUtilityStats } from "../../services/apiUtility";
 import Spinner from "../ui/Spinner";
 import { formatMoney } from "../../utils/helpers";
@@ -43,16 +44,8 @@ const TYPE_COLORS: Record<string, string> = {
   other: "#8b5cf6", // Purple
 };
 
-const TYPE_LABELS: Record<string, string> = {
-  electricity: "Світло",
-  water: "Вода",
-  gas: "Газ",
-  heating: "Опалення",
-  internet: "Інтернет",
-  rent: "Квартплата",
-};
-
 export default function UtilityGlobalChart() {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["utilityStatsGlobal"],
     queryFn: getGlobalUtilityStats,
@@ -76,7 +69,7 @@ export default function UtilityGlobalChart() {
 
   return (
     <ChartContainer>
-      <h3>Аналітика витрат (останні 12 міс.)</h3>
+      <h3>{t("stats_utility:utility.analytics_subtitle")}</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
@@ -102,10 +95,14 @@ export default function UtilityGlobalChart() {
             }}
             formatter={(value: number, name: string) => [
               formatMoney(value * 100, "UAH"), // Множимо на 100, бо formatMoney чекає копійки
-              TYPE_LABELS[name] || name,
+              t(`stats_utility:serviceTypes.${name}`) || name,
             ]}
           />
-          <Legend formatter={(value) => TYPE_LABELS[value] || value} />
+          <Legend
+            formatter={(value) =>
+              t(`stats_utility:serviceTypes.${value}`) || value
+            }
+          />
 
           {allKeys.map((key) => (
             <Bar
