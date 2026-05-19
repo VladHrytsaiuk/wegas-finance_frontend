@@ -1,11 +1,11 @@
 import axios from "axios";
 
-// Перевіряємо, чи запущено додаток на локальному комп'ютері
 const isLocalhost =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
 
-// Якщо ми локально — б'ємо на 8080, якщо на продакшені (Vercel) — суворо на відносний /api
+// Якщо локально — localhost, якщо на Vercel (сервер) — відносний шлях
 const API_URL = isLocalhost ? "http://localhost:8080/api" : "/api";
 
 const api = axios.create({
