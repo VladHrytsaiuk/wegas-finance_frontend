@@ -13,7 +13,8 @@
     "private": "Приватний",
     "public": "Публічний",
     "search_placeholder": "Пошук списків покупок...",
-    "title": "Список покупок"
+    "title": "Список покупок",
+    "subtitle": "Ваші списки покупок"
   },
   "wishlist": {
     "add_item": "Додати бажання",
@@ -61,6 +62,7 @@
     "status_bought": "Куплено",
     "status_planning": "Планується",
     "title": "Список бажань",
+    "subtitle": "Створіть власний список бажань",
     "label_mine": "Моє",
     "label_unknown": "Невідомо",
     "reserve_status_buying": "Ви купуєте",
@@ -76,8 +78,14 @@
     "sort_oldest": "Спочатку старі",
     "sort_name_asc": "Назва (А-Я)",
     "sort_name_desc": "Назва (Я-А)",
+    "sort_count_desc": "Найбільше бажань",
+    "sort_count_asc": "Найменше бажань",
     "filter_author_me": "Створені мною",
     "filter_author_others": "Спільні",
+    "filter_author_me_folders": "Мої папки",
+    "filter_author_others_folders": "Спільні папки",
+    "filter_visibility_public": "Публічні",
+    "filter_visibility_private": "Приватні",
     "filter_availability_free": "Вільні",
     "filter_availability_reserved_by_me": "Зарезервовані мною"
   }

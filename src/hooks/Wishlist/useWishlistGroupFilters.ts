@@ -30,8 +30,20 @@ export const useWishlistGroupFilters = (
       type: "multi-select",
       label: t("shopping_wishlist:wishlist.filter_author", "Автор"),
       options: [
-        { value: "me", label: "Мої папки" },
-        { value: "others", label: "Спільні папки" },
+        {
+          value: "me",
+          label: t(
+            "shopping_wishlist:wishlist.filter_author_me_folders",
+            "Мої папки",
+          ),
+        },
+        {
+          value: "others",
+          label: t(
+            "shopping_wishlist:wishlist.filter_author_others_folders",
+            "Спільні папки",
+          ),
+        },
       ],
     },
     {
@@ -39,17 +51,41 @@ export const useWishlistGroupFilters = (
       type: "multi-select",
       label: t("shopping_wishlist:wishlist.filter_visibility", "Видимість"),
       options: [
-        { value: "public", label: "Публічні" },
-        { value: "private", label: "Приватні" },
+        {
+          value: "public",
+          label: t(
+            "shopping_wishlist:wishlist.filter_visibility_public",
+            "Публічні",
+          ),
+        },
+        {
+          value: "private",
+          label: t(
+            "shopping_wishlist:wishlist.filter_visibility_private",
+            "Приватні",
+          ),
+        },
       ],
     },
   ];
 
   const sortOptions = [
-    { value: "name-asc", label: "Назва (А-Я)" },
-    { value: "name-desc", label: "Назва (Я-А)" },
-    { value: "count-desc", label: "Найбільше бажань" },
-    { value: "count-asc", label: "Найменше бажань" },
+    {
+      value: "name-asc",
+      label: t("shopping_wishlist:wishlist.sort_name_asc", "Назва (А-Я)"),
+    },
+    {
+      value: "name-desc",
+      label: t("shopping_wishlist:wishlist.sort_name_desc", "Назва (Я-А)"),
+    },
+    {
+      value: "count-desc",
+      label: t("shopping_wishlist:wishlist.sort_count_desc", "Найбільше бажань"),
+    },
+    {
+      value: "count-asc",
+      label: t("shopping_wishlist:wishlist.sort_count_asc", "Найменше бажань"),
+    },
   ];
 
   const handleFilterChange = (key: string, values: string[]) => {

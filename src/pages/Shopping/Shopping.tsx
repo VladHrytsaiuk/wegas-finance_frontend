@@ -46,7 +46,7 @@ function Shopping() {
   useEffect(() => {
     setPageTitle(
       t("shopping_wishlist:shopping.title", "Списки покупок"),
-      `Ваші списки покупок`, // <--- Додали субтайтл
+      t("shopping_wishlist:shopping.subtitle", "Ваші списки покупок"),
     );
 
     return () => resetPageTitle();

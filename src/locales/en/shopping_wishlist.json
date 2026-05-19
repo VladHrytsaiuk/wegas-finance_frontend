@@ -13,7 +13,8 @@
     "private": "Private",
     "public": "Public",
     "search_placeholder": "Search shopping lists...",
-    "title": "Shopping List"
+    "title": "Shopping List",
+    "subtitle": "Your shopping lists"
   },
   "wishlist": {
     "add_item": "Add Item",
@@ -61,6 +62,7 @@
     "status_bought": "Bought",
     "status_planning": "Planning",
     "title": "Wishlist",
+    "subtitle": "Create your own wishlist",
     "label_mine": "Mine",
     "label_unknown": "Unknown",
     "reserve_status_buying": "You're buying",
@@ -76,8 +78,14 @@
     "sort_oldest": "Oldest first",
     "sort_name_asc": "Name (A-Z)",
     "sort_name_desc": "Name (Z-A)",
+    "sort_count_desc": "Most wishes",
+    "sort_count_asc": "Least wishes",
     "filter_author_me": "Created by me",
     "filter_author_others": "Shared",
+    "filter_author_me_folders": "My folders",
+    "filter_author_others_folders": "Shared folders",
+    "filter_visibility_public": "Public",
+    "filter_visibility_private": "Private",
     "filter_availability_free": "Available",
     "filter_availability_reserved_by_me": "Reserved by me"
   }

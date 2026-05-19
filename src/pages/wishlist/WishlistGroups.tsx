@@ -43,7 +43,7 @@ export default function WishlistGroups() {
   useEffect(() => {
     setPageTitle(
       t("shopping_wishlist:wishlist.title", "Список бажань"),
-      "Створіть власний список бажань",
+      t("shopping_wishlist:wishlist.subtitle", "Створіть власний список бажань"),
     );
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
