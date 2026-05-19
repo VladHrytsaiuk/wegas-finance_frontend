@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useTheme } from "../../context/ThemeContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useSeedData } from "../useSeedData";
+import { CurrencySymbol } from "../../components/ui/CurrencySymbol";
 
 // --- Components ---
 
@@ -35,26 +36,6 @@ const UAFlag = () => (
   </svg>
 );
 
-const CurrencySymbol = ({ symbol }: { symbol: string }) => (
-  <span
-    style={{
-      fontSize: "14px",
-      fontWeight: "bold",
-      width: "20px",
-      height: "20px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "var(--color-bg-page)",
-      borderRadius: "4px",
-      color: "var(--color-text-main)",
-      border: "1px solid var(--color-border)",
-    }}
-  >
-    {symbol}
-  </span>
-);
-
 interface OptionType {
   value: string;
   label: string;
@@ -80,17 +61,17 @@ export const useGeneralSettings = () => {
       {
         value: "UAH",
         label: t("common:currencies.uah", "Українська гривня"),
-        icon: <CurrencySymbol symbol="₴" />,
+        icon: <CurrencySymbol symbol="₴" size="20px" />,
       },
       {
         value: "USD",
         label: t("common:currencies.usd", "Долар США"),
-        icon: <CurrencySymbol symbol="$" />,
+        icon: <CurrencySymbol symbol="$" size="20px" />,
       },
       {
         value: "EUR",
         label: t("common:currencies.eur", "Євро"),
-        icon: <CurrencySymbol symbol="€" />,
+        icon: <CurrencySymbol symbol="€" size="20px" />,
       },
     ],
     [t],

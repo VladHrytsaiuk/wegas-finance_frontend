@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

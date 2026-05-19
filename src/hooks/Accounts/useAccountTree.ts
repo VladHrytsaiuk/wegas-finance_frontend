@@ -73,8 +73,11 @@ export function useAccountTree({
       };
 
       userAccounts.forEach((acc) => {
-        if (groupedByType[acc.type]) {
-          groupedByType[acc.type].push(acc);
+        // 🔥 МАПІНГ: piggy_bank -> savings для коректного групування в UI
+        const effectiveType = acc.type === "piggy_bank" ? "savings" : acc.type;
+
+        if (groupedByType[effectiveType]) {
+          groupedByType[effectiveType].push(acc);
         } else {
           if (!groupedByType["other"]) groupedByType["other"] = [];
           groupedByType["other"].push(acc);

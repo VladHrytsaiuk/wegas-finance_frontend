@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+import { getCurrencyOptions } from "../../utils/currency";
 
 export function useDebtFilters(availableCurrencies: string[]) {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export function useDebtFilters(availableCurrencies: string[]) {
         // "Валюта" (з фільтру рахунків)
         label: t("accounts:accountsFilter.currency_label"),
         type: "multi-select",
-        options: availableCurrencies.map((c) => ({ value: c, label: c })),
+        options: getCurrencyOptions(availableCurrencies),
       },
     ];
   }, [availableCurrencies, t]);

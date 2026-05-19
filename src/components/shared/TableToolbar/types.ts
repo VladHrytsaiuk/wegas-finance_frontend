@@ -1,7 +1,9 @@
+import React from "react";
+
 export interface FilterOption {
   value: string;
   label: string;
-  icon?: string;
+  icon?: string | React.ReactNode;
   logo?: string;
   color?: string;
 }
@@ -12,7 +14,7 @@ export interface FilterConfig {
   type: "toggle" | "multi-select" | "range" | "select";
 
   // Налаштування для дерев
-  treeType?: "categories" | "counterparties";
+  treeType?: "categories" | "counterparties" | "accounts";
   rawData?: any[]; // Основні дані (категорії або контрагенти)
   relatedData?: any[]; // ✅ НОВЕ ПОЛЕ: Додаткові дані (наприклад, категорії для контрагентів)
 

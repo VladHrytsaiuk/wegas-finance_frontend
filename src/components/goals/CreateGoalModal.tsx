@@ -33,6 +33,8 @@ import { getMeApi } from "../../services/apiUsers";
 
 import * as S from "./CreateGoalModal.styles";
 import type { Goal } from "../../types";
+import { CURRENCY_SYMBOLS } from "../../utils/currency";
+import { CurrencySymbol } from "../ui/CurrencySymbol";
 
 interface CreateGoalModalProps {
   isOpen: boolean;
@@ -149,7 +151,21 @@ function CreateGoalFormContent({
                     <S.FieldGroup>
                       <S.Label>{t("goals_debts:goals.filter_currency")}</S.Label>
                       <BaseSelect
-                        triggerLabel={f.currency}
+                        triggerLabel={
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                            }}
+                          >
+                            <CurrencySymbol
+                              symbol={CURRENCY_SYMBOLS[f.currency] || f.currency}
+                              size="20px"
+                            />
+                            {f.currency}
+                          </div>
+                        }
                         disabled={!!editingGoal}
                       >
                         {CURRENCIES.map((curr) => (
@@ -158,7 +174,19 @@ function CreateGoalFormContent({
                             onClick={() => f.setCurrency(curr)}
                             $isSelected={f.currency === curr}
                           >
-                            {curr}
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              <CurrencySymbol
+                                symbol={CURRENCY_SYMBOLS[curr] || curr}
+                                size="20px"
+                              />
+                              {curr}
+                            </div>
                             {f.currency === curr && <HiCheck />}
                           </S.SelectOption>
                         ))}

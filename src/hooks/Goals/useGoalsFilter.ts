@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+import { getCurrencyOptions } from "../../utils/currency";
 
 export function useGoalsFilter(goals: any[]) {
   const { t } = useTranslation();
@@ -34,11 +35,7 @@ export function useGoalsFilter(goals: any[]) {
         key: "currency",
         label: t("goals_debts:goals.filter_currency"),
         type: "multi-select",
-        options: [
-          { value: "UAH", label: "UAH" },
-          { value: "USD", label: "USD" },
-          { value: "EUR", label: "EUR" },
-        ],
+        options: getCurrencyOptions(),
       },
     ],
     [t],

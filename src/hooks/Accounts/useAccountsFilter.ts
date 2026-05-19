@@ -1,8 +1,9 @@
-import { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 // 🔥 Імпортуємо нові скіни (хоча для логіки фільтрації вони менш важливі, ніж bank_name)
 import { BANK_SKINS } from "../../components/accounts/bankSkins"; // Перевір шлях
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 import { useTranslation } from "react-i18next";
+import { getCurrencyOptions } from "../../utils/currency";
 
 export function useAccountsFilter(accounts: any[], users: any[]) {
   const { t } = useTranslation();
@@ -63,10 +64,19 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     // 2. Фільтруємо, щоб отримати тільки унікальні банки за їх bankId
     const bankOptionsMap = new Map();
 
+    // --- ДИНАМІЧНА ФІЛЬТРАЦІЯ БАНКІВ ---
+    // Визначаємо, які банки реально є у користувача серед активних карток
+    const activeBankIds = new Set(
+      accounts
+        .filter((acc) => acc.type === "card")
+        .map((acc) => identifyBank(acc))
+        .filter(Boolean),
+    );
+
     Object.values(BANK_SKINS).forEach((skin: any) => {
       // Ігноруємо дефолтний скін та готівку, якщо вони там є
       if (skin.bankId && skin.bankId !== "cash" && skin.bankId !== "other") {
-        if (!bankOptionsMap.has(skin.bankId)) {
+        if (!bankOptionsMap.has(skin.bankId) && activeBankIds.has(skin.bankId)) {
           bankOptionsMap.set(skin.bankId, {
             value: skin.bankId,
             // Спробуємо взяти назву банку (наприклад, з label або розпарсити)
@@ -79,18 +89,19 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
       }
     });
 
-    // Перетворюємо Map у масив та додаємо "Інші"
-    const bankOptions = [
-      ...Array.from(bankOptionsMap.values()),
-      {
+    // Перетворюємо Map у масив та додаємо "Інші", якщо вони є
+    const bankOptions = [...Array.from(bankOptionsMap.values())];
+
+    if (activeBankIds.has("other")) {
+      bankOptions.push({
         value: "other",
         label: t("accounts:accountsFilter.bank_other", "Інші"),
         // 🔥 Змінюємо icon_default на HiCreditCard
         // SmartIcon не знайде файл /banks/HiCreditCard.svg і автоматично
         // відмалює іконку HiCreditCard з вашого ICON_MAP
         icon: "HiCreditCard",
-      },
-    ];
+      });
+    }
 
     return [
       {
@@ -113,11 +124,7 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
         key: "currency",
         label: t("accounts:accountsFilter.currency_label"),
         type: "multi-select",
-        options: [
-          { value: "UAH", label: "UAH" },
-          { value: "USD", label: "USD" },
-          { value: "EUR", label: "EUR" },
-        ],
+        options: getCurrencyOptions(),
       },
       {
         key: "status",
@@ -141,7 +148,7 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
         type: "range",
       },
     ];
-  }, [users, t]);
+  }, [users, t, accounts]);
 
   const sortOptions = [
     { value: "default", label: t("accounts:accountsFilter.sort_default") },

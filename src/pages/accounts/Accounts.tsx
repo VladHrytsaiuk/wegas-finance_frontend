@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+// Force rebuild after hook rename
 import { HiPlus } from "react-icons/hi2";
 
 // Components

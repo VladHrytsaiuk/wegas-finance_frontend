@@ -54,6 +54,8 @@ import {
 } from "../AccountCard.styles";
 import { formatMoney } from "../../../utils/helpers";
 import ConfirmUnlinkGoal from "./ConfirmUnlinkGoal";
+import { CURRENCY_SYMBOLS } from "../../../utils/currency";
+import { CurrencySymbol } from "../../ui/CurrencySymbol";
 
 interface AccountFormProps {
   onSubmit: (data: any, options?: any) => void;
@@ -159,17 +161,17 @@ export function AccountFormContent(props: AccountFormProps) {
     {
       value: "UAH",
       label: "UAH",
-      icon: <span style={{ fontWeight: 600 }}>₴</span>,
+      icon: <CurrencySymbol symbol={CURRENCY_SYMBOLS.UAH} size="20px" />,
     },
     {
       value: "USD",
       label: "USD",
-      icon: <span style={{ fontWeight: 600 }}>$</span>,
+      icon: <CurrencySymbol symbol={CURRENCY_SYMBOLS.USD} size="20px" />,
     },
     {
       value: "EUR",
       label: "EUR",
-      icon: <span style={{ fontWeight: 600 }}>€</span>,
+      icon: <CurrencySymbol symbol={CURRENCY_SYMBOLS.EUR} size="20px" />,
     },
   ];
 

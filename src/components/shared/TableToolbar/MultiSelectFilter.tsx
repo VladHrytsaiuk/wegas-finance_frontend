@@ -1,3 +1,4 @@
+import React from "react";
 import { createPortal } from "react-dom";
 import { HiFunnel, HiChevronDown, HiCheck } from "react-icons/hi2";
 
@@ -81,10 +82,12 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
       const isSelected = value.includes(opt.value);
       const color = opt.color || "var(--color-text-secondary)";
 
-      const isBankLogo = opt.icon?.startsWith("icon_");
+      const isBankLogo = typeof opt.icon === "string" && opt.icon.startsWith("icon_");
       const isOtherLogo = !!opt.logo;
       const hasImage = isBankLogo || isOtherLogo;
       const showLetter = !opt.logo && !opt.icon;
+      const isCustomIcon = React.isValidElement(opt.icon);
+
       return (
         <MenuOption
           key={opt.value}
@@ -96,15 +99,17 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
           <Checkbox $checked={isSelected}>
             <HiCheck />
           </Checkbox>
-          <S.ItemIconBox $color={color} $hasImage={hasImage}>
+          <S.ItemIconBox $color={color} $hasImage={hasImage || isCustomIcon}>
             {showLetter ? (
               <S.ItemInitials>{getInitials(opt.label)}</S.ItemInitials>
+            ) : isCustomIcon ? (
+              opt.icon
             ) : (
               <SmartIcon
-                logo={isBankLogo ? opt.icon : opt.logo}
-                iconName={!hasImage ? opt.icon : undefined}
+                logo={isBankLogo ? (opt.icon as string) : opt.logo}
+                iconName={!hasImage ? (opt.icon as string) : undefined}
                 color={color}
-                size={hasImage ? 32 : 18}
+                size={32}
               />
             )}
           </S.ItemIconBox>
