@@ -1,7 +1,12 @@
 import axios from "axios";
 
-// const API_URL = "http://127.0.0.1:8080/api";
-const API_URL = import.meta.env.DEV ? "http://localhost:8080/api" : "/api";
+// Перевіряємо, чи запущено додаток на локальному комп'ютері
+const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+// Якщо ми локально — б'ємо на 8080, якщо на продакшені (Vercel) — суворо на відносний /api
+const API_URL = isLocalhost ? "http://localhost:8080/api" : "/api";
 
 const api = axios.create({
   baseURL: API_URL,
