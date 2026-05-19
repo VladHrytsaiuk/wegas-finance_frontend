@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, type DropdownProps } from "react-day-picker";
 import {
   HiCalendarDays,
   HiChevronDown,
@@ -21,49 +21,32 @@ interface ExtendedDatePickerProps extends DatePickerProps {
   staticPicker?: boolean;
   numberOfMonths?: number;
 }
-// Ручні масиви місяців
-const MONTHS_UK = [
-  "Січень",
-  "Лютий",
-  "Березень",
-  "Квітень",
-  "Травень",
-  "Червень",
-  "Липень",
-  "Серпень",
-  "Вересень",
-  "Жовтень",
-  "Листопад",
-  "Грудень",
-];
-const MONTHS_EN = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 // 🔥 ІДЕАЛЬНИЙ СЕЛЕКТ З СИНХРОНІЗАЦІЄЮ ТА ЖОРСТКОЮ ЛОГІКОЮ 🔥
 const CustomDayPickerDropdown = (props: DropdownProps) => {
   const { value, onChange } = props;
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   // 🔥 100% БРОНЕБІЙНА ПЕРЕВІРКА 🔥
   // Місяці завжди мають значення від 0 до 11. Роки - завжди 2015 і більше.
   const isMonth = Number(value) < 12;
 
-  // Визначаємо мову
-  const isEn = localStorage.getItem("i18nextLng")?.startsWith("en");
-  const monthNames = isEn ? MONTHS_EN : MONTHS_UK;
+  const monthNames = [
+    t("common:datePicker.months.january"),
+    t("common:datePicker.months.february"),
+    t("common:datePicker.months.march"),
+    t("common:datePicker.months.april"),
+    t("common:datePicker.months.may"),
+    t("common:datePicker.months.june"),
+    t("common:datePicker.months.july"),
+    t("common:datePicker.months.august"),
+    t("common:datePicker.months.september"),
+    t("common:datePicker.months.october"),
+    t("common:datePicker.months.november"),
+    t("common:datePicker.months.december"),
+  ];
 
   // Генеруємо опції самостійно
   const options = isMonth

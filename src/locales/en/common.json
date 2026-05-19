@@ -5,7 +5,8 @@
   },
   "themeSwitcher": {
     "dark_mode": "🌙 Dark Mode",
-    "light_mode": "☀️ Light Mode"
+    "light_mode": "☀️ Light Mode",
+    "theme_toggle_tip": "Change theme"
   },
   "ui": {
     "select_placeholder_default": "Select...",
@@ -107,7 +108,21 @@
   "datePicker": {
     "placeholder_day": "DD",
     "placeholder_month": "MM",
-    "placeholder_year": "YYYY"
+    "placeholder_year": "YYYY",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
   },
   "timePicker": {
     "hours_short": "Hr",
@@ -131,6 +146,21 @@
     "loading_finances": "Loading finances...",
     "not_found_utility": "Utility not found",
     "mobile_desc": "Please log in from a computer or tablet for full access to WeGaS Finance."
+  },
+  "sync_widget": {
+    "status_done_short": "Done!",
+    "status_done_long": "Success!",
+    "status_syncing": "Syncing...",
+    "header_title": "Monobank Sync",
+    "tooltip_expand": "Expand",
+    "tooltip_minimize": "Minimize",
+    "msg_finished": "Sync completed",
+    "msg_initializing": "Initializing...",
+    "msg_connecting": "Connecting to server...",
+    "msg_auto_close": "This window will close automatically.",
+    "msg_background": "Process running in background.",
+    "toast_sync_success": "Data updated!",
+    "unit_items": "items"
   },
   "feedback_modal": {
     "title": "Feedback / Bug",

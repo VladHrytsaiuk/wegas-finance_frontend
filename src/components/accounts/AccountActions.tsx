@@ -116,7 +116,10 @@ export function AccountActions({ account, onAction }: any) {
       startPolling();
       await monobankApi.forceSync(account.id);
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Помилка");
+      toast.error(
+        err.response?.data?.error ||
+          t("accounts:accountDetailsPage.sync_error", "Помилка"),
+      );
       stopPolling();
     } finally {
       setIsLocalSyncing(false);
@@ -139,7 +142,11 @@ export function AccountActions({ account, onAction }: any) {
             disabled={isSyncingAnywhere}
           >
             <HiArrowPath size={20} />
-            <span>{isSyncingAnywhere ? "Оновлення..." : "Оновити баланс"}</span>
+            <span>
+              {isSyncingAnywhere
+                ? t("accounts:accountDetailsPage.action_syncing")
+                : t("accounts:accountDetailsPage.action_sync_button")}
+            </span>
           </SyncBtn>
         )}
 
@@ -148,7 +155,7 @@ export function AccountActions({ account, onAction }: any) {
           onClick={() => handleClick("income")}
           disabled={isLocked}
           title={
-            isLocked ? "Автоматичний рахунок. Ручне додавання заборонено." : ""
+            isLocked ? t("accounts:accountDetailsPage.sync_locked_hint") : ""
           }
         >
           <HiArrowDownTray

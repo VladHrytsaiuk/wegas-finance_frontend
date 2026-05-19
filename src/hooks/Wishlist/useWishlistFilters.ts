@@ -72,10 +72,19 @@ export const useWishlistFilters = (
       {
         key: "availability",
         type: "multi-select",
-        label: t("shopping_wishlist:wishlist.filter_availability", "Резерв"),
+        label: t("shopping_wishlist:wishlist.filter_availability", "Наявність"),
         options: [
-          { value: "available", label: "Вільні" },
-          { value: "reserved_by_me", label: "Зарезервовані мною" },
+          {
+            value: "available",
+            label: t("shopping_wishlist:wishlist.filter_availability_free", "Вільні"),
+          },
+          {
+            value: "reserved_by_me",
+            label: t(
+              "shopping_wishlist:wishlist.filter_availability_reserved_by_me",
+              "Зарезервовані мною",
+            ),
+          },
         ],
       },
       {
@@ -83,9 +92,18 @@ export const useWishlistFilters = (
         type: "multi-select",
         label: t("shopping_wishlist:wishlist.filter_priority", "Пріоритет"),
         options: [
-          { value: "3", label: t("shopping_wishlist:wishlist.priority_high", "Високий") },
-          { value: "2", label: t("shopping_wishlist:wishlist.priority_medium", "Середній") },
-          { value: "1", label: t("shopping_wishlist:wishlist.priority_low", "Низький") },
+          {
+            value: "3",
+            label: t("shopping_wishlist:wishlist.priority_high", "Високий"),
+          },
+          {
+            value: "2",
+            label: t("shopping_wishlist:wishlist.priority_medium", "Середній"),
+          },
+          {
+            value: "1",
+            label: t("shopping_wishlist:wishlist.priority_low", "Низький"),
+          },
         ],
       },
       {
@@ -99,22 +117,52 @@ export const useWishlistFilters = (
         type: "multi-select",
         label: t("shopping_wishlist:wishlist.filter_author", "Автор"),
         options: [
-          { value: "me", label: "Створені мною" },
-          { value: "others", label: "Спільні" },
+          {
+            value: "me",
+            label: t("shopping_wishlist:wishlist.filter_author_me", "Створені мною"),
+          },
+          {
+            value: "others",
+            label: t("shopping_wishlist:wishlist.filter_author_others", "Спільні"),
+          },
         ],
       },
     ] as FilterConfig[]
   ).filter((f) => f.options && f.options.length > 0);
 
   const sortOptions = [
-    { value: "priority-desc", label: "Пріоритет (високий)" },
-    { value: "priority-asc", label: "Пріоритет (низький)" },
-    { value: "price-desc", label: "Найдорожчі" },
-    { value: "price-asc", label: "Найдешевші" },
-    { value: "newest", label: "Спочатку нові" },
-    { value: "oldest", label: "Спочатку старі" },
-    { value: "name-asc", label: "Назва (А-Я)" },
-    { value: "name-desc", label: "Назва (Я-А)" },
+    {
+      value: "priority-desc",
+      label: t("shopping_wishlist:wishlist.sort_priority_desc", "Пріоритет (високий)"),
+    },
+    {
+      value: "priority-asc",
+      label: t("shopping_wishlist:wishlist.sort_priority_asc", "Пріоритет (низький)"),
+    },
+    {
+      value: "price-desc",
+      label: t("shopping_wishlist:wishlist.sort_price_desc", "Найдорожчі"),
+    },
+    {
+      value: "price-asc",
+      label: t("shopping_wishlist:wishlist.sort_price_asc", "Найдешевші"),
+    },
+    {
+      value: "newest",
+      label: t("shopping_wishlist:wishlist.sort_newest", "Спочатку нові"),
+    },
+    {
+      value: "oldest",
+      label: t("shopping_wishlist:wishlist.sort_oldest", "Спочатку старі"),
+    },
+    {
+      value: "name-asc",
+      label: t("shopping_wishlist:wishlist.sort_name_asc", "Назва (А-Я)"),
+    },
+    {
+      value: "name-desc",
+      label: t("shopping_wishlist:wishlist.sort_name_desc", "Назва (Я-А)"),
+    },
   ];
 
   const handleFilterChange = (filterId: string, values: string[]) => {

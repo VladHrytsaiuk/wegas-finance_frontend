@@ -83,7 +83,8 @@
     "visibility_private": "Приватна",
     "visibility_public": "Публічна",
     "days_left": "залишилось {{count}} днів",
-    "days_left_other": "залишилось {{count}} днів"
+    "days_left_other": "залишилось {{count}} днів",
+    "subtitle_create": "Створіть власну ціль"
   },
   "goalDetails": {
     "title_section_finance": "Фінансовий стан",

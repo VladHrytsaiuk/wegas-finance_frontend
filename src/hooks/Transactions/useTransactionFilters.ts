@@ -222,7 +222,7 @@ export function useTransactionFilters() {
       config.push({
         key: "counterparty",
         label: t(
-          "transactionFiltersHook.filter_counterparty_label",
+          "legacy:transactionFiltersHook.filter_counterparty_label",
           "Контрагент",
         ),
         type: "multi-select",

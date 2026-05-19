@@ -9,6 +9,7 @@ import {
 } from "react";
 import axios from "../services/Axios";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 // Типи статусів з бекенду
 interface BackendSyncStatus {
@@ -31,6 +32,7 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 const successSound = new Audio("/sounds/successSync.mp3");
 
 export function SyncProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [statusData, setStatusData] = useState<BackendSyncStatus>({
     is_running: false,
     message: "",
@@ -92,7 +94,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         console.log("✅ Синхронізація завершена");
         successSound.currentTime = 0;
         successSound.play().catch((e) => console.warn("Звук заблоковано:", e));
-        toast.success("Дані оновлено!");
+        toast.success(t("common:sync_widget.toast_sync_success"));
       }
 
       setStatusData(data);
@@ -173,7 +175,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     // Ставимо початковий стан UI вручну
     setStatusData({
       is_running: true,
-      message: "З'єднання з сервером...",
+      message: t("common:sync_widget.msg_connecting"),
       total_imported: 0,
     });
 

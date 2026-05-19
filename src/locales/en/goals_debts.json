@@ -83,7 +83,8 @@
     "visibility_private": "Private",
     "visibility_public": "Public",
     "days_left_few": "{{count}} days left",
-    "days_left_many": "{{count}} days left"
+    "days_left_many": "{{count}} days left",
+    "subtitle_create": "Create your own goal"
   },
   "goalDetails": {
     "title_section_finance": "Financial Overview",
@@ -94,7 +95,7 @@
     "label_collected": "Collected",
     "label_total": "Target",
     "label_progress": "Progress",
-    "status_active": "In Progress",
+    "status_active": "Active",
     "status_paused": "Paused",
     "status_reached": "Completed",
     "status_failed": "Overdue",
@@ -111,5 +112,8 @@
     "photo_empty": "No photo",
     "link_empty": "No link",
     "total_balance": "Total Balance"
+  },
+  "GOALDETAILS": {
+    "STATUS_ACTIVE": "Active"
   }
 }

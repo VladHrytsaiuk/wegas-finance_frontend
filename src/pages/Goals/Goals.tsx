@@ -55,7 +55,10 @@ function Goals() {
 
   // Встановлення глобального заголовка та субтайтлу
   useEffect(() => {
-    setPageTitle(t("goals_debts:goals.title", "Фінансові цілі"), `Створіть власну ціль`);
+    setPageTitle(
+      t("goals_debts:goals.title", "Фінансові цілі"),
+      t("goals_debts:goals.subtitle_create", "Створіть власну ціль"),
+    );
 
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t, goals.length]);

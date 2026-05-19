@@ -10,7 +10,8 @@ import {
   HiClock,
 } from "react-icons/hi2";
 import { format } from "date-fns";
-import { uk } from "date-fns/locale";
+import { uk, enUS } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 import Modal from "../ui/Modal";
 import ConfirmDelete from "../ui/ConfirmDelete";
@@ -30,6 +31,7 @@ interface GoalCardProps {
 
 export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   const target = Number(goal.target_amount) || 0;
   const current = Number(goal.current_amount) || 0;
@@ -40,6 +42,8 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
     goal.status === "reached" || (remaining === 0 && target > 0);
   const isFailed = goal.status === "failed";
   const isOverdueVisual = goal.isOverdue || isFailed;
+
+  const currentLocale = i18n.language === "uk" ? uk : enUS;
 
   return (
     <S.GoalCard $isPaused={isPaused} $status={goal.status}>
@@ -108,7 +112,7 @@ export default function GoalCard({ goal, t, handlers }: GoalCardProps) {
                   <>
                     <HiCalendar size={14} />
                     {format(new Date(goal.date_deadline), "d MMM yyyy", {
-                      locale: uk,
+                      locale: currentLocale,
                     })}
                   </>
                 ) : (

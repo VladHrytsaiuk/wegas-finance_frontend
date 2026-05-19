@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { HiSun, HiMoon } from "react-icons/hi2";
 import { useTheme } from "../../context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 const IconButton = styled.button`
   background: var(--color-bg-surface);
@@ -29,9 +30,13 @@ const IconButton = styled.button`
 
 export const ThemeSwitcher = () => {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
-    <IconButton onClick={toggleTheme} title="Змінити тему">
+    <IconButton
+      onClick={toggleTheme}
+      title={t("common:themeSwitcher.theme_toggle_tip")}
+    >
       {theme === "light" ? <HiMoon /> : <HiSun />}
     </IconButton>
   );
