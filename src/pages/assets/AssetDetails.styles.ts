@@ -338,7 +338,7 @@ export const PhotoContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 280px;
+  min-height: 200px; /* Трохи зменшили */
   border-radius: inherit;
   overflow: hidden;
   background-color: var(--color-bg-page);
@@ -360,13 +360,30 @@ export const PhotoPlaceholder = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8rem;
+  justify-content: center;
+  gap: 1rem;
   color: var(--color-text-tertiary);
   font-weight: 500;
   z-index: 1;
 
-  svg {
-    color: var(--color-border);
+  /* Стилізація як на сторінці цілей */
+  .icon-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background-color: var(--color-bg-surface-secondary);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-tertiary);
+    font-size: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  span {
+    font-size: 0.9rem;
+    opacity: 0.8;
   }
 `;
 
@@ -472,35 +489,38 @@ export const WarrantyProgressBlock = styled.div`
 
 export const ProgressBar = styled.div`
   width: 100%;
-  height: 8px;
+  height: 10px; /* Трохи товщий */
   background-color: var(--color-bg-page);
   border-radius: 99px;
   overflow: hidden;
   border: 1px solid var(--color-border);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
 `;
 
 export const ProgressFill = styled.div<{ $percent: number; $color: string }>`
   height: 100%;
-  width: ${(p) => p.$percent}%;
-  transition:
-    width 0.5s ease-in-out,
-    background-color 0.3s;
+  width: ${(p) => Math.max(0, Math.min(100, p.$percent || 0))}% !important;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 4px; /* Гарантуємо видимість якщо > 0 */
+  
+  /* Fallback color */
+  background-color: var(--color-brand-600);
 
   ${(p) =>
     p.$color === "red" &&
     css`
-      background-color: var(--color-red-500);
+      background-color: var(--color-error);
     `}
   ${(p) =>
     p.$color === "green" &&
     css`
-      background-color: var(--color-green-500);
+      background-color: var(--color-green-600);
     `} 
   ${(p) =>
     p.$color === "orange" &&
     css`
-      background-color: var(--color-yellow-500);
+      background-color: var(--color-warning);
     `}
 `;
 

@@ -75,14 +75,17 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
   const renderFlatList = () => {
     if (filteredFlatOptions.length === 0) {
       return (
-        <S.EmptyState>{t("legacy:filterComponent.status_not_found")}</S.EmptyState>
+        <S.EmptyState>
+          {t("legacy:filterComponent.status_not_found")}
+        </S.EmptyState>
       );
     }
     return filteredFlatOptions.map((opt) => {
       const isSelected = value.includes(opt.value);
       const color = opt.color || "var(--color-text-secondary)";
 
-      const isBankLogo = typeof opt.icon === "string" && opt.icon.startsWith("icon_");
+      const isBankLogo =
+        typeof opt.icon === "string" && opt.icon.startsWith("icon_");
       const isOtherLogo = !!opt.logo;
       const hasImage = isBankLogo || isOtherLogo;
       const showLetter = !opt.logo && !opt.icon;
@@ -120,7 +123,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
   };
 
   return (
-    <div ref={triggerRef}>
+    <div ref={triggerRef} style={{ position: "relative" }}>
       <FilterButton
         type="button"
         $isActive={activeCount > 0}

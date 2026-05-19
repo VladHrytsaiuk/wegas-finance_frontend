@@ -296,10 +296,11 @@ export const ProgressBarBg = styled.div`
 
 export const ProgressBarFill = styled.div<{ $width: number; $color: string }>`
   height: 100%;
-  width: ${(props) => props.$width}%;
-  background-color: ${(props) => props.$color};
+  width: ${(props) => Math.max(0, Math.min(100, props.$width || 0))}% !important;
+  background-color: ${(props) => props.$color || "var(--color-brand-600)"};
   border-radius: 3px;
-  transition: width 0.5s ease-out;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 4px; /* Ensure visibility if > 0 */
 `;
 
 export const GoalFooter = styled.div`

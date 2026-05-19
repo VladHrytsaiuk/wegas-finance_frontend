@@ -186,7 +186,10 @@ export default function AssetDetails() {
                   {/* 🔥 Показуємо бейдж, якщо фотографій більше ніж 1 */}
                   {images.length > 1 && (
                     <S.PhotoCountBadge>
-                      <HiPhoto size={16} /> +{images.length - 1} фото
+                      <HiPhoto size={16} /> +{images.length - 1}{" "}
+                      {t("assets:assetDetails.photo_plural", {
+                        count: images.length - 1,
+                      })}
                     </S.PhotoCountBadge>
                   )}
 
@@ -201,14 +204,17 @@ export default function AssetDetails() {
                   <S.PhotoOverlayBtn>
                     <Modal.Open opens="view-photo">
                       <Button size="small" variation="secondary">
-                        <HiArrowsPointingOut /> <span>Відкрити галерею</span>
+                        <HiArrowsPointingOut />{" "}
+                        <span>{t("assets:assetDetails.open_gallery")}</span>
                       </Button>
                     </Modal.Open>
                   </S.PhotoOverlayBtn>
                 </>
               ) : (
                 <S.PhotoPlaceholder>
-                  <HiPhoto size={48} />
+                  <div className="icon-box">
+                    <HiPhoto />
+                  </div>
                   <span>{t("assets:assetDetails.photo_missing")}</span>
                 </S.PhotoPlaceholder>
               )}
@@ -341,12 +347,13 @@ export default function AssetDetails() {
               <S.WarrantyContainer>
                 <S.WarrantyInfo>
                   <S.WarrantyMainDate>
-                    <div className="label">ТЕРМІН ДІЇ ДО</div>
+                    <div className="label">
+                      {t("assets:assetDetails.warranty_end_date_label")}
+                    </div>
                     <div className="value">
                       {helpers.formatDate(asset.warranty_end)}
                     </div>
                   </S.WarrantyMainDate>
-
                   <S.WarrantyStatusBadge $color={warrantyInfo.statusColor}>
                     {warrantyInfo.isExpired ? (
                       <>
@@ -360,8 +367,9 @@ export default function AssetDetails() {
                       </>
                     ) : (
                       <>
-                        <HiOutlineCheckCircle size={18} /> Активна (
-                        {warrantyInfo.daysLeft} дн.)
+                        <HiOutlineCheckCircle size={18} />{" "}
+                        {t("assets:assetDetails.warranty_active_label")} (
+                        {warrantyInfo.daysLeft} {t("assets:assetDetails.days_suffix", "дн.")})
                       </>
                     )}
                   </S.WarrantyStatusBadge>
@@ -418,7 +426,8 @@ export default function AssetDetails() {
                         variation="secondary"
                         onClick={() => window.open(fileUrl, "_blank")}
                       >
-                        <HiOutlineArrowDownTray size={16} /> Скачати
+                        <HiOutlineArrowDownTray size={16} />{" "}
+                        {t("assets:assetsPage.viewer_download")}
                       </Button>
                     </div>
                   </S.DocumentItem>
