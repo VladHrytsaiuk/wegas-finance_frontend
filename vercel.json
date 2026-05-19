@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://$BACKEND_URL/wegasfinance/api/:path*"
+      "destination": "http://vsr1.nxtcloud.online:8080/wegasfinance/api/:path*"
     },
     {
       "source": "/wegasfinance/uploads/:path*",
-      "destination": "https://$BACKEND_URL/wegasfinance/uploads/:path*"
+      "destination": "http://vsr1.nxtcloud.online:8080/wegasfinance/uploads/:path*"
     },
     {
       "source": "/(.*)",
