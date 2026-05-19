@@ -92,7 +92,7 @@ export default function StepSelection({
               alt="Monobank"
               style={{ width: "28px", height: "28px", borderRadius: "50%" }}
             />
-            {t("settings:profilePage.mono_title", "Синхронізація з Monobank")}
+            {t("settings:integrations.mono_flow_title")}
           </S.Title>
 
           {hasExistingConnection && (
@@ -102,12 +102,12 @@ export default function StepSelection({
               onClick={() => setShowDisconnectConfirm(true)}
               style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}
             >
-              <HiLinkSlash /> Відключити
+              <HiLinkSlash /> {t("settings:integrations.mono_flow_btn_disconnect")}
             </Button>
           )}
         </S.HeaderRow>
 
-        <S.Description>Оберіть рахунки для синхронізації:</S.Description>
+        <S.Description>{t("settings:integrations.mono_flow_step_selection_desc")}</S.Description>
 
         <S.ScrollableList>
           {accounts.map((acc: MonoAccount) => {
@@ -125,7 +125,7 @@ export default function StepSelection({
 
             const triggerLabel = linkedAccount
               ? `${linkedAccount.name} (${formatBalance(linkedAccount)})`
-              : "➕ Створити новий рахунок";
+              : t("settings:integrations.mono_flow_step_selection_create_new");
 
             return (
               <S.AccountCard
@@ -136,7 +136,7 @@ export default function StepSelection({
                 {/* Checkbox */}
                 <S.CheckboxContainer
                   $disabled={isLocked}
-                  title={isLocked ? "Вже синхронізовано" : ""}
+                  title={isLocked ? t("settings:integrations.mono_flow_step_selection_already_synced") : ""}
                 >
                   <S.HiddenCheckbox
                     checked={isSelected}
@@ -210,7 +210,7 @@ export default function StepSelection({
                                 cursor: "pointer",
                               }}
                             />
-                            Створити фінансову ціль (Goal)
+                            {t("settings:integrations.mono_flow_step_selection_create_goal")}
                           </S.SmallCheckboxLabel>
                         </S.JarSettings>
                       )}
@@ -224,17 +224,17 @@ export default function StepSelection({
                               : {}
                           }
                         >
-                          <S.Label>Прив'язати до:</S.Label>
+                          <S.Label>{t("settings:integrations.mono_flow_step_selection_link_to")}</S.Label>
                           <BaseSelect triggerLabel={triggerLabel}>
                             <S.SelectOption
                               $isActive={!config.internalId}
                               onClick={() => actions.setInternalId(acc.id, "")}
                             >
-                              <span>➕ Створити новий рахунок</span>
+                              <span>{t("settings:integrations.mono_flow_step_selection_create_new")}</span>
                             </S.SelectOption>
                             {availableFerpAccounts.length > 0 && (
                               <>
-                                <S.GroupLabel>Існуючі рахунки</S.GroupLabel>
+                                <S.GroupLabel>{t("settings:integrations.mono_flow_step_selection_existing_accounts")}</S.GroupLabel>
                                 {availableFerpAccounts.map((fa) => (
                                   <S.SelectOption
                                     key={fa.id}
@@ -267,7 +267,7 @@ export default function StepSelection({
                               : {}
                           }
                         >
-                          <S.Label>Назва в FERP</S.Label>
+                          <S.Label>{t("settings:integrations.mono_flow_step_selection_name_in_ferp")}</S.Label>
                           <Input
                             value={config.name || ""}
                             onChange={(e) =>
@@ -286,7 +286,7 @@ export default function StepSelection({
                               : {}
                           }
                         >
-                          <S.Label>Імпортувати історію з:</S.Label>
+                          <S.Label>{t("settings:integrations.mono_flow_step_selection_import_from")}</S.Label>
                           <div
                             style={{
                               display: "flex",
@@ -318,7 +318,7 @@ export default function StepSelection({
                             </div>
                             {!isLocked && (
                               <S.WarningText>
-                                <HiClock />1 міс ≈ 1 хв завантаження
+                                <HiClock />{t("settings:integrations.mono_flow_step_selection_time_estimate")}
                               </S.WarningText>
                             )}
                           </div>
@@ -335,7 +335,7 @@ export default function StepSelection({
         <S.FooterRow>
           {hasExistingConnection ? (
             <Button type="button" $variation="secondary" onClick={onClose}>
-              Скасувати
+              {t("settings:integrations.mono_flow_btn_cancel")}
             </Button>
           ) : (
             <Button
@@ -343,7 +343,7 @@ export default function StepSelection({
               $variation="secondary"
               onClick={() => actions.setStep("input")}
             >
-              Назад
+              {t("settings:integrations.mono_flow_btn_back")}
             </Button>
           )}
 
@@ -352,7 +352,7 @@ export default function StepSelection({
             onClick={handleStartImport}
             disabled={!Object.values(mapping).some((m: any) => m.isEnabled)}
           >
-            Почати імпорт
+            {t("settings:integrations.mono_flow_btn_start_import")}
           </Button>
         </S.FooterRow>
       </S.ContentWrapper>

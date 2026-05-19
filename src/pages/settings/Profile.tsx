@@ -143,9 +143,9 @@ function Profile() {
     try {
       await monobankApi.disconnect();
       setIsMonoConnected(false);
-      toast.success("Monobank успішно відключено");
+      toast.success(t("settings:integrations.toast_disconnect_success"));
     } catch (error) {
-      toast.error("Помилка відключення");
+      toast.error(t("settings:integrations.toast_disconnect_error"));
       console.error(error);
     } finally {
       setIsDisconnecting(false);
@@ -160,9 +160,9 @@ function Profile() {
     try {
       startPolling();
       await monobankApi.forceSync();
-      toast.success("Оновлення даних запущено");
+      toast.success(t("settings:integrations.toast_sync_started"));
     } catch (error) {
-      toast.error("Не вдалося запустити синхронізацію");
+      toast.error(t("settings:integrations.toast_sync_error"));
       if (typeof stopPolling === "function") stopPolling();
     } finally {
       setIsForceSyncing(false);
@@ -237,7 +237,7 @@ function Profile() {
       </S.Form>
 
       <S.IntegrationsSection>
-        <S.SectionTitle>Інтеграції</S.SectionTitle>
+        <S.SectionTitle>{t("settings:integrations.title")}</S.SectionTitle>
 
         <S.IntegrationCard>
           <S.IntegrationLeft>
@@ -255,20 +255,20 @@ function Profile() {
                   >
                     {isSyncing ? (
                       <>
-                        <HiArrowPath className="spin" /> Синхронізація...
+                        <HiArrowPath className="spin" /> {t("settings:integrations.status_syncing")}
                       </>
                     ) : isMonoConnected ? (
                       <>
-                        <HiCheckCircle /> Підключено
+                        <HiCheckCircle /> {t("settings:integrations.status_connected")}
                       </>
                     ) : (
-                      "Не підключено"
+                      t("settings:integrations.status_not_connected")
                     )}
                   </S.ConnectionStatus>
                 )}
               </S.BankTitleRow>
               <S.BankDescription>
-                Автоматичний імпорт транзакцій та балансів
+                {t("settings:integrations.mono_desc")}
               </S.BankDescription>
             </S.TextInfo>
           </S.IntegrationLeft>
@@ -279,7 +279,7 @@ function Profile() {
                 $variation="secondary"
                 $isSpinning={isForceSyncing || isSyncing}
                 onClick={handleForceSync}
-                title="Синхронізувати зараз"
+                title={t("settings:integrations.btn_sync_now")}
                 disabled={isSyncing || isForceSyncing}
               >
                 <HiArrowPath size={18} />
@@ -291,7 +291,7 @@ function Profile() {
                 <S.IconButton
                   $variation="danger"
                   size="sm"
-                  title="Відключити синхронізацію"
+                  title={t("settings:integrations.btn_disconnect")}
                   disabled={isSyncing}
                 >
                   <HiLinkSlash size={18} />
@@ -306,10 +306,10 @@ function Profile() {
                 disabled={isSyncing}
               >
                 {isSyncing
-                  ? "Синхронізація..."
+                  ? t("settings:integrations.status_syncing")
                   : isMonoConnected
-                    ? "Налаштувати"
-                    : "Підключити"}
+                    ? t("settings:integrations.btn_configure")
+                    : t("settings:integrations.btn_connect")}
               </Button>
             </Modal.Open>
           </S.ActionsRight>

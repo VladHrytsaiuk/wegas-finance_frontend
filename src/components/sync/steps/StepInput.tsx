@@ -18,13 +18,14 @@ export default function StepInput({ state, actions, onClose }: any) {
             alt="Monobank"
             style={{ width: "28px", height: "28px", borderRadius: "50%" }}
           />
-          {t("settings:profilePage.mono_title", "Синхронізація з Monobank")}
+          {t("settings:integrations.mono_flow_title")}
         </S.Title>
       </S.HeaderRow>
 
       <div style={{ flex: 1 }}>
         <S.Description>
-          Для підключення перейдіть на{" "}
+          {t("settings:integrations.mono_flow_step_input_desc")}
+          {" "}
           <a
             href="https://api.monobank.ua/"
             target="_blank"
@@ -36,12 +37,12 @@ export default function StepInput({ state, actions, onClose }: any) {
           >
             api.monobank.ua
           </a>
-          , скопіюйте токен та вставте його нижче.
+          , {t("settings:integrations.mono_flow_step_input_desc_continue", "скопіюйте токен та вставте його нижче.")}
         </S.Description>
 
         <div style={{ marginTop: "1.5rem" }}>
           <Input
-            placeholder="Вставте X-Token сюди"
+            placeholder={t("settings:integrations.mono_flow_step_input_placeholder")}
             value={token}
             onChange={(e) => actions.setToken(e.target.value)}
             disabled={isPending}
@@ -57,13 +58,13 @@ export default function StepInput({ state, actions, onClose }: any) {
       </div>
       <S.FooterRow>
         <Button type="button" $variation="secondary" onClick={onClose}>
-          Скасувати
+          {t("settings:integrations.mono_flow_btn_cancel")}
         </Button>
         <Button
           onClick={() => actions.handleConnect()}
           disabled={!token || isPending}
         >
-          {isPending ? <Spinner size="sm" /> : "Підключити"}
+          {isPending ? <Spinner size="sm" /> : t("settings:integrations.mono_flow_btn_connect")}
         </Button>
       </S.FooterRow>
     </S.ContentWrapper>

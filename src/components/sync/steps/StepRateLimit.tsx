@@ -1,8 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { HiExclamationTriangle } from "react-icons/hi2";
 import { Button } from "../../ui/Button";
 import * as S from "../MonobankModal.styles";
 
 export default function StepRateLimit({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <S.ContentWrapper>
       <S.CenterState>
@@ -28,13 +31,13 @@ export default function StepRateLimit({ onClose }: { onClose: () => void }) {
               marginBottom: "0.5rem",
             }}
           >
-            Забагато запитів до банку
+            {t("settings:integrations.mono_flow_step_limit_title")}
           </h3>
-          <S.Description>Спробуйте ще раз через 60 секунд.</S.Description>
+          <S.Description>{t("settings:integrations.mono_flow_step_limit_desc")}</S.Description>
         </div>
         <S.FooterRow>
           <Button onClick={onClose} $variation="secondary">
-            Закрити
+            {t("settings:integrations.mono_flow_step_limit_btn_close")}
           </Button>
         </S.FooterRow>
       </S.CenterState>
