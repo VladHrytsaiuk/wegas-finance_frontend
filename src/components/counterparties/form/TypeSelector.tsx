@@ -12,17 +12,17 @@ const TYPE_OPTIONS = [
   {
     id: "shop",
     icon: HiBuildingStorefront,
-    labelKey: "counterpartyCategoryForm.type_shop",
+    labelKey: "counterparties:counterpartyCategoryForm.type_shop",
   },
   {
     id: "person",
     icon: HiUser,
-    labelKey: "counterpartyCategoryForm.type_person",
+    labelKey: "counterparties:counterpartyCategoryForm.type_person",
   },
   {
     id: "other",
     icon: HiGlobeAlt,
-    labelKey: "counterpartyCategoryForm.type_other",
+    labelKey: "counterparties:counterpartyCategoryForm.type_other",
   },
 ] as const;
 
