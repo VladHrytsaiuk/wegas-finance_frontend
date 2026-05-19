@@ -15,7 +15,7 @@ import {
 export function useGoalDetails() {
   const { id: goalId } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -140,5 +140,6 @@ export function useGoalDetails() {
       handleAccountClick,
     },
     t,
+    i18n,
   };
 }

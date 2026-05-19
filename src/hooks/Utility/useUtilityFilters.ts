@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 import type { UtilityMeter } from "../../types";
 
 export function useUtilityFilters(meters: UtilityMeter[]) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
 
   // sortValue тепер використовуємо і для сортування, і для групування
@@ -29,27 +31,42 @@ export function useUtilityFilters(meters: UtilityMeter[]) {
     () => [
       {
         key: "type",
-        label: "Тип сервісу",
+        label: t("stats_utility:filters.type_label"),
         type: "multi-select",
         options: [
           {
             value: "electricity",
-            label: "Світло",
+            label: t("stats_utility:serviceTypes.electricity"),
             icon: "HiBolt",
             color: "#f59e0b",
           },
-          { value: "water", label: "Вода", icon: "HiBeaker", color: "#3b82f6" },
-          { value: "gas", label: "Газ", icon: "HiFire", color: "#ef4444" },
+          {
+            value: "water",
+            label: t("stats_utility:serviceTypes.water"),
+            icon: "HiBeaker",
+            color: "#3b82f6",
+          },
+          {
+            value: "gas",
+            label: t("stats_utility:serviceTypes.gas"),
+            icon: "HiFire",
+            color: "#ef4444",
+          },
           {
             value: "internet",
-            label: "Інтернет",
+            label: t("stats_utility:serviceTypes.internet"),
             icon: "HiWifi",
             color: "#10b981",
           },
-          { value: "rent", label: "Оренда", icon: "HiHome", color: "#6366f1" },
+          {
+            value: "rent",
+            label: t("stats_utility:serviceTypes.rent"),
+            icon: "HiHome",
+            color: "#6366f1",
+          },
           {
             value: "heating",
-            label: "Опалення",
+            label: t("stats_utility:serviceTypes.heating"),
             unit: "Gcal",
             icon: "HiSun",
             color: "#f97316",
@@ -57,18 +74,15 @@ export function useUtilityFilters(meters: UtilityMeter[]) {
         ],
       },
     ],
-    [],
+    [t],
   );
 
   // Опції для dropdown сортування, які тепер керують групуванням
-  const sortOptions = useMemo(
-    () => [
-      { value: "group-asset", label: "По нерухомості" },
-      { value: "group-type", label: "По типу послуг" },
-      { value: "name-asc", label: "А-Я (Списком)" },
-    ],
-    [],
-  );
+  const sortOptions = [
+    { value: "group-asset", label: t("stats_utility:filters.sort_by_asset") },
+    { value: "group-type", label: t("stats_utility:filters.sort_by_type") },
+    { value: "name-asc", label: t("stats_utility:filters.sort_alphabetical") },
+  ];
 
   // 1. Спочатку фільтруємо
   const filteredMeters = useMemo(() => {
@@ -97,35 +111,29 @@ export function useUtilityFilters(meters: UtilityMeter[]) {
 
     if (sortValue === "name-asc") {
       // Якщо вибрано просто сортування - одна група "Всі"
-      groups["Всі"] = filteredMeters.sort((a, b) =>
-        a.name.localeCompare(b.name),
+      groups[t("stats_utility:filters.group_all")] = filteredMeters.sort(
+        (a, b) => a.name.localeCompare(b.name),
       );
     } else if (sortValue === "group-asset") {
       // Групуємо по Asset
       filteredMeters.forEach((m) => {
-        const key = m.asset?.name || "Інше / Без прив'язки";
+        const key = m.asset?.name || t("stats_utility:filters.group_other");
         if (!groups[key]) groups[key] = [];
         groups[key].push(m);
       });
     } else if (sortValue === "group-type") {
       // Групуємо по Type
-      const typeLabels: Record<string, string> = {
-        electricity: "Електроенергія",
-        water: "Водопостачання",
-        gas: "Газопостачання",
-        internet: "Інтернет та ТБ",
-        rent: "Квартплата / Оренда",
-        heating: "Опалення",
-      };
       filteredMeters.forEach((m) => {
-        const key = typeLabels[m.type] || "Інше";
+        const key =
+          t(`stats_utility:serviceTypes.${m.type}`) ||
+          t("stats_utility:serviceTypes.other");
         if (!groups[key]) groups[key] = [];
         groups[key].push(m);
       });
     }
 
     return groups;
-  }, [filteredMeters, sortValue]);
+  }, [filteredMeters, sortValue, t]);
 
   return {
     searchQuery,

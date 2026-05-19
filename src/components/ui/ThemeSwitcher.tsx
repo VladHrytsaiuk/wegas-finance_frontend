@@ -32,17 +32,11 @@ export const ThemeSwitcher = () => {
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation();
 
-  const label =
-    theme === "light"
-      ? t("common:ui.toggle_dark_mode", "Переключити на темну тему")
-      : t("common:ui.toggle_light_mode", "Переключити на світлу тему");
+  // Використовуємо новий уніфікований ключ із гілки fix/language
+  const toggleTip = t("common:themeSwitcher.theme_toggle_tip");
 
   return (
-    <IconButton
-      onClick={toggleTheme}
-      title={label}
-      aria-label={label}
-    >
+    <IconButton onClick={toggleTheme} title={toggleTip} aria-label={toggleTip}>
       {theme === "light" ? <HiMoon /> : <HiSun />}
     </IconButton>
   );

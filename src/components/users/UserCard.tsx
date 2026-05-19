@@ -46,7 +46,7 @@ export function UserCard({ user, canManage }: UserCardProps) {
       <RoleBadge $color={roleConfig.color}>
         <RoleIcon />
         {/* Перекладаємо назву ролі динамічно на основі її ID */}
-        {t(`userRoles.${user.role_id}_label`)}
+        {t(`settings:userRoles.${user.role_id}_label`)}
       </RoleBadge>
 
       {canManage && (

@@ -8,6 +8,7 @@ import {
   AreaChart,
 } from "recharts";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import { CHART_COLORS, CustomTooltip } from "./ChartConfig";
 
 const ChartWrapper = styled.div`
@@ -53,6 +54,7 @@ export default function TariffHistoryChart({
   unit,
   currency,
 }: TariffHistoryProps) {
+  const { t } = useTranslation();
   const safeData = data.map((item) => ({
     month: item.month,
     tariff: item.avg_tariff || item.tariff || 0,
@@ -61,7 +63,7 @@ export default function TariffHistoryChart({
   return (
     <ChartWrapper>
       <Title>
-        Історія тарифів
+        {t("stats_utility:utility.tariff_history")}
         <span className="unit-badge">
           {currency} / {unit}
         </span>
@@ -120,7 +122,7 @@ export default function TariffHistoryChart({
           <Area
             type="stepAfter"
             dataKey="tariff"
-            name="Тариф"
+            name={t("stats_utility:utility.table_rate")}
             stroke={CHART_COLORS.electricity}
             strokeWidth={3}
             fillOpacity={1}

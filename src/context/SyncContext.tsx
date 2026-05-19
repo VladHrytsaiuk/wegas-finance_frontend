@@ -10,6 +10,7 @@ import {
 } from "react";
 import axios from "../services/Axios";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 // Типи статусів з бекенду
 interface BackendSyncStatus {
@@ -32,6 +33,7 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 const successSound = new Audio("/sounds/successSync.mp3");
 
 export function SyncProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [statusData, setStatusData] = useState<BackendSyncStatus>({
     is_running: false,
     message: "",
@@ -45,16 +47,15 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const isRunningRef = useRef(false); // Чи реально йде процес
   const isStartingRef = useRef(false); // Чи ми в фазі запуску
   const hasNotifiedRef = useRef(false); // Щоб не було подвійних звуків
-  const startupRetriesRef = useRef(0); // 🔥 Лічильник спроб на старті
+  const startupRetriesRef = useRef(0); // Лічильник спроб на старті
   const timerRef = useRef<number | null>(null);
+  const autoHideTimeoutRef = useRef<number | null>(null);
 
   const fetchStatus = useCallback(async () => {
     try {
       const { data } = await axios.get<BackendSyncStatus>("/monobank/status");
 
       // === ЛОГІКА ЗАХИСТУ ВІД МИТТЄВОГО "ГОТОВО" ===
-      // Якщо ми в фазі старту (isStartingRef), а сервер каже "я сплю" (false),
-      // ми не віримо йому перші 3-4 запити (це десь 6-9 секунд).
       if (isStartingRef.current && !data.is_running) {
         startupRetriesRef.current += 1;
 
@@ -62,8 +63,6 @@ export function SyncProvider({ children }: { children: ReactNode }) {
           return; // ІГНОРУЄМО цю відповідь, залишаємо "З'єднання..."
         }
 
-        // Якщо вже 4 рази сервер сказав ні - значить реально ні.
-        // Знімаємо прапор старту.
         isStartingRef.current = false;
       }
 
@@ -76,8 +75,6 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       }
 
       // 2. Логіка фінішу (Звук + Тост)
-      // Граємо тільки якщо процес БУВ (isRunningRef), а тепер СТАВ false
-      // І ми точно не в фазі старту
       if (
         isRunningRef.current &&
         !data.is_running &&
@@ -88,46 +85,45 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         isRunningRef.current = false;
 
         successSound.currentTime = 0;
-        successSound.play().catch(() => {});
-        toast.success("Дані оновлено!");
+        successSound.play().catch((e) => console.warn("Звук заблоковано:", e));
+        toast.success(t("common:sync_widget.toast_sync_success"));
       }
 
       setStatusData(data);
 
       // 3. Автоматичне приховування
       if (!data.is_running && isPolling && !isStartingRef.current) {
-        const timeoutId = setTimeout(() => {
-          setIsPolling(false);
-          setIsVisible(false);
-        }, 5000);
-        return () => clearTimeout(timeoutId);
+        if (!autoHideTimeoutRef.current) {
+          autoHideTimeoutRef.current = window.setTimeout(() => {
+            setIsPolling(false);
+            setIsVisible(false);
+            autoHideTimeoutRef.current = null;
+          }, 5000);
+        }
       }
     } catch (error) {
       console.error("Помилка опитування статусу:", error);
-      // Не вимикаємо поллінг одразу, даємо шанс відновитися
     }
-  }, [isPolling]);
+  }, [isPolling, t]);
 
   // Ефект таймера
   useEffect(() => {
     if (isPolling) {
-      // Робимо невелику затримку перед першим реальним запитом,
-      // щоб дати UI показати "Підключення..."
       const firstRun = setTimeout(fetchStatus, 1000);
-
       timerRef.current = window.setInterval(fetchStatus, 3000);
 
-      return () => clearTimeout(firstRun);
+      return () => {
+        clearTimeout(firstRun);
+        if (timerRef.current) clearInterval(timerRef.current);
+        if (autoHideTimeoutRef.current)
+          clearTimeout(autoHideTimeoutRef.current);
+      };
     } else {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     }
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
   }, [isPolling, fetchStatus]);
 
   // Перевірка при завантаженні (F5)
@@ -149,7 +145,6 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const startPolling = useCallback(() => {
-    // Розблокувати звук
     successSound
       .play()
       .then(() => {
@@ -158,25 +153,20 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {});
 
-    // Скидаємо всі прапорці
     isStartingRef.current = true;
     isRunningRef.current = false;
     hasNotifiedRef.current = false;
-    startupRetriesRef.current = 0; // 🔥 Скидаємо лічильник спроб
+    startupRetriesRef.current = 0;
 
     setIsVisible(true);
     setIsPolling(true);
 
-    // Ставимо початковий стан UI вручну
     setStatusData({
       is_running: true,
-      message: "З'єднання з сервером...",
+      message: t("common:sync_widget.msg_connecting"),
       total_imported: 0,
     });
-
-    // Примітка: Ми НЕ викликаємо fetchStatus() тут вручну,
-    // нехай це зробить useEffect з таймером, це дасть мікро-затримку.
-  }, []);
+  }, [t]);
 
   const stopPolling = useCallback(() => {
     setIsPolling(false);

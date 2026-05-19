@@ -113,7 +113,7 @@
   "userRoles": {
     "admin_label": "Admin",
     "admin_desc": "Full control: manages users, accounts, and structure.",
-    "member_label": "Guest",
+    "member_label": "Member",
     "member_desc": "View-only access to transactions and reports.",
     "child_label": "Child",
     "child_desc": "Can view and add transactions."

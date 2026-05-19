@@ -55,7 +55,11 @@ export default function WishItemCard({
   const hasMenuActions = isMine;
 
   const author = familyMembers?.find((m) => m.id === item.user_id);
-  const authorName = isMine ? "Моє" : author ? author.name : "Невідомо";
+  const authorName = isMine
+    ? t("shopping_wishlist:wishlist.label_mine", "Моє")
+    : author
+      ? author.name
+      : t("shopping_wishlist:wishlist.label_unknown", "Невідомо");
 
   return (
     <S.WishCard $isBought={isBought}>
@@ -143,12 +147,12 @@ export default function WishItemCard({
             {isReservedByMe ? (
               <>
                 <HiCheck size={14} />
-                Ви купуєте
+                {t("shopping_wishlist:wishlist.reserve_status_buying", "Ви купуєте")}
               </>
             ) : (
               <>
                 <HiLockClosed size={12} />
-                Резерв
+                {t("shopping_wishlist:wishlist.reserve_status_locked", "Резерв")}
               </>
             )}
           </S.StatusBadge>
@@ -161,17 +165,19 @@ export default function WishItemCard({
           <S.Title $isBought={isBought}>{item.name}</S.Title>
 
           <S.MetaRow>
-            <S.AuthorInfo title={`Створено: ${authorName}`}>
+            <S.AuthorInfo title={`${t("common:common.created", "Створено")}: ${authorName}`}>
               <HiUserCircle size={16} />
               {authorName}
             </S.AuthorInfo>
 
             <S.PriorityBadge $priority={item.priority || 1}>
-              {item.priority === 3
-                ? "🔥 Високий"
-                : item.priority === 2
-                  ? "⚡ Середній"
-                  : "Низький"}
+              {item.priority === 3 ? (
+                <>🔥 {t("shopping_wishlist:wishlist.priority_high", "Високий")}</>
+              ) : item.priority === 2 ? (
+                <>⚡ {t("shopping_wishlist:wishlist.priority_medium", "Середній")}</>
+              ) : (
+                t("shopping_wishlist:wishlist.priority_low", "Низький")
+              )}
             </S.PriorityBadge>
           </S.MetaRow>
         </div>
@@ -205,15 +211,18 @@ export default function WishItemCard({
           >
             {isReservedByMe ? (
               <>
-                <HiCheck size={18} /> Зняти резерв
+                <HiCheck size={18} />{" "}
+                {t("shopping_wishlist:wishlist.reserve_btn_cancel", "Зняти резерв")}
               </>
             ) : isReservedByOther ? (
               <>
-                <HiLockClosed size={16} /> Зарезервовано
+                <HiLockClosed size={16} />{" "}
+                {t("shopping_wishlist:wishlist.reserve_btn_locked", "Зарезервовано")}
               </>
             ) : (
               <>
-                <HiHandRaised size={18} /> Я хочу подарувати
+                <HiHandRaised size={18} />{" "}
+                {t("shopping_wishlist:wishlist.reserve_btn_action", "Я хочу подарувати")}
               </>
             )}
           </S.ReserveBtn>

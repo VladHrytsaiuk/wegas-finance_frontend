@@ -29,7 +29,7 @@
     "filter_type_transfer": "Transfers",
     "filter_account_label": "Account",
     "filter_category_label": "Category",
-    "filter_counterparty_label": "Counterparties",
+    "filter_counterparty_label": "Counterparty",
     "filter_amount_label": "Amount",
     "sort_date_desc": "Newest first",
     "sort_date_asc": "Oldest first",

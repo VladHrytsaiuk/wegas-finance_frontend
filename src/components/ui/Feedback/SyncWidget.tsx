@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styled, { keyframes, css } from "styled-components";
+import { useTranslation } from "react-i18next";
 import {
   HiArrowPath,
   HiMinus,
@@ -157,6 +158,7 @@ export function SyncWidget() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [shouldRender, setShouldRender] = useState(isVisible);
   const [isClosing, setIsClosing] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isVisible) {
@@ -191,7 +193,9 @@ export function SyncWidget() {
             <>
               <SuccessIcon size={isMinimized ? 20 : 24} />
               <span style={{ color: "var(--color-brand-500)" }}>
-                {isMinimized ? "Готово!" : "Успішно!"}
+                {isMinimized
+                  ? t("common:sync_widget.status_done_short")
+                  : t("common:sync_widget.status_done_long")}
               </span>
             </>
           ) : (
@@ -201,20 +205,25 @@ export function SyncWidget() {
                 style={{ color: "var(--color-brand-600)" }}
                 size={20}
               />
-              {isMinimized ? "Синхронізація..." : "Monobank Sync"}
+              {isMinimized
+                ? t("common:sync_widget.status_syncing")
+                : t("common:sync_widget.header_title")}
             </>
           )}
         </h4>
 
         {isMinimized ? (
-          <HiArrowsPointingOut size={16} title="Розгорнути" />
+          <HiArrowsPointingOut
+            size={16}
+            title={t("common:sync_widget.tooltip_expand")}
+          />
         ) : (
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
               setIsMinimized(true);
             }}
-            title="Згорнути"
+            title={t("common:sync_widget.tooltip_minimize")}
           >
             <HiMinus size={18} />
           </IconButton>
@@ -226,8 +235,8 @@ export function SyncWidget() {
           <StatusText>
             <span>
               {isFinished
-                ? "Синхронізацію завершено"
-                : statusData.message || "Ініціалізація..."}
+                ? t("common:sync_widget.msg_finished")
+                : statusData.message || t("common:sync_widget.msg_initializing")}
             </span>
             <span
               style={{
@@ -237,7 +246,8 @@ export function SyncWidget() {
                   : "var(--color-text-main)",
               }}
             >
-              {statusData.total_imported} шт.
+              {statusData.total_imported}{" "}
+              {t("common:sync_widget.unit_items")}
             </span>
           </StatusText>
 
@@ -259,8 +269,8 @@ export function SyncWidget() {
             }}
           >
             {isFinished
-              ? "Це вікно закриється автоматично."
-              : "Процес виконується у фоновому режимі."}
+              ? t("common:sync_widget.msg_auto_close")
+              : t("common:sync_widget.msg_background")}
           </div>
         </Content>
       )}

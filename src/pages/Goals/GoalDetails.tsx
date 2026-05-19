@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { uk } from "date-fns/locale";
+import { uk, enUS } from "date-fns/locale";
 import {
   HiArrowLeft,
   HiPencil,
@@ -33,8 +33,10 @@ import { useGoalDetails } from "../../hooks/Goals/useGoalDetails";
 import { formatMoney } from "../../utils/helpers";
 
 export default function GoalDetails() {
-  const { state, actions, t } = useGoalDetails();
+  const { state, actions, t, i18n } = useGoalDetails();
   const { goal, stats, isLoading, isEditModalOpen, isToggling } = state;
+
+  const currentLocale = i18n.language === "uk" ? uk : enUS;
 
   if (isLoading) {
     return (
@@ -73,7 +75,6 @@ export default function GoalDetails() {
     isCompleted,
     canPause,
     isPaused,
-    daysLeft,
     daysLeftText,
     deadlineStatus,
   } = stats;
@@ -104,7 +105,7 @@ export default function GoalDetails() {
                 <h1>{goal.name}</h1>
 
                 <S.StatusBadge $status={goal.status}>
-                  {t(`goalDetails.status_${goal.status}`)}
+                  {t(`goals_debts:goalDetails.status_${goal.status}`)}
                 </S.StatusBadge>
               </div>
             </S.GoalTitleBlock>
@@ -184,7 +185,7 @@ export default function GoalDetails() {
                 </div>
                 <div className="data">
                   {format(new Date(goal.date_start), "d MMM yyyy", {
-                    locale: uk,
+                    locale: currentLocale,
                   })}
                 </div>
               </S.MetaItem>
@@ -206,7 +207,7 @@ export default function GoalDetails() {
                   <S.DeadlineDate>
                     {t("goals_debts:goalDetails.date_deadline")}:{" "}
                     {format(new Date(goal.date_deadline), "d MMM yyyy", {
-                      locale: uk,
+                      locale: currentLocale,
                     })}
                   </S.DeadlineDate>
                 )}

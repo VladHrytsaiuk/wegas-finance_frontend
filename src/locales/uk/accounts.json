@@ -24,6 +24,10 @@
     "action_expense_button": "Записати витрату",
     "action_transfer_button": "Переказ між рахунками",
     "action_import_button": "Імпорт виписки",
+    "action_sync_button": "Оновити баланс",
+    "action_syncing": "Оновлення...",
+    "sync_locked_hint": "Автоматичний рахунок. Ручне додавання заборонено.",
+    "sync_error": "Помилка синхронізації",
     "back_to_list": "Назад до списку",
     "error_title": "Помилка рахунку",
     "storage_type_label": "Тип зберігання"

@@ -10,12 +10,12 @@ import {
   HiHome,
   HiPlus,
 } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "../../pages/utility/Utility.styles";
 import type { UtilityMeter } from "../../types";
 
-// Перенесли сюди конфіг іконок, бо він потрібен тільки картці
 const getTypeConfig = (type: string) => {
   switch (type) {
     case "electricity":
@@ -51,6 +51,7 @@ export default memo(function UtilityMeterCard({
   onAddReading,
 }: UtilityMeterCardProps) {
   const { icon, color } = getTypeConfig(meter.type);
+  const { t } = useTranslation();
 
   const balances = meter.counterparty?.balances || [];
   const mainBalance =
@@ -83,7 +84,7 @@ export default memo(function UtilityMeterCard({
               <HiBuildingOffice size={14} /> {meter.counterparty.name}
             </>
           ) : (
-            `Рах: ${meter.personal_account || "—"}`
+            `${t("stats_utility:utility.personal_account_short")}: ${meter.personal_account || "—"}`
           )}
         </S.MeterSubtitle>
 
@@ -94,7 +95,8 @@ export default memo(function UtilityMeterCard({
 
         {hasDebt && (
           <S.DebtBadge>
-            Борг: {formatMoney(debtAmount, meter.currency)}
+            {t("stats_utility:utility.debt_label")}:{" "}
+            {formatMoney(debtAmount, meter.currency)}
           </S.DebtBadge>
         )}
       </S.CardContent>
@@ -103,7 +105,7 @@ export default memo(function UtilityMeterCard({
 
       <S.Footer>
         <div style={{ flex: 1 }}>
-          <div className="label">Тариф</div>
+          <div className="label">{t("stats_utility:utility.table_rate")}</div>
           <div className="val">
             {formatMoney(meter.tariff * 100, meter.currency)}
           </div>
@@ -115,7 +117,7 @@ export default memo(function UtilityMeterCard({
               size="small"
               onClick={() => onPay(meter)}
             >
-              Оплатити
+              {t("stats_utility:utility.btn_pay")}
             </Button>
           )}
           <Button
@@ -124,7 +126,7 @@ export default memo(function UtilityMeterCard({
             icon={<HiPlus />}
             onClick={() => onAddReading(meter)}
           >
-            Внести
+            {t("stats_utility:utility.btn_add_reading_short")}
           </Button>
         </S.FooterActions>
       </S.Footer>

@@ -60,6 +60,25 @@
     "shared_wishes": "Спільні бажання",
     "status_bought": "Куплено",
     "status_planning": "Планується",
-    "title": "Список бажань"
+    "title": "Список бажань",
+    "label_mine": "Моє",
+    "label_unknown": "Невідомо",
+    "reserve_status_buying": "Ви купуєте",
+    "reserve_status_locked": "Резерв",
+    "reserve_btn_cancel": "Зняти резерв",
+    "reserve_btn_locked": "Зарезервовано",
+    "reserve_btn_action": "Я хочу подарувати",
+    "sort_priority_desc": "Пріоритет (високий)",
+    "sort_priority_asc": "Пріоритет (низький)",
+    "sort_price_desc": "Найдорожчі",
+    "sort_price_asc": "Найдешевші",
+    "sort_newest": "Спочатку нові",
+    "sort_oldest": "Спочатку старі",
+    "sort_name_asc": "Назва (А-Я)",
+    "sort_name_desc": "Назва (Я-А)",
+    "filter_author_me": "Створені мною",
+    "filter_author_others": "Спільні",
+    "filter_availability_free": "Вільні",
+    "filter_availability_reserved_by_me": "Зарезервовані мною"
   }
 }

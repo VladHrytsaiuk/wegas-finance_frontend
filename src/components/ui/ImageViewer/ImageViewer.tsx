@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { HiChevronLeft, HiChevronRight, HiXMark } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 import { Button } from "../Button"; // Твій стандартний компонент кнопки
 import * as S from "./ImageViewer.styles";
 
@@ -13,6 +14,7 @@ export default function ImageViewer({
   onCloseModal,
 }: ImageViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { t } = useTranslation();
 
   // Клавіатурна навігація (Стрілки вліво/вправо)
   useEffect(() => {
@@ -42,12 +44,13 @@ export default function ImageViewer({
           {currentIndex + 1} / {imageUrls.length}
         </S.Counter>
         <Button variation="secondary" size="small" onClick={onCloseModal}>
-          <HiXMark size={18} /> Закрити
+          <HiXMark size={18} /> {t("common:common.close")}
         </Button>
       </S.TopBar>
 
       <S.MainImageContainer>
-        {imageUrls.length > 1 && (
+...
+
           <S.NavButton $direction="left" onClick={handlePrev}>
             <HiChevronLeft size={28} />
           </S.NavButton>

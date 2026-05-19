@@ -24,6 +24,10 @@
     "action_expense_button": "Record Expense",
     "action_transfer_button": "Transfer between accounts",
     "action_import_button": "Import Statement",
+    "action_sync_button": "Update Balance",
+    "action_syncing": "Updating...",
+    "sync_locked_hint": "Automatic account. Manual entry is disabled.",
+    "sync_error": "Sync error",
     "back_to_list": "Back to List",
     "error_title": "Account Error",
     "storage_type_label": "Storage Type"

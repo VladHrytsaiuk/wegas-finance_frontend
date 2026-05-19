@@ -84,7 +84,7 @@ function Goals() {
   useEffect(() => {
     setPageTitle(
       t("goals_debts:goals.title", "Фінансові цілі"),
-      `Створіть власну ціль`,
+      t("goals_debts:goals.subtitle_create", "Створіть власну ціль"),
     );
 
     return () => resetPageTitle();

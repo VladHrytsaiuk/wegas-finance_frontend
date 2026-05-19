@@ -9,17 +9,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { HiArrowLeft } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 
 import Spinner from "../../components/ui/Spinner";
 import {
   CHART_COLORS,
   CustomTooltip,
-  TYPE_LABELS,
 } from "../../components/utility/ChartConfig";
 import { formatMoney } from "../../utils/helpers";
 
-// Імпорт хука та стилів (припускаємо, що вони в цьому ж файлі або імпортуються)
-import { useUtilityAnalytics } from "../../hooks/Utility/useUtilityAnalytics"; // шлях умовний
+// Імпорт хука та стилів
+import { useUtilityAnalytics } from "../../hooks/Utility/useUtilityAnalytics";
 import {
   PageContainer,
   BackButton,
@@ -30,10 +30,9 @@ import {
   Card,
   CardTitle,
   CardValue,
-} from "./UtilityAnalyticsPage.styles"; // шлях умовний
-import { t } from "i18next";
+} from "./UtilityAnalyticsPage.styles";
 
-// Виносимо конфігурацію Recharts за межі компонента, щоб уникнути inline об'єктів
+// configuration for Recharts legend
 const legendStyle = { paddingTop: "20px" };
 
 export default function UtilityAnalyticsPage() {
@@ -46,13 +45,15 @@ export default function UtilityAnalyticsPage() {
     hasData,
     handleBack,
   } = useUtilityAnalytics();
+  const { t } = useTranslation();
 
   if (isLoading) return <Spinner />;
 
   return (
     <PageContainer>
       <BackButton onClick={handleBack}>
-        <HiArrowLeft /> Назад {hasData ? "до списку" : ""}
+        <HiArrowLeft /> {t("stats_utility:utility.back")}{" "}
+        {hasData ? t("stats_utility:utility.to_list") : ""}
       </BackButton>
 
       <Header>
@@ -63,7 +64,7 @@ export default function UtilityAnalyticsPage() {
       {!hasData ? (
         <ChartCard>
           <EmptyStateWrapper>
-            Дані для аналітики за цей період відсутні.
+            {t("stats_utility:utility.analytics_empty")}
           </EmptyStateWrapper>
         </ChartCard>
       ) : (
@@ -77,7 +78,6 @@ export default function UtilityAnalyticsPage() {
               <CardTitle>
                 {t("stats_utility:utility.average_monthly")}
               </CardTitle>
-              {/* Передаємо проп замість інлайн стилю */}
               <CardValue $variant="neutral">
                 {formatMoney(avgMonthly * 100, "UAH")}
               </CardValue>
@@ -123,7 +123,9 @@ export default function UtilityAnalyticsPage() {
                 />
 
                 <Legend
-                  formatter={(val) => TYPE_LABELS[val] || val}
+                  formatter={(val) =>
+                    t(`stats_utility:serviceTypes.${val}`) || val
+                  }
                   wrapperStyle={legendStyle}
                   iconType="circle"
                 />
@@ -132,7 +134,7 @@ export default function UtilityAnalyticsPage() {
                   <Bar
                     key={key}
                     dataKey={key}
-                    name={TYPE_LABELS[key] || key}
+                    name={t(`stats_utility:serviceTypes.${key}`) || key}
                     stackId="a"
                     fill={CHART_COLORS[key] || CHART_COLORS.other}
                     barSize={40}

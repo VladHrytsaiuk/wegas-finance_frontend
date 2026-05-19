@@ -85,8 +85,8 @@ function UtilityContent() {
   // Встановлення глобального заголовка
   useEffect(() => {
     setPageTitle(
-      t("stats_utility:utilityPage.title", "Комунальні послуги"),
-      `Додайте свій лічильник`,
+      t("stats_utility:utilityPage.title"),
+      t("stats_utility:utilityPage.subtitle"),
     );
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t, meters.length]);
@@ -112,10 +112,7 @@ function UtilityContent() {
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
-        searchPlaceholder={t(
-          "utilityPage.search_placeholder",
-          "Пошук послуги...",
-        )}
+        searchPlaceholder={t("stats_utility:utilityPage.search_placeholder")}
         filtersConfig={filtersConfig}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
@@ -129,7 +126,7 @@ function UtilityContent() {
           icon={<HiChartBar />}
           onClick={() => navigate("analytics")}
         >
-          {t("stats_utility:utilityPage.analytics_btn", "Аналітика")}
+          {t("stats_utility:utilityPage.analytics_btn")}
         </Button>
         <Button
           variation="primary"
@@ -140,13 +137,15 @@ function UtilityContent() {
             open("create-meter");
           }}
         >
-          {t("stats_utility:utilityPage.add_btn", "Додати послугу")}
+          {t("stats_utility:utilityPage.add_btn")}
         </Button>
       </TableToolbar>
 
       {Object.entries(groupedMeters).map(([groupName, groupMeters]) => (
         <S.GroupSection key={groupName}>
-          {groupName !== "Всі" && <S.GroupHeader>{groupName}</S.GroupHeader>}
+          {groupName !== t("stats_utility:filters.group_all") && (
+            <S.GroupHeader>{groupName}</S.GroupHeader>
+          )}
           <S.Grid>
             {groupMeters.map((meter) => (
               <UtilityMeterCard
@@ -169,15 +168,8 @@ function UtilityContent() {
             <HiCube />
           </S.EmptyIconWrapper>
           <div>
-            <h3>
-              {t("stats_utility:utilityPage.empty_title", "Послуг не знайдено")}
-            </h3>
-            <p>
-              {t(
-                "utilityPage.empty_desc",
-                "Додайте свій перший лічильник або комунальну послугу, щоб почати відстежувати витрати.",
-              )}
-            </p>
+            <h3>{t("stats_utility:utilityPage.empty_title")}</h3>
+            <p>{t("stats_utility:utilityPage.empty_desc")}</p>
           </div>
         </S.EmptyState>
       )}
@@ -188,12 +180,17 @@ function UtilityContent() {
       </Modal.Window>
 
       <Modal.Window name="add-reading">
-        <AddReadingForm meter={activeMeter as UtilityMeter} onCloseModal={close} />
+        <AddReadingForm
+          meter={activeMeter as UtilityMeter}
+          onCloseModal={close}
+        />
       </Modal.Window>
 
       <Modal.Window name="delete-confirm">
         <ConfirmDelete
-          resourceName={activeMeter?.name || "послугу"}
+          resourceName={
+            activeMeter?.name || t("stats_utility:utility.resource_name")
+          }
           onConfirm={() => activeMeter && remove(activeMeter.id)}
         />
       </Modal.Window>
@@ -208,7 +205,9 @@ function UtilityContent() {
             type: "debt_repay",
             counterparty_id: activeMeter.counterparty_id || "",
             amount: getActiveDebt(),
-            note: `Оплата послуг: ${activeMeter.name}`,
+            note: t("stats_utility:utility.payment_note", {
+              name: activeMeter.name,
+            }),
           }}
         />
       )}

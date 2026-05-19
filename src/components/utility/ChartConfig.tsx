@@ -1,4 +1,5 @@
 import styled, { keyframes } from "styled-components";
+import { useTranslation } from "react-i18next";
 import { formatMoney } from "../../utils/helpers";
 
 // Кольори (Tailwind palette adaptation)
@@ -14,16 +15,6 @@ export const CHART_COLORS = {
   text: "#6B7280", // Grey 500
   grid: "#E5E7EB", // Grey 200
   hoverCursor: "rgba(59, 130, 246, 0.1)", // Світло-блакитний фон при наведенні
-};
-
-export const TYPE_LABELS: Record<string, string> = {
-  electricity: "Світло",
-  water: "Вода",
-  gas: "Газ",
-  heating: "Опалення",
-  internet: "Інтернет",
-  rent: "Квартплата",
-  other: "Інше",
 };
 
 // Анімація появи
@@ -92,6 +83,8 @@ export const CustomTooltip = ({
   label,
   currency = "UAH",
 }: any) => {
+  const { t } = useTranslation();
+
   // 1. Максимально сувора перевірка
   if (!active || !payload || !Array.isArray(payload) || payload.length === 0) {
     return null;
@@ -105,7 +98,9 @@ export const CustomTooltip = ({
 
   return (
     <TooltipContainer>
-      <div className="header">{label || "Дані"}</div>
+      <div className="header">
+        {label || t("stats_utility:utility.chart_data_header")}
+      </div>
       <div className="list">
         {validEntries.map((entry: any, index: number) => (
           <div className="item" key={`${entry.dataKey}-${index}`}>
@@ -114,7 +109,9 @@ export const CustomTooltip = ({
                 className="dot"
                 style={{ backgroundColor: entry.color || entry.fill || "#ccc" }}
               />
-              <span>{entry.name || entry.dataKey}</span>
+              <span>
+                {entry.name || t(`stats_utility:serviceTypes.${entry.dataKey}`)}
+              </span>
             </div>
             <div className="value">
               {entry.dataKey === "total_consumption"
