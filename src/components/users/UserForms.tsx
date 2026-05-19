@@ -37,8 +37,8 @@ export function UserForm({
   // Динамічний переклад ролей на основі їх ID
   const translatedRoles = FUN_ROLES.map((role) => ({
     ...role,
-    label: t(`userRoles.${role.id}_label`),
-    desc: t(`userRoles.${role.id}_desc`),
+    label: t(`settings:userRoles.${role.id}_label`),
+    desc: t(`settings:userRoles.${role.id}_desc`),
   }));
 
   return (

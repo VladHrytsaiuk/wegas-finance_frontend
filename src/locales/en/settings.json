@@ -112,11 +112,11 @@
   },
   "userRoles": {
     "admin_label": "Admin",
-    "admin_desc": "Full control: manages users, accounts, and structure.",
+    "admin_desc": "Full access to financial management and settings",
     "member_label": "Member",
-    "member_desc": "View-only access to transactions and reports.",
+    "member_desc": "Can view and add transactions based on assigned accounts",
     "child_label": "Child",
-    "child_desc": "Can view and add transactions."
+    "child_desc": "Limited access, optimized for basic expense tracking"
   },
   "integrations": {
     "title": "Integrations",
