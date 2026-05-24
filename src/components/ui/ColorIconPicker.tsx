@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { HiChevronDown, HiCheck } from "react-icons/hi2";
+import { HiCheck, HiChevronDown } from "react-icons/hi2";
 import * as Icons from "react-icons/hi2";
 
 import { useColorIconPicker } from "../../hooks/ui/useColorIconPicker";
@@ -13,132 +13,164 @@ interface ColorIconPickerProps {
   onIconChange: (icon: string) => void;
 }
 
-export function ColorIconPicker({
-  color,
-  icon,
-  onColorChange,
-  onIconChange,
-}: ColorIconPickerProps) {
-  const { state, refs, actions, t } = useColorIconPicker({ icon });
-  const {
-    isColorOpen,
-    isIconOpen,
-    SelectedIconComponent,
-    presetIcons,
-    presetColors,
-  } = state;
+/**
+ * Combined picker that renders two separate columns (Color & Icon)
+ */
+export function ColorIconPicker(props: ColorIconPickerProps) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", width: "100%" }}>
+      <ColorPicker color={props.color} onColorChange={props.onColorChange} />
+      <IconPicker icon={props.icon} onIconChange={props.onIconChange} color={props.color} />
+    </div>
+  );
+}
 
-  const [portalCoords, setPortalCoords] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
+export function ColorPicker({ color, onColorChange }: { color: string; onColorChange: (c: string) => void }) {
+  const { state, t } = useColorIconPicker({ icon: "" });
+  const { presetColors } = state;
+  const [isOpen, setIsOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [portalCoords, setPortalCoords] = useState({ top: 0, left: 0 });
 
-  const updatePortalPosition = (el: HTMLElement | null) => {
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setPortalCoords({
-      top: rect.bottom + window.scrollY + 8,
-      left: rect.left + window.scrollX,
-      width: rect.width,
-    });
+  const updatePortalPosition = () => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    setPortalCoords({ top: rect.bottom + window.scrollY + 6, left: rect.left + window.scrollX });
   };
 
   useEffect(() => {
-    if (isColorOpen || isIconOpen) {
-      const handleUpdate = () => {
-        if (isColorOpen) updatePortalPosition(refs.colorRef.current);
-        if (isIconOpen) updatePortalPosition(refs.iconRef.current);
-      };
-
-      window.addEventListener("scroll", handleUpdate, true);
-      window.addEventListener("resize", handleUpdate);
+    if (isOpen) {
+      updatePortalPosition();
+      window.addEventListener("scroll", updatePortalPosition, true);
+      window.addEventListener("resize", updatePortalPosition);
       return () => {
-        window.removeEventListener("scroll", handleUpdate, true);
-        window.removeEventListener("resize", handleUpdate);
+        window.removeEventListener("scroll", updatePortalPosition, true);
+        window.removeEventListener("resize", updatePortalPosition);
       };
     }
-  }, [isColorOpen, isIconOpen, refs]);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   return (
     <S.Container>
-      {/* --- COLOR PICKER --- */}
-      <div style={{ position: "relative" }} ref={refs.colorRef}>
-        <S.ColorTrigger
-          type="button"
-          $color={color}
-          onClick={(e) => {
-            updatePortalPosition(e.currentTarget);
-            actions.toggleColor();
+      <S.PickerTrigger ref={triggerRef} type="button" onClick={() => setIsOpen(!isOpen)}>
+        <S.ColorSwatch $color={color} />
+        <HiChevronDown
+          size={14}
+          style={{
+            marginLeft: "auto",
+            color: "var(--color-text-tertiary)",
+            transform: isOpen ? "rotate(180deg)" : "none",
+            transition: "transform 0.2s",
           }}
         />
+      </S.PickerTrigger>
 
-        {isColorOpen &&
-          createPortal(
-            <S.DropdownPortalContainer
-              $top={portalCoords.top}
-              $left={portalCoords.left}
-              // 🔥 ФІКС 1: Зупиняємо спливання події, щоб хук ClickOutside не закривав вікно
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
-            >
+      {isOpen &&
+        createPortal(
+          <S.DropdownPortalContainer
+            $top={portalCoords.top}
+            $left={portalCoords.left}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <S.Section>
               <S.ColorGrid>
                 {presetColors.map((c) => (
                   <S.ColorOption
                     key={c}
-                    type="button" // 🔥 ФІКС 2: Явно вказуємо тип
+                    type="button"
                     $color={c}
                     $isActive={color === c}
                     onClick={(e) => {
                       e.preventDefault();
-                      e.stopPropagation();
                       onColorChange(c);
-                      actions.setIsColorOpen(false);
+                      setIsOpen(false);
                     }}
                   >
                     {color === c && <HiCheck />}
                   </S.ColorOption>
                 ))}
               </S.ColorGrid>
-            </S.DropdownPortalContainer>,
-            document.body,
-          )}
-      </div>
+            </S.Section>
+          </S.DropdownPortalContainer>
+,
+          document.body,
+        )}
+    </S.Container>
+  );
+}
 
-      {/* --- ICON PICKER --- */}
-      <S.IconSelectWrapper ref={refs.iconRef}>
-        <S.IconTrigger
-          type="button"
-          onClick={(e) => {
-            updatePortalPosition(e.currentTarget);
-            actions.toggleIcon();
+export function IconPicker({ icon, onIconChange, color }: { icon: string; onIconChange: (i: string) => void; color: string }) {
+  const { state, t } = useColorIconPicker({ icon });
+  const { presetIcons, SelectedIconComponent } = state;
+  const [isOpen, setIsOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [portalCoords, setPortalCoords] = useState({ top: 0, left: 0 });
+
+  const updatePortalPosition = () => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    setPortalCoords({ top: rect.bottom + window.scrollY + 6, left: rect.left + window.scrollX });
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updatePortalPosition();
+      window.addEventListener("scroll", updatePortalPosition, true);
+      window.addEventListener("resize", updatePortalPosition);
+      return () => {
+        window.removeEventListener("scroll", updatePortalPosition, true);
+        window.removeEventListener("resize", updatePortalPosition);
+      };
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
+  return (
+    <S.Container>
+      <S.PickerTrigger ref={triggerRef} type="button" onClick={() => setIsOpen(!isOpen)}>
+        <S.IconPreview $color={color}>
+          <SelectedIconComponent />
+        </S.IconPreview>
+        <HiChevronDown
+          size={14}
+          style={{
+            marginLeft: "auto",
+            color: "var(--color-text-tertiary)",
+            transform: isOpen ? "rotate(180deg)" : "none",
+            transition: "transform 0.2s",
           }}
-        >
-          <S.SelectedIcon>
-            <S.IconPreview $color={color}>
-              <SelectedIconComponent />
-            </S.IconPreview>
-            <span>{icon.replace("Hi", "")}</span>
-          </S.SelectedIcon>
-          <HiChevronDown
-            style={{
-              color: "var(--color-text-secondary)",
-              transform: isIconOpen ? "rotate(180deg)" : "none",
-              transition: "transform 0.2s",
-            }}
-          />
-        </S.IconTrigger>
+        />
+      </S.PickerTrigger>
 
-        {isIconOpen &&
-          createPortal(
-            <S.DropdownPortalContainer
-              $top={portalCoords.top}
-              $left={portalCoords.left}
-              $width={portalCoords.width}
-              // 🔥 ФІКС 3: Зупиняємо спливання
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
-            >
+      {isOpen &&
+        createPortal(
+          <S.DropdownPortalContainer
+            $top={portalCoords.top}
+            $left={portalCoords.left}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <S.Section>
               <S.IconGrid>
                 {presetIcons.map((iconName) => {
                   const CurrentIcon = (Icons as any)[iconName];
@@ -149,11 +181,11 @@ export function ColorIconPicker({
                       key={iconName}
                       type="button"
                       $active={icon === iconName}
+                      $color={color}
                       onClick={(e) => {
                         e.preventDefault();
-                        e.stopPropagation();
                         onIconChange(iconName);
-                        actions.setIsIconOpen(false);
+                        setIsOpen(false);
                       }}
                     >
                       <CurrentIcon />
@@ -161,10 +193,11 @@ export function ColorIconPicker({
                   );
                 })}
               </S.IconGrid>
-            </S.DropdownPortalContainer>,
-            document.body,
-          )}
-      </S.IconSelectWrapper>
+            </S.Section>
+          </S.DropdownPortalContainer>
+,
+          document.body,
+        )}
     </S.Container>
   );
 }

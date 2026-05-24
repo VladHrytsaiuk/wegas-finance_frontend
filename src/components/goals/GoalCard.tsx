@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 
 import Modal from "../ui/Modal";
 import ConfirmDelete from "../ui/ConfirmDelete";
+import { SmartIcon } from "../../utils/IconMap";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "../../pages/Goals/Goals.styles";
 
@@ -104,7 +105,12 @@ export default memo(function GoalCard({ goal, t, handlers }: GoalCardProps) {
         <S.CardHeader>
           <S.TitleRow>
             <S.IconWrapper className="goal-icon" $color={goal.color}>
-              <HiFlag />
+              <SmartIcon
+                iconName={goal.icon}
+                logo={goal.photo_url}
+                color={goal.color}
+                size={22}
+              />
             </S.IconWrapper>
             <S.Info>
               <S.Title>{goal.name}</S.Title>

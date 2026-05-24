@@ -5,6 +5,7 @@ import {
   HiEllipsisHorizontalCircle,
   HiCheckCircle,
   HiXCircle,
+  HiFlag,
 
   // --- Home & Living ---
   HiHome,
@@ -173,9 +174,9 @@ export const ICON_MAP: Record<string, React.ElementType> = {
   HiArrowTrendingUp,
   HiArrowsRightLeft,
   HiCreditCard,
+  HiFlag,
 };
 
-// === 2. ХЕЛПЕР ДЛЯ ЛОГОТИПІВ (Внутрішній) ===
 // === 2. ХЕЛПЕР ДЛЯ ЛОГОТИПІВ (Внутрішній) ===
 const getLogoSrc = (logoIdentifier: string | undefined | null) => {
   if (!logoIdentifier) return undefined;

@@ -15,36 +15,66 @@ export const useCreateGoalForm = (
   editingGoal?: Goal | null,
 ) => {
   const { t } = useTranslation();
+  const { isDirty, setIsDirty } = useModal();
 
-  // --- СТЕЙТИ ---
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("UAH");
-  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
-  const [color, setColor] = useState("#10b981");
-  const [icon, setIcon] = useState("HiFlag");
+  // --- WIZARD STATE ---
+  const [currentStep, setCurrentStep] = useState(1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showConfirm, setShowConfirm] = useState(false);
+  const totalSteps = 3;
+
+  // --- FORM STATE (Using lazy initializers for stability) ---
+  const [name, setName] = useState(() => editingGoal?.name || "");
+  const [amount, setAmount] = useState(() => 
+    editingGoal ? (editingGoal.target_amount / 100).toFixed(2) : ""
+  );
+  const [currency, setCurrency] = useState(() => editingGoal?.currency || "UAH");
+  
+  const [deadline, setDeadline] = useState<Date | undefined>(() => {
+    if (!editingGoal?.date_deadline) return undefined;
+    let ts = Number(editingGoal.date_deadline);
+    if (isNaN(ts) || ts <= 0) return undefined;
+    if (ts < 10000000000) ts *= 1000;
+    return new Date(ts);
+  });
+  
+  const [color, setColor] = useState<string>(() => editingGoal?.color || "#10b981");
+  const [icon, setIcon] = useState<string>(() => editingGoal?.icon || "HiStar");
+
+  const handleColorChange = (colorId: string) => {
+    setColor(colorId);
+  };
+
+  const handleIconChange = (iconId: string) => {
+    if (iconId) setIcon(iconId);
+  };
 
   const [isPhotoRemoved, setIsPhotoRemoved] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState("");
-
-  // 🔥 ДОДАЄМО СТАН ЗАВАНТАЖЕННЯ 🔥
+  const [photoPreview, setPhotoPreview] = useState(() => 
+    getUploadedFileUrl(editingGoal?.photo_url) || ""
+  );
   const [isCompressing, setIsCompressing] = useState(false);
 
-  const [externalLink, setExternalLink] = useState("");
-  const [description, setDescription] = useState("");
+  const [externalLink, setExternalLink] = useState(() => editingGoal?.external_link || "");
+  const [description, setDescription] = useState(() => editingGoal?.description || "");
 
-  const [visibility, setVisibility] = useState<"public" | "private">("public");
-  const [hiddenFrom, setHiddenFrom] = useState<string[]>([]);
+  const [visibility, setVisibility] = useState<"public" | "private">(() => 
+    editingGoal?.visibility || "public"
+  );
+  const [hiddenFrom, setHiddenFrom] = useState<string[]>(() => 
+    editingGoal?.hidden_from ? editingGoal.hidden_from.split(",") : []
+  );
 
-  const [linkMode, setLinkMode] = useState<"none" | "new" | "existing">("none");
+  const [linkMode, setLinkMode] = useState<"none" | "new" | "existing">(() => 
+    editingGoal ? "none" : "new"
+  );
   const [selectedAccountId, setSelectedAccountId] = useState("");
   const [newAccountName, setNewAccountName] = useState("");
 
   const { submit, isLoading } = useCreateGoal(onClose, editingGoal);
-  const { setIsDirty } = useModal();
 
-  // --- ЗАВАНТАЖЕННЯ ДАНИХ ---
+  // --- DATA LOADING ---
   const { data: accounts = [] } = useQuery<Account[]>({
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
@@ -69,58 +99,7 @@ export const useCreateGoalForm = (
       (!acc.goal_id || acc.goal_id === editingGoal?.id),
   );
 
-  // --- ЗАПОВНЕННЯ ФОРМИ ---
-  useEffect(() => {
-    if (editingGoal) {
-      setName(editingGoal.name);
-      setAmount((editingGoal.target_amount / 100).toFixed(2));
-      setCurrency(editingGoal.currency);
-      setColor(editingGoal.color);
-      setIcon(editingGoal.icon);
-      setExternalLink(editingGoal.external_link || "");
-      setDescription(editingGoal.description || "");
-
-      setVisibility(editingGoal.visibility || "public");
-
-      setHiddenFrom(
-        editingGoal.hidden_from ? editingGoal.hidden_from.split(",") : [],
-      );
-
-      if (editingGoal.date_deadline) {
-        let ts = Number(editingGoal.date_deadline);
-        if (!isNaN(ts) && ts > 0) {
-          if (ts < 10000000000) ts *= 1000;
-          setDeadline(new Date(ts));
-        } else {
-          setDeadline(undefined);
-        }
-      } else {
-        setDeadline(undefined);
-      }
-
-      setPhotoPreview(getUploadedFileUrl(editingGoal.photo_url) || "");
-
-      setLinkMode("none");
-      setIsPhotoRemoved(false);
-    } else {
-      // Reset
-      setName("");
-      setAmount("");
-      setCurrency("UAH");
-      setDeadline(undefined);
-      setColor("#10b981");
-      setIcon("HiFlag");
-      setPhotoFile(null);
-      setPhotoPreview("");
-      setExternalLink("");
-      setDescription("");
-      setVisibility("public");
-      setHiddenFrom([]);
-      setLinkMode("new");
-      setNewAccountName("");
-      setIsPhotoRemoved(false);
-    }
-  }, [editingGoal, isOpen]);
+  const membersToHideFrom = users.filter((u) => u.id !== currentUser?.id);
 
   // Dirty Check
   useEffect(() => {
@@ -141,17 +120,7 @@ export const useCreateGoalForm = (
       }
     };
     setIsDirty(checkIsDirty());
-  }, [
-    name,
-    amount,
-    description,
-    visibility,
-    hiddenFrom,
-    photoFile,
-    isPhotoRemoved,
-    editingGoal,
-    setIsDirty,
-  ]);
+  }, [name, amount, description, visibility, hiddenFrom, photoFile, isPhotoRemoved, editingGoal, setIsDirty]);
 
   useEffect(() => {
     if (!editingGoal && linkMode === "new") {
@@ -159,13 +128,10 @@ export const useCreateGoalForm = (
     }
   }, [name, linkMode, editingGoal]);
 
-  // 🔥 ОНОВЛЕНИЙ ОБРОБНИК ФАЙЛУ З АНІМАЦІЄЮ 🔥
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const originalFile = e.target.files[0];
-
-      setIsCompressing(true); // Вмикаємо спінер
-
+      setIsCompressing(true);
       try {
         const compressed = await compressImage(originalFile);
         setPhotoFile(compressed);
@@ -173,12 +139,12 @@ export const useCreateGoalForm = (
         const reader = new FileReader();
         reader.onloadend = () => {
           setPhotoPreview(reader.result as string);
-          setIsCompressing(false); // Вимикаємо спінер
+          setIsCompressing(false);
         };
         reader.readAsDataURL(compressed);
       } catch (error) {
         console.error("Помилка стиснення:", error);
-        setIsCompressing(false); // Вимикаємо у разі помилки
+        setIsCompressing(false);
       }
     }
   };
@@ -191,14 +157,65 @@ export const useCreateGoalForm = (
 
   const toggleHiddenUser = (userId: string) => {
     setHiddenFrom((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId],
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateStep = (step: number) => {
+    const newErrors: Record<string, string> = {};
+    if (step === 1) {
+      if (!name.trim()) newErrors.name = t("common:validation.required");
+      if (!amount || Number(amount) <= 0) newErrors.amount = t("common:validation.invalid_amount");
+      if (deadline) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (deadline < today) {
+          newErrors.deadline = t("common:formValidation.error_date_required");
+        }
+      }
+    } else if (step === 2) {
+      if (!linkMode) newErrors.linkMode = t("common:validation.required");
+      if (!visibility) newErrors.visibility = t("common:validation.required");
+      if (linkMode === "new" && !newAccountName.trim()) {
+        newErrors.newAccountName = t("common:validation.required");
+      }
+      if (linkMode === "existing" && !selectedAccountId) {
+        newErrors.selectedAccountId = t("common:formValidation.error_select_account");
+      }
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const nextStep = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    if (validateStep(currentStep)) {
+      if (currentStep < totalSteps) {
+        setCurrentStep(currentStep + 1);
+      }
+    }
+  };
+
+  const prevStep = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setErrors({});
+    }
+  };
+
+  const handleCloseAttempt = () => {
+    if (isDirty) {
+      setShowConfirm(true);
+    } else {
+      setIsDirty(false);
+      onClose();
+    }
+  };
+
+  const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateStep(3)) return;
     submit({
       name,
       target_amount: Number(amount),
@@ -220,6 +237,17 @@ export const useCreateGoalForm = (
   };
 
   return {
+    wizard: {
+      currentStep,
+      totalSteps,
+      nextStep,
+      prevStep,
+      errors,
+      setErrors,
+      showConfirm,
+      setShowConfirm,
+      handleCloseAttempt,
+    },
     formState: {
       name,
       setName,
@@ -230,9 +258,9 @@ export const useCreateGoalForm = (
       deadline,
       setDeadline,
       color,
-      setColor,
+      setColor: handleColorChange,
       icon,
-      setIcon,
+      setIcon: handleIconChange,
       photoPreview,
       handleFileChange,
       handleRemovePhoto,
@@ -250,10 +278,16 @@ export const useCreateGoalForm = (
       setSelectedAccountId,
       newAccountName,
       setNewAccountName,
-      isCompressing, // 🔥 Передаємо стан у компонент
+      isCompressing,
     },
-    data: { availableAccounts, isLoading, users, currentUser },
-    handleSubmit,
+    data: {
+      availableAccounts,
+      isLoading,
+      users,
+      currentUser,
+      membersToHideFrom,
+    },
+    handleSubmit: handleSubmitForm,
     t,
   };
 };

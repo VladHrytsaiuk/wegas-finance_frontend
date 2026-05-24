@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { HiPlus, HiFlag } from "react-icons/hi2";
+import { HiPlus } from "react-icons/hi2";
 
 // Components
 import Spinner from "../../components/ui/Spinner";
@@ -7,7 +7,8 @@ import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import CreateGoalModal from "../../components/goals/CreateGoalModal";
 import ExtendGoalModal from "../../components/goals/ExtendGoalModal";
-import GoalCard from "../../components/goals/GoalCard"; // Наш новий компонент
+import GoalCard from "../../components/goals/GoalCard";
+import { SmartIcon } from "../../utils/IconMap";
 
 // Logic & Styles
 import { useGoalsPage } from "../../hooks/Goals/useGoalsPage";
@@ -129,7 +130,7 @@ function Goals() {
         !isLoading && (
           <S.EmptyState>
             <S.EmptyIconWrapper>
-              <HiFlag />
+              <SmartIcon size={64} />
             </S.EmptyIconWrapper>
             <div>
               <h3>

@@ -56,6 +56,7 @@ import { formatMoney } from "../../../utils/helpers";
 import ConfirmUnlinkGoal from "./ConfirmUnlinkGoal";
 import { CURRENCY_SYMBOLS } from "../../../utils/currency";
 import { CurrencySymbol } from "../../ui/CurrencySymbol";
+import { SmartIcon } from "../../../utils/IconMap";
 
 interface AccountFormProps {
   onSubmit: (data: any, options?: any) => void;
@@ -479,7 +480,7 @@ export function AccountFormContent(props: AccountFormProps) {
                     <div
                       style={{ display: "flex", alignItems: "center", gap: 8 }}
                     >
-                      <HiFlag style={{ color: selectedGoal.color }} />
+                      <SmartIcon iconName={selectedGoal.icon} color={selectedGoal.color} />
                       <span>{selectedGoal.name}</span>
                     </div>
                   ) : (
@@ -511,7 +512,7 @@ export function AccountFormContent(props: AccountFormProps) {
                     $isSelected={goal.id === state.goalId}
                     onClick={() => actions.setGoalId(goal.id)}
                   >
-                    <HiFlag style={{ color: goal.color }} />
+                    <SmartIcon iconName={goal.icon} color={goal.color} />
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <span>{goal.name}</span>
                       <small style={{ fontSize: "0.7rem", opacity: 0.6 }}>

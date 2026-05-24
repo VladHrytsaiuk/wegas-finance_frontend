@@ -2,77 +2,42 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  gap: 0.8rem;
-  align-items: center;
   width: 100%;
 `;
 
-export const ColorTrigger = styled.button<{ $color: string }>`
-  position: relative;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background-color: ${(props) => props.$color};
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  flex-shrink: 0;
+export const PickerTrigger = styled.button`
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  padding: 0;
-
-  &:hover {
-    transform: scale(1.05);
-    border-color: var(--color-text-tertiary);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-export const IconSelectWrapper = styled.div`
-  position: relative;
-  flex: 1;
-`;
-
-export const IconTrigger = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0.6rem 0.8rem;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
   &:hover {
-    border-color: var(--color-text-tertiary);
+    border-color: var(--color-brand-400);
     background-color: var(--color-bg-hover);
   }
 `;
 
-export const SelectedIcon = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-
-  span {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-text-main);
-  }
+export const ColorSwatch = styled.div<{ $color: string }>`
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: ${(props) => props.$color};
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 `;
 
 export const IconPreview = styled.div<{ $color: string }>`
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   color: ${(props) => props.$color};
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
 // --- PORTAL DROPDOWNS ---
@@ -84,14 +49,17 @@ export const DropdownPortalContainer = styled.div<{
   position: absolute;
   top: ${(p) => p.$top}px;
   left: ${(p) => p.$left}px;
-  width: ${(p) => (p.$width ? `${p.$width}px` : "auto")};
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: var(--shadow-lg);
-  z-index: 20000; /* Максимальний пріоритет */
-  padding: 0.8rem;
+  box-shadow: var(--shadow-xl);
+  z-index: 20000;
+  padding: 0.5rem; /* p-2 equivalent */
+  display: flex;
+  flex-direction: column;
   animation: fadeIn 0.1s ease-out;
+  margin-top: 4px; /* mt-1 equivalent */
+  overflow: hidden;
 
   @keyframes fadeIn {
     from {
@@ -105,58 +73,54 @@ export const DropdownPortalContainer = styled.div<{
   }
 `;
 
+export const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const ColorGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.6rem;
-  width: 210px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.35rem;
 `;
 
 export const ColorOption = styled.button<{
   $color: string;
   $isActive: boolean;
 }>`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   background-color: ${(props) => props.$color};
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s;
+  border: 2px solid ${(props) => (props.$isActive ? "var(--color-brand-500)" : "transparent")};
   padding: 0;
-
-  /* Фікс конфлікту hover/active */
-  border: 2px solid
-    ${(props) => (props.$isActive ? "var(--color-text-main)" : "transparent")};
-  outline: 2px solid
-    ${(props) => (props.$isActive ? "var(--color-bg-surface)" : "transparent")};
-  outline-offset: -4px;
+  transition: all 0.15s;
 
   &:hover {
-    transform: scale(1.15);
-    border-color: ${(p) =>
-      p.$isActive ? "var(--color-text-main)" : "rgba(0,0,0,0.2)"};
+    transform: scale(1.1);
+    z-index: 1;
   }
 
   svg {
     color: white;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
   }
 `;
 
 export const IconGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
-  gap: 0.5rem;
-  max-height: 200px;
-  overflow-y: auto;
+  grid-template-rows: repeat(4, 1fr);
+  grid-auto-flow: column;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
 
+  /* Custom Scrollbar for Popover (Horizontal if needed) */
   &::-webkit-scrollbar {
-    width: 4px;
+    height: 4px;
   }
   &::-webkit-scrollbar-thumb {
     background: var(--color-border);
@@ -164,30 +128,25 @@ export const IconGrid = styled.div`
   }
 `;
 
-export const IconOption = styled.button<{ $active: boolean }>`
-  width: 38px;
-  height: 38px;
+export const IconOption = styled.button<{ $active: boolean; $color: string }>`
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   padding: 0;
-  transition: all 0.2s;
-
-  background-color: ${(props) =>
-    props.$active ? "var(--color-brand-100)" : "transparent"};
-  color: ${(props) =>
-    props.$active ? "var(--color-brand-700)" : "var(--color-text-secondary)"};
-  border: 1px solid
-    ${(props) =>
-      props.$active ? "var(--color-brand-500)" : "var(--color-border)"};
+  border: 1px solid ${(props) => (props.$active ? "var(--color-brand-500)" : "var(--color-border)")};
+  background-color: ${(props) => (props.$active ? "var(--color-brand-50)" : "transparent")};
+  color: ${(props) => (props.$active ? props.$color : "var(--color-text-secondary)")};
+  transition: all 0.15s;
 
   &:hover {
-    background-color: ${(p) =>
-      p.$active ? "var(--color-brand-200)" : "var(--color-bg-hover)"};
-    color: var(--color-text-main);
-    transform: scale(1.05);
+    background-color: var(--color-bg-hover);
+    color: ${(props) => props.$color};
+    transform: scale(1.1);
+    z-index: 1;
   }
 `;

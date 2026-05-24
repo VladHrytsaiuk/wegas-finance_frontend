@@ -27,6 +27,7 @@ import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import CreateGoalModal from "../../components/goals/CreateGoalModal";
 import { GoalImagePanel } from "../../components/goals/GoalImagePanel";
+import { SmartIcon } from "../../utils/IconMap";
 
 // Hook & Utils
 import { useGoalDetails } from "../../hooks/Goals/useGoalDetails";
@@ -99,7 +100,12 @@ export default function GoalDetails() {
             <S.GoalTitleBlock>
               <div className="title-row">
                 <S.IconBox $color={goal.color || "var(--color-brand-600)"}>
-                  <HiFlag />
+                  <SmartIcon
+                    iconName={goal.icon}
+                    logo={goal.photo_url}
+                    color={goal.color}
+                    size={28}
+                  />
                 </S.IconBox>
 
                 <h1>{goal.name}</h1>
