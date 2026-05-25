@@ -7,7 +7,7 @@ import {
 // UI Components
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { ColorIconPicker } from "../ui/ColorIconPicker";
+import { ColorPicker, IconPicker } from "../ui/ColorIconPicker";
 import { BaseSelect } from "../ui/Select/BaseSelect";
 
 // Logic & Styles
@@ -57,7 +57,7 @@ export function CategoryForm(props: CategoryFormProps) {
 
   return (
     <S.FormContainer onSubmit={handleSubmit}>
-      {/* 1. TYPE SELECTOR */}
+      {/* 1. TYPE SELECTOR (Compact) */}
       <S.FormGroup>
         <S.Label>{t("categories:categoryForm.label_type")}</S.Label>
         <S.TypeGrid>
@@ -82,21 +82,24 @@ export function CategoryForm(props: CategoryFormProps) {
         </S.TypeGrid>
       </S.FormGroup>
 
-      {/* 2. COLOR & ICON */}
-      <S.FormGroup>
-        <S.Label>{t("categories:categoryForm.label_appearance")}</S.Label>
-        <ColorIconPicker
-          color={color}
-          icon={icon}
-          onColorChange={setColor}
-          onIconChange={setIcon}
-        />
-      </S.FormGroup>
+      {/* 2. COLOR + ICON + NAME (Combined Row) */}
+      <S.CompactInputRow>
+        <S.FormGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
+          <ColorPicker color={color} onColorChange={setColor} square />
+        </S.FormGroup>
 
-      {/* 3. NAME & PARENT */}
-      <S.InputRow>
-        {/* Name Input */}
-        <S.FormGroup>
+        <S.FormGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
+          <IconPicker
+            icon={icon}
+            onIconChange={setIcon}
+            color={color}
+            square
+          />
+        </S.FormGroup>
+
+        <S.FormGroup style={{ flex: 1 }}>
           <S.Label>{t("categories:categoryForm.label_name")}</S.Label>
           <Input
             value={name}
@@ -105,46 +108,46 @@ export function CategoryForm(props: CategoryFormProps) {
             required
           />
         </S.FormGroup>
+      </S.CompactInputRow>
 
-        {/* Parent Select */}
-        <S.FormGroup>
-          <S.Label>{t("categories:categoryForm.label_parent")}</S.Label>
-          <BaseSelect
-            triggerLabel={parentTriggerLabel}
-            placeholder={t("categories:categoryForm.placeholder_parent_default")}
-            onClear={parentId ? () => setParentId("") : undefined}
-          >
-            <S.SearchWrapper>
-              <Input
-                autoFocus
-                placeholder={t("categories:categoryForm.placeholder_search")}
-                value={parentSearch}
-                onChange={(e) => setParentSearch(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-                style={{ fontSize: "0.9rem", padding: "0.4rem 0.6rem" }}
-              />
-            </S.SearchWrapper>
+      {/* 3. PARENT CATEGORY (Full Width) */}
+      <S.FormGroup>
+        <S.Label>{t("categories:categoryForm.label_parent")}</S.Label>
+        <BaseSelect
+          triggerLabel={parentTriggerLabel}
+          placeholder={t("categories:categoryForm.placeholder_parent_default")}
+          onClear={parentId ? () => setParentId("") : undefined}
+        >
+          <S.SearchWrapper>
+            <Input
+              autoFocus
+              placeholder={t("categories:categoryForm.placeholder_search")}
+              value={parentSearch}
+              onChange={(e) => setParentSearch(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              style={{ fontSize: "0.9rem", padding: "0.4rem 0.6rem" }}
+            />
+          </S.SearchWrapper>
 
-            <S.ScrollableList>
-              {filteredRoots.length > 0 ? (
-                filteredRoots.map((cat) => (
-                  <S.ListItem
-                    key={cat.id}
-                    onClick={() => handleParentSelect(cat.id)}
-                  >
-                    <HiTag size={14} style={{ color: cat.color }} />
-                    {cat.name}
-                  </S.ListItem>
-                ))
-              ) : (
-                <S.EmptyState>
-                  {t("categories:categoryForm.search_not_found")}
-                </S.EmptyState>
-              )}
-            </S.ScrollableList>
-          </BaseSelect>
-        </S.FormGroup>
-      </S.InputRow>
+          <S.ScrollableList>
+            {filteredRoots.length > 0 ? (
+              filteredRoots.map((cat) => (
+                <S.ListItem
+                  key={cat.id}
+                  onClick={() => handleParentSelect(cat.id)}
+                >
+                  <HiTag size={14} style={{ color: cat.color }} />
+                  {cat.name}
+                </S.ListItem>
+              ))
+            ) : (
+              <S.EmptyState>
+                {t("categories:categoryForm.search_not_found")}
+              </S.EmptyState>
+            )}
+          </S.ScrollableList>
+        </BaseSelect>
+      </S.FormGroup>
 
       {/* FOOTER */}
       <S.Footer>

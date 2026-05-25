@@ -5,20 +5,21 @@ export const Container = styled.div`
   width: 100%;
 `;
 
-export const PickerTrigger = styled.button`
+export const PickerTrigger = styled.button<{ $square?: boolean }>`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0 0.85rem;
+  justify-content: ${(props) => (props.$square ? "center" : "space-between")};
+  gap: ${(props) => (props.$square ? "0" : "0.75rem")};
+  padding: ${(props) => (props.$square ? "0" : "0 0.85rem")};
   height: 44px; /* Matches h-11 */
-  width: 100%;
+  width: ${(props) => (props.$square ? "44px" : "100%")};
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
 
   &:hover {
     border-color: var(--color-brand-400);
