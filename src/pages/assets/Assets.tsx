@@ -37,7 +37,7 @@ export default function Assets() {
         />
 
         {/* --- MODAL WINDOWS --- */}
-        <Modal.Window name="create-asset">
+        <Modal.Window name="create-asset" padding="0">
           <AssetForm />
         </Modal.Window>
 
@@ -55,7 +55,7 @@ export default function Assets() {
                 />
               </Modal.Window>
 
-              <Modal.Window name={`edit-asset-${item.id}`}>
+              <Modal.Window name={`edit-asset-${item.id}`} padding="0">
                 <AssetForm assetToEdit={item} />
               </Modal.Window>
 

@@ -53,6 +53,7 @@ export const useAssetForm = ({
     handleSubmit,
     reset,
     watch,
+    trigger,
     formState: { errors, isDirty: isFormDirty },
   } = useForm({
     defaultValues: {
@@ -321,6 +322,7 @@ export const useAssetForm = ({
       errors,
       isSubmitting,
       watch,
+      trigger,
     },
     // Управління фотографіями
     files: {
