@@ -3,7 +3,7 @@ import { useModal } from "../ui/Modal";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { FUN_ROLES } from "./userConstants";
-import { RoleLabel, FormLayout, ButtonRow } from "./styles";
+import * as S from "./styles";
 import { useTranslation } from "react-i18next";
 
 interface BaseFormProps {
@@ -42,84 +42,85 @@ export function UserForm({
   }));
 
   return (
-    <FormLayout onSubmit={handleSubmit}>
-      <div>
-        <label>{t("settings:userForm.label_name")}</label>
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t("settings:userForm.placeholder_name")}
-          required
-        />
-      </div>
+    <S.FormLayout onSubmit={handleSubmit}>
+      {/* Column 1: Basic Info */}
+      <S.Column>
+        <S.FieldGroup>
+          <S.Label>{t("settings:userForm.label_name")}</S.Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("settings:userForm.placeholder_name")}
+            required
+          />
+        </S.FieldGroup>
 
-      <div>
-        <label>{t("settings:userForm.label_email")}</label>
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="user@example.com"
-          required
-        />
-      </div>
+        <S.FieldGroup>
+          <S.Label>{t("settings:userForm.label_email")}</S.Label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="user@example.com"
+            required
+          />
+        </S.FieldGroup>
 
-      <div>
-        <label>
-          {isEditSession
-            ? t("settings:userForm.label_new_password")
-            : t("settings:userForm.label_password")}
-        </label>
-        <Input
-          type="text"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder={t("settings:userForm.placeholder_password_default")}
-          required={!isEditSession}
-        />
-      </div>
+        <S.FieldGroup>
+          <S.Label>
+            {isEditSession
+              ? t("settings:userForm.label_new_password")
+              : t("settings:userForm.label_password")}
+          </S.Label>
+          <Input
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={t("settings:userForm.placeholder_password_default")}
+            required={!isEditSession}
+          />
+        </S.FieldGroup>
+      </S.Column>
 
-      <div>
-        <label style={{ marginBottom: "0.5rem", display: "block" }}>
-          {t("settings:userForm.label_role")}
-        </label>
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
-          {translatedRoles.map((role) => (
-            <RoleLabel
-              key={role.id}
-              $isActive={roleId === role.id}
-              $color={role.color}
-            >
-              <input
-                type="radio"
-                name="role"
-                value={role.id}
-                checked={roleId === role.id}
-                onChange={() => setRoleId(role.id)}
-                style={{ accentColor: role.color }}
-              />
-              <div style={{ color: role.color, fontSize: "1.2rem" }}>
-                <role.icon />
-              </div>
-              <div>
-                <div style={{ fontWeight: 600 }}>{role.label}</div>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "var(--color-text-secondary)",
-                  }}
-                >
-                  {role.desc}
+      {/* Column 2: Role Selection */}
+      <S.Column>
+        <S.FieldGroup>
+          <S.Label>{t("settings:userForm.label_role")}</S.Label>
+          <S.RoleSelectionGroup>
+            {translatedRoles.map((role) => (
+              <S.RoleLabel
+                key={role.id}
+                $isActive={roleId === role.id}
+                $color={role.color}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value={role.id}
+                  checked={roleId === role.id}
+                  onChange={() => setRoleId(role.id)}
+                  style={{ accentColor: role.color }}
+                />
+                <div style={{ color: role.color, fontSize: "1.2rem", display: "flex" }}>
+                  <role.icon />
                 </div>
-              </div>
-            </RoleLabel>
-          ))}
-        </div>
-      </div>
-
-      <ButtonRow>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{role.label}</div>
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--color-text-secondary)",
+                    }}
+                  >
+                    {role.desc}
+                  </div>
+                </div>
+              </S.RoleLabel>
+            ))}
+          </S.RoleSelectionGroup>
+        </S.FieldGroup>
+      </S.Column>
+      <S.ButtonRow>
         <Button
           type="button"
           variation="secondary"
@@ -131,7 +132,7 @@ export function UserForm({
         <Button style={{ width: "auto" }} disabled={isLoading} type="submit">
           {isEditSession ? t("settings:userForm.button_save") : t("settings:userForm.button_add")}
         </Button>
-      </ButtonRow>
-    </FormLayout>
+      </S.ButtonRow>
+    </S.FormLayout>
   );
 }
