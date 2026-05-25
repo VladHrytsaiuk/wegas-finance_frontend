@@ -59,7 +59,7 @@ export const useAssetForm = ({
     defaultValues: {
       name: "",
       serial_number: "",
-      type: "electronics",
+      type: "",
       price: "",
       currency: "UAH",
       purchase_date: new Date().toISOString().split("T")[0],
