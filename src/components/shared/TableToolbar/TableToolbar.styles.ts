@@ -4,7 +4,7 @@ export const ToolbarWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0; /* Relying on parent container gap */
 `;
 
 export const ChildrenTopRow = styled.div`
@@ -12,7 +12,7 @@ export const ChildrenTopRow = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0; /* Managed by ToolbarWrapper gap */
 `;
 
 // Додали проп $stickyEnabled
@@ -30,7 +30,7 @@ export const StickyContainer = styled.div<{
   z-index: 50;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem; /* Reduced from 1rem to group Filters and Sort closely */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   ${(p) =>

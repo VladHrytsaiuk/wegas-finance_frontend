@@ -8,8 +8,11 @@ export const Container = styled.div`
 export const PickerTrigger = styled.button`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0 0.85rem;
+  height: 44px; /* Matches h-11 */
+  width: 100%;
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -112,19 +115,26 @@ export const ColorOption = styled.button<{
 
 export const IconGrid = styled.div`
   display: grid;
-  grid-template-rows: repeat(4, 1fr);
-  grid-auto-flow: column;
-  gap: 0.35rem;
-  overflow-x: auto;
-  overflow-y: hidden;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  padding: 0.25rem;
+  max-height: 160px; /* Approx 4 rows */
+  overflow-y: auto;
+  overflow-x: hidden;
 
-  /* Custom Scrollbar for Popover (Horizontal if needed) */
+  /* Custom thin scrollbar */
   &::-webkit-scrollbar {
-    height: 4px;
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
   &::-webkit-scrollbar-thumb {
     background: var(--color-border);
     border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
   }
 `;
 

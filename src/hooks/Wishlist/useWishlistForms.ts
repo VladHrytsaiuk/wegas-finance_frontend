@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { compressImage } from "../../utils/compressor";
-import { DEFAULT_NOTE_COLOR } from "../../utils/constants";
+import { DEFAULT_NOTE_COLOR, DEFAULT_WISHLIST_GROUP_COLOR } from "../../utils/constants";
 import { getUploadedFileUrl } from "../../utils/helpers";
 
 // --- ХУК ДЛЯ БАЖАНЬ (ITEMS) ---
@@ -123,11 +123,10 @@ export const useWishlistItemForm = (
   };
 };
 
-// ... (useWishlistGroupForm залишається без змін)
 // --- ХУК ДЛЯ ПАПОК (GROUPS) ---
 export const useWishlistGroupForm = (initialData?: any) => {
   const [name, setName] = useState(initialData?.name || "");
-  const [color, setColor] = useState(initialData?.color || DEFAULT_NOTE_COLOR);
+  const [color, setColor] = useState(initialData?.color || DEFAULT_WISHLIST_GROUP_COLOR);
   const [icon, setIcon] = useState(initialData?.icon || "HiFolder");
   const [visibility, setVisibility] = useState(
     initialData?.visibility || "public",
@@ -145,7 +144,7 @@ export const useWishlistGroupForm = (initialData?: any) => {
       hiddenFromIds.join(",") !== (initialData.hidden_from || "")
     : !!name ||
       icon !== "HiFolder" ||
-      color !== DEFAULT_NOTE_COLOR ||
+      color !== DEFAULT_WISHLIST_GROUP_COLOR ||
       visibility !== "public" ||
       hiddenFromIds.length > 0;
 

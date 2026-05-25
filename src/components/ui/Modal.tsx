@@ -24,7 +24,7 @@ export const Overlay = styled.div`
   transition: all 0.5s;
 `;
 
-export const StyledModal = styled.div`
+export const StyledModal = styled.div<{ $padding?: string }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -32,7 +32,7 @@ export const StyledModal = styled.div`
   background-color: var(--color-bg-surface);
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
-  padding: 3.2rem 4rem;
+  padding: ${(props) => props.$padding || "3.2rem 4rem"};
   transition: all 0.5s;
   z-index: 1001;
   border: 1px solid var(--color-border);
@@ -127,7 +127,15 @@ function Open({
   return cloneElement(children, { onClick: () => open(opensWindowName) });
 }
 
-function Window({ children, name }: { children: ReactElement; name: string }) {
+function Window({
+  children,
+  name,
+  padding,
+}: {
+  children: ReactElement;
+  name: string;
+  padding?: string;
+}) {
   const context = useContext(ModalContext);
 
   // Якщо контексту немає, вікно просто не рендериться (але не ламає додаток)
@@ -166,6 +174,7 @@ function Window({ children, name }: { children: ReactElement; name: string }) {
   return createPortal(
     <Overlay onClick={handleCloseAttempt}>
       <StyledModal
+        $padding={padding}
         onClick={(e) => e.stopPropagation()}
         style={
           showConfirm

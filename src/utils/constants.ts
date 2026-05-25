@@ -9,5 +9,8 @@ export const NOTE_COLORS = [
   { name: "red", value: "#faafa8" }, // Червоний
 ];
 
-// Дефолтний колір, як ти просив (світло-жовтий)
+// Дефолтний колір для Shopping List (пастельно-жовтий)
 export const DEFAULT_NOTE_COLOR = "#fff7d6";
+
+// Дефолтний колір для груп Wishlist (теракотовий/яскравий)
+export const DEFAULT_WISHLIST_GROUP_COLOR = "#c2410c";

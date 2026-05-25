@@ -18,9 +18,13 @@ interface ColorIconPickerProps {
  */
 export function ColorIconPicker(props: ColorIconPickerProps) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", width: "100%" }}>
-      <ColorPicker color={props.color} onColorChange={props.onColorChange} />
-      <IconPicker icon={props.icon} onIconChange={props.onIconChange} color={props.color} />
+    <div style={{ display: "flex", gap: "0.75rem", width: "100%" }}>
+      <div style={{ flex: 1 }}>
+        <ColorPicker color={props.color} onColorChange={props.onColorChange} />
+      </div>
+      <div style={{ flex: 1 }}>
+        <IconPicker icon={props.icon} onIconChange={props.onIconChange} color={props.color} />
+      </div>
     </div>
   );
 }

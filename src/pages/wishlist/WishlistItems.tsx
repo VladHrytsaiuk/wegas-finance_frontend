@@ -93,7 +93,7 @@ export default function WishlistItems() {
               {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
             </Button>
           </Modal.Open>
-          <Modal.Window name="create-wish">
+          <Modal.Window name="create-wish" padding="0">
             <CreateWishModal
               groups={groups}
               onCreate={handlers.createItem}
@@ -140,7 +140,7 @@ export default function WishlistItems() {
                   {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
                 </Button>
               </Modal.Open>
-              <Modal.Window name="create-wish-empty">
+              <Modal.Window name="create-wish-empty" padding="0">
                 <CreateWishModal
                   groups={groups}
                   onCreate={handlers.createItem}

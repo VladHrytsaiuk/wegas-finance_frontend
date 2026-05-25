@@ -112,7 +112,7 @@ export const TableToolbar = ({
     });
 
   return (
-    <>
+    <S.ToolbarWrapper style={{ gap: "0.5rem" }}>
       {/* 1. ВЕРХНІЙ РЯДОК З КНОПКАМИ (відлітає при скролі) */}
       <S.ChildrenTopRow style={{ position: "relative" }}>
         {children}
@@ -255,6 +255,6 @@ export const TableToolbar = ({
           </S.BottomBar>
         )}
       </S.StickyContainer>
-    </>
+    </S.ToolbarWrapper>
   );
 };

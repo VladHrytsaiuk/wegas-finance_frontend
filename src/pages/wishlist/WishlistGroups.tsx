@@ -71,7 +71,7 @@ export default function WishlistGroups() {
                 {t("shopping_wishlist:wishlist.btn_add_group", "Група")}
               </Button>
             </Modal.Open>
-            <Modal.Window name="create-group">
+            <Modal.Window name="create-group" padding="0">
               <CreateGroupModal
                 onCreate={(name, color, icon, visibility, hiddenFrom) =>
                   handlers.createGroup(
@@ -92,7 +92,7 @@ export default function WishlistGroups() {
                 {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
               </Button>
             </Modal.Open>
-            <Modal.Window name="create-wish">
+            <Modal.Window name="create-wish" padding="0">
               <CreateWishModal groups={groups} onCreate={handlers.createItem} />
             </Modal.Window>
           </Modal>
@@ -164,7 +164,7 @@ export default function WishlistGroups() {
                     {t("shopping_wishlist:wishlist.btn_add_group", "Створити групу")}
                   </Button>
                 </Modal.Open>
-                <Modal.Window name="create-group-empty">
+                <Modal.Window name="create-group-empty" padding="0">
                   <CreateGroupModal
                     onCreate={(name, color, icon, visibility, hiddenFrom) =>
                       handlers.createGroup(

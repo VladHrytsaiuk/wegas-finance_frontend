@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem; /* Reduced from 2rem for a tighter vertical rhythm */
   width: 100%;
   padding-bottom: 4rem;
   max-width: 1600px;
@@ -28,7 +28,7 @@ export const HeaderSection = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0; /* Relying on PageContainer gap */
 `;
 
 export const HeaderLeft = styled.div`
