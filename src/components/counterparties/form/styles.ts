@@ -3,23 +3,38 @@ import styled from "styled-components";
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  min-width: 400px;
+  gap: 1.25rem;
+  width: 560px;
+  padding: 1.5rem 2rem; /* Balanced padding */
 
-  @media (max-width: 500px) {
-    min-width: 100%;
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 1.5rem;
   }
 `;
 
 export const FormRow = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
   position: relative;
 `;
 
+export const CompactRow = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+`;
+
+export const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+`;
+
 export const Label = styled.label`
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.85rem;
   color: var(--color-text-secondary);
 `;
@@ -35,12 +50,13 @@ export const Footer = styled.div`
   justify-content: flex-end;
   gap: 0.8rem;
   margin-top: 0.5rem;
-  padding-top: 0.8rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--color-border);
 `;
 
 export const Title = styled.h3`
   font-size: 1.25rem;
+  font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
 `;
@@ -57,46 +73,48 @@ export const PersonStaticBadge = styled.div`
   background-color: var(--color-bg-surface);
   color: var(--color-text-secondary);
   font-size: 0.9rem;
+  height: 44px; /* Matches picker height */
 `;
 
 export const IconContainer = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background-color: var(--color-brand-100);
   color: var(--color-brand-600);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
 `;
 
 export const LogoPreviewContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.8rem;
-  border: 1px dashed var(--color-brand-500);
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px dashed var(--color-brand-500);
   border-radius: 10px;
   background-color: var(--color-brand-50);
+  height: 44px; /* Same height */
 `;
 
 export const LogoBox = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid var(--color-border);
   overflow: hidden;
   flex-shrink: 0;
 
   img {
-    max-width: 80%;
-    max-height: 80%;
+    max-width: 90%;
+    max-height: 90%;
     object-fit: contain;
   }
 `;
@@ -109,54 +127,37 @@ export const LogoInfo = styled.div`
 
 export const LogoTextMain = styled.span`
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-text-main);
-`;
-
-export const LogoTextSub = styled.span`
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--color-brand-700);
 `;
 
 export const PickerContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-export const DividerContainer = styled.div`
-  display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
-`;
-
-export const DividerLine = styled.div`
-  height: 1px;
-  flex: 1;
-  background-color: var(--color-border);
+  gap: 0.75rem;
+  width: 100%;
 `;
 
 export const DividerText = styled.span`
-  font-size: 0.75rem;
-  color: var(--color-text-light);
-  font-weight: 500;
+  font-size: 0.7rem;
+  color: var(--color-text-tertiary);
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+  flex-shrink: 0;
 `;
 
-// src/components/counterparties/form/styles.ts
-
-// ... твої існуючі стилі (Form, Label тощо) ...
-
-// 👇 ДОДАЙ ЦЕЙ БЛОК, ЯКЩО ЙОГО НЕМАЄ 👇
-
 export const TypeGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
 `;
 
 export const TypeCard = styled.button<{ $active: boolean }>`
-  border: 1px solid
+  flex: 1;
+  border: 1.5px solid
     ${(p) => (p.$active ? "var(--color-brand-600)" : "var(--color-border)")};
   background-color: ${(p) =>
     p.$active ? "var(--color-brand-50)" : "var(--color-bg-surface)"};
@@ -170,9 +171,9 @@ export const TypeCard = styled.button<{ $active: boolean }>`
   gap: 0.5rem;
   transition: all 0.2s;
 
-  /* Скидання стилів кнопки, якщо використовуєш styled.button */
   font-family: inherit;
   font-size: inherit;
+  outline: none;
 
   &:hover {
     border-color: var(--color-brand-500);

@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { ColorIconPicker } from "../ui/ColorIconPicker";
+import { ColorPicker, IconPicker } from "../ui/ColorIconPicker";
 
-import * as S from "./CounterpartyCategoryForm.styles"; // Імпорт стилів
+import * as S from "./CounterpartyCategoryForm.styles";
 import { useCounterpartyCategoryForm } from "../../hooks/Counterparties/useCounterpartyCategoryForm";
 
 interface Props {
@@ -14,7 +14,6 @@ interface Props {
   isLoading?: boolean;
 }
 
-// Конфігурація для рендеру карток типів
 const TYPE_OPTIONS = [
   {
     id: "shop",
@@ -50,42 +49,53 @@ export function CounterpartyCategoryForm({
     <S.Form onSubmit={submitHandler}>
       <S.Title>{title}</S.Title>
 
+      {/* 1. TYPE SELECTOR */}
       <S.FormRow>
         <S.Label>{t("counterparties:counterpartyCategoryForm.label_type")}</S.Label>
         <S.TypeGrid>
           {TYPE_OPTIONS.map(({ id, icon: Icon, labelKey }) => (
             <S.TypeCard
               key={id}
-              type="button" // Важливо, щоб не сабмітило форму
+              type="button"
               $active={type === id}
               onClick={() => handleTypeChange(id)}
             >
               <Icon size={20} />
-              <span>{t(labelKey)}</span>
+              <span>{t("counterparties:" + labelKey)}</span>
             </S.TypeCard>
           ))}
         </S.TypeGrid>
       </S.FormRow>
 
-      <S.FormRow>
-        <S.Label>{t("counterparties:counterpartyCategoryForm.label_appearance")}</S.Label>
-        <ColorIconPicker
-          color={color}
-          icon={icon}
-          onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
-          onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
-        />
-      </S.FormRow>
+      {/* 2. COLOR + ICON + NAME (Compact Row) */}
+      <S.CompactInputRow>
+        <S.FieldGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("counterparties:counterpartyCategoryForm.label_appearance")}</S.Label>
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            <ColorPicker
+              color={color}
+              onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
+              square
+            />
+            <IconPicker
+              icon={icon}
+              onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
+              color={color}
+              square
+            />
+          </div>
+        </S.FieldGroup>
 
-      <S.FormRow>
-        <S.Label>{t("counterparties:counterpartyCategoryForm.label_name")}</S.Label>
-        <Input
-          {...register("name", { required: true })}
-          placeholder={t("counterparties:counterpartyCategoryForm.placeholder_name")}
-          autoFocus
-          autoComplete="off"
-        />
-      </S.FormRow>
+        <S.FieldGroup style={{ flex: 1 }}>
+          <S.Label>{t("counterparties:counterpartyCategoryForm.label_name")}</S.Label>
+          <Input
+            {...register("name", { required: true })}
+            placeholder={t("counterparties:counterpartyCategoryForm.placeholder_name")}
+            autoFocus
+            autoComplete="off"
+          />
+        </S.FieldGroup>
+      </S.CompactInputRow>
 
       <S.Footer>
         <Button

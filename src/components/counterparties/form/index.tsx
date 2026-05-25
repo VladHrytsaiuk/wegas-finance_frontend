@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { HiPhoto, HiTrash, HiUser } from "react-icons/hi2";
+import { HiPhoto, HiUser, HiXMark } from "react-icons/hi2";
 
 import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
-import { ColorIconPicker } from "../../ui/ColorIconPicker";
+import { ColorPicker, IconPicker } from "../../ui/ColorIconPicker";
 import { TypeSelector } from "./TypeSelector";
 import { CategorySelect } from "../../categories/CategorySelect";
 
@@ -53,122 +53,110 @@ export default function CounterpartyForm({
     <S.Form onSubmit={submitHandler}>
       <S.Title>{title}</S.Title>
 
-      {/* 1. Type */}
+      {/* 1. Type (Person / Shop) */}
       <S.FormRow>
         <S.Label>{t("counterparties:counterpartyForm.label_type")}</S.Label>
         <TypeSelector selectedType={selectedType} onSelect={handleTypeSelect} />
       </S.FormRow>
 
-      {/* 2. Appearance */}
+      {/* 2. Appearance (Color, Icon, SVG) */}
       <S.FormRow>
         <S.Label>{t("counterparties:counterpartyForm.label_appearance")}</S.Label>
-
-        {isPerson && (
-          <S.PersonStaticBadge>
-            <S.IconContainer>
-              <HiUser />
-            </S.IconContainer>
-            <span>{t("counterparties:counterpartyForm.person_icon_fixed")}</span>
-          </S.PersonStaticBadge>
-        )}
-
-        {showLogoPreview && (
-          <S.LogoPreviewContainer>
-            <S.LogoBox>
-              <img src={logoPreviewSrc} alt="Logo" />
-            </S.LogoBox>
-            <S.LogoInfo>
-              <S.LogoTextMain>
-                {t("counterparties:counterpartyForm.logo_active_status")}
-              </S.LogoTextMain>
-              <S.LogoTextSub>
-                {t("counterparties:counterpartyForm.logo_active_hint")}
-              </S.LogoTextSub>
-            </S.LogoInfo>
-            <Button
-              type="button"
-              variation="danger"
-              size="small"
-              onClick={handleRemoveLogo}
-              icon={<HiTrash />}
-            >
-              {t("common:common.delete")}
-            </Button>
-          </S.LogoPreviewContainer>
-        )}
-
-        {showIconPicker && (
-          <S.PickerContainer>
-            <ColorIconPicker
-              color={currentColor}
-              icon={currentIcon}
-              onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
-              onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
-            />
-
-            {selectedType === "shop" && (
-              <>
-                <S.DividerContainer>
-                  <S.DividerLine />
-                  <S.DividerText>
-                    {t("counterparties:counterpartyForm.divider_or", "АБО")}
-                  </S.DividerText>
-                  <S.DividerLine />
-                </S.DividerContainer>
-
-                <input
-                  type="file"
-                  accept=".svg"
-                  hidden
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                />
-                <Button
-                  type="button"
-                  variation="secondary"
-                  size="medium"
-                  onClick={triggerFileUpload}
-                  icon={<HiPhoto />}
-                  style={{ width: "100%", justifyContent: "center" }}
-                >
-                  {t("counterparties:counterpartyForm.button_upload_logo")}
-                </Button>
-              </>
-            )}
-          </S.PickerContainer>
-        )}
+        <S.PickerContainer>
+          {isPerson ? (
+            <S.PersonStaticBadge>
+              <S.IconContainer>
+                <HiUser />
+              </S.IconContainer>
+              <span>{t("counterparties:counterpartyForm.person_icon_fixed")}</span>
+            </S.PersonStaticBadge>
+          ) : (
+            <>
+              {showLogoPreview ? (
+                <S.LogoPreviewContainer style={{ flex: 1 }}>
+                  <S.LogoBox>
+                    <img src={logoPreviewSrc} alt="Logo" />
+                  </S.LogoBox>
+                  <S.LogoInfo>
+                    <S.LogoTextMain>SVG Logo</S.LogoTextMain>
+                  </S.LogoInfo>
+                  <Button
+                    type="button"
+                    variation="danger"
+                    size="small"
+                    onClick={handleRemoveLogo}
+                    style={{ padding: "4px" }}
+                  >
+                    <HiXMark size={16} />
+                  </Button>
+                </S.LogoPreviewContainer>
+              ) : (
+                <>
+                  <ColorPicker
+                    color={currentColor}
+                    onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
+                    square
+                  />
+                  <IconPicker
+                    icon={currentIcon}
+                    onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
+                    color={currentColor}
+                    square
+                  />
+                  
+                  {selectedType === "shop" && (
+                    <>
+                      <S.DividerText>{t("counterparties:counterpartyForm.divider_or")}</S.DividerText>
+                      <input
+                        type="file"
+                        accept=".svg"
+                        hidden
+                        ref={fileInputRef}
+                        onChange={handleFileSelect}
+                      />
+                      <Button
+                        type="button"
+                        variation="secondary"
+                        onClick={triggerFileUpload}
+                        style={{ flex: 1, height: "44px", justifyContent: "center", gap: "8px" }}
+                      >
+                        <HiPhoto size={20} />
+                        <span>SVG</span>
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </S.PickerContainer>
       </S.FormRow>
 
-      {/* 3. Name */}
-      <S.FormRow>
-        <S.Label>{t("counterparties:counterpartyForm.label_name")}</S.Label>
-        <Input
-          placeholder={t("counterparties:counterpartyForm.placeholder_name_default")}
-          {...register("name", {
-            required: t("counterparties:counterpartyForm.required_name_error"),
-          })}
-          autoComplete="off"
-        />
-        {errors.name && (
-          <S.ErrorMessage>{String(errors.name.message)}</S.ErrorMessage>
-        )}
-      </S.FormRow>
+      {/* 3. Name & Category Combined */}
+      <S.CompactRow>
+        <S.FieldGroup style={{ flex: 1.5 }}>
+          <S.Label>{t("counterparties:counterpartyForm.label_name")}</S.Label>
+          <Input
+            placeholder={t("counterparties:counterpartyForm.placeholder_name_default")}
+            {...register("name", {
+              required: t("counterparties:counterpartyForm.required_name_error"),
+            })}
+            autoComplete="off"
+          />
+          {errors.name && (
+            <S.ErrorMessage>{String(errors.name.message)}</S.ErrorMessage>
+          )}
+        </S.FieldGroup>
 
-      {/* 4. Category */}
-      <S.FormRow>
-        <S.Label>{t("counterparties:counterpartyForm.label_category")}</S.Label>
-        <CategorySelect
-          categories={availableCategories}
-          value={currentCategoryId}
-          onChange={(id) => setValue("category_id", id, { shouldDirty: true })}
-        />
-      </S.FormRow>
-
-      {/* 5. Note */}
-      <S.FormRow>
-        <S.Label>{t("counterparties:counterpartyForm.label_note")}</S.Label>
-        <Input as="textarea" rows={3} {...register("note")} />
-      </S.FormRow>
+        <S.FieldGroup style={{ flex: 1 }}>
+          <S.Label>{t("counterparties:counterpartyForm.label_category")}</S.Label>
+          <CategorySelect
+            categories={availableCategories}
+            value={currentCategoryId}
+            onChange={(id) => setValue("category_id", id, { shouldDirty: true })}
+          />
+        </S.FieldGroup>
+      </S.CompactRow>
 
       <S.Footer>
         <Button
