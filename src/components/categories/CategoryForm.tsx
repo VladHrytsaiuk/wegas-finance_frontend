@@ -82,11 +82,16 @@ export function CategoryForm(props: CategoryFormProps) {
         </S.TypeGrid>
       </S.FormGroup>
 
-      {/* 2. COLOR + ICON + NAME (Combined Row) */}
+      {/* 2. NAME + ICON + COLOR (Combined Row) */}
       <S.CompactInputRow>
-        <S.FormGroup style={{ flex: "0 0 auto" }}>
-          <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
-          <ColorPicker color={color} onColorChange={setColor} square />
+        <S.FormGroup style={{ flex: 1 }}>
+          <S.Label>{t("categories:categoryForm.label_name")}</S.Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("categories:categoryForm.placeholder_name")}
+            required
+          />
         </S.FormGroup>
 
         <S.FormGroup style={{ flex: "0 0 auto" }}>
@@ -99,14 +104,9 @@ export function CategoryForm(props: CategoryFormProps) {
           />
         </S.FormGroup>
 
-        <S.FormGroup style={{ flex: 1 }}>
-          <S.Label>{t("categories:categoryForm.label_name")}</S.Label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t("categories:categoryForm.placeholder_name")}
-            required
-          />
+        <S.FormGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
+          <ColorPicker color={color} onColorChange={setColor} square />
         </S.FormGroup>
       </S.CompactInputRow>
 

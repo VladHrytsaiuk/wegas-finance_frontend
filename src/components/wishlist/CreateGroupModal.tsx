@@ -1,11 +1,11 @@
 import { useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { HiGlobeAlt, HiLockClosed, HiEye, HiXMark } from "react-icons/hi2";
+import { HiGlobeAlt, HiLockClosed, HiEye } from "react-icons/hi2";
 
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { ColorIconPicker } from "../ui/ColorIconPicker";
+import { ColorPicker, IconPicker } from "../ui/ColorIconPicker";
 import { useModal } from "../ui/Modal";
 import { getFamilyMembers, getMeApi } from "../../services/apiUsers";
 import * as S from "./WishlistModals.styles";
@@ -62,9 +62,9 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
       </S.Header>
       <S.Content>
         <S.Form onSubmit={handleSubmit} id="create-group-form">
-          {/* ROW 1: Basic Info */}
-          <S.BasicInfoRow>
-            <S.FieldGroup>
+          {/* ROW 1: Basic Info (Name Left, Pickers Right) */}
+          <S.CompactInputRow>
+            <S.FieldGroup style={{ flex: 1 }}>
               <S.Label>{t("shopping_wishlist:wishlist.group_name")}</S.Label>
               <Input
                 autoFocus
@@ -75,18 +75,29 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
               />
             </S.FieldGroup>
 
-            <S.FieldGroup>
-              <S.Label>{t("shopping_wishlist:wishlist.appearance")}</S.Label>
+            <S.FieldGroup style={{ flex: "0 0 auto" }}>
+              <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
               <S.InlineGroup>
-                <ColorIconPicker
-                  color={state.color}
-                  onColorChange={actions.setColor}
+                <IconPicker
                   icon={state.icon}
                   onIconChange={actions.setIcon}
+                  color={state.color}
+                  square
                 />
               </S.InlineGroup>
             </S.FieldGroup>
-          </S.BasicInfoRow>
+
+            <S.FieldGroup style={{ flex: "0 0 auto" }}>
+              <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
+              <S.InlineGroup>
+                <ColorPicker
+                  color={state.color}
+                  onColorChange={actions.setColor}
+                  square
+                />
+              </S.InlineGroup>
+            </S.FieldGroup>
+          </S.CompactInputRow>
 
           {/* ROW 2: Visibility Toggles */}
           <S.SectionHeader>

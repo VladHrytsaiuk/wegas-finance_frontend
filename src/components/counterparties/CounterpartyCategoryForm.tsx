@@ -67,25 +67,8 @@ export function CounterpartyCategoryForm({
         </S.TypeGrid>
       </S.FormRow>
 
-      {/* 2. COLOR + ICON + NAME (Compact Row) */}
+      {/* 2. NAME + ICON + COLOR (Compact Row) */}
       <S.CompactInputRow>
-        <S.FieldGroup style={{ flex: "0 0 auto" }}>
-          <S.Label>{t("counterparties:counterpartyCategoryForm.label_appearance")}</S.Label>
-          <div style={{ display: "flex", gap: "0.75rem" }}>
-            <ColorPicker
-              color={color}
-              onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
-              square
-            />
-            <IconPicker
-              icon={icon}
-              onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
-              color={color}
-              square
-            />
-          </div>
-        </S.FieldGroup>
-
         <S.FieldGroup style={{ flex: 1 }}>
           <S.Label>{t("counterparties:counterpartyCategoryForm.label_name")}</S.Label>
           <Input
@@ -93,6 +76,25 @@ export function CounterpartyCategoryForm({
             placeholder={t("counterparties:counterpartyCategoryForm.placeholder_name")}
             autoFocus
             autoComplete="off"
+          />
+        </S.FieldGroup>
+
+        <S.FieldGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
+          <IconPicker
+            icon={icon}
+            onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
+            color={color}
+            square
+          />
+        </S.FieldGroup>
+
+        <S.FieldGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
+          <ColorPicker
+            color={color}
+            onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
+            square
           />
         </S.FieldGroup>
       </S.CompactInputRow>

@@ -77,7 +77,7 @@
   "tagForm": {
     "label_name": "Tag Name",
     "placeholder_name": "#Vacation",
-    "label_color": "Select Color",
+    "label_color": "Color",
     "button_cancel": "Cancel",
     "button_add": "Add Tag"
   },
