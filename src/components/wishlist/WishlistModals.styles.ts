@@ -89,12 +89,12 @@ export const InputGroup = styled.div`
   width: 100%;
 `;
 
-export const FieldGroup = styled.div`
+export const FieldGroup = styled.div<{ $width?: string }>`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   position: relative;
-  width: 100%;
+  width: ${(p) => p.$width || "100%"};
 `;
 
 export const Label = styled.label`

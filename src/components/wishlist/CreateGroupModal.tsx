@@ -75,27 +75,23 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
               />
             </S.FieldGroup>
 
-            <S.FieldGroup style={{ flex: "0 0 auto" }}>
+            <S.FieldGroup $width="auto">
               <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
-              <S.InlineGroup>
-                <IconPicker
-                  icon={state.icon}
-                  onIconChange={actions.setIcon}
-                  color={state.color}
-                  square
-                />
-              </S.InlineGroup>
+              <IconPicker
+                icon={state.icon}
+                onIconChange={actions.setIcon}
+                color={state.color}
+                square
+              />
             </S.FieldGroup>
 
-            <S.FieldGroup style={{ flex: "0 0 auto" }}>
+            <S.FieldGroup $width="auto">
               <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
-              <S.InlineGroup>
-                <ColorPicker
-                  color={state.color}
-                  onColorChange={actions.setColor}
-                  square
-                />
-              </S.InlineGroup>
+              <ColorPicker
+                color={state.color}
+                onColorChange={actions.setColor}
+                square
+              />
             </S.FieldGroup>
           </S.CompactInputRow>
 
