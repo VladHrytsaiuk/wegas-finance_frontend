@@ -14,7 +14,7 @@ export interface Goal {
   icon: string;
   photo_url?: string; // Тепер тут буде шлях до файлу на сервері
   external_link?: string;
-  status: "active" | "paused" | "reached" | "failed";
+  status: "active" | "paused" | "reached" | "failed" | "done";
   accounts?: any[];
 }
 

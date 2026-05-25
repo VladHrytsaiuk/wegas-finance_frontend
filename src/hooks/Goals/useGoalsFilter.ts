@@ -25,10 +25,10 @@ export function useGoalsFilter(goals: any[]) {
         label: t("goals_debts:goals.filter_status"),
         type: "multi-select",
         options: [
-          { value: "active", label: t("goals_debts:goals.status_active", "Активні") },
-          { value: "reached", label: t("goals_debts:goals.status_reached", "Досягнуті") },
-          { value: "paused", label: t("goals_debts:goals.status_paused", "На паузі") },
-          { value: "failed", label: t("goals_debts:goals.status_failed", "Провалені") },
+          { value: "active", label: t("goals_debts:goals.status_active") },
+          { value: "reached", label: t("goals_debts:goals.status_reached") },
+          { value: "paused", label: t("goals_debts:goals.status_paused") },
+          { value: "failed", label: t("goals_debts:goals.status_failed") },
         ],
       },
       {
@@ -45,29 +45,29 @@ export function useGoalsFilter(goals: any[]) {
     () => [
       {
         value: "deadline-asc",
-        label: t("goals_debts:goals.sort_deadline_asc", "Дедлайн (спочатку ближні)"),
+        label: t("goals_debts:goals.sort_deadline_asc"),
       },
       {
         value: "deadline-desc",
-        label: t("goals_debts:goals.sort_deadline_desc", "Дедлайн (спочатку дальні)"),
+        label: t("goals_debts:goals.sort_deadline_desc"),
       },
       {
         value: "progress-desc",
-        label: t("goals_debts:goals.sort_progress_desc", "Прогрес (високий -> низький)"),
+        label: t("goals_debts:goals.sort_progress_desc"),
       },
       {
         value: "progress-asc",
-        label: t("goals_debts:goals.sort_progress_asc", "Прогрес (низький -> високий)"),
+        label: t("goals_debts:goals.sort_progress_asc"),
       },
       {
         value: "amount-desc",
-        label: t("goals_debts:goals.sort_amount_desc", "Сума (велика -> мала)"),
+        label: t("goals_debts:goals.sort_amount_desc"),
       },
       {
         value: "amount-asc",
-        label: t("goals_debts:goals.sort_amount_asc", "Сума (мала -> велика)"),
+        label: t("goals_debts:goals.sort_amount_asc"),
       },
-      { value: "name-asc", label: t("goals_debts:goals.sort_name_asc", "Назва (А-Я)") },
+      { value: "name-asc", label: t("goals_debts:goals.sort_name_asc") },
     ],
     [t],
   );
@@ -83,9 +83,31 @@ export function useGoalsFilter(goals: any[]) {
         return false;
       }
 
-      // 2. Статус
-      if (filters.status.length > 0 && !filters.status.includes(goal.status)) {
-        return false;
+      // 2. Статус (Robust case-insensitive filtering with visual state mapping)
+      if (filters.status.length > 0) {
+        const goalStatus = (goal.status || "").toLowerCase();
+        // A goal is visually 'Done' if status is reached/done OR progress is 100%
+        const isVisuallyCompleted = 
+          goalStatus === "reached" || 
+          goalStatus === "done" || 
+          (goal.percentage && goal.percentage >= 100);
+
+        const isMatch = filters.status.some((filterVal) => {
+          const fv = filterVal.toLowerCase();
+          
+          if (fv === "reached" || fv === "done") {
+            return isVisuallyCompleted;
+          }
+          
+          if (fv === "active") {
+            // Active filter should exclude visually completed goals
+            return goalStatus === "active" && !isVisuallyCompleted;
+          }
+          
+          return goalStatus === fv;
+        });
+
+        if (!isMatch) return false;
       }
 
       // 3. Валюта
