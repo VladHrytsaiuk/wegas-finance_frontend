@@ -32,7 +32,6 @@ export const useCounterpartyForm = ({
     defaultValues: {
       name: "",
       type: "shop",
-      note: "",
       color: "#6366f1",
       icon: "HiBuildingStorefront",
       logo: "",

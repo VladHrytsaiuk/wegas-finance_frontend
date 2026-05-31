@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# 🚀 WeGaS Finance — Розумне Управління Фінансами
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Сучасний та потужний веб-застосунок для комплексного управління особистими фінансами. **WeGaS Finance** дозволяє не просто записувати витрати, а створювати повноцінну фінансову стратегію, контролювати активи, борги, комунальні платежі та інвестиції в одному місці.
 
-Currently, two official plugins are available:
+📝 **Про проєкт**
+---
+Цей проєкт розроблений для користувачів, які прагнуть повного контролю над своїм капіталом. Застосунок вирішує проблему фрагментації фінансових даних, збираючи інформацію про банківські рахунки, готівку, майно (активи), зобов'язання (борги) та регулярні платежі в єдиний інтерактивний дашборд. Завдяки модульній структурі та підтримці мультивалютності, він підходить як для базового трекінгу витрат, так і для глибинного фінансового аналізу.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🛠 **Стек технологій**
+---
+Проєкт побудований на базі найсучасніших інструментів розробки для забезпечення швидкості та стабільності:
 
-## React Compiler
+*   **Core:** React 19, TypeScript, Vite
+*   **Styling & UI:** Styled Components (CSS-in-JS), Lucide React / React Icons, Framer Motion (анімації)
+*   **State & Data Fetching:** TanStack Query (React Query) v5, Axios
+*   **Form Management:** React Hook Form
+*   **Charts & Visualization:** Recharts
+*   **Internationalization:** i18next (підтримка UA/EN)
+*   **Utilities:** date-fns, ExcelJS (експорт у .xlsx), jsPDF (генерація звітів), react-hot-toast (сповіщення)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+✨ **Ключові фічі**
+---
+1.  **📊 Інтерактивний Дашборд:** Миттєвий огляд загального балансу, останніх транзакцій та графіків розподілу витрат.
+2.  **💳 Управління Рахунками:** Підтримка різних типів рахунків (карткові, готівкові) з детальною історією та можливістю синхронізації (наприклад, з Monobank).
+3.  **🎯 Фінансові Цілі:** Створення цілей для накопичення коштів із відстеженням прогресу у реальному часі.
+4.  **🏠 Активи та Борги:** Облік майна (нерухомість, авто, крипто) та контроль заборгованостей (хто винен вам і кому винні ви).
+5.  **⚡️ Комунальні Послуги:** Трекінг показників лічильників, аналітика споживання та архів квитанцій.
+6.  **📁 Розумний Експорт:** Генерація детальних фінансових звітів у форматах PDF та Excel для подальшого аналізу.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+📂 **Структура проєкту**
+---
+```bash
+src/
+├── components/      # UI-компоненти (Shared та Feature-based)
+│   ├── ui/          # Базові елементи (Buttons, Inputs, Modals)
+│   └── [feature]/   # Специфічні компоненти (напр. transactions, accounts)
+├── context/         # Глобальний стейт (Theme, Auth, Sync, Settings)
+├── hooks/           # Кастомні хуки для бізнес-логіки
+├── locales/         # JSON-файли перекладів (i18n)
+├── pages/           # Компоненти сторінок та роутинг
+├── services/        # API-клієнти (Axios interceptors та запити)
+├── styles/          # Глобальні стилі та змінні теми
+├── types/           # TypeScript інтерфейси та енуми
+└── utils/           # Допоміжні функції та формати
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+⚙️ **Локальний запуск**
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Клонування репозиторію
+```bash
+git clone https://github.com/your-repo/wegas-finance.git
+cd wegas-finance/desktop/frontend
 ```
+
+### 2. Встановлення залежностей
+```bash
+npm install
+```
+
+### 3. Запуск dev-сервера
+```bash
+npm run dev
+```
+Після запуску застосунок буде доступний за адресою `http://localhost:5173`.
+
+> **Примітка:** Для коректної роботи запитів необхідно, щоб був запущений бекенд (за замовчуванням очікується на `http://localhost:8080`).
+
+🔧 **Змінні оточення**
+---
+Застосунок використовує проксування запитів через Vite для локальної розробки. Якщо ви плануєте змінити адресу бекенду, відредагуйте файл `vite.config.ts` або `src/services/Axios.ts`.
+
+| Змінна | Опис | Дефолтне значення |
+| :--- | :--- | :--- |
+| `API_URL` | Базова адреса API | `http://localhost:8080/api` |
+
+---
+Розроблено з ❤️ для вашої фінансової свободи.

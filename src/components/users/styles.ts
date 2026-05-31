@@ -135,14 +135,50 @@ export const RoleLabel = styled.label<{ $isActive: boolean; $color: string }>`
 `;
 
 export const FormLayout = styled.form`
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  align-items: stretch;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+`;
+
+export const Column = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.25rem; /* Space between field blocks */
+  height: 100%;
+`;
+
+export const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Consistent gap between Label and Input/Group */
+`;
+
+export const Label = styled.label`
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+`;
+
+export const RoleSelectionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Increased gap between role cards */
+  height: 100%;
 `;
 
 export const ButtonRow = styled.div`
+  grid-column: 1 / -1;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
 `;

@@ -89,12 +89,12 @@ export const InputGroup = styled.div`
   width: 100%;
 `;
 
-export const FieldGroup = styled.div`
+export const FieldGroup = styled.div<{ $width?: string }>`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   position: relative;
-  width: 100%;
+  width: ${(p) => p.$width || "100%"};
 `;
 
 export const Label = styled.label`
@@ -205,29 +205,19 @@ export const SelectOption = styled.div<{ $isSelected?: boolean }>`
 
 // --- NEW STYLES FOR GROUP MODAL (Restructured) ---
 
-export const BasicInfoRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem; /* Increased gap for breathing room */
+export const CompactInputRow = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
   width: 100%;
   margin-bottom: 1.5rem;
-
-  @media (min-width: 640px) {
-    grid-template-columns: 1fr 1fr;
-  }
 `;
 
 export const InlineGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  width: 100%;
   height: 44px; /* Matches Input height */
-
-  & > * {
-    flex: 1;
-    height: 100%;
-  }
 `;
 
 export const SectionHeader = styled.div`

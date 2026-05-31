@@ -1,17 +1,11 @@
 import { useState } from "react";
-import { HiCheck } from "react-icons/hi2";
-import { useTranslation } from "react-i18next"; // ⬅️ ІМПОРТ ДЛЯ ПЕРЕКЛАДУ
+import { useTranslation } from "react-i18next";
 
 import { useModal } from "../ui/Modal";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import {
-  PRESET_COLORS,
-  Form,
-  ColorGrid,
-  ColorSwatch,
-  ButtonRow,
-} from "./TagForm.styles";
+import { ColorPicker } from "../ui/ColorIconPicker";
+import * as S from "./TagForm.styles";
 
 // === COMPONENT ===
 interface TagFormProps {
@@ -20,10 +14,10 @@ interface TagFormProps {
 }
 
 export function TagForm({ onSubmit, isLoading }: TagFormProps) {
-  const { t } = useTranslation(); // ⬅️ ВИКОРИСТАННЯ ХУКА
+  const { t } = useTranslation();
   const { close } = useModal();
   const [name, setName] = useState("");
-  const [color, setColor] = useState(PRESET_COLORS[5]); // Default green
+  const [color, setColor] = useState(S.PRESET_COLORS[5]); // Default green
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,60 +35,38 @@ export function TagForm({ onSubmit, isLoading }: TagFormProps) {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <div>
-        <label
-          style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}
-        >
-          {/* ➡️ ПЕРЕКЛАД МІТКИ */}
-          {t("settings:tagForm.label_name")}
-        </label>
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          // ➡️ ПЕРЕКЛАД ПЛЕЙСХОЛДЕРА
-          placeholder={t("settings:tagForm.placeholder_name")}
-          autoFocus
-        />
-      </div>
+    <S.Form onSubmit={handleSubmit}>
+      <S.CompactRow>
+        <S.FieldGroup style={{ flex: 1 }}>
+          <S.Label>{t("settings:tagForm.label_name")}</S.Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("settings:tagForm.placeholder_name")}
+            autoFocus
+            required
+          />
+        </S.FieldGroup>
 
-      <div>
-        <label
-          style={{ display: "block", marginBottom: "0.5rem", fontWeight: 500 }}
-        >
-          {/* ➡️ ПЕРЕКЛАД МІТКИ */}
-          {t("settings:tagForm.label_color")}
-        </label>
-        <ColorGrid>
-          {PRESET_COLORS.map((c) => (
-            <ColorSwatch
-              key={c}
-              type="button"
-              $color={c}
-              $isSelected={color === c}
-              onClick={() => setColor(c)}
-            >
-              {color === c && <HiCheck style={{ strokeWidth: 2 }} />}
-            </ColorSwatch>
-          ))}
-        </ColorGrid>
-      </div>
+        <S.FieldGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("settings:tagForm.label_color")}</S.Label>
+          <ColorPicker color={color} onColorChange={setColor} square />
+        </S.FieldGroup>
+      </S.CompactRow>
 
-      <ButtonRow>
+      <S.ButtonRow>
         <Button
           type="button"
           variation="secondary"
           onClick={close}
           style={{ width: "auto" }}
         >
-          {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
           {t("settings:tagForm.button_cancel")}
         </Button>
         <Button disabled={isLoading} style={{ width: "auto" }} type="submit">
-          {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
           {t("settings:tagForm.button_add")}
         </Button>
-      </ButtonRow>
-    </Form>
+      </S.ButtonRow>
+    </S.Form>
   );
 }

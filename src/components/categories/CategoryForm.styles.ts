@@ -1,8 +1,9 @@
 import styled from "styled-components";
 
 export const FormContainer = styled.form`
-  display: grid;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 `;
 
 export const FormGroup = styled.div`
@@ -18,30 +19,24 @@ export const Label = styled.label`
   color: var(--color-text-secondary);
 `;
 
-export const InputRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-`;
-
 export const TypeGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
 `;
 
 export const TypeCard = styled.button<{ $active: boolean; $color: string }>`
+  flex: 1;
   border: 1.5px solid ${(p) => (p.$active ? p.$color : "var(--color-border)")};
   background-color: ${(p) =>
     p.$active ? `${p.$color}10` : "var(--color-bg-surface)"};
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.6rem;
   transition: all 0.2s;
   outline: none;
 
@@ -51,17 +46,23 @@ export const TypeCard = styled.button<{ $active: boolean; $color: string }>`
   }
 
   svg {
-    width: 28px;
-    height: 28px;
-    color: ${(p) => (p.$active ? p.$color : "var(--color-text-secondary)")};
-    transition: color 0.2s;
+    width: 20px;
+    height: 20px;
+    color: ${(p) => (p.$active ? p.$color : "var(--color-text-tertiary)")};
   }
 
   span {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: ${(p) => (p.$active ? p.$color : "var(--color-text-main)")};
   }
+`;
+
+export const CompactInputRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
 `;
 
 export const SearchWrapper = styled.div`

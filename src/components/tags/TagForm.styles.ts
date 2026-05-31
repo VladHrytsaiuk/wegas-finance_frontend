@@ -20,41 +20,34 @@ export const PRESET_COLORS = [
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 `;
 
-export const ColorGrid = styled.div`
+export const CompactRow = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-top: 0.5rem;
+  align-items: flex-end;
+  gap: 0.75rem;
+  width: 100%;
 `;
 
-export const ColorSwatch = styled.button<{
-  $color: string;
-  $isSelected: boolean;
-}>`
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background-color: ${(props) => props.$color};
-  border: 2px solid
-    ${(props) => (props.$isSelected ? "var(--color-text-main)" : "transparent")};
-  cursor: pointer;
+export const FieldGroup = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
-  color: white;
+  flex-direction: column;
+  gap: 0.4rem;
+`;
 
-  &:hover {
-    transform: scale(1.1);
-  }
+export const Label = styled.label`
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
 `;
 
 export const ButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
 `;

@@ -29,7 +29,8 @@ export const SpinnerContainer = styled.div`
 
 // Стилі для вмісту модалки
 export const ModalContent = styled.div`
-  width: 450px;
+  width: 800px;
+  max-width: 95vw;
 `;
 
 export const ModalTitle = styled.h3`
