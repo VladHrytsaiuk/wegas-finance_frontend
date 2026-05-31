@@ -49,7 +49,7 @@
   },
   "tagsPage": {
     "title": "Tags (Labels)",
-    "button_create_tag": "Create Tag",
+    "button_create_tag": "Add Tag",
     "search_placeholder": "Search tags...",
     "sort_default": "Default",
     "sort_name_asc": "Name (A-Z)",

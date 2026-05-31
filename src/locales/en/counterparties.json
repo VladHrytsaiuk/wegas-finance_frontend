@@ -1,7 +1,7 @@
 {
   "counterpartiesPage": {
     "title": "Counterparties",
-    "add_category_button": "Category",
+    "add_category_button": "Add category",
     "add_counterparty_button": "Add",
     "search_placeholder": "Search...",
     "filter_type_label": "Type",
