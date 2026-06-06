@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 const STORAGE_KEY = "last_selected_account_id";
 
 interface UseAccountSelectProps {
   accounts: any[];
+  users: any[];
   value: string;
   onChange: (id: string) => void;
   currentUserId?: string; // 🔥 Додано для сортування "моїх" рахунків
@@ -11,10 +13,12 @@ interface UseAccountSelectProps {
 
 export const useAccountSelect = ({
   accounts,
+  users,
   value,
   onChange,
   currentUserId,
 }: UseAccountSelectProps) => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
   // --- 1. Логіка авто-вибору при завантаженні ---
@@ -36,7 +40,6 @@ export const useAccountSelect = ({
   }, [accounts, value, onChange]);
 
   // --- 2. Сортування рахунків ---
-  // Сортуємо: спочатку "мої", потім за типом (не синхронізовані вище), потім за алфавітом
   const sortedAccounts = useMemo(() => {
     return [...accounts].sort((a, b) => {
       // Пріоритет 1: Рахунки поточного користувача
@@ -70,13 +73,88 @@ export const useAccountSelect = ({
     );
   }, [sortedAccounts, search]);
 
-  // --- 5. Групування рахунків ---
-  const groupedAccounts = useMemo(() => {
-    return {
-      regular: searchedAccounts.filter((acc) => !Boolean(acc.is_synced)),
-      synced: searchedAccounts.filter((acc) => Boolean(acc.is_synced)),
-    };
-  }, [searchedAccounts]);
+  // --- Helper: Icon Resolver ---
+  const getAccountIcon = useCallback((acc: any) => {
+    if (acc.type === "piggy_bank" || acc.type === "savings") return "HiCircleStack";
+    if (acc.type === "cash") return "HiBanknotes";
+    if (acc.type === "card") return "HiCreditCard";
+    return "HiQuestionMarkCircle";
+  }, []);
+
+  // --- 5. Групування рахунків (Tree Structure) ---
+  const treeData = useMemo(() => {
+    const ownerMap: Record<string, any> = {};
+
+    searchedAccounts.forEach((acc: any) => {
+      // Пріоритет: дані з об'єкта users або fallback на user_id/owner_name
+      const ownerObj = users.find((u) => u.id === acc.user_id);
+      const ownerName =
+        ownerObj?.name ||
+        acc.owner_name ||
+        t("accounts:accountForm.owner_other", "Інші");
+      const ownerId = `owner-${acc.user_id || "fallback"}`;
+
+      if (!ownerMap[ownerId]) {
+        ownerMap[ownerId] = {
+          id: ownerId,
+          name: ownerName,
+          isOwner: true,
+          children: {},
+        };
+      }
+
+      // Нормалізуємо тип для перекладу та іконки
+      const rawType = acc.type || "other";
+      const typeId = `${ownerId}-type-${rawType}`;
+
+      if (!ownerMap[ownerId].children[typeId]) {
+        // Отримуємо переклад для типу
+        let typeLabel = rawType;
+        let typeIcon = "HiQuestionMarkCircle";
+
+        switch (rawType) {
+          case "card":
+            typeLabel = t("accounts:accountForm.type_card");
+            typeIcon = "HiCreditCard";
+            break;
+          case "cash":
+            typeLabel = t("accounts:accountForm.type_cash");
+            typeIcon = "HiBanknotes";
+            break;
+          case "piggy_bank":
+          case "savings":
+            typeLabel = t("accounts:accountForm.type_savings", "Скарбничка");
+            typeIcon = "HiCircleStack";
+            break;
+          default:
+            typeLabel = rawType;
+        }
+
+        ownerMap[ownerId].children[typeId] = {
+          id: typeId,
+          name: typeLabel,
+          icon: typeIcon,
+          isType: true,
+          children: [],
+        };
+      }
+
+      // Додаємо рахунок з уже розрахунковою іконкою
+      ownerMap[ownerId].children[typeId].children.push({
+        ...acc,
+        resolvedIcon: getAccountIcon(acc)
+      });
+    });
+
+    // Перетворюємо об'єкти в масиви
+    return Object.values(ownerMap).map((owner: any) => ({
+      ...owner,
+      children: Object.values(owner.children).map((typeNode: any) => ({
+        ...typeNode,
+        children: typeNode.children,
+      })),
+    }));
+  }, [searchedAccounts, users, t, getAccountIcon]);
 
   // --- 6. Обробники подій ---
   const handleSelect = useCallback(
@@ -96,7 +174,7 @@ export const useAccountSelect = ({
     state: {
       search,
       selectedAccount,
-      groupedAccounts,
+      treeData,
     },
     actions: {
       setSearch,

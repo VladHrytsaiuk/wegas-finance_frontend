@@ -1,5 +1,12 @@
 import styled, { css } from "styled-components";
 
+export const TreeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 0.5rem;
+`;
+
 export const TriggerContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -27,11 +34,10 @@ export const AccountBalance = styled.span`
   margin-top: 2px;
 `;
 
-// Контейнер іконки
 export const IconWrapper = styled.div<{ $color: string; $hasImage?: boolean }>`
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,94 +49,120 @@ export const IconWrapper = styled.div<{ $color: string; $hasImage?: boolean }>`
   background: ${(p) => (p.$hasImage ? "transparent" : `${p.$color}15`)};
   border: 1px solid
     ${(p) => (p.$hasImage ? "var(--color-border)" : "transparent")};
-
-  /* Легкий ефект при наведенні на весь рядок */
-  button:hover & {
-    transform: scale(1.05);
-  }
 `;
 
-export const OptionItem = styled.button<{ $isActive: boolean }>`
-  width: 100%;
-  text-align: left;
-  border: none;
+// Схоже на TreeItem в CategoryTree
+export const OptionItem = styled.div<{ $isActive: boolean; $isSynced?: boolean }>`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0.7rem 1rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
   cursor: pointer;
-  position: relative;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+  transition: all 0.2s;
+  user-select: none;
+  min-height: 44px;
+  margin: 0 4px;
 
-  /* Базовий колір фону залежно від активності */
-  background: ${(p) => (p.$isActive ? "var(--color-brand-50)" : "transparent")};
+  background-color: ${(p) =>
+    p.$isActive ? "var(--color-brand-50)" : "transparent"};
+  box-shadow: ${(p) =>
+    p.$isActive ? "inset 0 0 0 1px var(--color-brand-200)" : "none"};
 
-  /* Лінія активності зліва */
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 3px;
-    height: 0;
-    background: var(--color-brand-600);
-    transition: height 0.2s ease;
-    border-radius: 0 4px 4px 0;
-    ${(p) =>
-      p.$isActive &&
-      css`
-        height: 60%;
-      `}
-  }
-
-  &:hover:not(:disabled) {
-    background: var(--color-bg-hover, #f8fafc);
-    padding-left: 1.2rem; /* Ефект зміщення вправо */
-
-    &::before {
-      height: 40%;
-    }
-  }
-
-  &:active:not(:disabled) {
-    background: var(--color-brand-50);
-    transform: scale(0.99);
+  &:hover {
+    background-color: ${(p) =>
+      p.$isActive ? "var(--color-brand-100)" : "var(--color-bg-hover)"};
   }
 
   &:focus {
     outline: none;
-    background: var(--color-bg-hover);
+    background-color: var(--color-brand-50);
+    box-shadow: 0 0 0 2px var(--color-brand-200);
   }
 
-  /* Стилі для заблокованих */
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--color-bg-page);
-    filter: grayscale(0.8);
-  }
-
-  &:last-child {
-    border-bottom: none;
-  }
+  ${(p) =>
+    p.$isSynced &&
+    css`
+      opacity: 0.6;
+      cursor: not-allowed;
+      &:hover {
+        background-color: transparent;
+      }
+    `}
 `;
 
-export const GroupLabel = styled.div`
-  padding: 0.6rem 1rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--color-text-tertiary);
-  background-color: var(--color-bg-secondary, #f1f5f9);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+export const OwnerRow = styled.div<{ $isExpanded: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  user-select: none;
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-light);
+  margin-bottom: 2px;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+  }
+
+  &:focus {
+    outline: none;
+    background-color: var(--color-brand-50);
+  }
+`;
+
+export const OwnerName = styled.span`
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.05em;
+`;
+
+export const TypeRow = styled.div<{ $isExpanded: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.5rem 0.8rem 0.5rem 1.5rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+  border-radius: 4px;
+  margin: 1px 4px;
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+  }
+
+  &:focus {
+    outline: none;
+    background-color: var(--color-brand-50);
+    box-shadow: inset 0 0 0 1px var(--color-brand-200);
+  }
+`;
+
+export const TypeName = styled.span`
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+`;
+
+export const ExpandIcon = styled.div<{ $isExpanded: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease-in-out;
+  transform: ${(p) => (p.$isExpanded ? "rotate(0deg)" : "rotate(-90deg)")};
+  color: var(--color-text-tertiary);
 `;
 
 export const EmptyState = styled.div`
   padding: 1.5rem;
   text-align: center;
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
   font-size: 0.9rem;
 `;

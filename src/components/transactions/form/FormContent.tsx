@@ -23,6 +23,7 @@ import { getCategoriesApi } from "../../../services/apiCategories";
 import { getCounterpartiesApi } from "../../../services/apiCounterparties";
 import { getTagsApi, createTagApi } from "../../../services/apiTags";
 import { getAssets } from "../../../services/apiAssets";
+import { getUsersApi } from "../../../services/apiUsers";
 
 // UI Components
 import { Button } from "../../ui/Button";
@@ -94,6 +95,10 @@ export const FormContent: React.FC<FormContentProps> = ({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
   });
+  const { data: users = [], isLoading: loadUsers } = useQuery({
+    queryKey: ["users"],
+    queryFn: getUsersApi,
+  });
   const { data: tags = [], isLoading: loadTags } = useQuery({
     queryKey: ["tags"],
     queryFn: getTagsApi,
@@ -113,12 +118,15 @@ export const FormContent: React.FC<FormContentProps> = ({
     mutationFn: createTagApi,
     onSuccess: (newTag) => {
       toast.success(
-        t("transactions:transactionForm.alert_tag_create_success", { name: newTag.name }),
+        t("transactions:transactionForm.alert_tag_create_success", {
+          name: newTag.name,
+        }),
       );
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       actions.setTagIds([...form.tagIds, newTag.id]);
     },
-    onError: () => toast.error(t("transactions:transactionForm.alert_tag_create_error")),
+    onError: () =>
+      toast.error(t("transactions:transactionForm.alert_tag_create_error")),
   });
 
   const activeAccount = accounts.find(
@@ -206,7 +214,7 @@ export const FormContent: React.FC<FormContentProps> = ({
     }
   };
 
-  if (loadAcc || loadCat || loadCp || loadTags) return <Spinner />;
+  if (loadAcc || loadCat || loadCp || loadTags || loadUsers) return <Spinner />;
 
   return (
     <>
@@ -266,6 +274,7 @@ export const FormContent: React.FC<FormContentProps> = ({
           <div style={isLocked ? { pointerEvents: "none", opacity: 0.8 } : {}}>
             <AccountSelect
               accounts={accounts}
+              users={users}
               value={form.accountId}
               onChange={(val: string) => {
                 actions.setAccountId(val);
@@ -351,7 +360,8 @@ export const FormContent: React.FC<FormContentProps> = ({
         {form.type === "transfer" ? (
           <>
             <S.TransferDetailsHeader>
-              <HiArrowRight /> {t("transactions:transactionForm.transfer_details_text")}
+              <HiArrowRight />{" "}
+              {t("transactions:transactionForm.transfer_details_text")}
             </S.TransferDetailsHeader>
             <S.RowGroup $columns={isMultiCurrency ? "6fr 4fr" : "1fr"}>
               <div>
@@ -372,6 +382,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                     accounts={accounts.filter(
                       (a: any) => String(a.id) !== String(form.accountId),
                     )}
+                    users={users}
                     value={form.targetAccountId}
                     onChange={(val: string) => {
                       actions.setTargetAccountId(val);
@@ -392,7 +403,11 @@ export const FormContent: React.FC<FormContentProps> = ({
                 <S.InputWrapper>
                   <S.Label>
                     <S.AmountLabelInner>
-                      <span>{t("transactions:transactionForm.label_received_amount")}</span>
+                      <span>
+                        {t(
+                          "transactions:transactionForm.label_received_amount",
+                        )}
+                      </span>
                       {isTransferLocked && <HiLockClosed />}
                       {targetCurrency && (
                         <S.CurrencyHint>({targetCurrency})</S.CurrencyHint>
@@ -427,7 +442,9 @@ export const FormContent: React.FC<FormContentProps> = ({
           <S.RowGroup $columns={isDebt ? "2fr 1fr" : "1fr 1fr 1fr"}>
             {!isDebt && (
               <div>
-                <S.Label>{t("transactions:transactionForm.label_category")}</S.Label>
+                <S.Label>
+                  {t("transactions:transactionForm.label_category")}
+                </S.Label>
                 <CategorySelect
                   categories={availableCategories}
                   value={form.categoryId}
@@ -483,8 +500,14 @@ export const FormContent: React.FC<FormContentProps> = ({
           >
             <HiCube />
             {form.isAssetPanelOpen
-              ? t("transactions:transactionForm.hide_asset_option", "Прибрати актив")
-              : t("transactions:transactionForm.add_asset_option", "Додати актив")}
+              ? t(
+                  "transactions:transactionForm.hide_asset_option",
+                  "Прибрати актив",
+                )
+              : t(
+                  "transactions:transactionForm.add_asset_option",
+                  "Додати актив",
+                )}
             {form.isAssetPanelOpen ? <HiChevronUp /> : <HiChevronDown />}
           </S.DetailsTriggerButton>
 
@@ -506,7 +529,10 @@ export const FormContent: React.FC<FormContentProps> = ({
                   <S.Label>
                     <S.AssetMileageLabelInner>
                       <HiTruck />
-                      {t("transactions:transactionForm.label_mileage", "Пробіг (км)")}
+                      {t(
+                        "transactions:transactionForm.label_mileage",
+                        "Пробіг (км)",
+                      )}
                     </S.AssetMileageLabelInner>
                   </S.Label>
 
@@ -557,7 +583,9 @@ export const FormContent: React.FC<FormContentProps> = ({
               onClick={() => actions.setShowDetails(true)}
             >
               <HiListBullet size={18} />
-              <span>{t("transactions:transactionForm.details_button_show")}</span>
+              <span>
+                {t("transactions:transactionForm.details_button_show")}
+              </span>
             </S.DetailsTriggerButton>
           ) : (
             <ItemsTable
@@ -609,7 +637,10 @@ export const FormContent: React.FC<FormContentProps> = ({
                   ) : (
                     <>
                       <HiPaperClip />
-                      {t("transactions:transactionForm.add_photo", "Додати фото")}
+                      {t(
+                        "transactions:transactionForm.add_photo",
+                        "Додати фото",
+                      )}
                     </>
                   )}
                 </S.UploadButtonInner>
@@ -621,7 +652,9 @@ export const FormContent: React.FC<FormContentProps> = ({
         <S.FooterNoteWrapper>
           <S.StyledTextarea
             rows={1}
-            placeholder={t("transactions:transactionForm.placeholder_note_default")}
+            placeholder={t(
+              "transactions:transactionForm.placeholder_note_default",
+            )}
             value={form.note}
             onChange={(e) => actions.setNote(e.target.value)}
           />

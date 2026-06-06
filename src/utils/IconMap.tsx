@@ -97,6 +97,7 @@ import {
   HiArrowTrendingUp,
   HiArrowsRightLeft,
   HiCreditCard,
+  HiCircleStack,
 } from "react-icons/hi2";
 
 // === 1. МАПА ІКОНОК ===
@@ -174,6 +175,7 @@ export const ICON_MAP: Record<string, React.ElementType> = {
   HiArrowTrendingUp,
   HiArrowsRightLeft,
   HiCreditCard,
+  HiCircleStack,
   HiFlag,
 };
 
