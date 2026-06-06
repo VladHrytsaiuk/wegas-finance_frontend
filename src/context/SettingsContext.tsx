@@ -32,7 +32,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Дефолтні налаштування (поки не завантажили з БД)
   const [settings, setSettingsState] = useState<AppSettings>({
     base_currency: "UAH",
-    language: i18n.language || "uk", // Якщо i18n вже визначив мову (з localStorage), беремо її
+    language: (i18n.resolvedLanguage || i18n.language || "uk").split("-")[0],
     theme: "light",
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -41,11 +41,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     const load = async () => {
       try {
         const data = await settingsService.getSettings();
-        setSettingsState(data);
+        // Normalize language from backend
+        const normalizedLanguage = data.language?.split("-")[0] || "uk";
+        const normalizedData = { ...data, language: normalizedLanguage };
+
+        setSettingsState(normalizedData);
 
         // 1. Синхронізуємо мову
-        if (data.language && data.language !== i18n.language) {
-          i18n.changeLanguage(data.language);
+        if (normalizedLanguage !== i18n.language) {
+          i18n.changeLanguage(normalizedLanguage);
         }
 
         // 2. Синхронізуємо тему

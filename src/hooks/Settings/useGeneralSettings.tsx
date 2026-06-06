@@ -43,13 +43,14 @@ interface OptionType {
 }
 
 export const useGeneralSettings = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { seed, isSeeding } = useSeedData();
   const { theme, toggleTheme } = useTheme();
   const [isPending, startTransition] = useTransition();
 
   const {
     currency = "UAH",
+    language = "uk",
     updateSettings,
     isLoading,
   } = useSettings() || {};
@@ -130,10 +131,10 @@ export const useGeneralSettings = () => {
 
   const setLocalLanguage = useCallback(
     (val: string) => {
-      if (val === i18n.language) return;
+      if (val === language) return;
       handleUpdate({ language: val });
     },
-    [i18n.language, handleUpdate],
+    [language, handleUpdate],
   );
 
   const handleToggleTheme = useCallback(() => {
@@ -145,7 +146,7 @@ export const useGeneralSettings = () => {
   return {
     state: {
       localCurrency: currency,
-      localLanguage: i18n.language,
+      localLanguage: language,
       theme,
       isLoading,
       isPending,

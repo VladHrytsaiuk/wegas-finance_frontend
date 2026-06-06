@@ -12,7 +12,8 @@ interface OptionType {
 }
 
 const getTriggerLabel = (options: OptionType[], value: string) => {
-  const selected = options.find((o) => o.value === value);
+  const normalizedValue = value?.split("-")[0];
+  const selected = options.find((o) => o.value === normalizedValue);
   if (!selected) return null;
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
