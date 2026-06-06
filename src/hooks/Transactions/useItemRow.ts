@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
 import { predictCategoryApi } from "../../services/apiTransactions";
@@ -72,11 +72,17 @@ export const useItemRow = ({
     actions.updateItem(idx, "comment", val);
   const handleRemove = () => actions.removeItem(idx);
 
-  // Calculate total for display
-  const totalDisplay = (
-    ((Number(item.price_per_unit) || 0) * (Number(item.quantity) || 0)) /
-    100
-  ).toFixed(2);
+  // --- Calculate total for display ---
+  const totalDisplay = useMemo(() => {
+    const rawTotal =
+      ((Number(item.price_per_unit) || 0) * (Number(item.quantity) || 0)) / 100;
+
+    // Use Intl.NumberFormat for thousand separators (spaces)
+    return new Intl.NumberFormat("uk-UA", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(rawTotal);
+  }, [item.price_per_unit, item.quantity]);
 
   return {
     handleManualCategoryChange,

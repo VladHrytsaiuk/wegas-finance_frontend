@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { memo } from "react";
+import { NumericFormat } from "react-number-format";
 import * as S from "./styles";
 
 interface PriceInputProps
@@ -6,85 +7,54 @@ interface PriceInputProps
     React.InputHTMLAttributes<HTMLInputElement>,
     "value" | "onChange"
   > {
-  value: number; // Завжди число (копійки або ціле)
+  value: number; // Always a number (coins or integer)
   onChange: (val: number) => void;
   isCurrency?: boolean;
 }
 
-// --- HELPERS ---
-
-const isValidInput = (val: string) => /^\d*\.?\d*$/.test(val);
-
-const toDisplay = (val: number, isCurrency: boolean): string => {
-  if (val === 0) return "";
-  return isCurrency ? (val / 100).toString() : val.toString();
-};
-
-const toBackend = (val: string, isCurrency: boolean): number => {
-  if (val === "" || val === ".") return 0;
-  const num = parseFloat(val);
-  if (isNaN(num)) return 0;
-  return isCurrency ? Math.round(num * 100) : num;
-};
-
+/**
+ * PriceInput Component for Itemization Table
+ * 
+ * Features:
+ * 1. Real-time thousands separators (spaces).
+ * 2. Handles both raw numeric values (quantity) and currency values (price).
+ * 3. Syncs correctly with backend numeric state.
+ */
 export const PriceInput = memo(
   ({ value, onChange, isCurrency = false, ...props }: PriceInputProps) => {
-    // Ініціалізація локального стейту
-    const [localValue, setLocalValue] = useState(() =>
-      toDisplay(value, isCurrency)
-    );
-
-    // Реф для уникнення циклічних оновлень при введенні
-    const lastExternalValue = useRef(value);
-
-    // 1. Sync from Parent (External Changes)
-    useEffect(() => {
-      // Оновлюємось тільки якщо прийшло НОВЕ значення ззовні (не те, що ми самі тільки що відправили)
-      if (value !== lastExternalValue.current) {
-        const newDisplay = toDisplay(value, isCurrency);
-        // Важливо: не перетираємо "0.", якщо користувач в процесі введення, а прийшло 0
-        if (toBackend(localValue, isCurrency) !== value) {
-          setLocalValue(newDisplay);
-        }
-        lastExternalValue.current = value;
+    
+    const handleChange = (values: { value: string; floatValue: number | undefined }) => {
+      const rawString = values.value; // The unformatted string value
+      
+      if (rawString === "") {
+        onChange(0);
+        return;
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value, isCurrency]);
 
-    // 2. Handle User Typing
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let rawVal = e.target.value.replace(",", ".");
+      const numericValue = parseFloat(rawString);
+      if (isNaN(numericValue)) {
+        onChange(0);
+        return;
+      }
 
-      // Валідація: тільки цифри та одна крапка
-      if (!isValidInput(rawVal)) return;
-
-      setLocalValue(rawVal);
-
-      const numericValue = toBackend(rawVal, isCurrency);
-
-      // Оновлюємо реф, щоб useEffect не перетер наше введення
-      lastExternalValue.current = numericValue;
-      onChange(numericValue);
+      // If it's currency, we store it as "coins" (cents * 100)
+      const backendValue = isCurrency ? Math.round(numericValue * 100) : numericValue;
+      onChange(backendValue);
     };
 
-    // 3. Format on Blur (e.g. 10 -> 10.00)
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      if (localValue !== "") {
-        const num = parseFloat(localValue);
-        if (!isNaN(num)) {
-          const formatted = isCurrency ? num.toFixed(2) : num.toString();
-          setLocalValue(formatted);
-        }
-      }
-      props.onBlur?.(e);
-    };
+    // Convert backend value to display value (e.g. 1000 coins -> 10.00)
+    const displayValue = isCurrency ? value / 100 : value;
 
     return (
-      <S.TableInput
+      <NumericFormat
         {...props}
-        value={localValue}
-        onChange={handleChange}
-        onBlur={handleBlur}
+        customInput={S.TableInput}
+        value={displayValue === 0 ? "" : displayValue}
+        onValueChange={handleChange}
+        thousandSeparator=" "
+        decimalScale={isCurrency ? 2 : 3} // Price has 2, Quantity might have more
+        fixedDecimalScale={false}
+        allowNegative={false}
         inputMode="decimal"
         autoComplete="off"
       />

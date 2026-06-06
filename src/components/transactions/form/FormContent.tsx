@@ -398,7 +398,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                       actions.clearError("targetAccountId");
                     }}
                     placeholder={t(
-                      "transactionForm.placeholder_select_account",
+                      "transactions:transactionForm.placeholder_select_account",
                     )}
                     hasError={!!state.errors.targetAccountId}
                   />
