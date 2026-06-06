@@ -1,10 +1,11 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 
 import { Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
+import type { TransactionType } from "../../types";
 
 const CenteredLayout = styled.div`
   display: flex;
@@ -35,14 +36,20 @@ function CreateTransactionModal({
   initialData = {},
 }: CreateTransactionModalProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const handleClose = () => {
+  // Отримуємо параметри з URL (якщо модалка відкрита через navigate)
+  const typeParam = searchParams.get("type");
+  const accountIdParam = searchParams.get("accountId");
+  const cpIdParam = searchParams.get("counterpartyId");
+
+  const handleClose = useCallback(() => {
     if (onClose) {
       onClose();
     } else {
       navigate(-1);
     }
-  };
+  }, [onClose, navigate]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -50,7 +57,7 @@ function CreateTransactionModal({
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, []);
+  }, [handleClose]);
 
   if (!isOpen) return null;
 
@@ -61,9 +68,13 @@ function CreateTransactionModal({
         <CreateTransactionForm
           onCloseModal={handleClose}
           // 🔥 ПЕРЕДАЄМО ДАНІ ДАЛІ
-          initialType={initialData.type}
-          initialAccountId={initialData.account_id}
-          initialCounterpartyId={initialData.counterparty_id}
+          initialType={(initialData.type || typeParam || undefined) as TransactionType}
+          initialAccountId={
+            initialData.account_id || accountIdParam || undefined
+          }
+          initialCounterpartyId={
+            initialData.counterparty_id || cpIdParam || undefined
+          }
           initialAmount={initialData.amount} // <--- ОСЬ ВОНО
           initialNote={initialData.note} // <--- І ЦЕ
         />

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { format, setHours, setMinutes, isValid } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import { type ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
 
 import { useTransactionForm } from "./useTransactionForm";
@@ -178,6 +178,9 @@ export const useTransactionLogic = ({
   const invalidationConfig = () => {
     queryClient.invalidateQueries({ queryKey: ["transactions"] });
     queryClient.invalidateQueries({ queryKey: ["accounts"] });
+    queryClient.invalidateQueries({ queryKey: ["account"] });
+    queryClient.invalidateQueries({ queryKey: ["goal"] });
+    queryClient.invalidateQueries({ queryKey: ["goals"] });
     queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     if (isEditSession && transactionToEdit) {
       queryClient.invalidateQueries({
