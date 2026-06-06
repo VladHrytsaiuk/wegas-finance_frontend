@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 
 // Стилі для react-modal
 export const ModalContainerOverrides = {
-  maxWidth: "900px", /* Significantly wider */
+  maxWidth: "750px", /* Increased width to ensure it's wider than tall */
   width: "100%",
   padding: "0",
   display: "flex",
@@ -20,7 +20,7 @@ export const ModalContainer = styled.div`
 `;
 
 export const Header = styled.div`
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 2.5rem; /* Increased padding */
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -31,17 +31,17 @@ export const Header = styled.div`
 `;
 
 export const Title = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.5rem; /* Slightly larger title */
+  font-weight: 800;
   margin: 0;
   color: var(--color-text-main);
 `;
 
 export const Content = styled.div`
-  padding: 1.5rem; /* p-6 */
-  padding-bottom: 2rem; /* Ensure bottom breathing room without dead space */
+  padding: 2.5rem 3rem; /* Increased side padding for breathing room */
+  padding-bottom: 3.5rem; 
   overflow-y: auto;
-  max-height: 70vh;
+  max-height: 75vh;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -55,6 +55,7 @@ export const Content = styled.div`
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
+  gap: 1.75rem; /* Balanced gap between major blocks */
   width: 100%;
 `;
 
@@ -170,7 +171,7 @@ export const UploadPlaceholder = styled.div`
 `;
 
 export const FooterActions = styled.div`
-  padding: 1.25rem 1.5rem;
+  padding: 1.5rem 2.5rem; /* Balanced footer padding */
   border-top: 1px solid var(--color-border);
   background-color: var(--color-bg-surface);
   display: flex;
@@ -208,9 +209,9 @@ export const SelectOption = styled.div<{ $isSelected?: boolean }>`
 export const CompactInputRow = styled.div`
   display: flex;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: 1.5rem; /* Increased gap for better separation */
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const InlineGroup = styled.div`
@@ -224,7 +225,7 @@ export const SectionHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.75rem; /* Tightened space below label */
   
   font-size: 0.75rem;
   font-weight: 800;
@@ -233,10 +234,16 @@ export const SectionHeader = styled.div`
   letter-spacing: 0.05em;
 `;
 
+export const VisibilitySection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
 export const ToggleGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 1rem; /* Balanced gap between toggles */
   width: 100%;
 `;
 
@@ -245,13 +252,13 @@ export const ToggleButton = styled.div<{ $isActive: boolean }>`
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  padding: 0.65rem 1rem; /* Visibly shorter height */
-  border-radius: 12px;
+  padding: 0.5rem 1rem; /* Compact height */
+  border-radius: 10px; /* Refined radius */
   border: 2px solid;
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem; /* Smaller font size */
 
   ${(p) =>
     p.$isActive
@@ -272,8 +279,8 @@ export const ToggleButton = styled.div<{ $isActive: boolean }>`
 `;
 
 export const HideFromContainer = styled.div`
-  margin-top: 1rem;
-  padding: 0.75rem; /* Reduced internal padding */
+  margin-top: 1rem; /* Separation from toggles */
+  padding: 1rem;
   background-color: var(--color-bg-page);
   border-radius: 12px;
   border: 1px solid var(--color-border);

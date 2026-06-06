@@ -101,35 +101,37 @@ export default function EditGroupModal({
             </S.FieldGroup>
           </S.CompactInputRow>
 
-          {/* ROW 2: Visibility Toggles */}
-          <S.SectionHeader>
-            <HiGlobeAlt size={14} />
-            {t("shopping_wishlist:wishlist.filter_visibility")}
-          </S.SectionHeader>
+          {/* ROW 2: Visibility Section */}
+          <S.VisibilitySection>
+            <S.SectionHeader>
+              <HiGlobeAlt size={14} />
+              {t("shopping_wishlist:wishlist.filter_visibility")}
+            </S.SectionHeader>
 
-          <S.ToggleGrid>
-            <S.ToggleButton
-              $isActive={state.visibility === "public"}
-              onClick={() => {
-                actions.setVisibility("public");
-                actions.setHiddenFromIds([]);
-              }}
-            >
-              <HiGlobeAlt size={20} />
-              {t("shopping_wishlist:shopping.public")}
-            </S.ToggleButton>
+            <S.ToggleGrid>
+              <S.ToggleButton
+                $isActive={state.visibility === "public"}
+                onClick={() => {
+                  actions.setVisibility("public");
+                  actions.setHiddenFromIds([]);
+                }}
+              >
+                <HiGlobeAlt size={20} />
+                {t("shopping_wishlist:shopping.public")}
+              </S.ToggleButton>
 
-            <S.ToggleButton
-              $isActive={state.visibility === "private"}
-              onClick={() => {
-                actions.setVisibility("private");
-                actions.setHiddenFromIds([]);
-              }}
-            >
-              <HiLockClosed size={20} />
-              {t("shopping_wishlist:shopping.private")}
-            </S.ToggleButton>
-          </S.ToggleGrid>
+              <S.ToggleButton
+                $isActive={state.visibility === "private"}
+                onClick={() => {
+                  actions.setVisibility("private");
+                  actions.setHiddenFromIds([]);
+                }}
+              >
+                <HiLockClosed size={20} />
+                {t("shopping_wishlist:shopping.private")}
+              </S.ToggleButton>
+            </S.ToggleGrid>
+          </S.VisibilitySection>
 
           {/* ROW 3: Hide from Selection */}
           {state.visibility === "public" && membersToHideFrom.length > 0 && (
