@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useMemo } from "react"; // <--- Додано useMemo
+import { useMemo } from "react";
 import { HiMagnifyingGlass, HiXMark, HiPlus } from "react-icons/hi2";
 
 // Components & Utils
@@ -19,11 +19,10 @@ interface CounterpartySelectProps {
   hasError?: boolean;
   type?: "person" | "shop" | "other";
   initialExpanded?: string[];
-  defaultCategory?: string;
+  priorityCategoryId?: string; // 🔥 Додано
 }
 
 // --- HELPER FUNCTION ---
-// Рекурсивно збирає всі ID з дерева (для повного розкриття при пошуку)
 const getAllRecursiveIds = (nodes: any[]): string[] => {
   return nodes.reduce((acc, node) => {
     acc.push(String(node.id));
@@ -36,8 +35,8 @@ const getAllRecursiveIds = (nodes: any[]): string[] => {
 
 export default function CounterpartySelect(props: CounterpartySelectProps) {
   const {
-    state: { isOpen, searchQuery, imgError }, // Дістаємо imgError
-    setters: { setSearchQuery, setImgError }, // Дістаємо setImgError
+    state: { isOpen, searchQuery, imgError },
+    setters: { setSearchQuery, setImgError },
     refs: {
       triggerRef,
       menuRef,
@@ -49,7 +48,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
       treeData,
       selectedCP,
       displayIconName,
-      defaultExpandedIds: hookDefaultExpandedIds, // Перейменували для ясності
+      defaultExpandedIds: hookDefaultExpandedIds,
       style,
       actions,
     },
@@ -73,11 +72,9 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
 
   // --- ЛОГІКА РОЗКРИТТЯ ---
   const expandedIds = useMemo(() => {
-    // Якщо користувач щось шукає -> розкриваємо ВСІ знайдені гілки та елементи
     if (searchQuery) {
       return getAllRecursiveIds(treeData);
     }
-    // Якщо пошуку немає -> використовуємо стандартні (наприклад, тільки кореневі групи)
     return hookDefaultExpandedIds;
   }, [searchQuery, treeData, hookDefaultExpandedIds]);
 
@@ -91,7 +88,6 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
         </Modal.Open>
       </S.HiddenTrigger>
 
-      {/* Прив'язуємо triggerRef до обгортки */}
       <S.Wrapper ref={triggerRef as any}>
         <S.Trigger
           ref={triggerBtnRef}
@@ -106,7 +102,6 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
         >
           {selectedCP ? (
             <S.TriggerContent>
-              {/* --- ОНОВЛЕНА ЛОГІКА ЛОГО --- */}
               <S.IconWrapper
                 $color={selectedCP.color}
                 style={
@@ -116,7 +111,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
                         padding: 0,
                         border: "1px solid rgba(0,0,0,0.1)",
                         overflow: "hidden",
-                        width: "24px", // Трохи більше для тригера
+                        width: "24px",
                         height: "24px",
                         flexShrink: 0,
                       }
@@ -173,19 +168,14 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
               ref={menuRef}
               onKeyDown={handleMenuKeyDown}
               style={{
-                // Позиціонування з хука
                 position: style.position,
                 top: style.top,
                 bottom: style.bottom,
                 left: style.left,
                 right: style.right,
                 transformOrigin: style.transformOrigin,
-
-                // 🔥 ФІКСОВАНІ РОЗМІРИ
                 width: "350px",
                 maxHeight: "506.234px",
-
-                // Z-Index та Layout
                 zIndex: 10050,
                 overflow: "hidden",
                 display: "flex",
@@ -214,14 +204,12 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
 
               <S.ScrollArea>
                 <CounterpartyTree
-                  // Key оновлюється при зміні пошуку, що змушує дерево прийняти нові expandedIds
                   key={`${props.type || "all"}-${searchQuery}`}
                   nodes={treeData}
                   selectedId={props.value}
                   onSelect={(item: any) => {
                     if (item && item.id) handleSelect(String(item.id));
                   }}
-                  // ТУТ ПЕРЕДАЄМО ОБЧИСЛЕНІ ID
                   defaultExpandedIds={expandedIds}
                 />
 

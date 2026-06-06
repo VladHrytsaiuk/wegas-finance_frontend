@@ -1,11 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
 import { useUtilityMeters } from "./useUtility"; // Ваш існуючий хук
-import { getCounterpartiesApi } from "../../services/apiCounterparties";
+import {
+  getCounterpartiesApi,
+  getCpCategoriesApi,
+} from "../../services/apiCounterparties";
 
 interface UseCreateMeterFormProps {
   onCloseModal?: () => void;
@@ -59,17 +62,32 @@ export const useCreateMeterForm = ({
   }, [meterToEdit, reset]);
 
   // --- 3. DATA FETCHING ---
+  const { data: categories = [] } = useQuery({
+    queryKey: ["counterparty-categories"],
+    queryFn: getCpCategoriesApi,
+  });
+
   const { data: allCounterparties = [] } = useQuery({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
   });
 
-  const utilityProviders = allCounterparties.filter((cp: any) => {
-    const catName = cp.category?.name || "";
-    // Note: These category names are usually hardcoded in backend or set during seeding.
-    // Keeping logic as is but ideally these would be IDs.
-    return catName.includes("Комунальн") || catName === "Інтернет";
-  });
+  // ВАЖЛИВО: Ми повертаємо ВСІХ контрагентів, щоб не втратити жодну категорію.
+  // rest (Інше) має містити повний список оригінальних категорій.
+  const utilityProviders = allCounterparties;
+
+  // Знаходимо ID категорії Комуналка для хойстінгу
+  const priorityCategoryId = useMemo(() => {
+    return categories.find((c) => c.name.toLowerCase().includes("комунал"))?.id;
+  }, [categories]);
+
+  // Список ID для автоматичного розкриття (ТІЛЬКИ сама категорія Комунальні послуги)
+  const expandedIds = useMemo(() => {
+    if (priorityCategoryId) {
+      return [priorityCategoryId];
+    }
+    return [];
+  }, [priorityCategoryId]);
 
   // --- 4. WATCHERS ---
   const currentType = watch("type");
@@ -154,6 +172,8 @@ export const useCreateMeterForm = ({
     },
     data: {
       utilityProviders,
+      expandedIds,
+      priorityCategoryId,
       isEdit,
     },
     actions: {

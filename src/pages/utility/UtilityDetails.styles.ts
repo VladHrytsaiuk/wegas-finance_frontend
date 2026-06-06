@@ -63,16 +63,23 @@ export const IconButton = styled.button`
   justify-content: center;
   transition: all 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: var(--color-grey-50);
     color: var(--color-brand-600);
     border-color: var(--color-brand-200);
   }
 
-  &.danger:hover {
+  &.danger:hover:not(:disabled) {
     background: var(--color-red-50);
     color: var(--color-red-600);
     border-color: var(--color-red-200);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    filter: grayscale(1);
+    border-color: var(--color-grey-100);
   }
 
   svg {
@@ -254,9 +261,16 @@ export const ActionButton = styled.button`
   cursor: pointer;
   padding: 8px;
   border-radius: 8px;
-  &:hover {
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
     background: var(--color-red-50);
     color: var(--color-red-600);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
   }
 `;
 

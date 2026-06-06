@@ -8,10 +8,12 @@ import { useHeader } from "../../context/HeaderContext";
 import type { Asset } from "../../types";
 
 export const useAssets = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { setPageTitle, resetPageTitle } = useHeader();
+
+  const currentLocale = i18n.language === "uk" ? "uk-UA" : "en-US";
 
   // --- Lifecycle & Title ---
   useEffect(() => {
@@ -48,13 +50,13 @@ export const useAssets = () => {
 
   // --- Helpers ---
   const formatPrice = (coins: number, currency: string) =>
-    new Intl.NumberFormat(t("common:common.locale", "uk-UA"), {
+    new Intl.NumberFormat(currentLocale, {
       style: "currency",
       currency,
     }).format(coins / 100);
 
   const formatDate = (ts: number) =>
-    ts ? new Date(ts).toLocaleDateString(t("common:common.locale", "uk-UA")) : "-";
+    ts ? new Date(ts).toLocaleDateString(currentLocale) : "-";
 
   const isWarrantyExpired = (date: number) => Date.now() > date;
 

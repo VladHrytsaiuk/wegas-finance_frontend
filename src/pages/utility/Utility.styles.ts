@@ -95,14 +95,20 @@ export const ActionButton = styled.button`
   cursor: pointer;
   transition: all 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: var(--color-bg-hover);
     color: var(--color-text-main);
   }
 
-  &.danger:hover {
+  &.danger:hover:not(:disabled) {
     background: #fee2e2;
     color: #ef4444;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    filter: grayscale(1);
   }
 `;
 

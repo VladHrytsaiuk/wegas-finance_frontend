@@ -36,6 +36,7 @@ interface UseTreeProps {
   searchQuery: string;
   filters: { type: string[] };
   sortValue: string;
+  priorityCategoryId?: string; // 🔥 Додано для хойстінгу
 }
 
 export function useCounterpartyTree({
@@ -44,6 +45,7 @@ export function useCounterpartyTree({
   searchQuery,
   filters,
   sortValue,
+  priorityCategoryId,
 }: UseTreeProps) {
   const { t } = useTranslation();
 
@@ -63,25 +65,25 @@ export function useCounterpartyTree({
 
       // Find matching categories by name
       const matchingCatIdsByName = new Set(
-        cats.filter((c) => c.name.toLowerCase().includes(q)).map((c) => c.id)
+        cats.filter((c) => c.name.toLowerCase().includes(q)).map((c) => c.id),
       );
 
       // Filter counterparties (by name OR by parent category match)
       cps = cps.filter(
         (cp) =>
           cp.name.toLowerCase().includes(q) ||
-          (cp.category_id && matchingCatIdsByName.has(cp.category_id))
+          (cp.category_id && matchingCatIdsByName.has(cp.category_id)),
       );
 
       // Filter categories (by name OR if they have matching children)
       const catIdsWithMatchingChildren = new Set(
-        cps.map((cp) => cp.category_id).filter(Boolean)
+        cps.map((cp) => cp.category_id).filter(Boolean),
       );
 
       cats = cats.filter(
         (c) =>
           c.name.toLowerCase().includes(q) ||
-          catIdsWithMatchingChildren.has(c.id)
+          catIdsWithMatchingChildren.has(c.id),
       );
     }
 
@@ -119,26 +121,34 @@ export function useCounterpartyTree({
       logo: null,
     };
 
+    let rootPriority: CounterpartyTreeNode | null = null;
     const categoryNodes = new Map<string, CounterpartyTreeNode>();
 
     // 4. Distribute Categories
     cats.forEach((cat) => {
+      const isPriority = priorityCategoryId && cat.id === priorityCategoryId;
+
       const node: CounterpartyTreeNode = {
         id: cat.id,
         name: cat.name,
-        type: "subgroup",
+        type: isPriority ? "group" : "subgroup", // Підвищуємо тип, якщо це корінь
         iconName: normalizeIconName(cat.icon),
         logo: null,
         color: cat.color || "#64748b",
         children: [],
         isCategory: true,
+        isRoot: isPriority, // Робимо справжнім коренем
         raw: cat,
       };
       categoryNodes.set(cat.id, node);
 
-      if (cat.type === "shop") rootShops.children.push(node);
-      else if (cat.type === "person") rootPeople.children.push(node);
-      else rootOther.children.push(node);
+      if (isPriority) {
+        rootPriority = node;
+      } else {
+        if (cat.type === "shop") rootShops.children.push(node);
+        else if (cat.type === "person") rootPeople.children.push(node);
+        else rootOther.children.push(node);
+      }
     });
 
     const shopSubtypesMap = new Map<string, CounterpartyTreeNode>();
@@ -196,7 +206,7 @@ export function useCounterpartyTree({
 
     // Add generated subtypes to Shops root
     const sortedSubgroups = Array.from(shopSubtypesMap.values()).sort((a, b) =>
-      a.name.localeCompare(b.name)
+      a.name.localeCompare(b.name),
     );
     rootShops.children.push(...sortedSubgroups);
 
@@ -224,18 +234,32 @@ export function useCounterpartyTree({
       if (root.children.length > 0) sortNodes(root.children);
     });
 
+    if (rootPriority && rootPriority.children.length > 0) {
+      sortNodes(rootPriority.children);
+    }
+
     // Sort children of categories
     categoryNodes.forEach((node) => {
       if (node.children.length > 0) sortNodes(node.children);
     });
 
     // Only return roots that have content
+    // ПОРЯДОК: Пріоритет -> Інше -> Магазини -> Люди
     return [
+      ...(rootPriority ? [rootPriority] : []),
+      ...(rootOther.children.length ? [rootOther] : []),
       ...(rootShops.children.length ? [rootShops] : []),
       ...(rootPeople.children.length ? [rootPeople] : []),
-      ...(rootOther.children.length ? [rootOther] : []),
     ];
-  }, [counterparties, categories, searchQuery, filters, sortValue, t]);
+  }, [
+    counterparties,
+    categories,
+    searchQuery,
+    filters,
+    sortValue,
+    t,
+    priorityCategoryId,
+  ]);
 
   return treeRoots;
 }

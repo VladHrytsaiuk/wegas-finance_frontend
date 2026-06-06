@@ -82,6 +82,14 @@ function UtilityContent() {
     [open],
   );
 
+  const handleMeterDelete = useCallback(
+    (meter: UtilityMeter) => {
+      setActiveMeter(meter);
+      open("delete-confirm");
+    },
+    [open],
+  );
+
   // Встановлення глобального заголовка
   useEffect(() => {
     setPageTitle(
@@ -153,6 +161,7 @@ function UtilityContent() {
                 meter={meter}
                 onClick={handleMeterClick}
                 onEdit={handleMeterEdit}
+                onDelete={handleMeterDelete}
                 onPay={handleMeterPay}
                 onAddReading={handleMeterAddReading}
               />

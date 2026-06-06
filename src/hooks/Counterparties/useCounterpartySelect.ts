@@ -13,6 +13,7 @@ const EMPTY_ARRAY: string[] = [];
 const ROOT_ID_PEOPLE = "root_people";
 const ROOT_ID_SHOPS = "root_shops";
 const ROOT_ID_OTHER = "root_other";
+const ROOT_ID_PRIORITY = "root_priority";
 
 interface UseCounterpartySelectProps {
   counterparties?: any[];
@@ -20,6 +21,7 @@ interface UseCounterpartySelectProps {
   onChange: (id: string) => void;
   type?: "person" | "shop" | "other";
   initialExpanded?: string[];
+  priorityCategoryId?: string; // 🔥 Додано
 }
 
 export const useCounterpartySelect = ({
@@ -28,6 +30,7 @@ export const useCounterpartySelect = ({
   onChange,
   type,
   initialExpanded,
+  priorityCategoryId,
 }: UseCounterpartySelectProps) => {
   const { t } = useTranslation();
 
@@ -82,12 +85,14 @@ export const useCounterpartySelect = ({
     searchQuery,
     filters: activeFilters,
     sortValue: "name-asc",
+    priorityCategoryId, // 🔥 Передаємо далі
   });
 
   // Чистимо пусті корені
   const finalTreeData = useMemo(() => {
     if (!type) return rawTreeData;
     return rawTreeData.filter((node) => {
+      if (node.id === ROOT_ID_PRIORITY) return true; // Пріоритетний корінь завжди показуємо, якщо він не пустий (це вже перевірено в хуку)
       if (type === "person" && node.id.includes("person")) return true;
       if (type === "shop" && node.id.includes("shop")) return true;
       if (type === "other" && node.id.includes("other")) return true;
@@ -98,11 +103,12 @@ export const useCounterpartySelect = ({
   const defaultExpandedIds = useMemo(() => {
     if (searchQuery) return EMPTY_ARRAY;
     if (initialExpanded) return initialExpanded;
+    if (priorityCategoryId) return [ROOT_ID_PRIORITY, priorityCategoryId]; // Авто-розкриваємо пріоритет
     if (type === "other") return [ROOT_ID_OTHER];
     if (type === "person") return [ROOT_ID_PEOPLE];
     if (type === "shop") return [ROOT_ID_SHOPS];
     return [ROOT_ID_PEOPLE, ROOT_ID_SHOPS, ROOT_ID_OTHER];
-  }, [type, searchQuery, initialExpanded]);
+  }, [type, searchQuery, initialExpanded, priorityCategoryId]);
 
   // 4. Selected Item Logic
   const selectedCP = effectiveCounterparties.find(

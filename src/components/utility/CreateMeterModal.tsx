@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -137,13 +137,13 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
   } = form;
 
   // 1. Функція спроби закриття
-  const handleCloseAttempt = () => {
+  const handleCloseAttempt = useCallback(() => {
     if (isDirty) {
       setShowConfirm(true);
     } else {
       onCloseModal?.();
     }
-  };
+  }, [isDirty, onCloseModal]);
 
   // 2. Обробка ESC
   useEffect(() => {
@@ -159,7 +159,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
     };
     document.addEventListener("keydown", handleEsc, true);
     return () => document.removeEventListener("keydown", handleEsc, true);
-  }, [showConfirm, isDirty]);
+  }, [showConfirm, handleCloseAttempt]);
 
   const handleTypeChange = (typeValue: string) => {
     setValue("type", typeValue);
@@ -168,6 +168,9 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
   };
 
   const activeTypeConfig = SERVICE_TYPES.find((t) => t.value === currentType);
+
+  // Use a stable date reference
+  const [sessionDate] = useState(() => Date.now());
 
   return (
     <>
@@ -307,7 +310,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               setAssetId={assets.setAssetId}
               newAsset={assets.newAsset}
               setNewAsset={assets.setNewAsset}
-              transactionDate={Date.now()}
+              transactionDate={sessionDate}
             />
           </SelectorWrapper>
 
@@ -320,8 +323,8 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               value={currentCP}
               onChange={(id) => setValue("counterparty_id", id)}
               hasError={!currentCP && isSubmitting}
-              type="other"
-              initialExpanded={["root_other"]}
+              initialExpanded={data.expandedIds}
+              priorityCategoryId={data.priorityCategoryId}
             />
           </SelectorWrapper>
 

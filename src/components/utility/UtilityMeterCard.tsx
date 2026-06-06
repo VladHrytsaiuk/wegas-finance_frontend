@@ -9,9 +9,11 @@ import {
   HiSun,
   HiHome,
   HiPlus,
+  HiTrash,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
+import { Tooltip } from "../ui/Tooltip";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "../../pages/utility/Utility.styles";
 import type { UtilityMeter } from "../../types";
@@ -39,6 +41,7 @@ interface UtilityMeterCardProps {
   meter: UtilityMeter;
   onClick: (id: string) => void;
   onEdit: (meter: UtilityMeter) => void;
+  onDelete: (meter: UtilityMeter) => void;
   onPay: (meter: UtilityMeter) => void;
   onAddReading: (meter: UtilityMeter) => void;
 }
@@ -47,6 +50,7 @@ export default memo(function UtilityMeterCard({
   meter,
   onClick,
   onEdit,
+  onDelete,
   onPay,
   onAddReading,
 }: UtilityMeterCardProps) {
@@ -60,19 +64,34 @@ export default memo(function UtilityMeterCard({
   const hasDebt = mainBalance < 0;
   const debtAmount = Math.abs(mainBalance);
 
+  const hasReadings = meter.last_reading_date && meter.last_reading_date > 0;
+
   return (
     <S.MeterCard onClick={() => onClick(meter.id)}>
       <S.CardTop>
         <S.IconBadge $color={color}>{icon}</S.IconBadge>
-        <S.Actions>
-          <S.ActionButton
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(meter);
-            }}
-          >
+        <S.Actions onClick={(e) => e.stopPropagation()}>
+          <S.ActionButton onClick={() => onEdit(meter)}>
             <HiPencil size={18} />
           </S.ActionButton>
+
+          <Tooltip
+            content={
+              hasReadings
+                ? "Неможливо видалити послугу, оскільки за нею вже є внесені записи"
+                : t("stats_utility:utility.tooltip_delete")
+            }
+          >
+            <div style={{ display: "inline-flex" }}>
+              <S.ActionButton
+                className="danger"
+                disabled={hasReadings}
+                onClick={() => onDelete(meter)}
+              >
+                <HiTrash size={18} />
+              </S.ActionButton>
+            </div>
+          </Tooltip>
         </S.Actions>
       </S.CardTop>
 
