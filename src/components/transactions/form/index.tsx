@@ -107,7 +107,7 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
   ]);
 
   const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
-    if (e.ctrlKey || e.metaKey) return;
+    if (isModKeyPressed(e)) return;
     if (e.key === "Enter" && (e.target as HTMLElement).tagName !== "TEXTAREA") {
       e.preventDefault();
       focusNextElement(e.target as HTMLElement);

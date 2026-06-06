@@ -187,12 +187,16 @@ function Sidebar({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isModKeyPressed(e) && (e.key === "a" || e.key === "A")) {
-        if (
-          ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "")
-        )
-          return;
+        // --- ПЕРЕВІРКИ ---
+        // 1. Якщо ми в інпуті - ігноруємо
+        if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "")) return;
+        
+        // 2. Якщо вже відкрита якась модалка - ігноруємо
         if (document.querySelector('[role="dialog"]')) return;
+
+        // --- ДІЯ ---
         e.preventDefault();
+        e.stopPropagation();
         navigate("/transactions/new", { state: { background: location } });
       }
     };
