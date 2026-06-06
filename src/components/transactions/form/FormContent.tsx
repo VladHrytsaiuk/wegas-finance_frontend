@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +30,7 @@ import { Button } from "../../ui/Button";
 import Spinner from "../../ui/Spinner";
 import { TypeSelector } from "./TypeSelector";
 import { AccountSelect } from "../../accounts/form/AccountSelect";
+import { AmountInput } from "../../ui/AmountInput";
 import { CategorySelect } from "../../categories/CategorySelect";
 import CounterpartySelect from "../../counterparties/CounterpartySelect";
 import TagSelect from "../../tags/TagSelect";
@@ -108,11 +109,14 @@ export const FormContent: React.FC<FormContentProps> = ({
     queryFn: getAssets,
   });
 
+  const { toggleAssetPanel } = actions;
+  const isAssetPanelOpen = form.isAssetPanelOpen;
+
   useEffect(() => {
-    if (form.assetId && !form.isAssetPanelOpen) {
-      actions.toggleAssetPanel();
+    if (form.assetId && !isAssetPanelOpen) {
+      toggleAssetPanel();
     }
-  }, [form.assetId]);
+  }, [form.assetId, isAssetPanelOpen, toggleAssetPanel]);
 
   const { mutate: createTag, isPending: isCreatingTag } = useMutation({
     mutationFn: createTagApi,
@@ -214,6 +218,10 @@ export const FormContent: React.FC<FormContentProps> = ({
     }
   };
 
+  const getTransactionDate = useCallback(() => {
+    return form.date ? new Date(form.date).getTime() : Date.now();
+  }, [form.date]);
+
   if (loadAcc || loadCat || loadCp || loadTags || loadUsers) return <Spinner />;
 
   return (
@@ -267,7 +275,11 @@ export const FormContent: React.FC<FormContentProps> = ({
         <div>
           <S.Label>
             <LabelWithLock
-              label={t("transactions:transactionForm.label_from_account")}
+              label={
+                form.type === "income"
+                  ? t("transactions:transactionForm.label_income_account", "На рахунок")
+                  : t("transactions:transactionForm.label_from_account", "З рахунку")
+              }
               isLocked={isLocked}
             />
           </S.Label>
@@ -307,15 +319,12 @@ export const FormContent: React.FC<FormContentProps> = ({
             </S.AmountLabelInner>
           </S.Label>
 
-          <S.StyledInput
-            $hasError={!!state.errors.amount}
-            $isLocked={isLocked}
-            type="number"
-            step="0.01"
-            placeholder="0.00"
+          <AmountInput
             value={state.localAmount}
-            onChange={(e) => actions.setLocalAmount(e.target.value)}
+            onChange={(val) => actions.setLocalAmount(val)}
             disabled={isLocked}
+            hasError={!!state.errors.amount}
+            placeholder="0.00"
           />
           {state.errors.amount && (
             <S.ErrorText>{state.errors.amount}</S.ErrorText>
@@ -414,17 +423,12 @@ export const FormContent: React.FC<FormContentProps> = ({
                       )}
                     </S.AmountLabelInner>
                   </S.Label>
-                  <S.StyledInput
-                    $hasError={!!state.errors.targetAmount}
-                    $isLocked={isTransferLocked}
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
+                  <AmountInput
                     value={state.localTargetAmount}
-                    onChange={(e) =>
-                      actions.setLocalTargetAmount(e.target.value)
-                    }
+                    onChange={(val) => actions.setLocalTargetAmount(val)}
                     disabled={isTransferLocked}
+                    hasError={!!state.errors.targetAmount}
+                    placeholder="0.00"
                   />
                   {state.errors.targetAmount && (
                     <S.ErrorText>{state.errors.targetAmount}</S.ErrorText>
@@ -519,9 +523,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                 setAssetId={actions.setAssetId}
                 newAsset={form.newAsset}
                 setNewAsset={actions.setNewAsset}
-                transactionDate={
-                  form.date ? new Date(form.date).getTime() : Date.now()
-                }
+                transactionDate={getTransactionDate()}
               />
 
               {isCarSelected && (

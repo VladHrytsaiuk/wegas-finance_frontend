@@ -6,7 +6,6 @@ import {
   HiCube,
   HiCurrencyDollar,
   HiCloudArrowUp,
-  HiLink,
   HiGlobeAlt,
   HiLockClosed,
   HiEye,
@@ -20,6 +19,7 @@ import {
 } from "../ui/Modal";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import { AmountInput } from "../ui/AmountInput";
 import { ColorPicker, IconPicker } from "../ui/ColorIconPicker";
 import { DateRangePicker } from "../ui/DateRangePicker";
 import { BaseSelect } from "../ui/Select/BaseSelect";
@@ -144,7 +144,7 @@ function CreateGoalFormContent({
                       required
                       autoFocus={!w.showConfirm}
                       placeholder={t("goals_debts:goals.placeholder_name")}
-                      style={w.errors.name ? { borderColor: "var(--color-red-500)" } : {}}
+                      $hasError={!!w.errors.name}
                     />
                     {w.errors.name && <S.ErrorText>{w.errors.name}</S.ErrorText>}
                   </S.FieldGroup>
@@ -152,17 +152,15 @@ function CreateGoalFormContent({
                   <S.AmountRow>
                     <S.FieldGroup>
                       <S.Label>{t("goals_debts:goals.label_amount")}</S.Label>
-                      <Input
-                        type="number"
+                      <AmountInput
                         value={f.amount}
-                        onChange={(e) => {
-                          f.setAmount(e.target.value);
-                          if (w.errors.amount) w.setErrors((prev) => ({ ...prev, amount: "" }));
+                        onChange={(val) => {
+                          f.setAmount(val);
+                          if (w.errors.amount)
+                            w.setErrors((prev) => ({ ...prev, amount: "" }));
                         }}
-                        required
-                        step="0.01"
+                        hasError={!!w.errors.amount}
                         placeholder="0.00"
-                        style={w.errors.amount ? { borderColor: "var(--color-red-500)" } : {}}
                       />
                       {w.errors.amount && <S.ErrorText>{w.errors.amount}</S.ErrorText>}
                     </S.FieldGroup>
@@ -284,7 +282,7 @@ function CreateGoalFormContent({
                             }}
                             size="small"
                             placeholder={t("goals_debts:goals.placeholder_name")}
-                            style={w.errors.newAccountName ? { borderColor: "var(--color-red-500)" } : {}}
+                            $hasError={!!w.errors.newAccountName}
                           />
                           {w.errors.newAccountName && <S.ErrorText>{w.errors.newAccountName}</S.ErrorText>}
                         </S.CardContent>

@@ -4,6 +4,7 @@ import { HiCloudArrowUp, HiXMark } from "react-icons/hi2";
 
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import { AmountInput } from "../ui/AmountInput";
 import { BaseSelect } from "../ui/Select/BaseSelect";
 import type { WishlistGroup } from "../../types";
 import { useModal } from "../ui/Modal";
@@ -111,13 +112,10 @@ export default function CreateWishModal({
             <S.InputGroup>
               <S.FieldGroup>
                 <S.Label>{t("shopping_wishlist:wishlist.price")}</S.Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
+                <AmountInput
                   value={state.price}
-                  onChange={(e) => actions.setPrice(e.target.value)}
+                  onChange={(val) => actions.setPrice(val)}
+                  placeholder="0.00"
                 />
               </S.FieldGroup>
               <S.FieldGroup>

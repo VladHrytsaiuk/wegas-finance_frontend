@@ -6,7 +6,6 @@ import {
   HiXMark,
   HiCheck,
   HiCube,
-  HiBanknotes,
   HiDocumentText,
   HiOutlineDocumentPlus,
   HiOutlinePhoto,
@@ -14,6 +13,7 @@ import {
 
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
+import { AmountInput } from "../../components/ui/AmountInput";
 import { BaseSelect } from "../../components/ui/Select/BaseSelect";
 import { type Asset } from "../../types";
 
@@ -252,12 +252,18 @@ export default function AssetForm({
                 <S.Grid columns="1fr 0.8fr 1fr">
                   <S.FormGroup>
                     <S.Label>{t("assets:assetForm.label_price")}</S.Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      $hasError={!!errors?.price}
-                      {...register("price", { required: true })}
-                      placeholder="0.00"
+                    <Controller
+                      name="price"
+                      control={control}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <AmountInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          hasError={!!errors?.price}
+                          placeholder="0.00"
+                        />
+                      )}
                     />
                     {errors?.price && <S.ErrorText>{t("common:validation.required")}</S.ErrorText>}
                   </S.FormGroup>
