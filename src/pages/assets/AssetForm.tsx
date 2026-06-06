@@ -24,6 +24,7 @@ import { useAssetForm } from "../../hooks/Assets/useAssetForm";
 import Spinner from "../../components/ui/Spinner";
 import * as S from "./AssetForm.styles";
 import { getUploadedFileUrl } from "../../utils/helpers";
+import { getModKey, isModKeyPressed } from "../../utils/platform";
 
 interface SelectOption {
   value: string;
@@ -104,6 +105,26 @@ export default function AssetForm({
     return () => document.removeEventListener("keydown", handleEsc, true);
   }, [showConfirm, isDirty]);
 
+  // Sync Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isModKeyPressed(e) && e.key === "Enter") {
+        // If we are on step 1 and valid, go to step 2
+        // If we are on step 2, submit
+        const activeEl = document.activeElement as HTMLElement;
+        if (activeEl?.tagName === "TEXTAREA") return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const formEl = document.getElementById("asset-form") as HTMLFormElement;
+        formEl?.requestSubmit();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const nextStep = async (e?: React.MouseEvent | React.FormEvent) => {
     e?.preventDefault();
     if (!trigger) {
@@ -129,6 +150,8 @@ export default function AssetForm({
 
   const totalFiles = (files?.existing?.length || 0) + (files?.list?.length || 0);
   const totalDocs = (documents?.existing?.length || 0) + (documents?.list?.length || 0);
+
+  const modKey = getModKey();
 
   return (
     <>
@@ -508,7 +531,7 @@ export default function AssetForm({
               >
                 {t("common:common.cancel")}
               </Button>
-              <Button type="button" onClick={nextStep}>
+              <Button type="button" onClick={nextStep} title={`${modKey} + Enter`}>
                 {t("common:common.next")}
               </Button>
             </>
@@ -521,6 +544,7 @@ export default function AssetForm({
                 type="submit"
                 form="asset-form"
                 disabled={isSubmitting || files?.isCompressing}
+                title={`${modKey} + Enter`}
               >
                 {isSubmitting
                   ? t("common:common.saving")

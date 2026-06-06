@@ -31,6 +31,7 @@ import { SkinSelector } from "./SkinSelector";
 import * as S from "./AccountForm.styles";
 import { focusNextElement } from "../../../utils/focusUtils";
 import { BANK_SKINS } from "../bankSkins";
+import { getModKey } from "../../../utils/platform";
 
 import {
   CASH_COLORS,
@@ -254,6 +255,8 @@ export function AccountFormContent(props: AccountFormProps) {
     if (state.type === "cash") return t("accounts:accountForm.type_cash");
     return selectedStorageType?.name || t("accounts:accountForm.type_savings");
   };
+
+  const modKey = getModKey();
 
   return (
     <S.FormContainer onKeyDown={handleTabKey}>
@@ -614,7 +617,7 @@ export function AccountFormContent(props: AccountFormProps) {
             style={{ width: "auto" }}
             disabled={isLoading}
             type="submit"
-            title="Ctrl + Enter"
+            title={`${modKey} + Enter`}
           >
             {state.isEditing
               ? t("accounts:accountForm.button_save")
@@ -742,7 +745,7 @@ export function AccountFormContent(props: AccountFormProps) {
                     : "monobank";
                   actions.setActiveBankTab(targetTab);
                 }}
-                title="Ctrl + I"
+                title={`${modKey} + I`}
               >
                 <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
               </S.ChangeSkinBtn>

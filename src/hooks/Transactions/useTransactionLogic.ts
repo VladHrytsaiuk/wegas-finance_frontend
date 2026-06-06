@@ -14,6 +14,7 @@ import {
   deleteTransactionPhotoApi,
 } from "../../services/apiTransactions";
 import { compressImage } from "../../utils/compressor";
+import { isModKeyPressed } from "../../utils/platform";
 
 interface UseTransactionLogicProps {
   transactionToEdit?: any;
@@ -104,7 +105,7 @@ export const useTransactionLogic = ({
   // --- HOTKEYS ---
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const isCmdOrCtrl = isModKeyPressed(e);
 
       if (isCmdOrCtrl) {
         if (e.key === "=" || e.key === "+") {
@@ -120,6 +121,20 @@ export const useTransactionLogic = ({
         if (e.key === "0") {
           e.preventDefault();
           transformRef.current?.resetTransform();
+          return;
+        }
+        
+        // 🔥 ПІДТРИМКА ENTER (SAVE)
+        if (e.key === "Enter") {
+          const activeEl = document.activeElement as HTMLElement;
+          // If we are in a textarea, let it handle Enter normally unless we want Cmd+Enter
+          if (activeEl?.tagName === "TEXTAREA") return;
+          
+          e.preventDefault();
+          e.stopPropagation();
+          // Trigger form submission
+          const formEl = document.getElementById("transaction-form") as HTMLFormElement;
+          formEl?.requestSubmit();
           return;
         }
       }

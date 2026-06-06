@@ -1,166 +1,176 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
-  HiPlus,
+  useLocation,
+  useNavigate,
+  NavLink,
+  type NavLinkRenderProps,
+} from "react-router-dom";
+import {
   HiChevronLeft,
   HiChevronRight,
-  HiOutlineChatBubbleLeftRight,
+  HiHome,
+  HiCreditCard,
+  HiArrowPath,
+  HiChartBar,
+  HiFlag,
+  HiShoppingBag,
+  HiArrowsRightLeft,
+  HiChatBubbleLeftRight,
+  HiCog6Tooth,
+  HiSquare2Stack,
+  HiPlus,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import styled, { css } from "styled-components";
+import { isModKeyPressed } from "../utils/platform";
 
-import Logo from "./ui/Logo";
-import MainNav from "./MainNav";
-import FeedbackWidget from "./ui/FeedbackWidget"; // 👈 НЕ ЗАБУДЬ ІМПОРТУВАТИ
+import Logo from "./Logo";
+import Modal from "./ui/Modal";
+import FeedbackModal from "./Feedback/FeedbackModal";
 
-// --- STYLES ---
-
-const StyledSidebar = styled.aside<{ $collapsed: boolean }>`
+const SidebarContainer = styled.aside<{ $isCollapsed: boolean }>`
   background-color: var(--color-bg-surface);
   border-right: 1px solid var(--color-border);
-  grid-row: 1 / -1;
+  height: 100vh;
+  width: ${(props) => (props.$isCollapsed ? "80px" : "260px")};
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  padding: 1rem ${(p) => (p.$collapsed ? "0.6rem" : "1.2rem")} 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-`;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  flex-shrink: 0;
 
-const NavContainer = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin: 1rem 0;
-  padding-right: 4px;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--color-border);
-    border-radius: 10px;
+  @media (max-width: 1024px) {
+    display: none;
   }
 `;
 
-const ToggleButton = styled.button`
-  position: absolute;
-  top: 1.5rem;
-  right: -12px;
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+const Header = styled.div<{ $isCollapsed: boolean }>`
+  padding: 24px ${(props) => (props.$isCollapsed ? "12px" : "24px")};
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1000;
-  transition: all 0.2s;
-
-  &:hover {
-    color: var(--color-brand-600);
-    border-color: var(--color-brand-600);
-    transform: scale(1.1);
-  }
-`;
-
-// 👇 ТУТ ГОЛОВНА ЗМІНА: flex-direction: column
-const SidebarFooter = styled.div`
-  margin-top: auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column; /* Ставить елементи вертикально */
-  gap: 0.5rem; /* Відступ між кнопками */
-  justify-content: center;
-  position: relative; /* Важливо для позиціонування віджета */
-`;
-
-const AnimatedButton = styled(Link)<{ $collapsed: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: ${(p) => (p.$collapsed ? "38px" : "100%")};
-  height: 38px;
-  border-radius: 10px;
-  background-color: var(--color-brand-600);
-  color: white;
-  transition: all 0.3s;
+  justify-content: ${(props) => (props.$isCollapsed ? "center" : "flex-start")};
+  gap: 12px;
+  height: 80px;
   overflow: hidden;
+`;
+
+const Nav = styled.nav`
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const NavItemStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  transition: all 0.2s;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
 
   &:hover {
-    background-color: var(--color-brand-700);
+    background-color: var(--color-bg-hover);
+    color: var(--color-text-main);
+  }
+
+  &.active {
+    background-color: var(--color-brand-50);
+    color: var(--color-brand-600);
+    font-weight: 600;
   }
 `;
 
-const ButtonIconBox = styled.div`
-  min-width: 38px;
-  height: 38px;
+const StyledNavLink = styled(NavLink)`
+  ${NavItemStyle}
+`;
+
+const CollapseButton = styled.button`
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--color-text-main);
+  }
+`;
+
+const Footer = styled.div`
+  padding: 12px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const IconWrapper = styled.div`
+  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 `;
 
-const ButtonLabel = styled.span<{ $collapsed: boolean }>`
-  opacity: ${(p) => (p.$collapsed ? 0 : 1)};
-  margin-left: 0.5rem;
-  transition: opacity 0.3s;
-  white-space: nowrap;
-  font-weight: 600;
-  font-size: 0.85rem;
+const Label = styled.span<{ $isCollapsed: boolean }>`
+  opacity: ${(props) => (props.$isCollapsed ? 0 : 1)};
+  transition: opacity 0.2s;
+  font-size: 0.95rem;
 `;
 
-// Стилі кнопки фідбеку
-const FeedbackButton = styled.button<{ $collapsed: boolean }>`
+const QuickAddButton = styled.button<{ $isCollapsed: boolean }>`
+  margin: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background-color: var(--color-brand-600);
+  color: white;
+  border: none;
   display: flex;
   align-items: center;
-  justify-content: ${(p) =>
-    p.$collapsed
-      ? "center"
-      : "flex-start"}; /* Центруємо іконку при згортанні */
-  width: ${(p) =>
-    p.$collapsed
-      ? "38px"
-      : "100%"}; /* Робимо ширину такою ж, як у нижньої кнопки */
-  height: 38px; /* Фіксуємо висоту для краси */
-  padding: 0; /* Прибираємо паддінг, щоб центрування працювало */
-
-  background: transparent;
-  border: 1px dashed var(--color-border);
-  border-radius: 8px;
-  color: var(--color-text-secondary);
+  justify-content: center;
+  gap: 10px;
   cursor: pointer;
+  font-weight: 600;
   transition: all 0.2s;
-  overflow: hidden; /* Ховаємо текст при згортанні */
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
 
   &:hover {
-    background-color: var(--color-bg-page);
-    color: var(--color-brand-600);
-    border-color: var(--color-brand-600);
+    background-color: var(--color-brand-700);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
   }
 
-  svg {
-    min-width: 38px; /* Ширина блоку під іконку */
-    width: 20px;
-    height: 20px;
+  span {
+    display: ${(props) => (props.$isCollapsed ? "none" : "block")};
   }
 `;
 
-const FeedbackLabel = styled.span<{ $collapsed: boolean }>`
-  margin-left: 0.1rem; /* Трохи менший відступ, бо іконка вже в блоці */
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: ${(p) => (p.$collapsed ? 0 : 1)};
-  transition: opacity 0.2s;
-`;
+const NavGroup = styled.div`
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 0 12px;
 
-// --- COMPONENT ---
+  span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.05em;
+  }
+`;
 
 function Sidebar({
   isCollapsed,
@@ -176,7 +186,7 @@ function Sidebar({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && (e.key === "a" || e.key === "A")) {
+      if (isModKeyPressed(e) && (e.key === "a" || e.key === "A")) {
         if (
           ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "")
         )
@@ -188,85 +198,164 @@ function Sidebar({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [navigate, location]);
+  }, [location, navigate]);
 
   const toggleLabel = isCollapsed
     ? t("navigation:sidebar.expand", "Розгорнути")
     : t("navigation:sidebar.collapse", "Згорнути");
 
   return (
-    <StyledSidebar $collapsed={isCollapsed}>
-      <ToggleButton
-        onClick={onToggle}
-        aria-label={toggleLabel}
-        title={toggleLabel}
+    <SidebarContainer $isCollapsed={isCollapsed}>
+      <Header $isCollapsed={isCollapsed}>
+        <Logo size={isCollapsed ? "small" : "medium"} />
+      </Header>
+
+      <QuickAddButton
+        $isCollapsed={isCollapsed}
+        onClick={() =>
+          navigate("/transactions/new", { state: { background: location } })
+        }
+        title="Quick Add (A)"
       >
-        {isCollapsed ? (
-          <HiChevronRight size={14} />
-        ) : (
-          <HiChevronLeft size={14} />
-        )}
-      </ToggleButton>
+        <HiPlus size={20} />
+        <span>{t("navigation:sidebar.add_transaction")}</span>
+      </QuickAddButton>
 
-      <Logo isCollapsed={isCollapsed} />
+      <Nav>
+        <StyledNavLink to="/dashboard">
+          <IconWrapper>
+            <HiHome />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.dashboard")}
+          </Label>
+        </StyledNavLink>
 
-      <NavContainer>
-        <MainNav isCollapsed={isCollapsed} />
-      </NavContainer>
+        <StyledNavLink to="/transactions">
+          <IconWrapper>
+            <HiArrowPath />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.transactions")}
+          </Label>
+        </StyledNavLink>
 
-      <SidebarFooter>
-        {/* 1. ВІДЖЕТ (Позиціонується абсолютно) */}
-        {isFeedbackOpen && (
-          <FeedbackWidget
-            isCollapsed={isCollapsed}
-            onClose={() => setIsFeedbackOpen(false)}
-          />
-        )}
+        <StyledNavLink to="/accounts">
+          <IconWrapper>
+            <HiCreditCard />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.accounts")}
+          </Label>
+        </StyledNavLink>
 
-        {/* 2. КНОПКА ФІДБЕКУ (Тепер вона зверху завдяки flex-direction: column) */}
-        <FeedbackButton
-          $collapsed={isCollapsed}
-          onClick={() => setIsFeedbackOpen(!isFeedbackOpen)}
+        <NavGroup>
+          {!isCollapsed && <span>{t("navigation:sidebar.group_planning")}</span>}
+        </NavGroup>
+
+        <StyledNavLink to="/goals">
+          <IconWrapper>
+            <HiFlag />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.goals")}
+          </Label>
+        </StyledNavLink>
+
+        <StyledNavLink to="/wishlist">
+          <IconWrapper>
+            <HiShoppingBag />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.wishlist")}
+          </Label>
+        </StyledNavLink>
+
+        <NavGroup>
+          {!isCollapsed && <span>{t("navigation:sidebar.group_analysis")}</span>}
+        </NavGroup>
+
+        <StyledNavLink to="/stats">
+          <IconWrapper>
+            <HiChartBar />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.stats")}
+          </Label>
+        </StyledNavLink>
+
+        <StyledNavLink to="/utility">
+          <IconWrapper>
+            <HiSquare2Stack />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.utility")}
+          </Label>
+        </StyledNavLink>
+
+        <StyledNavLink to="/counterparties">
+          <IconWrapper>
+            <HiArrowsRightLeft />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.counterparties")}
+          </Label>
+        </StyledNavLink>
+      </Nav>
+
+      <Footer>
+        <CollapseButton onClick={onToggle} title={toggleLabel}>
+          {isCollapsed ? (
+            <HiChevronRight size={20} />
+          ) : (
+            <>
+              <HiChevronLeft size={20} />
+              <Label $isCollapsed={isCollapsed} style={{ marginLeft: "12px" }}>
+                {t("navigation:sidebar.collapse_action")}
+              </Label>
+            </>
+          )}
+        </CollapseButton>
+
+        <StyledNavLink
+          as="button"
+          to="#"
+          className={({ isActive }: NavLinkRenderProps) =>
+            isActive ? "active" : ""
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            setIsFeedbackOpen(true);
+          }}
           title={t("navigation:sidebar.feedback_tooltip")}
           aria-label={t("navigation:sidebar.feedback_tooltip")}
         >
-          {/* Обгортка для іконки, щоб центрувати як в нижній кнопці */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minWidth: "38px",
-              height: "38px",
-            }}
-          >
-            <HiOutlineChatBubbleLeftRight size={20} />
-          </div>
+          <IconWrapper>
+            <HiChatBubbleLeftRight />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.feedback")}
+          </Label>
+        </StyledNavLink>
 
-          {!isCollapsed && (
-            <FeedbackLabel $collapsed={isCollapsed}>
-              {t("navigation:feedback")}
-            </FeedbackLabel>
-          )}
-        </FeedbackButton>
+        <StyledNavLink to="/settings">
+          <IconWrapper>
+            <HiCog6Tooth />
+          </IconWrapper>
+          <Label $isCollapsed={isCollapsed}>
+            {t("navigation:sidebar.settings")}
+          </Label>
+        </StyledNavLink>
+      </Footer>
 
-        {/* 3. ОСНОВНА КНОПКА (Знизу) */}
-        <AnimatedButton
-          to="/transactions/new"
-          state={{ background: location }}
-          $collapsed={isCollapsed}
-          title={isCollapsed ? t("navigation:sidebar.new_transaction") : ""}
-          aria-label={t("navigation:sidebar.new_transaction")}
-        >
-          <ButtonIconBox>
-            <HiPlus size={20} />
-          </ButtonIconBox>
-          <ButtonLabel $collapsed={isCollapsed}>
-            {t("navigation:sidebar.new_transaction")}
-          </ButtonLabel>
-        </AnimatedButton>
-      </SidebarFooter>
-    </StyledSidebar>
+      {/* Feedback Modal */}
+      <Modal>
+        <FeedbackModal
+          isOpen={isFeedbackOpen}
+          onClose={() => setIsFeedbackOpen(false)}
+        />
+      </Modal>
+    </SidebarContainer>
   );
 }
 

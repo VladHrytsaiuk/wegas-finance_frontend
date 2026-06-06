@@ -4,44 +4,62 @@ import { HiCloudArrowUp, HiXMark } from "react-icons/hi2";
 
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import { AmountInput } from "../ui/AmountInput";
 import { BaseSelect } from "../ui/Select/BaseSelect";
-import type { WishlistGroup } from "../../types";
+import type { WishlistGroup, WishlistItem } from "../../types";
 import { useModal } from "../ui/Modal";
 import * as S from "./WishlistModals.styles";
 import { useWishlistItemForm } from "../../hooks/Wishlist/useWishlistForms";
 import Spinner from "../ui/Spinner";
-import { getUploadedFileUrl } from "../../utils/helpers";
+import { getModKey, isModKeyPressed } from "../../utils/platform";
 
 interface Props {
   onCloseModal?: () => void;
   groups: WishlistGroup[];
-  initialData: any;
-  onSave: (data: any) => void;
+  item: WishlistItem;
+  onUpdate: (id: string, data: any) => void;
 }
 
 export default function EditWishModal({
   onCloseModal,
   groups,
-  initialData,
-  onSave,
+  item,
+  onUpdate,
 }: Props) {
   const { t } = useTranslation();
   const { setIsDirty, close } = useModal();
 
-  const { state, actions, handlers, refs } = useWishlistItemForm(initialData);
+  const { state, actions, handlers, refs } = useWishlistItemForm(item);
 
   useEffect(() => {
     setIsDirty(state.isDirty);
   }, [state.isDirty, setIsDirty]);
 
+  // Sync Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isModKeyPressed(e) && e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        // Trigger the form submission
+        const formEl = document.getElementById("edit-wish-form") as HTMLFormElement;
+        formEl?.requestSubmit();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!state.name.trim()) return;
 
-    onSave(handlers.getPayload());
+    onUpdate(item.id, handlers.getPayload());
     setIsDirty(false);
     close();
   };
+
+  const modKey = getModKey();
 
   return (
     <S.ModalContainer style={S.ModalContainerOverrides}>
@@ -65,10 +83,7 @@ export default function EditWishModal({
                 </S.UploadPlaceholder>
               ) : state.photoPreview ? (
                 <>
-                  <S.PreviewImage
-                    src={getUploadedFileUrl(state.photoPreview)}
-                    alt="Preview"
-                  />
+                  <S.PreviewImage src={state.photoPreview} alt="Preview" />
                   <S.RemovePhotoButton>
                     <Button
                       type="button"
@@ -103,6 +118,7 @@ export default function EditWishModal({
               <Input
                 autoFocus
                 required
+                placeholder={t("shopping_wishlist:wishlist.item_name_placeholder", "AirPods Pro")}
                 value={state.name}
                 onChange={(e) => actions.setName(e.target.value)}
               />
@@ -111,12 +127,10 @@ export default function EditWishModal({
             <S.InputGroup>
               <S.FieldGroup>
                 <S.Label>{t("shopping_wishlist:wishlist.price")}</S.Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
+                <AmountInput
                   value={state.price}
-                  onChange={(e) => actions.setPrice(e.target.value)}
+                  onChange={(val) => actions.setPrice(val)}
+                  placeholder="0.00"
                 />
               </S.FieldGroup>
               <S.FieldGroup>
@@ -139,6 +153,7 @@ export default function EditWishModal({
               <S.Label>{t("shopping_wishlist:wishlist.link")}</S.Label>
               <Input
                 type="url"
+                placeholder="https://..."
                 value={state.url}
                 onChange={(e) => actions.setUrl(e.target.value)}
               />
@@ -217,9 +232,11 @@ export default function EditWishModal({
           variation="primary"
           disabled={!state.name.trim()}
           form="edit-wish-form"
+          title={`${modKey} + Enter`}
         >
           {t("common:common.save")}
         </Button>
       </S.FooterActions>
     </S.ModalContainer>
-  );}
+  );
+}

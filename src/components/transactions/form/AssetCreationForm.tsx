@@ -13,6 +13,7 @@ import {
 import { BaseSelect } from "../../ui/Select/BaseSelect";
 import { focusNextElement } from "../../../utils/focusUtils";
 import { type CreateAssetOnFlyInput } from "../../../services/apiTransactions";
+import { isModKeyPressed } from "../../../utils/platform";
 import * as S from "./AssetSelector.styles";
 
 interface AssetCreationFormProps {
@@ -96,7 +97,7 @@ export const AssetCreationForm = ({
   };
 
   const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && (e.key === "s" || e.key === "S")) {
+    if (isModKeyPressed(e) && (e.key === "s" || e.key === "S")) {
       e.preventDefault();
       e.stopPropagation();
       handleSave();

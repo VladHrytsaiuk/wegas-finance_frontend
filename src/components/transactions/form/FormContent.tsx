@@ -39,6 +39,7 @@ import { TimePicker } from "../../ui/TimePicker";
 import { ItemsTable } from "./ItemsTable";
 import { AssetSelector } from "./AssetSelector";
 import { Overlay, StyledModal } from "../../ui/Modal";
+import { getModKey } from "../../../utils/platform";
 
 import * as S from "./styles";
 import toast from "react-hot-toast";
@@ -683,7 +684,7 @@ export const FormContent: React.FC<FormContentProps> = ({
               state.isCompressing
             }
             type="submit"
-            title="Ctrl + Enter"
+            title={`${getModKey()} + Enter`}
             onKeyDown={handleSaveKeyDown}
           >
             {state.isEditSession

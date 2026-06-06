@@ -15,6 +15,7 @@ import {
 } from "react-icons/hi2";
 import Modal from "../../ui/Modal";
 import { DeleteReceiptDialog } from "../../ui/DeleteReceiptDialog";
+import { getModKey } from "../../../utils/platform";
 import * as S from "./styles";
 
 interface ImagePanelProps {
@@ -42,6 +43,8 @@ export const ImagePanel = ({
   isDeleting,
   transformRef, // Отримуємо ref
 }: ImagePanelProps) => {
+  const modKey = getModKey();
+
   return (
     <S.ImagePanel>
       <TransformWrapper
@@ -56,21 +59,21 @@ export const ImagePanel = ({
               <S.ControlButton
                 type="button"
                 onClick={() => zoomIn()}
-                title="Zoom In (Cmd +)"
+                title={`Zoom In (${modKey} +)`}
               >
                 <HiMagnifyingGlassPlus />
               </S.ControlButton>
               <S.ControlButton
                 type="button"
                 onClick={() => zoomOut()}
-                title="Zoom Out (Cmd -)"
+                title={`Zoom Out (${modKey} -)`}
               >
                 <HiMagnifyingGlassMinus />
               </S.ControlButton>
               <S.ControlButton
                 type="button"
                 onClick={() => resetTransform()}
-                title="Reset (Cmd 0)"
+                title={`Reset (${modKey} 0)`}
               >
                 <HiArrowUturnLeft />
               </S.ControlButton>

@@ -10,7 +10,8 @@ import type { WishlistGroup } from "../../types";
 import { useModal } from "../ui/Modal";
 import * as S from "./WishlistModals.styles";
 import { useWishlistItemForm } from "../../hooks/Wishlist/useWishlistForms";
-import Spinner from "../ui/Spinner"; // Перевір шлях до твого спінера!
+import Spinner from "../ui/Spinner";
+import { getModKey, isModKeyPressed } from "../../utils/platform";
 
 interface Props {
   onCloseModal?: () => void;
@@ -37,6 +38,21 @@ export default function CreateWishModal({
     setIsDirty(state.isDirty);
   }, [state.isDirty, setIsDirty]);
 
+  // Sync Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isModKeyPressed(e) && e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        // Trigger the form submission
+        const formEl = document.getElementById("create-wish-form") as HTMLFormElement;
+        formEl?.requestSubmit();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!state.name.trim()) return;
@@ -45,6 +61,8 @@ export default function CreateWishModal({
     setIsDirty(false);
     close();
   };
+
+  const modKey = getModKey();
 
   return (
     <S.ModalContainer style={S.ModalContainerOverrides}>
@@ -217,6 +235,7 @@ export default function CreateWishModal({
           variation="primary"
           disabled={!state.name.trim()}
           form="create-wish-form"
+          title={`${modKey} + Enter`}
         >
           {t("common:common.save")}
         </Button>

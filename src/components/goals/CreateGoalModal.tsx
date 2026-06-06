@@ -32,6 +32,7 @@ import * as S from "./CreateGoalModal.styles";
 import type { Goal } from "../../types";
 import { CURRENCY_SYMBOLS } from "../../utils/currency";
 import { CurrencySymbol } from "../ui/CurrencySymbol";
+import { getModKey, isModKeyPressed } from "../../utils/platform";
 
 interface CreateGoalModalProps {
   isOpen: boolean;
@@ -66,7 +67,7 @@ function CreateGoalFormContent({
     t,
   } = useCreateGoalForm(isOpen, onClose, editingGoal);
 
-  // Sync ESC key handling
+  // Sync Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -76,11 +77,23 @@ function CreateGoalFormContent({
         } else {
           w.handleCloseAttempt();
         }
+        return;
+      }
+
+      const isMod = isModKeyPressed(e);
+      if (isMod && e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        // Trigger the form submission
+        const formEl = document.getElementById("goal-form") as HTMLFormElement;
+        formEl?.requestSubmit();
       }
     };
     document.addEventListener("keydown", handleKeyDown, true);
     return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [w]);
+
+  const modKey = getModKey();
 
   const modalContent = (
     <Overlay onClick={w.handleCloseAttempt}>
@@ -547,6 +560,7 @@ function CreateGoalFormContent({
                 form="goal-form"
                 disabled={d.isLoading}
                 size="small"
+                title={`${modKey} + Enter`}
               >
                 {d.isLoading ? (
                   <Spinner size="small" />
