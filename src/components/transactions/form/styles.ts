@@ -141,13 +141,21 @@ export const ControlButton = styled.button<{ $variant?: "danger" }>`
 
 // --- FORM GENERAL AREA ---
 
+export const RightSideWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-surface);
+`;
+
 export const FormScrollArea = styled.div`
-  padding: 1.5rem 2rem;
+  flex: 1;
+  padding: 0.5rem 2rem 2.5rem 2rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  height: 100%;
   background-color: var(--color-bg-surface);
 
   &::-webkit-scrollbar {
@@ -160,6 +168,7 @@ export const FormScrollArea = styled.div`
 
   @media (max-width: 768px) {
     padding: 1rem;
+    padding-bottom: 2rem;
   }
 `;
 
@@ -167,8 +176,11 @@ export const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.8rem;
-  padding-top: 0.5rem;
+  padding: 1.5rem 2rem 0.8rem 2rem;
+  background-color: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 10;
+  flex-shrink: 0;
 `;
 
 export const Title = styled.h2`
@@ -179,7 +191,7 @@ export const Title = styled.h2`
 `;
 
 export const ConditionalFieldsContainer = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 `;
 
 export const RowGroup = styled.div<{ $columns?: string }>`
@@ -312,9 +324,21 @@ export const Footer = styled.div`
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  margin-top: auto;
-  padding-top: 1.5rem;
+  padding: 1.25rem 2rem;
+  background-color: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
+  z-index: 20;
+  flex-shrink: 0;
+
+  /* Sticky behavior */
+  position: sticky;
+  bottom: 0;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    gap: 1rem;
+  }
 `;
 
 export const FooterNoteWrapper = styled.div`
@@ -391,7 +415,7 @@ export const CompressingText = styled.span`
 // --- ASSET SECTION ---
 
 export const AssetSection = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 `;
 
 export const AssetContentWrapper = styled.div`
@@ -494,7 +518,7 @@ export const UnlinkModalButtons = styled.div`
 // --- ITEMS TABLE STYLES ---
 
 export const ItemsTableContainer = styled.div`
-  margin-top: 0.5rem;
+  margin-top: 0;
 `;
 
 export const ItemsContainer = styled.div`

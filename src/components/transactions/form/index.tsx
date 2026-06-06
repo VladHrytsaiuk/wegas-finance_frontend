@@ -247,7 +247,7 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
             />
           )}
 
-          <S.FormScrollArea>
+          <S.RightSideWrapper>
             <form
               onSubmit={handlers.handleSubmit}
               onKeyDown={handleFormKeyDown}
@@ -274,7 +274,7 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
                 modalRef={modalContainerRef}
               />
             </form>
-          </S.FormScrollArea>
+          </S.RightSideWrapper>
         </S.SplitLayout>
       </S.ModalContainer>
 
