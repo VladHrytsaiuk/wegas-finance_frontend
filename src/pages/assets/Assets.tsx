@@ -3,34 +3,53 @@ import { HiPlus } from "react-icons/hi2";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { Button } from "../../components/ui/Button";
+import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import AssetForm from "./AssetForm";
 import AssetsTable from "../../components/assets/AssetsTable";
 import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
 
 import { useAssets } from "../../hooks/Assets/useAssets";
+import { useAssetsFilter } from "../../hooks/Assets/useAssetsFilter";
 import * as S from "./Assets.styles";
 
 export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
   const { assets, isLoading, isDeleting } = state;
 
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    setSortBy,
+    filteredAssets,
+    sortOptions,
+    handleClearAll,
+  } = useAssetsFilter(assets);
+
   if (isLoading) return <p>{t("common:shared.loading")}</p>;
 
   return (
     <S.PageContainer>
       <Modal>
-        <S.ActionsBar>
+        <TableToolbar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder={t("assets:assetsPage.search_placeholder", "Пошук активів...")}
+          sortOptions={sortOptions}
+          sortValue={sortBy}
+          onSortChange={setSortBy}
+          onClearAll={handleClearAll}
+        >
           <Modal.Open opens="create-asset">
-            <Button>
-              <HiPlus />
+            <Button variation="primary" size="medium" icon={<HiPlus />}>
               <span>{t("assets:assetsPage.button_add")}</span>
             </Button>
           </Modal.Open>
-        </S.ActionsBar>
+        </TableToolbar>
 
         {/* Винесена таблиця */}
         <AssetsTable
-          assets={assets}
+          assets={filteredAssets}
           helpers={helpers}
           actions={actions}
           t={t}

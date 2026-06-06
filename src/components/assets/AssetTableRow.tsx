@@ -1,5 +1,5 @@
 import { memo, useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom"; // 🔥 Додано імпорт
+import { createPortal } from "react-dom";
 import {
   HiPencil,
   HiTrash,
@@ -21,7 +21,6 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      // Закриваємо меню, якщо клік був не по кнопці і не по самому меню
       if (
         menuRef.current &&
         !menuRef.current.contains(e.target) &&
@@ -32,12 +31,10 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
       }
     };
 
-    // Закриваємо меню при скролі сторінки або таблиці
     const handleScroll = () => setOpen(false);
 
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
-      // true вказує на фазу захоплення (capture phase), щоб ловити скрол у будь-якому контейнері
       window.addEventListener("scroll", handleScroll, true);
     }
     return () => {
@@ -51,8 +48,8 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setCoords({
-        top: rect.bottom + 4, // 4 пікселі відступ знизу від кнопки
-        right: window.innerWidth - rect.right, // Вирівнюємо по правому краю кнопки
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right,
       });
     }
     setOpen((v) => !v);
@@ -81,7 +78,7 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
                 />
               )}
             </S.AssetName>
-            <S.AssetType>{item.type}</S.AssetType>
+            <S.AssetType>{helpers.getAssetTypeLabel(item.type)}</S.AssetType>
           </div>
         </S.InfoWrapper>
       </Table.Cell>
@@ -133,13 +130,11 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
           </Modal.Open>
         </S.DesktopActions>
 
-        {/* --- MOBILE ACTIONS --- */}
         <S.MobileActions onClick={(e) => e.stopPropagation()}>
           <S.MenuToggle ref={buttonRef} onClick={handleToggle}>
             <HiEllipsisVertical size={20} />
           </S.MenuToggle>
 
-          {/* 🔥 Використовуємо createPortal для меню */}
           {open &&
             createPortal(
               <S.MenuDropdown
@@ -152,24 +147,23 @@ export const AssetTableRow = memo(({ item, helpers, actions, t }) => {
                     disabled={!hasPhoto}
                     style={{ opacity: hasPhoto ? 1 : 0.3 }}
                   >
-                    <HiPhoto size={16} />{" "}
-                    {t("assets:assetsPage.tooltip_photo" || "Фото")}
+                    <HiPhoto size={16} /> {t("assets:assetsPage.tooltip_photo")}
                   </S.MenuItemButton>
                 </Modal.Open>
 
                 <Modal.Open opens={`edit-asset-${item.id}`}>
                   <S.MenuItemButton>
-                    <HiPencil size={16} /> {t("common:common.edit" || "Редагувати")}
+                    <HiPencil size={16} /> {t("common:common.edit")}
                   </S.MenuItemButton>
                 </Modal.Open>
 
                 <Modal.Open opens={`delete-asset-${item.id}`}>
                   <S.MenuItemButton $variant="delete">
-                    <HiTrash size={16} /> {t("common:common.delete" || "Видалити")}
+                    <HiTrash size={16} /> {t("common:common.delete")}
                   </S.MenuItemButton>
                 </Modal.Open>
               </S.MenuDropdown>,
-              document.body, // Рендеримо меню безпосередньо в body
+              document.body,
             )}
         </S.MobileActions>
       </Table.Cell>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -73,6 +73,27 @@ export const useAssets = () => {
     return images;
   };
 
+  // 🔥 NEW: Хелпер для перекладу типів активів
+  const getAssetTypeLabel = useCallback(
+    (type: string) => {
+      switch (type) {
+        case "electronics":
+          return t("assets:assetForm.type_electronics");
+        case "furniture":
+          return t("assets:assetForm.type_furniture");
+        case "car":
+          return t("assets:assetForm.type_car");
+        case "real_estate":
+          return t("assets:assetForm.type_real_estate");
+        case "other":
+          return t("assets:assetForm.type_other");
+        default:
+          return type;
+      }
+    },
+    [t],
+  );
+
   return {
     state: {
       assets,
@@ -88,6 +109,7 @@ export const useAssets = () => {
       formatDate,
       isWarrantyExpired,
       getAssetImages,
+      getAssetTypeLabel,
     },
     t,
   };
