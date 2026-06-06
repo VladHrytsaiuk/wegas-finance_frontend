@@ -19,10 +19,13 @@ export default function Assets() {
   const {
     searchQuery,
     setSearchQuery,
+    filters,
+    filtersConfig,
     sortBy,
     setSortBy,
     filteredAssets,
     sortOptions,
+    handleFilterChange,
     handleClearAll,
   } = useAssetsFilter(assets);
 
@@ -35,6 +38,10 @@ export default function Assets() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           searchPlaceholder={t("assets:assetsPage.search_placeholder", "Пошук активів...")}
+          searchPosition="top"
+          filtersConfig={filtersConfig}
+          filterValues={filters}
+          onFilterChange={handleFilterChange}
           sortOptions={sortOptions}
           sortValue={sortBy}
           onSortChange={setSortBy}

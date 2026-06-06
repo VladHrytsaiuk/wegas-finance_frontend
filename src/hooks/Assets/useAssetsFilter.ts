@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { Asset } from "../../types";
+import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 
 export function useAssetsFilter(assets: Asset[] = []) {
   const { t } = useTranslation();
@@ -8,8 +9,11 @@ export function useAssetsFilter(assets: Asset[] = []) {
   // --- STATE ---
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("purchase_date-desc"); // За замовчуванням: нові покупки
+  const [filters, setFilters] = useState({});
 
   // --- CONFIGS ---
+  const filtersConfig: FilterConfig[] = []; // Поки що без фільтрів
+
   const sortOptions = useMemo(
     () => [
       {
@@ -72,18 +76,26 @@ export function useAssetsFilter(assets: Asset[] = []) {
     return result;
   }, [assets, searchQuery, sortBy]);
 
+  const handleFilterChange = (key: string, value: string[] | { min: string; max: string }) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleClearAll = () => {
     setSearchQuery("");
+    setFilters({});
     setSortBy("purchase_date-desc");
   };
 
   return {
     searchQuery,
     setSearchQuery,
+    filters,
+    filtersConfig,
     sortBy,
     setSortBy,
     filteredAssets,
     sortOptions,
+    handleFilterChange,
     handleClearAll,
   };
 }

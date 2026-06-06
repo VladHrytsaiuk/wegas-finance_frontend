@@ -65,7 +65,7 @@ export const useAssets = () => {
     let images: string[] = [];
 
     if (item.photos && item.photos.length > 0) {
-      images = item.photos.map((p: any) => p.path);
+      images = item.photos.map((p: { path: string }) => p.path);
     } else if (item.photo) {
       images = [item.photo];
     }
