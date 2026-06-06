@@ -130,7 +130,7 @@ function Goals() {
         !isLoading && (
           <S.EmptyState>
             <S.EmptyIconWrapper>
-              <SmartIcon size={64} />
+              <SmartIcon iconName="HiFlag" size={32} />
             </S.EmptyIconWrapper>
             <div>
               <h3>
