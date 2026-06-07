@@ -22,9 +22,6 @@ export const DetailedTable = ({
 }: Props) => {
   const { rows, t } = useDetailedTable({ data, totalSum, type });
 
-  if (!data || data.length === 0)
-    return <S.Empty>{t("stats_utility:statisticsPage.table_no_data")}</S.Empty>;
-
   return (
     <S.TableWrapper>
       <S.TableHead>

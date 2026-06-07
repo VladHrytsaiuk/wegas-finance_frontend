@@ -9,6 +9,7 @@ export interface DashboardStats {
 }
 
 export interface TopStat {
+  id?: string;
   name: string;
   metadata: string;
   currency: string;

@@ -23,6 +23,7 @@ interface Props {
   type?: "income" | "expense";
   activeTab?: "category" | "counterparty" | "tag";
   currency?: string;
+  hideHeader?: boolean;
 }
 
 export const ExpensesPieWidget = (props: Props) => {
@@ -42,18 +43,20 @@ export const ExpensesPieWidget = (props: Props) => {
 
   return (
     <S.WidgetCard>
-      <S.Header>
-        <S.Title>{widgetTitle}</S.Title>
-        {shouldFetch && props.globalFilter && (
-          <WidgetControls
-            mini={true}
-            currentLabel={localFilter.label || t("legacy:filters.period_label")}
-            currentAccountIds={localFilter.accountIds}
-            onFilterChange={handleFilterUpdate}
-            variant="local"
-          />
-        )}
-      </S.Header>
+      {!props.hideHeader && (
+        <S.Header>
+          <S.Title>{widgetTitle}</S.Title>
+          {shouldFetch && props.globalFilter && (
+            <WidgetControls
+              mini={true}
+              currentLabel={localFilter.label || t("legacy:filters.period_label")}
+              currentAccountIds={localFilter.accountIds}
+              onFilterChange={handleFilterUpdate}
+              variant="local"
+            />
+          )}
+        </S.Header>
+      )}
 
       {isLoading ? (
         <CenteredSpinner isContainer />

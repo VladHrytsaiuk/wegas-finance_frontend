@@ -46,23 +46,26 @@ export const useStatistics = () => {
   >("category");
 
   // --- Queries ---
-  const { data: listData = [] } = useQuery({
+  const { data: listData = [], isLoading: isListLoading } = useQuery({
     queryKey: ["stats", "list", flowType, activeTab, filter, currency],
     queryFn: () =>
       statsService.getTopStats(flowType, activeTab, { ...filter, currency }),
+    placeholderData: (prev) => prev,
   });
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: isCatLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategoriesApi,
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: counterparties = [] } = useQuery({
+  const { data: counterparties = [], isLoading: isCpLoading } = useQuery({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
     staleTime: 5 * 60 * 1000,
   });
+
+  const isLoading = isListLoading || isCatLoading || isCpLoading;
 
   // --- Data Transformation (Enrichment) ---
   const enrichedData = useMemo(() => {
@@ -76,7 +79,7 @@ export const useStatistics = () => {
       // Logic for Categories
       if (activeTab === "category") {
         const found = categories.find(
-          (c: any) => c.id === item.id || c.name === item.name
+          (c: any) => String(c.id) === String(item.id) || c.name === item.name
         );
         finalColor = found?.color || item.color || stringToColor(item.name);
         finalIcon = found?.icon || item.icon;
@@ -86,7 +89,7 @@ export const useStatistics = () => {
       // Logic for Counterparties
       if (activeTab === "counterparty") {
         const foundCP = counterparties.find(
-          (c: any) => c.id === item.id || c.name === item.name
+          (c: any) => String(c.id) === String(item.id) || c.name === item.name
         );
 
         const nestedCategory = foundCP?.category;
@@ -137,6 +140,7 @@ export const useStatistics = () => {
       enrichedData,
       totalSum,
       currency,
+      isLoading,
     },
     actions: {
       setFilter,

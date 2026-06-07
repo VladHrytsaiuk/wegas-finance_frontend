@@ -70,9 +70,9 @@ export const ToggleBtn = styled.button<{
 
 export const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 500px 1fr;
   gap: 1.5rem;
-  align-items: start;
+  align-items: start; /* 🔥 Не розтягуємо, щоб не стрибало */
 
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
@@ -83,19 +83,21 @@ export const ChartSection = styled.div`
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-height: 450px;
 `;
 
 /* --- TABS --- */
 export const TabsContainer = styled.div`
   display: flex;
-  gap: 0.5rem;
-  background-color: var(--color-bg-main);
-  border-radius: 10px;
-  margin-bottom: 0.5rem;
+  gap: 0.25rem;
+  background-color: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  padding: 4px;
+  border-radius: 12px;
   width: fit-content;
 `;
 
@@ -103,25 +105,36 @@ export const Tab = styled.button<{ $active: boolean }>`
   background: ${(p) => (p.$active ? "var(--color-bg-surface)" : "transparent")};
   color: ${(p) =>
     p.$active ? "var(--color-brand-600)" : "var(--color-text-secondary)"};
-  box-shadow: ${(p) => (p.$active ? "0 1px 2px rgba(0,0,0,0.1)" : "none")};
+  box-shadow: ${(p) =>
+    p.$active ? "0 2px 4px rgba(0,0,0,0.05)" : "none"};
   font-weight: 600;
-  padding: 6px 16px;
+  padding: 8px 20px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.9rem;
+  
   &:hover {
     color: var(--color-text-main);
+    background: ${(p) => (p.$active ? "var(--color-bg-surface)" : "var(--color-bg-hover)")};
   }
 `;
 
 /* --- EXTRA CONTAINERS --- */
 export const TrendContainer = styled.div`
   width: 100%;
-  height: 300px;
-  margin-bottom: 2rem;
+  height: 400px;
+  margin-bottom: 0.5rem;
 `;
 
 export const PieContainer = styled.div`
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 450px;
+
+  & > div {
+    height: 100%;
+  }
 `;

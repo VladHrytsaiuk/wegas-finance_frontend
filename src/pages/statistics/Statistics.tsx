@@ -1,4 +1,4 @@
-import { HiArrowDownTray } from "react-icons/hi2";
+import { HiArrowDownTray, HiChartPie } from "react-icons/hi2";
 
 import { WidgetControls } from "../../components/stats/widgets/WidgetControls";
 import { TrendWidget } from "../../components/stats/widgets/TrendWidget";
@@ -7,6 +7,8 @@ import { DetailedTable } from "../../components/stats/DetailedTable";
 import ExportStatsModal from "../../components/stats/ExportModal";
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 import { useStatistics } from "../../hooks/Stats/useStatistics";
 import * as S from "./Statistics.styles";
@@ -21,6 +23,7 @@ export const Statistics = () => {
     enrichedData,
     totalSum,
     currency,
+    isLoading,
   } = state;
 
   return (
@@ -47,7 +50,9 @@ export const Statistics = () => {
 
             <WidgetControls
               variant="local"
-              currentLabel={filter.label || t("stats_utility:statisticsPage.filter_period")}
+              currentLabel={
+                filter.label || t("stats_utility:statisticsPage.filter_period")
+              }
               currentAccountIds={filter.accountIds}
               onFilterChange={actions.handleFilterChange}
               currentFrom={filter.from}
@@ -55,6 +60,7 @@ export const Statistics = () => {
             />
 
             <Button
+              variation="secondary"
               icon={<HiArrowDownTray size={18} />}
               onClick={() => actions.setIsExportModalOpen(true)}
             >
@@ -76,46 +82,61 @@ export const Statistics = () => {
           />
         </S.TrendContainer>
 
-        <S.TabsContainer>
-          <S.Tab
-            $active={activeTab === "category"}
-            onClick={() => actions.setActiveTab("category")}
-          >
-            {t("stats_utility:statisticsPage.tab_categories")}
-          </S.Tab>
-          <S.Tab
-            $active={activeTab === "counterparty"}
-            onClick={() => actions.setActiveTab("counterparty")}
-          >
-            {t("stats_utility:statisticsPage.tab_counterparties")}
-          </S.Tab>
-          <S.Tab
-            $active={activeTab === "tag"}
-            onClick={() => actions.setActiveTab("tag")}
-          >
-            {t("stats_utility:statisticsPage.tab_tags")}
-          </S.Tab>
-        </S.TabsContainer>
+        <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "1rem" }}>
+          <S.TabsContainer>
+            <S.Tab
+              $active={activeTab === "category"}
+              onClick={() => actions.setActiveTab("category")}
+            >
+              {t("stats_utility:statisticsPage.tab_categories")}
+            </S.Tab>
+            <S.Tab
+              $active={activeTab === "counterparty"}
+              onClick={() => actions.setActiveTab("counterparty")}
+            >
+              {t("stats_utility:statisticsPage.tab_counterparties")}
+            </S.Tab>
+            <S.Tab
+              $active={activeTab === "tag"}
+              onClick={() => actions.setActiveTab("tag")}
+            >
+              {t("stats_utility:statisticsPage.tab_tags")}
+            </S.Tab>
+          </S.TabsContainer>
+        </div>
 
-        <S.ContentGrid>
-          <S.PieContainer>
-            <ExpensesPieWidget
-              data={enrichedData}
-              currency={currency}
-              type={flowType}
-              activeTab={activeTab}
-            />
-          </S.PieContainer>
+        {isLoading && enrichedData.length === 0 ? (
+          <div style={{ height: "450px", position: "relative" }}>
+            <CenteredSpinner isContainer />
+          </div>
+        ) : enrichedData.length === 0 ? (
+          <EmptyState
+            icon={<HiChartPie />}
+            title={t("dashboard:dashboard.no_data")}
+            description={t("common:common.try_adjusting_search")}
+          />
+        ) : (
+          <S.ContentGrid>
+            <S.PieContainer>
+              <ExpensesPieWidget
+                data={enrichedData}
+                currency={currency}
+                type={flowType}
+                activeTab={activeTab}
+                hideHeader
+              />
+            </S.PieContainer>
 
-          <S.ChartSection>
-            <DetailedTable
-              data={enrichedData}
-              currency={currency}
-              totalSum={totalSum}
-              type={activeTab}
-            />
-          </S.ChartSection>
-        </S.ContentGrid>
+            <S.ChartSection>
+              <DetailedTable
+                data={enrichedData}
+                currency={currency}
+                totalSum={totalSum}
+                type={activeTab}
+              />
+            </S.ChartSection>
+          </S.ContentGrid>
+        )}
 
         {isExportModalOpen && (
           <ExportStatsModal
