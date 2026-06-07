@@ -414,34 +414,130 @@ export const StyledDayPickerWrapper = styled.div`
     --rdp-cell-size: 40px;
     --rdp-accent-color: var(--color-brand-600);
     --rdp-background-color: var(--color-brand-50);
+    --rdp-accent-color-dark: var(--color-brand-700);
+    
+    /* Додаткові змінні для повного контролю */
+    --rdp-outline: 2px solid var(--color-brand-200);
+    --rdp-outline-focus: 2px solid var(--color-brand-600);
+    --rdp-range_start-date-background-color: var(--color-brand-600);
+    --rdp-range_end-date-background-color: var(--color-brand-600);
+    --rdp-range_middle-background-color: var(--color-brand-50);
+    --rdp-selected-color: white;
+    --rdp-selected-border: none; /* 🔥 ПРИБИРАЄМО ОБВЕДЕННЯ */
+    
     margin: 0;
   }
-  .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    background-color: var(--color-bg-hover);
+
+  /* 🔥 ПРИБИРАЄМО СИНЮ ОБВОДКУ (OUTLINE) */
+  .rdp-button:focus,
+  .rdp-button:active,
+  .rdp-day_button:focus,
+  .rdp-day_button:active,
+  .rdp-day:focus,
+  *:focus {
+    outline: none !important;
+    box-shadow: none !important;
   }
-  .rdp-day_range_start,
-  .rdp-day_range_end {
+  
+  .rdp-button:focus-visible,
+  .rdp-day_button:focus-visible {
+    outline: 2px solid var(--color-brand-300) !important;
+    outline-offset: -2px;
+  }
+
+  /* 🔥 ФІКС ВИБРАНИХ ДНІВ ТА ДІАПАЗОНУ (ЄДИНА ЛІНІЯ) */
+  
+  .rdp-day {
+    padding: 0 !important;
+    background: transparent !important; /* Клітинка завжди прозора */
+  }
+
+  .rdp-day_button {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    border: none !important; /* 🔥 ПРИБИРАЄМО ОБВОДКУ */
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important; /* Дефолт для середини діапазону */
+  }
+
+  /* Початок діапазону (КНОПКА) */
+  .rdp-range_start .rdp-day_button, 
+  .rdp-day_range_start .rdp-day_button {
     background-color: var(--color-brand-600) !important;
     color: white !important;
-    border-radius: 8px !important;
-    opacity: 1 !important;
+    border-radius: 100px 0 0 100px !important;
   }
-  .rdp-day_range_middle {
-    background-color: var(--color-brand-100) !important;
-    color: var(--color-brand-900) !important;
+
+  /* Кінець діапазону (КНОПКА) */
+  .rdp-range_end .rdp-day_button,
+  .rdp-day_range_end .rdp-day_button {
+    background-color: var(--color-brand-600) !important;
+    color: white !important;
+    border-radius: 0 100px 100px 0 !important;
+  }
+
+  /* Початок і кінець — один день (КНОПКА) */
+  .rdp-range_start.rdp-range_end .rdp-day_button,
+  .rdp-day_range_start.rdp-day_range_end .rdp-day_button {
+    border-radius: 100px !important;
+  }
+
+  /* Окремий вибраний день (КНОПКА) */
+  .rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle) .rdp-day_button,
+  .rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle) .rdp-day_button {
+    border-radius: 100px !important;
+    background-color: var(--color-brand-600) !important;
+    color: white !important;
+  }
+
+  /* Середина діапазону (КНОПКА) */
+  .rdp-range_middle .rdp-day_button,
+  .rdp-day_range_middle .rdp-day_button {
+    background-color: var(--color-brand-50) !important;
+    color: var(--color-brand-700) !important;
     border-radius: 0 !important;
   }
-  .rdp-day_range_start:not(.rdp-day_range_end) {
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
+
+  /* Hover ефект для не вибраних кнопок */
+  .rdp-button:hover:not([disabled]):not(.rdp-day_selected):not(.rdp-selected) .rdp-day_button,
+  .rdp-button:hover:not([disabled]):not(.rdp-day_selected):not(.rdp-selected) {
+    background-color: var(--color-bg-hover) !important;
+    border-radius: 100px !important; /* Округлюємо при наведенні */
   }
-  .rdp-day_range_end:not(.rdp-day_range_start) {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+
+  /* Стрілки навігації */
+  .rdp-nav_button {
+    color: var(--color-text-main) !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-bg-surface) !important;
   }
-  .rdp-day_today:not(.rdp-day_selected) {
-    border: 2px solid var(--color-brand-200);
-    color: var(--color-brand-600);
+
+  .rdp-chevron {
+    fill: var(--color-brand-600) !important;
+  }
+
+  .rdp-nav_button:hover {
+    background: var(--color-bg-hover) !important;
+    border-color: var(--color-brand-300) !important;
+  }
+
+  .rdp-nav_button:hover .rdp-chevron {
+    fill: var(--color-brand-700) !important;
+  }
+
+  .rdp-day_today:not(.rdp-day_selected) .rdp-day_button {
+    border: 2px solid var(--color-brand-200) !important;
+    color: var(--color-brand-600) !important;
     font-weight: bold;
+    border-radius: 100px !important;
+  }
+
+  /* Колір назви місяця та днів тижня */
+  .rdp-caption_label,
+  .rdp-head_cell {
+    color: var(--color-text-main) !important;
+    font-weight: 600;
   }
 `;

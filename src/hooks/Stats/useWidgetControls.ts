@@ -144,9 +144,9 @@ export const useWidgetControls = ({
 
   const handleApplyCalendar = () => {
     if (tempRange?.from) {
-      const from = tempRange.from.getTime();
-      const toDate = tempRange.to || endOfDay(tempRange.from);
-      const to = toDate.getTime();
+      const from = startOfDay(tempRange.from).getTime();
+      const toDate = tempRange.to || tempRange.from;
+      const to = endOfDay(toDate).getTime();
       const label = `${format(tempRange.from, "d MMM", {
         locale: dateLocale,
       })} - ${format(toDate, "d MMM", { locale: dateLocale })}`;
@@ -159,8 +159,8 @@ export const useWidgetControls = ({
     const updates: Partial<StatsFilter> = { accountIds: [] };
     if (!hidePeriod) {
       const now = new Date();
-      updates.from = subDays(now, 30).getTime();
-      updates.to = now.getTime();
+      updates.from = startOfDay(subDays(now, 30)).getTime();
+      updates.to = endOfDay(now).getTime();
       updates.label = t("legacy:filters.periods.last_30_days");
     }
     onFilterChange(updates);
