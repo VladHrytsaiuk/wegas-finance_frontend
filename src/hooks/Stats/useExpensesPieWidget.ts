@@ -94,21 +94,26 @@ export const useExpensesPieWidget = ({
 
     const sorted = [...rawData].sort((a, b) => b.total - a.total);
 
-    const enrichColor = (item: any) => {
-      if (item.color) return item.color;
-      let color = item.metadata;
+    const enrichData = (item: any) => {
+      let color = item.color || item.metadata;
+      let logo = item.logo || null;
+      let icon = item.icon || null;
 
       if (shouldFetch) {
         if (activeTab === "category") {
           const cat = categories.find(
-            (c: any) => String(c.id) === String(item.id)
+            (c: any) => String(c.id) === String(item.id) || c.name === item.name
           );
           if (cat?.color) color = cat.color;
+          if (cat?.icon) icon = cat.icon;
         } else if (activeTab === "counterparty") {
           const cp = counterparties.find(
-            (c: any) => String(c.id) === String(item.id)
+            (c: any) => String(c.id) === String(item.id) || c.name === item.name
           );
           if (cp) {
+            if (cp.logo) logo = cp.logo;
+            if (cp.icon) icon = cp.icon;
+            
             if (cp.color) color = cp.color;
             else if (cp.category?.color) color = cp.category.color;
             else if (cp.category_id) {
@@ -120,7 +125,11 @@ export const useExpensesPieWidget = ({
           }
         }
       }
-      return color || stringToColor(item.name);
+      return {
+        color: color || stringToColor(item.name),
+        logo,
+        icon,
+      };
     };
 
     let result = [];
@@ -128,7 +137,7 @@ export const useExpensesPieWidget = ({
       result = sorted.map((item) => ({
         name: item.name,
         value: item.total,
-        color: enrichColor(item),
+        ...enrichData(item),
       }));
     } else {
       const top5 = sorted.slice(0, 5);
@@ -138,7 +147,7 @@ export const useExpensesPieWidget = ({
       result = top5.map((item) => ({
         name: item.name,
         value: item.total,
-        color: enrichColor(item),
+        ...enrichData(item),
       }));
 
       if (othersTotal > 0) {
@@ -146,6 +155,8 @@ export const useExpensesPieWidget = ({
           name: t("dashboard:dashboard.filter_other", "Інше"),
           value: othersTotal,
           color: "#9ca3af",
+          logo: null,
+          icon: null,
         });
       }
     }

@@ -1,6 +1,8 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import React, { useState } from "react";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Sector } from "recharts";
 import { HiChartPie } from "react-icons/hi2";
 import { EmptyState } from "../../ui/EmptyState";
+import { SmartIcon } from "../../../utils/IconMap";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
@@ -26,7 +28,71 @@ interface Props {
   hideHeader?: boolean;
 }
 
+// --- Custom Tooltip ---
+const CustomPieTooltip = ({ active, payload, currency, language }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <S.TooltipContainer>
+        <S.TooltipIconBox $color={data.color} $hasLogo={!!data.logo}>
+          {data.logo ? (
+            <img src={`/brands/${data.logo}`} alt={data.name} />
+          ) : data.icon ? (
+            <SmartIcon iconName={data.icon} color={data.color} size={16} />
+          ) : (
+            <div
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                background: data.color,
+              }}
+            />
+          )}
+        </S.TooltipIconBox>
+        <div className="info">
+          <span className="name">{data.name}</span>
+          <span className="value">
+            {formatMoney(data.value, currency, language)}
+          </span>
+        </div>
+      </S.TooltipContainer>
+    );
+  }
+  return null;
+};
+
+// --- Custom Active Shape (Hover Effect) ---
+const renderActiveShape = (props: any) => {
+  const {
+    cx,
+    cy,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill,
+  } = props;
+
+  return (
+    <g>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 8} // Висуваємо сектор на 8px
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        style={{ filter: `drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.15))` }}
+      />
+    </g>
+  );
+};
+
 export const ExpensesPieWidget = (props: Props) => {
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   const {
     state: {
       chartData,
@@ -40,6 +106,14 @@ export const ExpensesPieWidget = (props: Props) => {
     actions: { handleFilterUpdate },
     t,
   } = useExpensesPieWidget(props);
+
+  const onPieEnter = (_: any, index: number) => {
+    setActiveIndex(index);
+  };
+
+  const onPieLeave = () => {
+    setActiveIndex(-1);
+  };
 
   return (
     <S.WidgetCard>
@@ -81,6 +155,10 @@ export const ExpensesPieWidget = (props: Props) => {
                     paddingAngle={2}
                     dataKey="value"
                     stroke="none"
+                    activeIndex={activeIndex}
+                    activeShape={renderActiveShape}
+                    onMouseEnter={onPieEnter}
+                    onMouseLeave={onPieLeave}
                   >
                     {chartData.map((entry, index) => (
                       <Cell
@@ -91,27 +169,14 @@ export const ExpensesPieWidget = (props: Props) => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(val: number) =>
-                      formatMoney(val, currency, language)
+                    content={
+                      <CustomPieTooltip
+                        currency={currency}
+                        language={language}
+                      />
                     }
                     wrapperStyle={{ zIndex: 1000 }}
-                    contentStyle={{
-                      backgroundColor: "var(--color-bg-surface)",
-                      border: "1px solid var(--color-border)",
-                      borderRadius: "12px",
-                      boxShadow: "var(--shadow-md)",
-                      padding: "8px 12px",
-                    }}
-                    itemStyle={{
-                      color: "var(--color-text-main)",
-                      fontWeight: 600,
-                      fontSize: "0.9rem",
-                    }}
-                    labelStyle={{
-                      color: "var(--color-text-secondary)",
-                    }}
                     cursor={{ fill: "transparent" }}
-                    separator=": "
                   />
                 </PieChart>
               </ResponsiveContainer>

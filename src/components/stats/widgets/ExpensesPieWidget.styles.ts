@@ -132,5 +132,66 @@ export const LegendText = styled.div`
   font-weight: 600;
   color: var(--color-text-secondary);
   }
-  `;
+`;
+
+export const TooltipContainer = styled.div`
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .name {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+  }
+`;
+
+export const TooltipIconBox = styled.div<{ $color: string; $hasLogo?: boolean }>`
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  background: ${(p) =>
+    p.$hasLogo
+      ? "transparent"
+      : `color-mix(in srgb, ${p.$color || "#6b7280"}, transparent 90%)`};
+
+  border: 1px solid
+    ${(p) =>
+      p.$hasLogo
+        ? "rgba(0, 0, 0, 0.08)"
+        : `color-mix(in srgb, ${p.$color || "#6b7280"}, transparent 80%)`};
+
+  color: ${(p) => p.$color || "#6b7280"};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    padding: 0;
+  }
+`;
 

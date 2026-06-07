@@ -11,7 +11,7 @@ export const TableWrapper = styled.div`
 export const TableHead = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   font-size: 0.75rem;
   color: var(--color-text-tertiary);
   font-weight: 700;
@@ -40,9 +40,9 @@ export const TableBody = styled.div`
 export const TableRow = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0.85rem 1rem;
+  padding: 0.6rem 1rem;
   border-bottom: 1px solid var(--color-border);
-  gap: 12px;
+  gap: 8px;
   transition: background 0.1s ease;
   &:last-child {
     border-bottom: none;
