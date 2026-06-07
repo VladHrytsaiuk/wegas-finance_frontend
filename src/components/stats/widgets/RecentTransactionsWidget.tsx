@@ -3,6 +3,7 @@ import { HiOutlineBanknotes, HiArrowLongRight } from "react-icons/hi2";
 // Components
 import { WidgetControls } from "./WidgetControls";
 import Spinner from "../../ui/Spinner";
+import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { TransactionItem } from "../../transactions/TransactionItem";
 
 // Styles & Logic
@@ -55,9 +56,7 @@ export const RecentTransactionsWidget = (props: Props) => {
       </S.Header>
 
       {isLoadingTx ? (
-        <S.SpinnerWrapper>
-          <Spinner />
-        </S.SpinnerWrapper>
+        <CenteredSpinner isContainer />
       ) : (
         <S.TableList>
           {recentItems.map((tx) => (

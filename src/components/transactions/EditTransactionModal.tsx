@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import Spinner from "../ui/Spinner";
+import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { getTransactionApi } from "../../services/apiTransactions";
 
 // Просто центрувальник, без обмежень ширини
@@ -52,7 +53,7 @@ function EditTransactionModal() {
     <Overlay onClick={handleClose}>
       <CenteredLayout onClick={(e) => e.stopPropagation()}>
         {isLoading ? (
-          <Spinner />
+          <CenteredSpinner isContainer />
         ) : (
           <CreateTransactionForm
             transactionToEdit={transaction}

@@ -26,6 +26,7 @@ import {
 
 import { Button } from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { TransactionItem } from "../../components/transactions/TransactionItem";
@@ -74,7 +75,13 @@ export default function AssetDetails() {
     mainPhotoUrl,
   } = state;
 
-  if (isLoading) return <Spinner />;
+  if (isLoading)
+    return (
+      <CenteredSpinner
+        isContainer
+        message={t("common:ui.loading_details", "Завантаження деталей...")}
+      />
+    );
 
   if (!asset) {
     return (

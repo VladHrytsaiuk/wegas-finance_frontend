@@ -11,6 +11,7 @@ import {
 } from "react-icons/hi2";
 
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
@@ -110,7 +111,13 @@ function DebtorDetails() {
     });
   };
 
-  if (isLoading) return <Spinner />;
+  if (isLoading)
+    return (
+      <CenteredSpinner
+        isContainer
+        message={t("common:ui.loading_details", "Завантаження деталей...")}
+      />
+    );
   if (!counterparty) return <div>{t("common:ui.status_not_found")}</div>;
 
   return (

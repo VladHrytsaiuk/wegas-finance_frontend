@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next"; // ✅ Додано
 import { Overlay, StyledModal, ModalCloseButton } from "../ui/Modal";
 import { AccountForm } from "./form/AccountForm";
 import Spinner from "../ui/Spinner";
+import { CenteredSpinner } from "../ui/CenteredSpinner";
 
 import { useAccountsData } from "../../hooks/Accounts/useAccountsData";
 import { getAccountApi } from "../../services/apiAccounts";
@@ -50,15 +51,7 @@ function EditAccountModal() {
           </h3>
 
           {isLoading ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "2rem",
-              }}
-            >
-              <Spinner />
-            </div>
+            <CenteredSpinner isContainer />
           ) : (
             <AccountForm
               defaultValues={account}

@@ -11,6 +11,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 import {
   useProfileForm,
@@ -187,13 +188,7 @@ function Profile() {
     }
   }, [isSyncing]);
 
-  if (isLoading) {
-    return (
-      <S.SpinnerContainer>
-        <Spinner />
-      </S.SpinnerContainer>
-    );
-  }
+  if (isLoading) return <CenteredSpinner />;
 
   return (
     <Modal>

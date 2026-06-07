@@ -28,6 +28,7 @@ import { type StatsFilter } from "../../services/apiStats";
 import { useHeader } from "../../context/HeaderContext";
 import api from "../../services/Axios";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { formatMoney } from "../../utils/helpers";
 import { useSummaryWidget } from "../../hooks/Stats/useSummaryWidget";
 
@@ -246,7 +247,13 @@ function Dashboard() {
   const margin = useMemo(() => [20, 20] as [number, number], []);
   const containerPadding = useMemo(() => [0, 0] as [number, number], []);
 
-  if (isUserLoading || isAccLoading) return <Spinner />;
+  if (isUserLoading || isAccLoading)
+    return (
+      <CenteredSpinner
+        isContainer
+        message={t("common:ui.loading_finances", "Завантаження фінансів...")}
+      />
+    );
 
   return (
     <DashboardContainer

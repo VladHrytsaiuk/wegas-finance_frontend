@@ -11,6 +11,7 @@ import {
 
 // UI Components
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
@@ -141,7 +142,7 @@ function Debts() {
     );
   };
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <CenteredSpinner />;
 
   return (
     <S.PageContainer>

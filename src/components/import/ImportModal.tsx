@@ -7,6 +7,7 @@ import {
 
 // UI Components
 import Spinner from "../ui/Spinner";
+import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { Button } from "../ui/Button";
 import Checkbox from "../ui/Checkbox";
 
@@ -57,12 +58,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
     t,
   } = useImportModal({ account, onClose });
 
-  if (isLoading)
-    return (
-      <S.LoadingContainer>
-        <Spinner />
-      </S.LoadingContainer>
-    );
+  if (isLoading) return <CenteredSpinner isContainer />;
 
   return (
     <S.Container>

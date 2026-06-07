@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { SyncWidget } from "./Feedback/SyncWidget";
+import { useAccountsData } from "../../hooks/Accounts/useAccountsData";
+import CenteredSpinner from "./CenteredSpinner";
 
 // --- Стилі для Desktop версії ---
 const StyledAppLayout = styled.div<{ $collapsed: boolean }>`
@@ -65,7 +67,8 @@ const MobileText = styled.p`
 `;
 
 function AppLayout() {
-  const { t } = useTranslation(["common"]);
+  const { t } = useTranslation(["common", "accounts"]);
+  const { isLoading: isAccLoading } = useAccountsData();
 
   // 1. Стейт для перевірки мобільного пристрою
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -106,6 +109,18 @@ function AppLayout() {
   }
 
   // 5. Desktop версія
+  if (isAccLoading) {
+    return (
+      <CenteredSpinner
+        fullHeight
+        message={t(
+          "accounts:accountsPage.status_loading",
+          "Завантаження фінансів...",
+        )}
+      />
+    );
+  }
+
   return (
     <StyledAppLayout $collapsed={isCollapsed}>
       <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />

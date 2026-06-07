@@ -4,6 +4,7 @@ import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { UserCard } from "../../components/users/UserCard";
 import { UserForm } from "../../components/users/UserForms";
 
@@ -28,11 +29,7 @@ function Users() {
         )}
       </S.HeaderRow>
 
-      {isLoading && (
-        <S.SpinnerContainer>
-          <Spinner />
-        </S.SpinnerContainer>
-      )}
+      {isLoading && <CenteredSpinner />}
 
       <S.UserGrid>
         {users.map((user: any) => (

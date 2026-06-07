@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 // Components
 import { WidgetControls } from "./WidgetControls";
 import Spinner from "../../ui/Spinner";
+import { CenteredSpinner } from "../../ui/CenteredSpinner";
 
 // Styles & Logic
 import * as S from "./ExpensesPieWidget.styles";
@@ -53,9 +54,7 @@ export const ExpensesPieWidget = (props: Props) => {
       </S.Header>
 
       {isLoading ? (
-        <S.SpinnerWrapper>
-          <Spinner />
-        </S.SpinnerWrapper>
+        <CenteredSpinner isContainer />
       ) : chartData.length === 0 ? (
         <S.EmptyState>{t("dashboard:dashboard.no_data")}</S.EmptyState>
       ) : (

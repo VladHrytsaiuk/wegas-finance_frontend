@@ -3,6 +3,7 @@ import { HiPlus } from "react-icons/hi2";
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { TagForm } from "../../components/tags/TagForm";
 import { TagItem } from "../../components/tags/TagItem";
@@ -46,9 +47,7 @@ function Tags() {
 
       {/* CONTENT LIST */}
       {isLoading ? (
-        <S.SpinnerContainer>
-          <Spinner />
-        </S.SpinnerContainer>
+        <CenteredSpinner />
       ) : (
         <S.TagList>
           {tags.length === 0 ? (

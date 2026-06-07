@@ -23,6 +23,7 @@ import * as S from "./GoalDetails.styles";
 // UI Components
 import { Button } from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import CreateGoalModal from "../../components/goals/CreateGoalModal";
@@ -39,13 +40,7 @@ export default function GoalDetails() {
 
   const currentLocale = i18n.language === "uk" ? uk : enUS;
 
-  if (isLoading) {
-    return (
-      <S.LoadingContainer>
-        <Spinner />
-      </S.LoadingContainer>
-    );
-  }
+  if (isLoading) return <CenteredSpinner />;
 
   if (!goal || !stats) {
     return (

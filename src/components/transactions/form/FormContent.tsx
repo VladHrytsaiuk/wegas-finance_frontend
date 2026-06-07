@@ -29,6 +29,7 @@ import { getUsersApi } from "../../../services/apiUsers";
 // UI Components
 import { Button } from "../../ui/Button";
 import Spinner from "../../ui/Spinner";
+import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { TypeSelector } from "./TypeSelector";
 import { AccountSelect } from "../../accounts/form/AccountSelect";
 import { AmountInput } from "../../ui/AmountInput";
@@ -223,7 +224,8 @@ export const FormContent: React.FC<FormContentProps> = ({
     return form.date ? new Date(form.date).getTime() : Date.now();
   }, [form.date]);
 
-  if (loadAcc || loadCat || loadCp || loadTags || loadUsers) return <Spinner />;
+  if (loadAcc || loadCat || loadCp || loadTags || loadUsers)
+    return <CenteredSpinner isContainer />;
 
   return (
     <>

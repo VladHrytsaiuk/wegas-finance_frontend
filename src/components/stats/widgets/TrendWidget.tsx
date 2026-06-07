@@ -13,6 +13,7 @@ import { uk, enUS } from "date-fns/locale";
 // Components
 import { WidgetControls } from "./WidgetControls";
 import Spinner from "../../ui/Spinner";
+import { CenteredSpinner } from "../../ui/CenteredSpinner";
 
 // Styles & Hooks
 import * as S from "./TrendWidget.styles";
@@ -121,9 +122,7 @@ export const TrendWidget = (props: Props) => {
 
       <S.ChartWrapper>
         {isLoading ? (
-          <S.SpinnerWrapper>
-            <Spinner />
-          </S.SpinnerWrapper>
+          <CenteredSpinner isContainer />
         ) : (
           <S.AbsoluteChartContainer>
             <ResponsiveContainer width="99.9%" height="100%" debounce={50}>

@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getMeApi } from "../services/apiUsers";
-import FullPageSpinner from "./ui/FullPageSpinner";
+import CenteredSpinner from "./ui/CenteredSpinner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -36,13 +38,24 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   );
 
   // Поки йде перевірка - показуємо спінер
-  if (isLoading) return <FullPageSpinner />;
+  if (isLoading)
+    return (
+      <CenteredSpinner
+        fullHeight
+        message={t("common:ui.verifying_auth", "Перевірка авторизації...")}
+      />
+    );
 
   // Якщо авторизовані - показуємо контент
   if (isAuthenticated) return children;
 
   // Фолбек (щоб не блимало перед редіректом)
-  return <FullPageSpinner />;
+  return (
+    <CenteredSpinner
+      fullHeight
+      message={t("common:ui.verifying_auth", "Перевірка авторизації...")}
+    />
+  );
 }
 
 export default ProtectedRoute;

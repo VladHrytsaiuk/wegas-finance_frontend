@@ -20,6 +20,7 @@ import { SyncProvider } from "./context/SyncContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/ui/AppLayout";
 import Spinner from "./components/ui/Spinner";
+import { CenteredSpinner } from "./components/ui/CenteredSpinner";
 
 // --- LAZY LOADED PAGES ---
 const Login = lazy(() => import("./pages/auth/Login"));
@@ -92,7 +93,14 @@ function AppRoutes() {
   const background = location.state && location.state.background;
 
   return (
-    <Suspense fallback={<Spinner />}>
+    <Suspense
+      fallback={
+        <CenteredSpinner
+          fullHeight
+          message="Завантаження ресурсів..."
+        />
+      }
+    >
       <Routes location={background || location}>
         <Route
           element={

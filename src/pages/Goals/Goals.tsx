@@ -3,6 +3,7 @@ import { HiPlus } from "react-icons/hi2";
 
 // Components
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import CreateGoalModal from "../../components/goals/CreateGoalModal";
@@ -91,7 +92,13 @@ function Goals() {
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t, goals.length]);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading)
+    return (
+      <CenteredSpinner
+        isContainer
+        message={t("common:ui.loading_goals", "Завантаження цілей...")}
+      />
+    );
 
   return (
     <S.PageContainer>

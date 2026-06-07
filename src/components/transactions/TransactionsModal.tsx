@@ -3,6 +3,7 @@ import { useTransactionsModal } from "../../hooks/Transactions/useTransactionsMo
 
 // UI Components
 import Spinner from "../ui/Spinner";
+import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { TableToolbar } from "../shared/TableToolbar/TableToolbar";
 import { TransactionItem } from "./TransactionItem";
 import * as S from "./TransactionsModal.styles";
@@ -73,9 +74,7 @@ export default function TransactionsModal(props: TransactionsModalProps) {
 
       <S.ScrollArea>
         {isLoading ? (
-          <S.SpinnerContainer>
-            <Spinner />
-          </S.SpinnerContainer>
+          <CenteredSpinner isContainer />
         ) : transactions.length === 0 ? (
           <S.EmptyState>{t("transactions:transactionsModal.status_empty")}</S.EmptyState>
         ) : (

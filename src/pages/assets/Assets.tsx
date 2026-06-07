@@ -7,6 +7,7 @@ import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar"
 import AssetForm from "./AssetForm";
 import AssetsTable from "../../components/assets/AssetsTable";
 import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 import { useAssets } from "../../hooks/Assets/useAssets";
 import { useAssetsFilter } from "../../hooks/Assets/useAssetsFilter";
@@ -29,7 +30,7 @@ export default function Assets() {
     handleClearAll,
   } = useAssetsFilter(assets);
 
-  if (isLoading) return <p>{t("common:shared.loading")}</p>;
+  if (isLoading) return <CenteredSpinner />;
 
   return (
     <S.PageContainer>
@@ -37,7 +38,10 @@ export default function Assets() {
         <TableToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          searchPlaceholder={t("assets:assetsPage.search_placeholder", "Пошук активів...")}
+          searchPlaceholder={t(
+            "assets:assetsPage.search_placeholder",
+            "Пошук активів...",
+          )}
           searchPosition="top"
           filtersConfig={filtersConfig}
           filterValues={filters}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { HiPlus } from "react-icons/hi2";
 
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { Button } from "../../components/ui/Button";
 import { NoteOptions } from "../../components/shopping/NoteOptions";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
@@ -68,7 +69,13 @@ function Shopping() {
     }
   };
 
-  if (isLoading) return <Spinner />;
+  if (isLoading)
+    return (
+      <CenteredSpinner
+        isContainer
+        message={t("common:ui.loading_shopping", "Завантаження списків...")}
+      />
+    );
 
   return (
     <S.PageContainer>

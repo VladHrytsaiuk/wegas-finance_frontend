@@ -10,6 +10,7 @@ import { AccountsTable } from "../../components/accounts/AccountsTable";
 import { ViewToggle } from "../../components/ui/ViewToggle";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 // Hook & Styles
 import { useAccountsPage } from "../../hooks/Accounts/useAccountsPage";
@@ -51,7 +52,12 @@ function Accounts() {
   } = useAccountsPage();
 
   if (isLoading)
-    return <S.LoadingState>{t("accounts:accountsPage.status_loading")}</S.LoadingState>;
+    return (
+      <CenteredSpinner
+        isContainer
+        message={t("accounts:accountsPage.status_loading", "Завантаження рахунків...")}
+      />
+    );
   if (isError)
     return <S.ErrorState>{t("accounts:accountsPage.status_error")}</S.ErrorState>;
 

@@ -18,6 +18,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import Modal from "../../components/ui/Modal";
 import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { AccountCard } from "../../components/accounts/AccountCard";
 import { AccountActions } from "../../components/accounts/AccountActions";
 import TransactionsModal from "../../components/transactions/TransactionsModal";
@@ -54,27 +55,18 @@ function AccountDetails() {
   } = useAccountDetails();
 
   useEffect(() => {
-    if (account) setPageTitle(account.name, t("accounts:accountDetailsPage.subtitle"));
+    if (account)
+      setPageTitle(account.name, t("accounts:accountDetailsPage.subtitle"));
     return () => resetPageTitle();
   }, [account, setPageTitle, resetPageTitle, t]);
 
-  if (isLoading) {
+  if (isLoading)
     return (
-      <S.PageContainer>
-        <S.LoadingContainer>
-          <Spinner />
-          <p
-            style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}
-          >
-            {t(
-              "accountDetailsPage.loading_details",
-              "Завантаження деталей рахунку...",
-            )}
-          </p>
-        </S.LoadingContainer>
-      </S.PageContainer>
+      <CenteredSpinner
+        isContainer
+        message={t("accounts:accountDetailsPage.loading_details", "Завантаження деталей рахунку...")}
+      />
     );
-  }
 
   if (isError || !account) {
     return (
@@ -104,7 +96,10 @@ function AccountDetails() {
               style={{ display: "flex", alignItems: "center", gap: "8px" }}
             >
               <HiChevronLeft />{" "}
-              {t("accounts:accountDetailsPage.back_to_list", "До списку рахунків")}
+              {t(
+                "accounts:accountDetailsPage.back_to_list",
+                "До списку рахунків",
+              )}
             </Button>
             <Button onClick={() => window.location.reload()}>
               {t("common:common.retry", "Оновити")}
@@ -145,7 +140,8 @@ function AccountDetails() {
 
           <Modal.Open opens="export-account">
             <S.ActionButton title={t("export_import:exportPage.title")}>
-              <HiArrowDownTray size={18} /> <span>{t("export_import:exportPage.title")}</span>
+              <HiArrowDownTray size={18} />{" "}
+              <span>{t("export_import:exportPage.title")}</span>
             </S.ActionButton>
           </Modal.Open>
 
@@ -210,7 +206,10 @@ function AccountDetails() {
                   </S.ProgressBarBg>
                   <S.GoalFooter>
                     <span>
-                      {t("goals_debts:goals.linked_goal_label", "Прив'язана ціль")}
+                      {t(
+                        "goals_debts:goals.linked_goal_label",
+                        "Прив'язана ціль",
+                      )}
                     </span>
                   </S.GoalFooter>
                 </S.GoalWidget>
@@ -220,7 +219,10 @@ function AccountDetails() {
               account.storage_type && (
                 <S.InfoCard>
                   <S.InfoLabel>
-                    {t("accounts:accountDetailsPage.storage_type_label", "Тип сховища")}
+                    {t(
+                      "accounts:accountDetailsPage.storage_type_label",
+                      "Тип сховища",
+                    )}
                   </S.InfoLabel>
                   <S.InfoValue>
                     {getStorageIcon(account.storage_type.slug)}
@@ -239,7 +241,9 @@ function AccountDetails() {
           <S.RightColumn>
             <S.SectionBox>
               <S.SectionHeader>
-                <h2>{t("accounts:accountDetailsPage.history_section_title")}</h2>
+                <h2>
+                  {t("accounts:accountDetailsPage.history_section_title")}
+                </h2>
                 <Modal.Open opens="history-all">
                   <S.TextButton>
                     {t("accounts:accountDetailsPage.history_all_button")}{" "}

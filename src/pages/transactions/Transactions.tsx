@@ -10,6 +10,7 @@ import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
 import { Pagination } from "../../components/ui/Pagination";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import ExportModal from "../settings/ExportPage";
 
 // Hook & Styles
@@ -64,13 +65,13 @@ function Transactions() {
   }, [page, isLoading]);
 
   // Перше завантаження - повний спінер
-  if (isLoading) {
+  if (isLoading)
     return (
-      <S.LoadingContainer>
-        <Spinner />
-      </S.LoadingContainer>
+      <CenteredSpinner
+        isContainer
+        message={t("common:ui.loading_transactions", "Завантаження транзакцій...")}
+      />
     );
-  }
 
   return (
     <S.PageContainer>
