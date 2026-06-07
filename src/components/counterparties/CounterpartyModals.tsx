@@ -85,11 +85,33 @@ export function CounterpartyModals({
 
       {/* 5. Видалення */}
       <Modal.Window name="delete-confirm">
-        <ConfirmDelete
-          resourceName={resourceName}
-          onConfirm={handleConfirmDelete}
-          disabled={actions.deleteCp.isPending || actions.deleteCat.isPending}
-        />
+        {itemToDelete?.hasDebt ? (
+          <div style={{
+            width: "100%",
+            maxWidth: "32rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            textAlign: "center",
+            alignItems: "center",
+            padding: "2rem"
+          }}>
+            <div style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>🚫</div>
+            <h3 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--color-text-main)", margin: 0 }}>
+              {t("common:common.delete")}
+            </h3>
+            <p style={{ color: "var(--color-text-secondary)", fontSize: "0.95rem", lineHeight: 1.5, margin: 0 }}>
+              Ви не можете видалити контрагента з активним балансом. Спочатку
+              спишіть борг або погасіть його у розділі боргів.
+            </p>
+          </div>
+        ) : (
+          <ConfirmDelete
+            resourceName={resourceName}
+            onConfirm={handleConfirmDelete}
+            disabled={actions.deleteCp.isPending || actions.deleteCat.isPending}
+          />
+        )}
       </Modal.Window>
     </>
   );

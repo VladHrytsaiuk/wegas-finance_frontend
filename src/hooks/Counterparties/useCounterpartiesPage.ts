@@ -24,6 +24,7 @@ export const useCounterpartiesPage = () => {
     id: string;
     name: string;
     isCategory: boolean;
+    hasDebt?: boolean;
   } | null>(null);
 
   // Computed Tree
@@ -62,6 +63,7 @@ export const useCounterpartiesPage = () => {
     if (!canManageStructure) return;
 
     let name = "";
+    let hasDebt = false;
     const categoryNameDefault =
       t("counterparties:counterpartiesPage.resource_category") || "Category";
     const counterpartyNameDefault =
@@ -73,8 +75,9 @@ export const useCounterpartiesPage = () => {
     } else {
       const cp = counterparties.find((c: any) => c.id === id);
       name = cp ? cp.name : counterpartyNameDefault;
+      hasDebt = cp?.balances?.some((b: any) => Math.abs(b.balance) > 0.01) || false;
     }
-    setItemToDelete({ id, name, isCategory });
+    setItemToDelete({ id, name, isCategory, hasDebt });
     openModal("delete-confirm");
   };
 

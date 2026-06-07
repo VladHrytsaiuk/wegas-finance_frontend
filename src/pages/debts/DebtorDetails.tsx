@@ -2,7 +2,6 @@ import { useState } from "react"; // 🔥 Додали useState
 import {
   HiArrowLeft,
   HiPencil,
-  HiTrash,
   HiArrowUpRight,
   HiArrowDownLeft,
   HiOutlineUser,
@@ -16,7 +15,6 @@ import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
 import Modal from "../../components/ui/Modal";
-import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import CounterpartyForm from "../../components/counterparties/form";
 import { ForgiveDebtWindow } from "../../components/debts/ForgiveDebtWindow";
 
@@ -31,7 +29,6 @@ function DebtorDetails() {
       transactions,
       accounts,
       isLoading,
-      isDeleting,
       isUpdating,
       isForgiving,
       isTxModalOpen,
@@ -43,7 +40,6 @@ function DebtorDetails() {
       id,
     },
     actions: {
-      deleteCounterparty,
       updateCounterparty,
       forgiveDebt,
       deleteTransaction,
@@ -164,11 +160,7 @@ function DebtorDetails() {
               </Modal.Open>
             )}
 
-            <Modal.Open opens="delete-cp">
-              <Button variation="danger" icon={<HiTrash />}>
-                {t("common:common.delete")}
-              </Button>
-            </Modal.Open>
+
 
             <Modal.Window name="edit-cp">
               <CounterpartyForm
@@ -186,24 +178,7 @@ function DebtorDetails() {
               />
             </Modal.Window>
 
-            <Modal.Window name="delete-cp">
-              {hasDebt ? (
-                <S.DeleteWarningContainer>
-                  <S.WarningIcon>🚫</S.WarningIcon>
-                  <h3>{t("common:common.delete")}</h3>
-                  <p style={{ color: "var(--color-text-secondary)" }}>
-                    Ви не можете видалити боржника з активним балансом. Спочатку
-                    спишіть борг або погасіть його.
-                  </p>
-                </S.DeleteWarningContainer>
-              ) : (
-                <ConfirmDelete
-                  resourceName={counterparty.name}
-                  onConfirm={() => deleteCounterparty(id as string)}
-                  disabled={isDeleting}
-                />
-              )}
-            </Modal.Window>
+
           </Modal>
         </S.Actions>
       </S.ProfileHeader>

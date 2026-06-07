@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 // API Services
 import {
   getCounterpartyApi,
-  deleteCounterpartyApi,
   updateCounterpartyApi,
 } from "../../services/apiCounterparties";
 
@@ -28,7 +27,7 @@ export function useDebtorDetails() {
   const [accounts, setAccounts] = useState<any[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [isForgiving, setIsForgiving] = useState(false);
 
@@ -97,19 +96,7 @@ export function useDebtorDetails() {
     }
   };
 
-  const handleDeleteCounterparty = async () => {
-    if (!id) return;
-    setIsDeleting(true);
-    try {
-      await deleteCounterpartyApi(id);
-      toast.success(t("counterparties:counterparties.delete_success"));
-      navigate("/debts");
-    } catch (error) {
-      toast.error(t("common:ui.error_action"));
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+
 
   const handleUpdateCounterparty = async (data: any) => {
     setIsUpdating(true);
@@ -167,7 +154,7 @@ export function useDebtorDetails() {
       transactions,
       accounts,
       isLoading,
-      isDeleting,
+
       isUpdating,
       isForgiving,
       isTxModalOpen,
@@ -179,7 +166,7 @@ export function useDebtorDetails() {
       id,
     },
     actions: {
-      deleteCounterparty: handleDeleteCounterparty,
+
       updateCounterparty: handleUpdateCounterparty,
       forgiveDebt: handleForgiveDebt,
       deleteTransaction, // Експортуємо виправлену функцію
