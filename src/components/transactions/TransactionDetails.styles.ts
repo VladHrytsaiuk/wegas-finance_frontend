@@ -9,13 +9,13 @@ export const Container = styled.div`
 export const Layout = styled.div<{ $hasImage: boolean }>`
   display: grid;
   grid-template-columns: ${(props) => (props.$hasImage ? "35% 1fr" : "1fr")};
-  gap: 3rem;
+  gap: 1.5rem;
   align-items: start;
 
   @media (max-width: 1100px) {
     grid-template-columns: ${(props) =>
-      props.$hasImage ? "300px 1fr" : "1fr"};
-    gap: 2rem;
+      props.$hasImage ? "280px 1fr" : "1fr"};
+    gap: 1.25rem;
   }
 
   @media (max-width: 900px) {
@@ -56,14 +56,14 @@ export const ViewerWrapper = styled.div`
 export const ContentSide = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
   min-width: 0;
 `;
 
 export const Section = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 `;
 
 // --- HEADER ---
@@ -72,31 +72,31 @@ export const Header = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.5rem;
-  padding-bottom: 1.5rem;
+  gap: 0.4rem;
+  padding-bottom: 1rem;
   border-bottom: 1px dashed var(--color-border);
 `;
 
 export const TypeBadge = styled.span`
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 4px 8px;
-  border-radius: 6px;
+  letter-spacing: 0.05em;
+  padding: 3px 6px;
+  border-radius: 4px;
 `;
 
 export const AmountDisplay = styled.div<{ $type: string }>`
-  font-size: 3.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
   font-family: "JetBrains Mono", monospace;
-  line-height: 1;
-  letter-spacing: -1.5px;
+  line-height: 1.1;
+  letter-spacing: -1px;
 `;
 
 export const DateText = styled.div`
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 `;
 
 // --- EXCHANGE & CURRENCY ---
@@ -104,12 +104,12 @@ export const DateText = styled.div`
 export const ExchangeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
   background: var(--color-bg-surface-secondary);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
 `;
 
 export const ExchangeRow = styled.div`
@@ -142,7 +142,7 @@ export const ExchangeBox = styled.div<{ $isCurrent: boolean }>`
     gap: 4px;
   }
   .val {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     font-family: "Monaco", monospace;
   }
@@ -187,7 +187,7 @@ export const DetailRow = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 1rem;
+  padding: 0.75rem;
   border-bottom: 1px solid var(--color-border);
 
   &:last-child {
@@ -243,12 +243,12 @@ export const RowContent = styled.div`
     margin-bottom: 2px;
   }
   .value {
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--color-text-main);
   }
   .sub-value {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
   }
 `;
@@ -256,15 +256,15 @@ export const RowContent = styled.div`
 // --- NOTES & USER ---
 
 export const NoteBox = styled.div`
-  margin-top: 0.5rem;
-  padding: 1.2rem 1.5rem;
+  margin-top: 0.25rem;
+  padding: 1rem;
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
   font-style: italic;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
 `;
 
 export const UserInfo = styled.div`
@@ -300,13 +300,13 @@ export const ItemsTable = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 
   th {
     text-align: left;
     font-weight: 600;
     color: var(--color-text-secondary);
-    padding: 0.8rem 1rem;
+    padding: 0.6rem 0.8rem;
     border-bottom: 1px solid var(--color-border);
     background: var(--color-bg-surface-secondary);
   }
@@ -318,7 +318,7 @@ export const ItemsTable = styled.table`
   }
 
   td {
-    padding: 0.8rem 1rem;
+    padding: 0.6rem 0.8rem;
     border-bottom: 1px solid var(--color-border);
     vertical-align: top;
   }
@@ -331,10 +331,10 @@ export const ItemsTable = styled.table`
 
 export const DeleteOverlayButton = styled.button`
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 44px;
-  height: 44px;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.05);
