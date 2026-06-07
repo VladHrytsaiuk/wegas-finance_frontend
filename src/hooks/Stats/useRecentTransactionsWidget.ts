@@ -46,7 +46,8 @@ export const useRecentTransactionsWidget = ({
   // 1. Transactions
   const { data: transactionsData, isLoading: isLoadingTx } = useQuery({
     queryKey: [
-      "recentTransactions",
+      "stats",
+      "recent",
       localFilter.accountIds,
       localFilter.from,
       localFilter.to,

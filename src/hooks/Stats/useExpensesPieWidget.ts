@@ -65,7 +65,7 @@ export const useExpensesPieWidget = ({
 
   // --- Queries ---
   const { data: fetchedData, isLoading: isDataLoading } = useQuery({
-    queryKey: ["structurePie", type, activeTab, localFilter, currency],
+    queryKey: ["stats", "structurePie", type, activeTab, localFilter, currency],
     queryFn: () =>
       statsService.getTopStats(type, activeTab, { ...localFilter, currency }),
     enabled: shouldFetch,

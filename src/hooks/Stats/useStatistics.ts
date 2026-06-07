@@ -47,7 +47,7 @@ export const useStatistics = () => {
 
   // --- Queries ---
   const { data: listData = [] } = useQuery({
-    queryKey: ["statsList", flowType, activeTab, filter, currency],
+    queryKey: ["stats", "list", flowType, activeTab, filter, currency],
     queryFn: () =>
       statsService.getTopStats(flowType, activeTab, { ...filter, currency }),
   });

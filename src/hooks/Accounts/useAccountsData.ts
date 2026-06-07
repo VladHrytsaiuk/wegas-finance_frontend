@@ -32,6 +32,7 @@ export function useAccountsData() {
     onSuccess: () => {
       toast.success(t("accounts:accountsDataHook.alert_create_success"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
     },
     onError: () => toast.error(t("accounts:accountsDataHook.alert_create_error")),
   });
@@ -41,6 +42,7 @@ export function useAccountsData() {
     onSuccess: () => {
       toast.success(t("accounts:accountsDataHook.alert_update_success"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
     },
     onError: (err: any) =>
       toast.error(err.message || t("accounts:accountsDataHook.alert_update_error")),
@@ -51,6 +53,7 @@ export function useAccountsData() {
     onSuccess: () => {
       toast.success(t("accounts:accountsDataHook.alert_delete_success"));
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
     },
     onError: () => toast.error(t("accounts:accountsDataHook.alert_delete_error")),
   });

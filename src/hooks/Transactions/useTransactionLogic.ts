@@ -182,7 +182,7 @@ export const useTransactionLogic = ({
     queryClient.invalidateQueries({ queryKey: ["account"] });
     queryClient.invalidateQueries({ queryKey: ["goal"] });
     queryClient.invalidateQueries({ queryKey: ["goals"] });
-    queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    queryClient.invalidateQueries({ queryKey: ["stats"] });
     if (isEditSession && transactionToEdit) {
       queryClient.invalidateQueries({
         queryKey: ["transaction", transactionToEdit.id],

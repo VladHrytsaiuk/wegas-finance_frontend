@@ -47,7 +47,7 @@ export const useTopListWidget = ({
 
   // --- Queries ---
   const { data, isLoading: isStatsLoading } = useQuery({
-    queryKey: ["topStats", type, entity, localFilter, currency],
+    queryKey: ["stats", "top", type, entity, localFilter, currency],
     queryFn: async () => {
       const res = await statsService.getTopStats(type, entity, {
         ...localFilter,

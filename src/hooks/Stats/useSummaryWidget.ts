@@ -31,7 +31,7 @@ export const useSummaryWidget = ({ globalFilter }: UseSummaryWidgetProps) => {
 
   // 3. Запит статистики
   const { data: stats, isLoading: isStatsLoading } = useQuery({
-    queryKey: ["dashboardStats", globalFilter, targetAccountIds, currency],
+    queryKey: ["stats", "summary", globalFilter, targetAccountIds, currency],
     queryFn: () =>
       statsService.getDashboard({
         ...globalFilter,

@@ -52,7 +52,7 @@ export const useTrendWidget = ({
 
   // Запит даних
   const { data, isLoading } = useQuery({
-    queryKey: ["trendStats", activeType, localFilter, currency],
+    queryKey: ["stats", "trend", activeType, localFilter, currency],
     queryFn: () =>
       statsService.getTrend(activeType, { ...localFilter, currency }),
   });
