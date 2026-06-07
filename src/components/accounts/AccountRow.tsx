@@ -57,17 +57,17 @@ export function AccountRow({
   const renderIcon = (type: string | null) => {
     switch (type) {
       case "envelope":
-        return <HiEnvelope size={20} />;
+        return <HiEnvelope size={16} />;
       case "safe":
-        return <HiLockClosed size={20} />;
+        return <HiLockClosed size={16} />;
       case "jar":
-        return <HiBeaker size={20} />;
+        return <HiBeaker size={16} />;
       case "cash":
-        return <HiBanknotes size={20} />;
+        return <HiBanknotes size={16} />;
       case "archive":
-        return <HiArchiveBox size={20} />;
+        return <HiArchiveBox size={16} />;
       default:
-        return <HiCreditCard size={20} />;
+        return <HiCreditCard size={16} />;
     }
   };
 
@@ -109,6 +109,7 @@ export function AccountRow({
             <div
               style={{
                 fontWeight: 600,
+                fontSize: "0.9rem",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
@@ -118,7 +119,7 @@ export function AccountRow({
               {acc.storage_type?.name && (
                 <span
                   style={{
-                    fontSize: "0.75rem",
+                    fontSize: "0.65rem",
                     color: "var(--color-text-tertiary)",
                     fontWeight: 400,
                   }}
@@ -132,7 +133,7 @@ export function AccountRow({
                   title="Синхронізовано"
                   style={{ color: "var(--color-brand-600)", display: "flex" }}
                 >
-                  <HiArrowPath size={16} />
+                  <HiArrowPath size={14} />
                 </div>
               )}
             </div>
@@ -140,7 +141,7 @@ export function AccountRow({
             {acc.type === "card" && acc.card_number && (
               <div
                 style={{
-                  fontSize: "0.8rem",
+                  fontSize: "0.7rem",
                   color: "var(--color-text-secondary)",
                   fontFamily: "monospace",
                 }}
@@ -155,7 +156,7 @@ export function AccountRow({
       </Table.Cell>
 
       {/* TYPE */}
-      <Table.Cell style={{ textTransform: "capitalize" }}>
+      <Table.Cell style={{ textTransform: "capitalize", fontSize: "0.75rem" }}>
         {translateAccountType(acc.type)}
       </Table.Cell>
 
@@ -166,7 +167,7 @@ export function AccountRow({
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",
-            fontSize: "0.9rem",
+            fontSize: "0.8rem",
           }}
         >
           <HiUser style={{ color: "var(--color-text-secondary)" }} />
@@ -180,7 +181,7 @@ export function AccountRow({
           textAlign: "right",
           fontWeight: 700,
           fontFamily: "monospace",
-          fontSize: "1rem",
+          fontSize: "0.95rem",
         }}
       >
         {formatMoney(acc.calculated_balance || acc.balance, acc.currency)}

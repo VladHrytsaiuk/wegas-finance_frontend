@@ -44,7 +44,7 @@ export function AccountsTable({
           <th style={{ textAlign: "right" }}>
             {t("accounts:accountsTable.header_balance")}
           </th>
-          {canManage && <th style={{ width: "80px" }}></th>}
+          {canManage && <th style={{ width: "60px" }}></th>}
         </tr>
       </Table.Header>
 

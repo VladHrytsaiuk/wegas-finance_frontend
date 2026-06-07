@@ -6,12 +6,16 @@ export const GroupHeaderRow = styled.tr`
 
 export const GroupHeaderCell = styled.td`
   padding: 0.6rem 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-border);
+
+  @media (max-width: 1300px) {
+    font-size: 0.6rem;
+  }
 `;
 
 export const BankIndicator = styled.div<{ $color: string }>`
@@ -25,9 +29,9 @@ export const BankIndicator = styled.div<{ $color: string }>`
 `;
 
 export const IconWrapper = styled.div<{ $bg: string; $color: string }>`
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: ${(p) => p.$bg};
   color: ${(p) => p.$color};
   display: flex;
@@ -119,7 +123,7 @@ export const DropdownItem = styled.button<{ $isDanger?: boolean }>`
   text-align: left;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   text-decoration: none;
   color: ${(p) =>

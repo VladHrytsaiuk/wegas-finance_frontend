@@ -3,28 +3,32 @@ import styled from "styled-components";
 export const GridContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 `;
 
 export const GroupSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 `;
 
 export const GroupTitle = styled.h3`
-  font-size: 1rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
-  font-weight: 600;
+  font-weight: 700;
   margin-left: 0.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+
+  @media (max-width: 1300px) {
+    font-size: 0.6rem;
+  }
 `;
 
 export const CardsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
 `;
 
 export const CardWrapper = styled.div`

@@ -26,15 +26,15 @@ const PrivatNoiseEffect = css`
 const CardBase = css`
   position: relative;
   width: 100%;
-  border-radius: 16px;
+  border-radius: 14px;
 
-  /* 🔥 ПОВЕРНУЛИ БІЛЬШИЙ PADDING: Щоб картка "дихала" */
-  padding: 1.25rem;
+  /* 🔥 Зменшено паддінг */
+  padding: 1rem;
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition:
     transform 0.2s ease,
@@ -58,8 +58,8 @@ export const CreditCardContainer = styled.div<{
 }>`
   ${CardBase}
 
-  /* 🔥 ЗБІЛЬШИЛИ ВИСОТУ: Було 200px, стало 220px */
-  height: 220px;
+  /* 🔥 ЗМЕНШИЛИ ВИСОТУ: Було 220px, стало 180px */
+  height: 180px;
 
   background: ${(props) => props.$bg};
   color: ${(props) => props.$color};
@@ -70,7 +70,8 @@ export const CreditCardContainer = styled.div<{
 // --- CASH / SAVINGS CARD ---
 export const CashCardStyled = styled.div<{ $color: string }>`
   ${CardBase}
-  height: 150px;
+  /* 🔥 Зменшено зі 150 до 130 */
+  height: 130px;
   background-color: var(--color-bg-surface);
   color: var(--color-text-main);
   border: 1px solid var(--color-border);
@@ -81,12 +82,11 @@ export const CashCardStyled = styled.div<{ $color: string }>`
 
 export const CardHeader = styled.div`
   display: flex;
-  justify-content: space-between; /* Лого зліва, пусто справа (для кнопок дій) */
-  align-items: center; /* Центрування по вертикалі */
+  justify-content: space-between;
+  align-items: center;
   height: 30px;
 `;
 
-// Група для Лого + Бейдж (ліва сторона)
 export const HeaderLeftGroup = styled.div`
   display: flex;
   align-items: center;
@@ -96,38 +96,42 @@ export const HeaderLeftGroup = styled.div`
 export const CashCardHeader = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  /* padding-right прибираємо або зменшуємо, бо бейдж тепер біля імені */
+  gap: 4px;
   padding-right: 10px;
 `;
 
-// 🔥 ОНОВЛЕНИЙ БЕЙДЖ: Прибрали absolute, зробили його менш нав'язливим
 export const SyncBadge = styled.div<{ $variant: "card" | "cash" }>`
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* Для карток - маленький кружечок біля лого */
   ${(props) =>
     props.$variant === "card"
       ? css`
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.2);
           backdrop-filter: blur(4px);
           color: inherit;
+          & svg {
+            width: 12px;
+            height: 12px;
+          }
         `
       : css`
-          /* Для готівки - просто іконка поруч з ім'ям */
           color: var(--color-brand-600);
-          margin-left: 6px;
+          margin-left: 4px;
+          & svg {
+            width: 14px;
+            height: 14px;
+          }
         `}
 `;
 
 export const CashName = styled.div`
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -138,25 +142,24 @@ export const TypeBadge = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
   font-weight: 500;
 
   svg {
     opacity: 0.7;
+    width: 14px;
+    height: 14px;
   }
 `;
 
 export const CardChip = styled.div`
-  width: 36px;
-  height: 26px;
+  width: 32px;
+  height: 20px;
   background: linear-gradient(135deg, #e2e2e2 0%, #a5a5a5 100%);
   border-radius: 4px;
-
-  /* 🔥 ВІДСТУП: 1rem виглядає збалансовано при висоті 220px */
-  margin-top: 1rem;
-
-  margin-bottom: 8px;
+  margin-top: 0.5rem;
+  margin-bottom: 6px;
   position: relative;
   opacity: 0.9;
   flex-shrink: 0;
@@ -183,7 +186,7 @@ export const CardChip = styled.div`
 
 export const CardNumber = styled.div`
   font-family: "Courier New", Courier, monospace;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   letter-spacing: 2px;
   display: flex;
   align-items: center;
@@ -193,7 +196,7 @@ export const CardNumber = styled.div`
 `;
 
 export const CardName = styled.div`
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   opacity: 0.7;
   font-weight: 600;
   text-transform: uppercase;
@@ -205,12 +208,16 @@ export const CardName = styled.div`
 `;
 
 export const CardOwner = styled.div`
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   opacity: 0.6;
   display: flex;
   align-items: center;
   gap: 4px;
   margin-top: 2px;
+  & svg {
+    width: 10px;
+    height: 10px;
+  }
 `;
 
 export const CardFooter = styled.div`
@@ -222,7 +229,7 @@ export const CardFooter = styled.div`
 `;
 
 export const CardBalance = styled.div`
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   font-family: "JetBrains Mono", monospace;
   letter-spacing: -0.5px;
@@ -230,4 +237,8 @@ export const CardBalance = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (max-width: 1300px) {
+    font-size: 1.1rem;
+  }
 `;
