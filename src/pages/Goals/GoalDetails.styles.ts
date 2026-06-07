@@ -6,8 +6,8 @@ export const PageContainer = styled.div`
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 0 0 4rem 0;
+  gap: 1.25rem;
+  padding: 0 0 3rem 0;
 `;
 
 export const LoadingContainer = styled.div`
@@ -44,8 +44,8 @@ export const HeaderSection = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const HeaderLeft = styled.div`
@@ -85,11 +85,15 @@ export const GoalTitleBlock = styled.div`
   }
 
   h1 {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--color-text-main);
     margin: 0;
     line-height: 1.1;
+
+    @media (max-width: 1300px) {
+      font-size: 1.4rem;
+    }
   }
 `;
 
@@ -149,6 +153,13 @@ export const IconBox = styled.div<{ $color: string }>`
   justify-content: center;
   font-size: 1.8rem;
   flex-shrink: 0;
+
+  @media (max-width: 1300px) {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 1.4rem;
+  }
 `;
 
 export const HeaderActions = styled.div`
@@ -195,6 +206,11 @@ export const TopGrid = styled.div`
   /* 🔥 ФІКСОВАНА ВИСОТА БЛОКУ (щоб обидва були однакові) */
   height: 420px;
 
+  @media (max-width: 1300px) {
+    height: 360px;
+    gap: 1.25rem;
+  }
+
   @media (max-width: 1000px) {
     grid-template-columns: 1fr;
     height: auto;
@@ -215,8 +231,8 @@ export const MetricsGrid = styled.div`
 export const StyledCard = styled.div<{ $noPadding?: boolean }>`
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
-  padding: ${(p) => (p.$noPadding ? "0" : "2rem")};
+  border-radius: 16px;
+  padding: ${(p) => (p.$noPadding ? "0" : "1.25rem")};
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -229,13 +245,13 @@ export const StyledCard = styled.div<{ $noPadding?: boolean }>`
 export const CardHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--color-border);
 
   h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--color-text-main);
     margin: 0;
@@ -243,6 +259,8 @@ export const CardHeader = styled.div`
 
   svg {
     color: var(--color-brand-600);
+    width: 18px;
+    height: 18px;
   }
 `;
 
@@ -256,15 +274,14 @@ export const AccountHeaderWrapper = styled.div`
   }
 `;
 
-// --- КОНТЕНТ ---
 export const MainValueBlock = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-bottom: 2rem;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
 
   .label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--color-text-tertiary);
     text-transform: uppercase;
@@ -272,20 +289,24 @@ export const MainValueBlock = styled.div`
   }
 
   .value {
-    font-size: 3.2rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: var(--color-brand-600);
     font-family: "JetBrains Mono", monospace;
     letter-spacing: -0.03em;
     line-height: 1;
+
+    @media (max-width: 1300px) {
+      font-size: 1.8rem;
+    }
   }
 `;
 
 export const ProgressWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
 
   .meta {
     display: flex;
@@ -295,13 +316,13 @@ export const ProgressWrapper = styled.div`
     span:first-child {
       font-family: "JetBrains Mono", monospace;
       font-weight: 800;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       color: var(--color-text-main);
     }
     span:last-child {
       font-weight: 500;
       color: var(--color-text-tertiary);
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
   }
 `;
@@ -326,27 +347,33 @@ export const ProgressFill = styled.div<{ $percent: number; $color: string }>`
 export const MetaDataGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  gap: 1.25rem;
   margin-top: auto;
 `;
 
 export const MetaItem = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 
   .icon-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8rem;
+    gap: 0.4rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--color-text-tertiary);
     text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
   }
 
   .data {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-text-main);
   }
@@ -365,7 +392,7 @@ export const MetaItem = styled.div`
 `;
 
 export const MetaSpacer = styled(MetaItem)`
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 `;
 
 export const DeadlineValue = styled.span<{
@@ -507,6 +534,10 @@ export const AccountRowItem = styled.div`
   cursor: pointer;
   transition: background-color 0.2s;
 
+  @media (max-width: 1300px) {
+    padding: 0.8rem 1.25rem;
+  }
+
   &:last-child {
     border-bottom: none;
   }
@@ -529,6 +560,10 @@ export const AccountRowItem = styled.div`
     font-weight: 700;
     font-size: 1.05rem;
     color: var(--color-text-main);
+
+    @media (max-width: 1300px) {
+      font-size: 0.95rem;
+    }
   }
 `;
 
@@ -556,6 +591,10 @@ export const CardFooter = styled.div`
   justify-content: space-between;
   align-items: center;
 
+  @media (max-width: 1300px) {
+    padding: 0.8rem 1.25rem;
+  }
+
   span.label {
     font-size: 0.9rem;
     font-weight: 600;
@@ -567,5 +606,9 @@ export const CardFooter = styled.div`
     font-weight: 800;
     font-size: 1.1rem;
     color: var(--color-text-main);
+
+    @media (max-width: 1300px) {
+      font-size: 1rem;
+    }
   }
 `;
