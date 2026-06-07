@@ -14,6 +14,7 @@ import { BaseSelect } from "../../ui/Select/BaseSelect";
 import { focusNextElement } from "../../../utils/focusUtils";
 import { type CreateAssetOnFlyInput } from "../../../services/apiTransactions";
 import * as S from "./AssetSelector.styles";
+import { Input } from "../../ui/Input";
 import { isModifierPressed } from "../../../utils/platform";
 
 interface AssetCreationFormProps {
@@ -97,7 +98,7 @@ export const AssetCreationForm = ({
   };
 
   const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
-    if (isModifierPressed(e) && (e.key === "s" || e.key === "S")) {
+    if (isModifierPressed(e) && e.code === "KeyS") {
       e.preventDefault();
       e.stopPropagation();
       handleSave();

@@ -108,24 +108,24 @@ export const useTransactionLogic = ({
       const isMod = isModifierPressed(e);
 
       if (isMod) {
-        if (e.key === "=" || e.key === "+") {
+        if (e.code === "Equal") {
           e.preventDefault();
           transformRef.current?.zoomIn();
           return;
         }
-        if (e.key === "-" || e.key === "_") {
+        if (e.code === "Minus") {
           e.preventDefault();
           transformRef.current?.zoomOut();
           return;
         }
-        if (e.key === "0") {
+        if (e.code === "Digit0") {
           e.preventDefault();
           transformRef.current?.resetTransform();
           return;
         }
       }
 
-      if (isMod && (e.key === "d" || e.key === "D")) {
+      if (isMod && e.code === "KeyD") {
         e.preventDefault();
         if (showDetails) {
           const hasData = form.items.some(
@@ -147,7 +147,7 @@ export const useTransactionLogic = ({
         return;
       }
 
-      if (isMod && (e.key === "a" || e.key === "A")) {
+      if (isMod && e.code === "KeyA") {
         const target = e.target as HTMLElement;
         if (
           target.tagName === "TEXTAREA" ||
@@ -164,7 +164,7 @@ export const useTransactionLogic = ({
         return;
       }
 
-      if (isMod && (e.key === "i" || e.key === "I")) {
+      if (isMod && e.code === "KeyI") {
         e.preventDefault();
         fileInputRef.current?.click();
         return;

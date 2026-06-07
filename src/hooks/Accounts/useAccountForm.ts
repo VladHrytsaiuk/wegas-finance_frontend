@@ -304,7 +304,7 @@ export const useAccountForm = ({
         e.stopPropagation();
         formRef.current?.requestSubmit();
       }
-      if (isModifierPressed(e) && (e.key === "i" || e.key === "I")) {
+      if (isModifierPressed(e) && e.code === "KeyI") {
         e.preventDefault();
         e.stopPropagation();
         skinBtnRef.current?.click();
