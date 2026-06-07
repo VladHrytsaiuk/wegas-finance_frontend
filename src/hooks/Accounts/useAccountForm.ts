@@ -7,6 +7,7 @@ import {
   getStorageTypesApi,
   createStorageTypeApi,
 } from "../../services/apiStorageTypes";
+import { isModifierPressed } from "../../utils/platform";
 
 interface UseAccountFormProps {
   onSubmit: (data: any, options?: any) => void;
@@ -298,13 +299,12 @@ export const useAccountForm = ({
   // Shortcuts logic ... (без змін)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const isCmd = e.metaKey || e.ctrlKey;
-      if (isCmd && e.key === "Enter") {
+      if (isModifierPressed(e) && e.key === "Enter") {
         e.preventDefault();
         e.stopPropagation();
         formRef.current?.requestSubmit();
       }
-      if (isCmd && (e.key === "i" || e.key === "I")) {
+      if (isModifierPressed(e) && (e.key === "i" || e.key === "I")) {
         e.preventDefault();
         e.stopPropagation();
         skinBtnRef.current?.click();

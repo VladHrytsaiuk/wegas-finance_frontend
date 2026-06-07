@@ -14,6 +14,7 @@ import {
   deleteTransactionPhotoApi,
 } from "../../services/apiTransactions";
 import { compressImage } from "../../utils/compressor";
+import { isModifierPressed } from "../../utils/platform";
 
 interface UseTransactionLogicProps {
   transactionToEdit?: any;
@@ -104,9 +105,9 @@ export const useTransactionLogic = ({
   // --- HOTKEYS ---
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const isMod = isModifierPressed(e);
 
-      if (isCmdOrCtrl) {
+      if (isMod) {
         if (e.key === "=" || e.key === "+") {
           e.preventDefault();
           transformRef.current?.zoomIn();
@@ -124,7 +125,7 @@ export const useTransactionLogic = ({
         }
       }
 
-      if (isCmdOrCtrl && (e.key === "d" || e.key === "D")) {
+      if (isMod && (e.key === "d" || e.key === "D")) {
         e.preventDefault();
         if (showDetails) {
           const hasData = form.items.some(
@@ -146,7 +147,7 @@ export const useTransactionLogic = ({
         return;
       }
 
-      if (isCmdOrCtrl && (e.key === "a" || e.key === "A")) {
+      if (isMod && (e.key === "a" || e.key === "A")) {
         const target = e.target as HTMLElement;
         if (
           target.tagName === "TEXTAREA" ||
@@ -163,7 +164,7 @@ export const useTransactionLogic = ({
         return;
       }
 
-      if (isCmdOrCtrl && (e.key === "i" || e.key === "I")) {
+      if (isMod && (e.key === "i" || e.key === "I")) {
         e.preventDefault();
         fileInputRef.current?.click();
         return;

@@ -16,6 +16,7 @@ import {
 import Modal from "../../ui/Modal";
 import { DeleteReceiptDialog } from "../../ui/DeleteReceiptDialog";
 import * as S from "./styles";
+import { getShortcutLabel } from "../../../utils/platform";
 
 interface ImagePanelProps {
   previewUrl: string;
@@ -56,21 +57,21 @@ export const ImagePanel = ({
               <S.ControlButton
                 type="button"
                 onClick={() => zoomIn()}
-                title="Zoom In (Cmd +)"
+                title={`Zoom In (${getShortcutLabel("+")})`}
               >
                 <HiMagnifyingGlassPlus />
               </S.ControlButton>
               <S.ControlButton
                 type="button"
                 onClick={() => zoomOut()}
-                title="Zoom Out (Cmd -)"
+                title={`Zoom Out (${getShortcutLabel("-")})`}
               >
                 <HiMagnifyingGlassMinus />
               </S.ControlButton>
               <S.ControlButton
                 type="button"
                 onClick={() => resetTransform()}
-                title="Reset (Cmd 0)"
+                title={`Reset (${getShortcutLabel("0")})`}
               >
                 <HiArrowUturnLeft />
               </S.ControlButton>

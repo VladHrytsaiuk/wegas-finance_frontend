@@ -15,6 +15,7 @@ import {
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { getShortcutLabel } from "../../../utils/platform";
 
 // UI Components
 import { Button } from "../../ui/Button";
@@ -614,7 +615,7 @@ export function AccountFormContent(props: AccountFormProps) {
             style={{ width: "auto" }}
             disabled={isLoading}
             type="submit"
-            title="Ctrl + Enter"
+            title={getShortcutLabel("Enter")}
           >
             {state.isEditing
               ? t("accounts:accountForm.button_save")
@@ -742,7 +743,7 @@ export function AccountFormContent(props: AccountFormProps) {
                     : "monobank";
                   actions.setActiveBankTab(targetTab);
                 }}
-                title="Ctrl + I"
+                title={getShortcutLabel("I")}
               >
                 <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
               </S.ChangeSkinBtn>

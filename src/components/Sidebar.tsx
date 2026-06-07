@@ -160,6 +160,8 @@ const FeedbackLabel = styled.span<{ $collapsed: boolean }>`
   transition: opacity 0.2s;
 `;
 
+import { isModifierPressed } from "../utils/platform";
+
 // --- COMPONENT ---
 
 function Sidebar({
@@ -176,7 +178,7 @@ function Sidebar({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && (e.key === "a" || e.key === "A")) {
+      if (isModifierPressed(e) && (e.key === "a" || e.key === "A")) {
         if (
           ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "")
         )

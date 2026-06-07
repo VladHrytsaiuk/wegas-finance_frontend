@@ -14,6 +14,7 @@ import { BaseSelect } from "../../ui/Select/BaseSelect";
 import { focusNextElement } from "../../../utils/focusUtils";
 import { type CreateAssetOnFlyInput } from "../../../services/apiTransactions";
 import * as S from "./AssetSelector.styles";
+import { isModifierPressed } from "../../../utils/platform";
 
 interface AssetCreationFormProps {
   newAsset: CreateAssetOnFlyInput | null;
@@ -96,7 +97,7 @@ export const AssetCreationForm = ({
   };
 
   const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && (e.key === "s" || e.key === "S")) {
+    if (isModifierPressed(e) && (e.key === "s" || e.key === "S")) {
       e.preventDefault();
       e.stopPropagation();
       handleSave();
@@ -115,156 +116,138 @@ export const AssetCreationForm = ({
     }, 0);
   };
 
-  const handleCancel = (e?: React.SyntheticEvent) => {
-    e?.preventDefault();
-    onFinish(false);
+  const renderIcon = (type: string) => {
+    switch (type) {
+      case "electronics":
+        return <HiOutlineCube />;
+      case "car":
+        return <HiTruck />;
+      default:
+        return <HiOutlineCube />;
+    }
   };
 
   return (
-    <S.Wrapper ref={createFormRef} onKeyDownCapture={handleWrapperKeyDown}>
-      <S.Label>{t("assets:assetSelector.create_title")}</S.Label>
-      <S.CreateContainer>
-        <S.Row>
-          <S.IconBox>
-            <HiOutlineCube size={20} />
-          </S.IconBox>
-          <S.InlineInput
+    <S.FlyFormWrapper ref={createFormRef} onKeyDown={handleWrapperKeyDown}>
+      <S.FlyFormRow>
+        <S.FlyFormGroup style={{ flex: 2 }}>
+          <S.FlyLabel>
+            <HiTag /> {t("assets:assetForm.label_name")}
+          </S.FlyLabel>
+          <Input
             autoFocus
             placeholder={t("assets:assetForm.placeholder_name")}
             value={newAsset?.name || ""}
             onChange={(e) => handleNewAssetChange("name", e.target.value)}
             onKeyDown={handleKeyDown}
           />
-        </S.Row>
-        <S.Row>
-          <S.IconBox>
-            <HiHashtag size={18} />
-          </S.IconBox>
-          <S.InlineInput
-            placeholder={t("assets:assetForm.placeholder_serial")}
-            value={newAsset?.serial_number || ""}
+        </S.FlyFormGroup>
+
+        <S.FlyFormGroup style={{ flex: 1 }}>
+          <S.FlyLabel>
+            <HiHashtag /> {t("assets:assetForm.label_price")}
+          </S.FlyLabel>
+          <Input
+            type="number"
+            placeholder="0.00"
+            value={newAsset?.balance || ""}
             onChange={(e) =>
-              handleNewAssetChange("serial_number", e.target.value)
+              handleNewAssetChange("balance", parseFloat(e.target.value))
             }
             onKeyDown={handleKeyDown}
           />
-        </S.Row>
-        <S.Row>
-          <S.IconBox>
-            <HiTag size={18} />
-          </S.IconBox>
-          <div style={{ flex: 1 }}>
-            <BaseSelect
-              placeholder={t("assets:assetForm.placeholder_type")}
-              triggerLabel={
-                ASSET_TYPES.find((t) => t.value === newAsset?.type)?.label
-              }
-            >
-              {ASSET_TYPES.map((t) => (
-                <S.SelectItem
-                  key={t.value}
-                  type="button"
-                  $isActive={newAsset?.type === t.value}
-                  onClick={() => handleNewAssetChange("type", t.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleNewAssetChange("type", t.value);
-                      e.currentTarget.click();
-                    }
-                  }}
-                >
-                  {t.label}
-                  {newAsset?.type === t.value && <HiCheck size={16} />}
-                </S.SelectItem>
-              ))}
-            </BaseSelect>
-          </div>
-        </S.Row>
+        </S.FlyFormGroup>
+      </S.FlyFormRow>
 
-        {/* 🔥 ПОЛЕ ПРОБІГУ (ТІЛЬКИ ДЛЯ АВТО) */}
-        {newAsset?.type === "car" && (
-          <S.Row>
-            <S.IconBox>
-              <HiTruck size={18} />
-            </S.IconBox>
-            <S.InlineInput
-              type="number"
-              placeholder={t(
-                "assetForm.placeholder_mileage",
-                "Початковий пробіг (км)",
-              )}
-              value={newAsset?.mileage || ""}
-              onChange={(e) =>
-                handleNewAssetChange("mileage", Number(e.target.value))
-              }
-              onKeyDown={handleKeyDown}
-            />
-          </S.Row>
-        )}
+      <S.FlyFormRow>
+        <S.FlyFormGroup style={{ flex: 1 }}>
+          <S.FlyLabel>{t("assets:assetForm.label_type")}</S.FlyLabel>
+          <BaseSelect
+            options={ASSET_TYPES}
+            value={newAsset?.type || "other"}
+            onChange={(val) => handleNewAssetChange("type", val)}
+          />
+        </S.FlyFormGroup>
 
-        <S.Row>
-          <div
-            style={{ display: "flex", alignItems: "center", gap: 6, flex: 1 }}
-          >
-            <span
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--color-text-secondary)",
-              }}
-            >
-              {t("assets:assetForm.label_warranty_short", "Гарантія:")}
-            </span>
-            <S.DateInput
-              type="date"
-              max="9999-12-31"
-              value={localDate}
-              onChange={handleWarrantyDateChange}
-              onKeyDown={handleKeyDown}
-              onFocus={() => (isInputFocused.current = true)}
-              onBlur={() => (isInputFocused.current = false)}
-            />
-          </div>
-          <S.UploadButton
+        <S.FlyFormGroup style={{ flex: 1 }}>
+          <S.FlyLabel>{t("assets:assetForm.label_warranty_end")}</S.FlyLabel>
+          <Input
+            type="date"
+            value={localDate}
+            onChange={handleWarrantyDateChange}
+            onFocus={() => (isInputFocused.current = true)}
+            onBlur={() => (isInputFocused.current = false)}
+          />
+        </S.FlyFormGroup>
+      </S.FlyFormRow>
+
+      {/* Warranty Files Section */}
+      <S.FlyFormGroup>
+        <S.FlyLabel>
+          <HiPaperClip /> {t("assets:assetForm.label_warranty_files")}
+        </S.FlyLabel>
+        <S.FilesRow>
+          <S.AddFileBtn
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            $hasFiles={(newAsset?.warrantyFiles?.length || 0) > 0}
-            title={t("assets:assetForm.button_add_files")}
           >
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*,.pdf"
-              style={{ display: "none" }}
-              onChange={handleFilesAdd}
-            />
-            <HiPaperClip size={16} />
-            {(newAsset?.warrantyFiles?.length || 0) > 0 && (
-              <S.FileCountBadge>
-                {newAsset?.warrantyFiles?.length}
-              </S.FileCountBadge>
-            )}
-          </S.UploadButton>
-        </S.Row>
-        <S.ButtonsRow>
-          <S.ActionButton
-            type="button"
-            $variant="secondary"
-            onClick={handleCancel}
-          >
-            {t("assets:assetForm.button_cancel")}
-          </S.ActionButton>
-          <S.ActionButton
-            ref={saveBtnRef}
-            type="button"
-            $variant="primary"
-            onClick={handleSave}
-          >
-            {t("assets:assetForm.button_save")}
-          </S.ActionButton>
-        </S.ButtonsRow>
-      </S.CreateContainer>
-    </S.Wrapper>
+            <HiPlus size={20} />
+          </S.AddFileBtn>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            hidden
+            onChange={handleFilesAdd}
+          />
+          {newAsset?.warrantyFiles?.map((f, i) => (
+            <S.FileBadge key={i}>
+              <span>{f.name}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = (newAsset.warrantyFiles || []).filter(
+                    (_, idx) => idx !== i,
+                  );
+                  handleNewAssetChange("warrantyFiles", updated);
+                }}
+              >
+                &times;
+              </button>
+            </S.FileBadge>
+          ))}
+        </S.FilesRow>
+      </S.FlyFormGroup>
+
+      <S.FlyActions>
+        <S.FlyButton
+          ref={saveBtnRef}
+          $primary
+          type="button"
+          onClick={() => onFinish(true)}
+        >
+          <HiCheck /> {t("common:actions.save")}
+        </S.FlyButton>
+        <S.FlyButton type="button" onClick={() => onFinish(false)}>
+          {t("common:actions.cancel")}
+        </S.FlyButton>
+      </S.FlyActions>
+    </S.FlyFormWrapper>
   );
 };
+
+const HiPlus = ({ size }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);

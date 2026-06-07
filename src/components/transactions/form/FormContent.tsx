@@ -15,6 +15,7 @@ import {
   HiExclamationTriangle,
   HiPaperClip,
 } from "react-icons/hi2";
+import { getShortcutLabel } from "../../../utils/platform";
 
 // Context & Services
 import { useSettings } from "../../../context/SettingsContext";
@@ -683,7 +684,7 @@ export const FormContent: React.FC<FormContentProps> = ({
               state.isCompressing
             }
             type="submit"
-            title="Ctrl + Enter"
+            title={getShortcutLabel("Enter")}
             onKeyDown={handleSaveKeyDown}
           >
             {state.isEditSession
