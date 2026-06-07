@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { endOfMonth, startOfMonth } from "date-fns";
+import { endOfMonth, startOfMonth, subDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { HiCheck, HiPencil, HiXMark } from "react-icons/hi2";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
@@ -189,9 +189,9 @@ function Dashboard() {
   }, [accounts, user?.id]);
 
   const [globalFilter, setGlobalFilter] = useState<any>({
-    from: startOfMonth(new Date()).getTime(),
-    to: endOfMonth(new Date()).getTime(),
-    label: t("dashboard:dashboardPage.filter_period_label"),
+    from: subDays(new Date(), 30).getTime(),
+    to: new Date().getTime(),
+    label: t("legacy:filters.last_30_days", "Останні 30 днів"),
     accountIds: [],
   });
 
