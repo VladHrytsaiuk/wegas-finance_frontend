@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { startOfMonth, endOfMonth, subDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
@@ -33,9 +33,9 @@ export const useStatistics = () => {
 
   // --- Local State ---
   const [filter, setFilter] = useState<StatsFilter>({
-    from: startOfMonth(new Date()).getTime(),
-    to: endOfMonth(new Date()).getTime(),
-    label: t("stats_utility:statisticsPage.filter_period"),
+    from: subDays(new Date(), 30).getTime(),
+    to: new Date().getTime(),
+    label: t("legacy:filters.periods.last_30_days"),
     accountIds: [],
   });
 
