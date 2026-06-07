@@ -10,7 +10,7 @@ import { SyncWidget } from "./Feedback/SyncWidget";
 // --- Стилі для Desktop версії ---
 const StyledAppLayout = styled.div<{ $collapsed: boolean }>`
   display: grid;
-  grid-template-columns: ${(props) => (props.$collapsed ? "7rem" : "20rem")} 1fr;
+  grid-template-columns: ${(props) => (props.$collapsed ? "7rem" : "18rem")} 1fr;
   grid-template-rows: auto minmax(0, 1fr);
   height: 100vh;
   transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);

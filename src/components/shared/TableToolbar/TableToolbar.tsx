@@ -34,6 +34,7 @@ interface TableToolbarProps {
     from: Date | undefined;
     to: Date | undefined;
   }) => void;
+  enableSticky?: boolean;
   children?: ReactNode;
 }
 
@@ -51,6 +52,7 @@ export const TableToolbar = ({
   onClearAll,
   dateRange,
   onDateRangeChange,
+  enableSticky = false,
   children,
 }: TableToolbarProps) => {
   const { t } = useTranslation();
@@ -61,6 +63,11 @@ export const TableToolbar = ({
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!enableSticky) {
+      setIsSticky(false);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsSticky(!entry.isIntersecting);
@@ -74,7 +81,7 @@ export const TableToolbar = ({
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [enableSticky]);
 
   const ESTIMATED_WIDTH = 480;
 
@@ -132,7 +139,7 @@ export const TableToolbar = ({
       </S.ChildrenTopRow>
 
       {/* 2. ЛИПКИЙ КОНТЕЙНЕР (Фільтри + Пошук + Сортування) */}
-      <S.StickyContainer $isSticky={isSticky} $stickyEnabled={true}>
+      <S.StickyContainer $isSticky={isSticky} $stickyEnabled={enableSticky}>
         {showControlsRow && (
           <S.ControlsRow $isSticky={isSticky}>
             {searchPosition === "inline" && (
