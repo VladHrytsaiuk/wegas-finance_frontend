@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 
-const Container = styled.div<{ $isFullPage?: boolean }>`
+const Container = styled.div<{ $isFullPage?: boolean; $compact?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1.5rem;
+  padding: ${(p) => (p.$compact ? "1rem" : "1.5rem")};
   width: 100%;
   /* Використовуємо flex-grow, щоб зайняти весь вільний простір без жорстких calc */
   flex: ${(p) => (p.$isFullPage ? "1" : "none")};
@@ -16,54 +16,55 @@ const Container = styled.div<{ $isFullPage?: boolean }>`
   box-sizing: border-box;
 `;
 
-const ContentCard = styled.div`
-  background: var(--color-bg-surface);
-  border: 1px dashed var(--color-border);
+const ContentCard = styled.div<{ $compact?: boolean }>`
+  background: ${(p) => (p.$compact ? "transparent" : "var(--color-bg-surface)")};
+  border: ${(p) =>
+    p.$compact ? "none" : "1px dashed var(--color-border)"};
   border-radius: 16px;
-  padding: 2.5rem 2rem;
-  max-width: 420px;
+  padding: ${(p) => (p.$compact ? "0.5rem" : "2.5rem 2rem")};
+  max-width: ${(p) => (p.$compact ? "100%" : "420px")};
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  box-shadow: var(--shadow-sm);
+  gap: ${(p) => (p.$compact ? "0.5rem" : "1rem")};
+  box-shadow: ${(p) => (p.$compact ? "none" : "var(--shadow-sm)")};
 
   @media (max-width: 768px) {
-    padding: 1.5rem 1rem;
+    padding: ${(p) => (p.$compact ? "0.5rem" : "1.5rem 1rem")};
   }
 `;
 
-const IconWrapper = styled.div`
-  width: 56px;
-  height: 56px;
+const IconWrapper = styled.div<{ $compact?: boolean }>`
+  width: ${(p) => (p.$compact ? "40px" : "56px")};
+  height: ${(p) => (p.$compact ? "40px" : "56px")};
   border-radius: 50%;
   background-color: var(--color-brand-50);
   color: var(--color-brand-500);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: ${(p) => (p.$compact ? "0.25rem" : "0.5rem")};
 
   svg {
-    width: 28px;
-    height: 28px;
+    width: ${(p) => (p.$compact ? "20px" : "28px")};
+    height: ${(p) => (p.$compact ? "20px" : "28px")};
   }
 
   span.emoji {
-    font-size: 2rem;
+    font-size: ${(p) => (p.$compact ? "1.5rem" : "2rem")};
   }
 `;
 
-const Title = styled.h3`
-  font-size: 1.1rem;
+const Title = styled.h3<{ $compact?: boolean }>`
+  font-size: ${(p) => (p.$compact ? "0.9rem" : "1.1rem")};
   font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
 `;
 
-const Description = styled.p`
-  font-size: 0.85rem;
+const Description = styled.p<{ $compact?: boolean }>`
+  font-size: ${(p) => (p.$compact ? "0.75rem" : "0.85rem")};
   color: var(--color-text-secondary);
   line-height: 1.6;
   margin: 0;
@@ -83,6 +84,7 @@ interface EmptyStateProps {
   description?: string;
   action?: React.ReactNode;
   isFullPage?: boolean; // Якщо true, займе весь вільний простір батька
+  compact?: boolean; // Компактний режим для віджетів
 }
 
 export function EmptyState({
@@ -92,10 +94,11 @@ export function EmptyState({
   description,
   action,
   isFullPage = true,
+  compact = false,
 }: EmptyStateProps) {
-  // 🔥 Lock scroll on parent if fullPage
+  // 🔥 Lock scroll on parent if fullPage and NOT compact
   useEffect(() => {
-    if (!isFullPage) return;
+    if (!isFullPage || compact) return;
 
     const mainElement = document.querySelector("main");
     if (mainElement) {
@@ -105,19 +108,21 @@ export function EmptyState({
         mainElement.style.overflowY = originalOverflow;
       };
     }
-  }, [isFullPage]);
+  }, [isFullPage, compact]);
 
   return (
-    <Container $isFullPage={isFullPage}>
-      <ContentCard>
+    <Container $isFullPage={isFullPage} $compact={compact}>
+      <ContentCard $compact={compact}>
         {(icon || emoji) && (
-          <IconWrapper>
+          <IconWrapper $compact={compact}>
             {icon}
             {emoji && <span className="emoji">{emoji}</span>}
           </IconWrapper>
         )}
-        <Title>{title}</Title>
-        {description && <Description>{description}</Description>}
+        <Title $compact={compact}>{title}</Title>
+        {description && (
+          <Description $compact={compact}>{description}</Description>
+        )}
         {action && <Actions>{action}</Actions>}
       </ContentCard>
     </Container>

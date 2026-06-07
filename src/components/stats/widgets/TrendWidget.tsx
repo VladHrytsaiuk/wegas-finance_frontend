@@ -14,6 +14,8 @@ import { uk, enUS } from "date-fns/locale";
 import { WidgetControls } from "./WidgetControls";
 import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
+import { EmptyState } from "../../ui/EmptyState";
+import { HiOutlineChartBar } from "react-icons/hi2";
 
 // Styles & Hooks
 import * as S from "./TrendWidget.styles";
@@ -123,8 +125,16 @@ export const TrendWidget = (props: Props) => {
       <S.ChartWrapper>
         {isLoading ? (
           <CenteredSpinner isContainer />
+        ) : chartData.length === 0 ? (
+          <EmptyState
+            compact
+            icon={<HiOutlineChartBar />}
+            title={t("dashboard:dashboard.no_data")}
+          />
         ) : (
           <S.AbsoluteChartContainer>
+...
+
             <ResponsiveContainer width="99.9%" height="100%" debounce={50}>
               <AreaChart
                 data={chartData}

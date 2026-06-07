@@ -2,6 +2,8 @@
 import { WidgetControls } from "./WidgetControls";
 import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
+import { EmptyState } from "../../ui/EmptyState";
+import { HiListBullet } from "react-icons/hi2";
 
 // Styles & Logic
 import * as S from "./TopListWidget.styles";
@@ -50,7 +52,11 @@ export const TopListWidget = (props: Props) => {
       {isLoading ? (
         <CenteredSpinner isContainer />
       ) : processedData.length === 0 ? (
-        <S.EmptyState>{t("dashboard:dashboard.no_data")}</S.EmptyState>
+        <EmptyState
+          compact
+          icon={<HiListBullet />}
+          title={t("dashboard:dashboard.no_data")}
+        />
       ) : (
         <S.List>
           {processedData.map((item, idx) => (

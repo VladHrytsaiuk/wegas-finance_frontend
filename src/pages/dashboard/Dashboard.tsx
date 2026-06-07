@@ -1,12 +1,7 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
-import { startOfMonth, endOfMonth } from "date-fns";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import { HiPencil, HiCheck, HiXMark } from "react-icons/hi2";
+import { HiCheck, HiPencil, HiXMark } from "react-icons/hi2";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import type { ResponsiveLayouts as Layouts } from "react-grid-layout/legacy";
 import { useTranslation } from "react-i18next";
@@ -24,13 +19,11 @@ import { RecentTransactionsWidget } from "../../components/stats/widgets/RecentT
 import { AccountsWidget } from "../../components/stats/widgets/AccountsWidget";
 import { ExpensesPieWidget } from "../../components/stats/widgets/ExpensesPieWidget";
 
-import { type StatsFilter } from "../../services/apiStats";
 import { useHeader } from "../../context/HeaderContext";
 import api from "../../services/Axios";
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
-import { formatMoney } from "../../utils/helpers";
 import { useSummaryWidget } from "../../hooks/Stats/useSummaryWidget";
+import { formatMoney } from "../../utils/helpers";
 
 import {
   DashboardContainer,
@@ -42,74 +35,68 @@ import {
   ButtonLabel,
 } from "./Dashboard.styles";
 
-// Create the responsive grid with width provider
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-// 🔥 ФІНАЛЬНА СІТКА v10: Виправлено баг RGL зі стрибком віджета вниз
+// 🔥 ФІКСОВАНА ВИСОТА h: 8 (при rowHeight: 30) ідеально відповідає ~350px
+const MAIN_H = 8;
+const SUM_H = 3;
+const TREND_H = 10;
+
 const defaultLayouts: Layouts = {
+  xl: [
+    { i: "balance", x: 0, y: 0, w: 6, h: SUM_H },
+    { i: "income", x: 6, y: 0, w: 3, h: SUM_H },
+    { i: "expense", x: 9, y: 0, w: 3, h: SUM_H },
+    { i: "accounts", x: 0, y: 3, w: 6, h: MAIN_H },
+    { i: "recent", x: 6, y: 3, w: 6, h: MAIN_H, isResizable: false },
+    { i: "trend", x: 0, y: 11, w: 12, h: TREND_H },
+    { i: "pie", x: 0, y: 21, w: 6, h: MAIN_H },
+    { i: "top_categories", x: 6, y: 21, w: 6, h: MAIN_H },
+    { i: "top_counterparties", x: 0, y: 29, w: 12, h: MAIN_H },
+  ],
   lg: [
-    { i: "balance", x: 0, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
-    { i: "income", x: 4, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
-    { i: "expense", x: 8, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
-    { i: "accounts", x: 0, y: 3, w: 4, h: 8, minH: 5, minW: 3 },
-    {
-      i: "recent",
-      x: 4,
-      y: 3,
-      w: 8,
-      h: 8,
-      minH: 6,
-      minW: 4,
-      isResizable: false,
-    },
-    { i: "trend", x: 0, y: 11, w: 8, h: 9, minH: 6, minW: 4 },
-    { i: "pie", x: 8, y: 11, w: 4, h: 9, minH: 6, minW: 3 },
-    { i: "top_categories", x: 0, y: 20, w: 6, h: 9, minH: 6, minW: 3 },
-    { i: "top_counterparties", x: 6, y: 20, w: 6, h: 9, minH: 6, minW: 3 },
+    { i: "balance", x: 0, y: 0, w: 6, h: SUM_H },
+    { i: "income", x: 6, y: 0, w: 3, h: SUM_H },
+    { i: "expense", x: 9, y: 0, w: 3, h: SUM_H },
+    { i: "accounts", x: 0, y: 3, w: 6, h: MAIN_H },
+    { i: "recent", x: 6, y: 3, w: 6, h: MAIN_H },
+    { i: "trend", x: 0, y: 11, w: 12, h: TREND_H },
+    { i: "pie", x: 0, y: 21, w: 6, h: MAIN_H },
+    { i: "top_categories", x: 6, y: 21, w: 6, h: MAIN_H },
+    { i: "top_counterparties", x: 0, y: 29, w: 12, h: MAIN_H },
   ],
   md: [
-    { i: "balance", x: 0, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
-    { i: "income", x: 4, y: 0, w: 3, h: 3, minH: 2, minW: 2 },
-    { i: "expense", x: 7, y: 0, w: 3, h: 3, minH: 2, minW: 2 },
-    { i: "accounts", x: 0, y: 3, w: 5, h: 8, minH: 5, minW: 3 },
-    { i: "recent", x: 5, y: 3, w: 5, h: 8, isResizable: false, minW: 4 },
-    { i: "trend", x: 0, y: 11, w: 10, h: 9, minH: 6, minW: 4 },
-    { i: "pie", x: 0, y: 20, w: 5, h: 9, minH: 6, minW: 3 },
-    { i: "top_categories", x: 5, y: 20, w: 5, h: 9, minH: 6, minW: 3 },
-    { i: "top_counterparties", x: 0, y: 29, w: 10, h: 9, minH: 6, minW: 4 },
+    { i: "balance", x: 0, y: 0, w: 6, h: SUM_H },
+    { i: "income", x: 6, y: 0, w: 3, h: SUM_H },
+    { i: "expense", x: 9, y: 0, w: 3, h: SUM_H },
+    { i: "accounts", x: 0, y: 3, w: 6, h: MAIN_H },
+    { i: "recent", x: 6, y: 3, w: 6, h: MAIN_H },
+    { i: "trend", x: 0, y: 11, w: 12, h: TREND_H },
+    { i: "pie", x: 0, y: 21, w: 6, h: MAIN_H },
+    { i: "top_categories", x: 6, y: 21, w: 6, h: MAIN_H },
+    { i: "top_counterparties", x: 0, y: 29, w: 12, h: MAIN_H },
   ],
   sm: [
-    { i: "balance", x: 0, y: 0, w: 6, h: 3, minH: 2, minW: 2 },
-    { i: "income", x: 0, y: 3, w: 3, h: 3, minH: 2, minW: 2 },
-    { i: "expense", x: 3, y: 3, w: 3, h: 3, minH: 2, minW: 2 },
-    { i: "accounts", x: 0, y: 6, w: 3, h: 8, minH: 5, minW: 3 },
-    { i: "recent", x: 3, y: 6, w: 3, h: 8, isResizable: false, minW: 3 },
-    { i: "trend", x: 0, y: 14, w: 6, h: 9, minH: 6, minW: 4 },
-    { i: "pie", x: 0, y: 23, w: 6, h: 9, minH: 6, minW: 3 },
-    { i: "top_categories", x: 0, y: 32, w: 3, h: 9, minH: 6, minW: 3 },
-    { i: "top_counterparties", x: 3, y: 32, w: 3, h: 9, minH: 6, minW: 3 },
+    { i: "balance", x: 0, y: 0, w: 6, h: SUM_H },
+    { i: "income", x: 0, y: 3, w: 3, h: SUM_H },
+    { i: "expense", x: 3, y: 3, w: 3, h: SUM_H },
+    { i: "accounts", x: 0, y: 6, w: 6, h: MAIN_H },
+    { i: "recent", x: 0, y: 16, w: 6, h: MAIN_H },
+    { i: "trend", x: 0, y: 26, w: 6, h: TREND_H },
+    { i: "top_categories", x: 0, y: 36, w: 6, h: MAIN_H },
+    { i: "pie", x: 0, y: 46, w: 6, h: MAIN_H },
+    { i: "top_counterparties", x: 0, y: 56, w: 6, h: MAIN_H },
   ],
   xs: [
-    { i: "balance", x: 0, y: 0, w: 4, h: 3, minH: 2, minW: 2 },
-    { i: "income", x: 0, y: 3, w: 2, h: 3, minH: 2, minW: 2 },
-    { i: "expense", x: 2, y: 3, w: 2, h: 3, minH: 2, minW: 2 },
-    { i: "accounts", x: 0, y: 6, w: 4, h: 8, minH: 5, minW: 2 },
-    { i: "recent", x: 0, y: 14, w: 4, h: 8, isResizable: false, minW: 2 },
-    { i: "trend", x: 0, y: 22, w: 4, h: 9, minH: 6, minW: 2 },
-    { i: "pie", x: 0, y: 31, w: 4, h: 9, minH: 6, minW: 2 },
-    { i: "top_categories", x: 0, y: 40, w: 4, h: 9, minH: 6, minW: 2 },
-    { i: "top_counterparties", x: 0, y: 49, w: 4, h: 9, minH: 6, minW: 2 },
-  ],
-  xxs: [
-    { i: "balance", x: 0, y: 0, w: 2, h: 3, minH: 2, minW: 2 },
-    { i: "income", x: 0, y: 3, w: 2, h: 3, minH: 2, minW: 2 },
-    { i: "expense", x: 0, y: 6, w: 2, h: 3, minH: 2, minW: 2 },
-    { i: "accounts", x: 0, y: 9, w: 2, h: 8, minH: 5, minW: 2 },
-    { i: "recent", x: 0, y: 17, w: 2, h: 8, isResizable: false, minW: 2 },
-    { i: "trend", x: 0, y: 25, w: 2, h: 9, minH: 6, minW: 2 },
-    { i: "pie", x: 0, y: 34, w: 2, h: 9, minH: 6, minW: 2 },
-    { i: "top_categories", x: 0, y: 43, w: 2, h: 9, minH: 6, minW: 2 },
-    { i: "top_counterparties", x: 0, y: 52, w: 2, h: 9, minH: 6, minW: 2 },
+    { i: "balance", x: 0, y: 0, w: 4, h: SUM_H },
+    { i: "income", x: 0, y: 3, w: 2, h: SUM_H },
+    { i: "expense", x: 2, y: 3, w: 2, h: SUM_H },
+    { i: "accounts", x: 0, y: 6, w: 4, h: MAIN_H },
+    { i: "recent", x: 0, y: 16, w: 4, h: MAIN_H },
+    { i: "trend", x: 0, y: 26, w: 4, h: TREND_H },
+    { i: "top_categories", x: 0, y: 36, w: 4, h: MAIN_H },
+    { i: "pie", x: 0, y: 46, w: 4, h: MAIN_H },
+    { i: "top_counterparties", x: 0, y: 56, w: 4, h: MAIN_H },
   ],
 };
 
@@ -149,7 +136,7 @@ function Dashboard() {
 
   const [layouts, setLayouts] = useState(() => {
     try {
-      const saved = localStorage.getItem("dashboard_layout_v7");
+      const saved = localStorage.getItem("dashboard_layout_v19");
       return saved ? JSON.parse(saved) : defaultLayouts;
     } catch (e) {
       return defaultLayouts;
@@ -170,21 +157,16 @@ function Dashboard() {
   const onLayoutChange = useCallback(
     (_currentLayout: any, allLayouts: any) => {
       if (!isEditMode) return;
-      
-      // Guard: only update if layouts actually changed
-      const layoutsStr = JSON.stringify(layouts);
       const allLayoutsStr = JSON.stringify(allLayouts);
-      if (layoutsStr === allLayoutsStr) return;
-
       setLayouts(allLayouts);
-      localStorage.setItem("dashboard_layout_v7", allLayoutsStr);
+      localStorage.setItem("dashboard_layout_v19", allLayoutsStr);
     },
-    [isEditMode, layouts],
+    [isEditMode],
   );
 
   const handleResetLayout = () => {
     setLayouts(defaultLayouts);
-    localStorage.removeItem("dashboard_layout_v7");
+    localStorage.removeItem("dashboard_layout_v19");
     setIsEditMode(false);
   };
 
@@ -206,7 +188,7 @@ function Dashboard() {
     );
   }, [accounts, user?.id]);
 
-  const [globalFilter, setGlobalFilter] = useState<StatsFilter>({
+  const [globalFilter, setGlobalFilter] = useState<any>({
     from: startOfMonth(new Date()).getTime(),
     to: endOfMonth(new Date()).getTime(),
     label: t("dashboard:dashboardPage.filter_period_label"),
@@ -222,7 +204,7 @@ function Dashboard() {
 
   useEffect(() => {
     if (myAccountIds.length > 0 && globalFilter.accountIds.length === 0) {
-      setGlobalFilter((prev) => ({ ...prev, accountIds: myAccountIds }));
+      setGlobalFilter((prev: any) => ({ ...prev, accountIds: myAccountIds }));
     }
   }, [myAccountIds]);
 
@@ -235,16 +217,18 @@ function Dashboard() {
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, user, t]);
 
-  const handleGlobalUpdate = (updates: Partial<StatsFilter>) => {
-    setGlobalFilter((prev) => ({ ...prev, ...updates }));
+  const handleGlobalUpdate = (updates: any) => {
+    setGlobalFilter((prev: any) => ({ ...prev, ...updates }));
     setIsDiverged(false);
   };
   const handleLocalChange = () => setIsDiverged(true);
 
-  // Memoize static grid props to prevent re-renders
-  const breakpoints = useMemo(() => ({ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }), []);
-  const cols = useMemo(() => ({ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }), []);
-  const margin = useMemo(() => [20, 20] as [number, number], []);
+  const breakpoints = useMemo(
+    () => ({ xl: 1300, lg: 1000, md: 768, sm: 480, xs: 0 }),
+    [],
+  );
+  const cols = useMemo(() => ({ xl: 12, lg: 12, md: 12, sm: 6, xs: 4 }), []);
+  const margin = useMemo(() => [16, 16] as [number, number], []);
   const containerPadding = useMemo(() => [0, 0] as [number, number], []);
 
   if (isUserLoading || isAccLoading)
@@ -256,20 +240,12 @@ function Dashboard() {
     );
 
   return (
-    <DashboardContainer
-      $isEditMode={isEditMode}
-      $isMounted={isMounted}
-    >
+    <DashboardContainer $isEditMode={isEditMode} $isMounted={isMounted}>
       <FilterBar>
         <div style={{ display: "flex", gap: "10px" }}>
           <EditButton
             onClick={() => setIsEditMode(!isEditMode)}
             $active={isEditMode}
-            title={
-              isEditMode
-                ? t("dashboard:dashboardPage.save_mode")
-                : t("dashboard:dashboardPage.edit_mode")
-            }
           >
             {isEditMode ? <HiCheck /> : <HiPencil />}
             <ButtonLabel>
@@ -279,10 +255,7 @@ function Dashboard() {
             </ButtonLabel>
           </EditButton>
           {isEditMode && (
-            <EditButton
-              onClick={handleResetLayout}
-              title={t("dashboard:dashboardPage.reset_layout")}
-            >
+            <EditButton onClick={handleResetLayout}>
               <HiXMark />
               <ButtonLabel>{t("dashboard:dashboardPage.reset_layout")}</ButtonLabel>
             </EditButton>
@@ -292,9 +265,7 @@ function Dashboard() {
         <WidgetControls
           variant="global"
           hasChanges={isDiverged}
-          currentLabel={
-            globalFilter.label || t("dashboard:dashboardPage.filter_period_label")
-          }
+          currentLabel={globalFilter.label}
           currentAccountIds={globalFilter.accountIds}
           onFilterChange={handleGlobalUpdate}
           currentFrom={globalFilter.from}

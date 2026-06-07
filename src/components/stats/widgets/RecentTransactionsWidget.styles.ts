@@ -18,7 +18,7 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 1.25rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 6px;
 `;
 
 export const TitleGroup = styled.div`
@@ -58,11 +58,11 @@ export const TableList = styled.div`
   /* 🔥 Головний фікс: змушуємо контейнер зайняти весь вільний простір до низу картки */
   flex: 1;
   overflow-y: hidden;
-  padding-bottom: 0.5rem; /* Щоб останній елемент не прилипав до низу при скролі */
+  /* padding-bottom removed */
 
   /* Стилізація дочірніх елементів (TransactionItem) */
   & > div {
-    height: 63px;
+    height: 58px;
     padding-left: 1.25rem;
     padding-right: 1.25rem;
     flex-shrink: 0; /* 🔥 Забороняємо транзакціям сплющуватись, якщо їх буде багато */
@@ -82,24 +82,5 @@ export const TableList = styled.div`
   &::-webkit-scrollbar-thumb {
     background: var(--color-text-tertiary);
     border-radius: 10px;
-  }
-`;
-
-export const SpinnerWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 3rem 0;
-`;
-
-export const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 3rem 0;
-  gap: 0.5rem;
-  color: var(--color-text-secondary);
-
-  svg {
-    opacity: 0.3;
   }
 `;

@@ -102,7 +102,7 @@ export const Item = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;

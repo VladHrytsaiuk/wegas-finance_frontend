@@ -1,4 +1,5 @@
 import { HiOutlineBanknotes, HiArrowLongRight } from "react-icons/hi2";
+import { EmptyState } from "../../ui/EmptyState";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
@@ -73,10 +74,11 @@ export const RecentTransactionsWidget = (props: Props) => {
           ))}
 
           {recentItems.length === 0 && (
-            <S.EmptyState>
-              <HiOutlineBanknotes size={32} />
-              <span>{t("dashboard:dashboard.no_data")}</span>
-            </S.EmptyState>
+            <EmptyState
+              compact
+              icon={<HiOutlineBanknotes />}
+              title={t("dashboard:dashboard.no_data")}
+            />
           )}
         </S.TableList>
       )}

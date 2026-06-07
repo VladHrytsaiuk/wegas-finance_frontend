@@ -1,4 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { HiChartPie } from "react-icons/hi2";
+import { EmptyState } from "../../ui/EmptyState";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
@@ -56,7 +58,11 @@ export const ExpensesPieWidget = (props: Props) => {
       {isLoading ? (
         <CenteredSpinner isContainer />
       ) : chartData.length === 0 ? (
-        <S.EmptyState>{t("dashboard:dashboard.no_data")}</S.EmptyState>
+        <EmptyState
+          compact
+          icon={<HiChartPie />}
+          title={t("dashboard:dashboard.no_data")}
+        />
       ) : (
         <S.ContentContainer>
           <S.ChartArea>
@@ -67,8 +73,8 @@ export const ExpensesPieWidget = (props: Props) => {
                     data={chartData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
+                    innerRadius={70}
+                    outerRadius={95}
                     paddingAngle={2}
                     dataKey="value"
                     stroke="none"
@@ -107,31 +113,12 @@ export const ExpensesPieWidget = (props: Props) => {
                 </PieChart>
               </ResponsiveContainer>
               <S.CenterLabel>
-                <span className="label">{t("dashboard:dashboard.total_balance")}</span>
+                <span className="label">
+                  {t("dashboard:dashboard.total_balance")}
+                </span>
               </S.CenterLabel>
             </S.AbsolutePieContainer>
           </S.ChartArea>
-
-          <S.CustomLegend>
-            {chartData.map((entry, index) => (
-              <S.LegendItem key={index}>
-                <S.Dot style={{ backgroundColor: entry.color }} />
-                <S.LegendText>
-                  <span className="name" title={entry.name}>
-                    {entry.name}
-                  </span>
-                  <span className="percent">
-                    {(
-                      (entry.value /
-                        chartData.reduce((acc, cur) => acc + cur.value, 0)) *
-                      100
-                    ).toFixed(0)}
-                    %
-                  </span>
-                </S.LegendText>
-              </S.LegendItem>
-            ))}
-          </S.CustomLegend>
         </S.ContentContainer>
       )}
     </S.WidgetCard>

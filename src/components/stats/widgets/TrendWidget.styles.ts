@@ -77,13 +77,6 @@ export const AbsoluteChartContainer = styled.div`
   height: 100%;
 `;
 
-export const SpinnerWrapper = styled.div`
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-`;
-
 export const TooltipContainer = styled.div`
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);

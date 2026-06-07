@@ -10,6 +10,11 @@ export const WidgetCard = styled.div`
   gap: 1rem;
   height: 100%;
   min-height: 0;
+
+  @media (max-width: 1300px) {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
 `;
 
 export const Header = styled.div`
@@ -30,17 +35,21 @@ export const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: center; /* 🔥 Center vertically */
   flex: 1;
   min-height: 0;
   width: 100%;
+
+  @media (max-width: 1300px) {
+    gap: 0.5rem;
+  }
 `;
 
 export const ChartArea = styled.div`
   width: 100%;
-  height: 220px;
+  height: 100%; /* 🔥 Use full available height */
   position: relative;
-  flex-shrink: 0;
+  flex-grow: 1;
 `;
 
 export const AbsolutePieContainer = styled.div`
@@ -68,7 +77,7 @@ export const CenterLabel = styled.div`
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--color-text-tertiary);
-    font-weight: 600;
+    font-weight: 700;
   }
 `;
 
@@ -80,6 +89,12 @@ export const CustomLegend = styled.div`
   @media (max-width: 1400px) {
     grid-template-columns: 1fr;
   }
+
+  @media (max-width: 1300px) {
+    gap: 4px;
+  }
+
+  margin-bottom: auto;
 `;
 
 export const LegendItem = styled.div`
@@ -87,6 +102,11 @@ export const LegendItem = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
+
+  @media (max-width: 1300px) {
+    font-size: 0.75rem;
+    gap: 4px;
+  }
 `;
 
 export const Dot = styled.div`
@@ -106,27 +126,11 @@ export const LegendText = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
   }
 
   .percent {
-    font-weight: 600;
-    color: var(--color-text-secondary);
-  }
-`;
-
-export const SpinnerWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-`;
-
-export const EmptyState = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  font-weight: 600;
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
-`;
+  }
+  `;
+

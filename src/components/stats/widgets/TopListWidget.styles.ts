@@ -4,10 +4,10 @@ export const WidgetCard = styled.div`
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.25rem 0 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
   height: 100%;
   min-height: 0;
 `;
@@ -30,9 +30,10 @@ export const Title = styled.h3`
 export const List = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.75rem;
   overflow-y: auto;
   padding-right: 4px;
+  flex: 1;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -68,7 +69,6 @@ export const Name = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
 `;
 
 export const Value = styled.span`
@@ -99,22 +99,4 @@ export const ProgressBar = styled.div<{ $width: number; $color: string }>`
   width: ${(p) => p.$width}%;
   background-color: ${(p) => p.$color};
   transition: width 0.6s ease;
-`;
-
-export const SpinnerWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  min-height: 150px;
-`;
-
-export const EmptyState = styled.div`
-  color: var(--color-text-secondary);
-  text-align: center;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
 `;

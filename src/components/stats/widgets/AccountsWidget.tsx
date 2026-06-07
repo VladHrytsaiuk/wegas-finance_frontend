@@ -1,7 +1,8 @@
-import { HiArrowLongRight } from "react-icons/hi2";
+import { HiArrowLongRight, HiCreditCard } from "react-icons/hi2";
 
 // Components
-import Spinner from "../../ui/Spinner";
+import { CenteredSpinner } from "../../ui/CenteredSpinner";
+import { EmptyState } from "../../ui/EmptyState";
 
 // Styles & Logic
 import * as S from "./AccountsWidget.styles";
@@ -31,8 +32,15 @@ export const AccountsWidget = () => {
       </S.Header>
 
       {isLoading ? (
-        <Spinner />
+        <CenteredSpinner isContainer />
+      ) : accounts.length === 0 ? (
+        <EmptyState
+          compact
+          icon={<HiCreditCard />}
+          title={t("accounts:accountsPage.status_empty")}
+        />
       ) : (
+
         <S.ScrollArea>
           <S.List>
             {accounts.map((acc: any) => {
