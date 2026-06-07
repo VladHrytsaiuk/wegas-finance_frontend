@@ -74,7 +74,7 @@ export const TopListWidget = (props: Props) => {
                       <SmartIcon
                         iconName={item.icon}
                         color={item.displayColor}
-                        size={14}
+                        size={16}
                       />
                     ) : (
                       <S.ColorDot $color={item.displayColor} />

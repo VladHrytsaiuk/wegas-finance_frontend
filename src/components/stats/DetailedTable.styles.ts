@@ -46,22 +46,35 @@ export const NameCell = styled.div`
   min-width: 0; /* 🔥 Fix for flex ellipsis */
 `;
 
-export const IconBox = styled.div<{ $bg: string }>`
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: ${(p) => `${p.$bg}15`};
+export const IconBox = styled.div<{ $color: string; $hasLogo?: boolean }>`
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  background: ${(p) =>
+    p.$hasLogo
+      ? "transparent"
+      : `color-mix(in srgb, ${p.$color || "#6b7280"}, transparent 90%)`};
+
+  border: 1px solid
+    ${(p) =>
+      p.$hasLogo
+        ? "rgba(0, 0, 0, 0.08)"
+        : `color-mix(in srgb, ${p.$color || "#6b7280"}, transparent 80%)`};
+
+  color: ${(p) => p.$color || "#6b7280"};
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* 🔥 Change from cover to contain for logos */
-    padding: 4px; /* Give logos some breathing room */
+    object-fit: cover;
+    display: block;
+    padding: 0;
   }
 `;
 
@@ -92,7 +105,8 @@ export const ProgressBar = styled.div`
   width: 100%;
   max-width: 180px;
   height: 8px;
-  background: var(--color-bg-page);
+  background: var(--color-bg-main);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   overflow: hidden;
   .fill {

@@ -69,20 +69,31 @@ export const Logo = styled.div<{ $color?: string; $hasImage?: boolean }>`
   width: 24px;
   height: 24px;
   border-radius: 6px;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  background: ${(p) =>
+    p.$hasImage
+      ? "transparent"
+      : `color-mix(in srgb, ${p.$color || "#6b7280"}, transparent 90%)`};
+
+  border: 1px solid
+    ${(p) =>
+      p.$hasImage
+        ? "rgba(0, 0, 0, 0.08)"
+        : `color-mix(in srgb, ${p.$color || "#6b7280"}, transparent 80%)`};
+
+  color: ${(p) => p.$color || "#6b7280"};
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-  background: ${(p) => (p.$hasImage ? "transparent" : `${p.$color}15`)};
-  border: ${(p) =>
-    p.$hasImage ? "1px solid var(--color-border)" : "none"};
-  color: ${(p) => p.$color || "var(--color-text-secondary)"};
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    display: block;
+    padding: 0;
   }
 
   svg {

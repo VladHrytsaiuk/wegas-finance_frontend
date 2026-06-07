@@ -38,11 +38,11 @@ export const DetailedTable = ({
         {rows.map((item, idx) => (
           <S.TableRow key={idx}>
             <S.NameCell>
-              <S.IconBox $bg={item.finalColor}>
+              <S.IconBox $color={item.finalColor} $hasLogo={!!item.logo}>
                 <SmartIcon
                   iconName={item.displayIcon}
                   logo={item.logo}
-                  size={20}
+                  size={24}
                   color={item.finalColor}
                 />
               </S.IconBox>

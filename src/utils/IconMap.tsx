@@ -189,8 +189,13 @@ const getLogoSrc = (logoIdentifier: string | undefined | null) => {
   // Якщо назва починається на 'icon_', шукаємо в банках, інакше в брендах
   const folder = logoIdentifier.startsWith("icon_") ? "banks" : "brands";
 
-  return `/${folder}/${logoIdentifier}.svg`;
+  // Якщо розширення вже є — повертаємо як є, інакше додаємо .svg
+  const hasExtension = /\.(svg|png|jpg|jpeg|webp)$/i.test(logoIdentifier);
+  const fileName = hasExtension ? logoIdentifier : `${logoIdentifier}.svg`;
+
+  return `/${folder}/${fileName}`;
 };
+
 
 // === 3. КОМПОНЕНТ CATEGORY ICON (Базовий) ===
 interface IconProps extends React.ComponentProps<"svg"> {
