@@ -16,6 +16,11 @@ export const Label = styled.span`
   @media (min-width: 640px) {
     display: inline;
   }
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
+  }
 `;
 
 export const Group = styled.div`
@@ -42,6 +47,11 @@ export const Button = styled.button<{ $active: boolean }>`
   font-size: 0.85rem;
   transition: all 0.2s ease-in-out;
   white-space: nowrap;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
+  }
 
   &:hover {
     color: var(--color-brand-700);

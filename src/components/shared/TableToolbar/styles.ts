@@ -71,6 +71,11 @@ export const SearchInput = styled.input`
   transition: all 0.2s;
   height: 38px;
 
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    height: 30px;
+  }
+
   &:focus {
     outline: none;
     background-color: var(--color-bg-surface);
@@ -108,9 +113,25 @@ export const FilterButton = styled.button<{
   white-space: nowrap;
   flex-shrink: 0;
 
+  @media (max-width: 1300px) {
+    padding: 0 0.6rem;
+    font-size: 0.7rem;
+    height: 30px;
+  }
+
   &:hover {
     background-color: var(--color-brand-50);
     border-color: var(--color-brand-300);
+  }
+
+  & svg:not(.chevron) {
+    width: 1.1rem;
+    height: 1.1rem;
+
+    @media (max-width: 1300px) {
+      width: 13px;
+      height: 13px;
+    }
   }
 
   svg.chevron {
@@ -142,6 +163,11 @@ export const ClearTextBtn = styled.button`
   color: var(--color-red-600);
   font-size: 0.8rem;
   cursor: pointer;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    height: 30px;
+  }
   display: flex;
   align-items: center;
   justify-content: center;
@@ -241,6 +267,11 @@ export const SmallInput = styled.input`
   border-radius: 6px;
   font-size: 0.85rem;
   background: var(--color-bg-page);
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    height: 30px;
+  }
   color: var(--color-text-main);
   &:focus {
     border-color: var(--color-brand-500);
@@ -255,6 +286,11 @@ export const ButtonSmall = styled.button`
   padding: 0.4rem 0.8rem;
   font-size: 0.85rem;
   cursor: pointer;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    height: 30px;
+  }
   font-weight: 500;
   &:hover {
     background-color: var(--color-brand-700);

@@ -49,7 +49,7 @@ export default function Assets() {
         >
           <Modal.Open opens="create-asset">
             <Button variation="primary" size="medium" icon={<HiPlus />}>
-              <span>{t("assets:assetsPage.button_add")}</span>
+              {t("assets:assetsPage.button_add")}
             </Button>
           </Modal.Open>
         </TableToolbar>

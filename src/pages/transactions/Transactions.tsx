@@ -111,16 +111,13 @@ function Transactions() {
               to="new"
               state={{ background: location }}
               size="medium"
+              icon={<HiPlus />}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
                 textDecoration: "none",
                 whiteSpace: "nowrap",
               }}
             >
-              <HiPlus style={{ width: "20px", height: "20px" }} />
-              <span>{t("transactions:transactionsPage.button_add")}</span>
+              {t("transactions:transactionsPage.button_add")}
             </Button>
           </S.ActionButtons>
         </TableToolbar>

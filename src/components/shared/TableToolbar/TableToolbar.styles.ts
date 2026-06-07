@@ -182,7 +182,8 @@ export const FilterButton = styled.button<{
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 0 12px;
+  height: 38px;
   border: 1px solid transparent;
   background: ${(p) => (p.$isOpen ? "var(--color-bg-hover)" : "transparent")};
   color: var(--color-text-main);
@@ -191,6 +192,13 @@ export const FilterButton = styled.button<{
   font-size: 0.9rem;
   font-weight: 500;
   transition: background 0.2s;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    padding: 0 0.6rem;
+    height: 30px;
+  }
+
   &:hover {
     background: var(--color-bg-hover);
   }
@@ -198,13 +206,26 @@ export const FilterButton = styled.button<{
     width: 18px;
     height: 18px;
     color: var(--color-text-secondary);
+
+    @media (max-width: 1300px) {
+      width: 13px;
+      height: 13px;
+    }
   }
 `;
 export const SortLabelPrefix = styled.span`
   color: var(--color-text-secondary);
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+  }
 `;
 export const SortLabelValue = styled.span`
   font-weight: 600;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+  }
 `;
 export const PortalMenu = styled.div`
   position: fixed;

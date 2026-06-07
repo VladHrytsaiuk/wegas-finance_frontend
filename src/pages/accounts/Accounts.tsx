@@ -81,16 +81,14 @@ function Accounts() {
                   to="new"
                   state={{ background: location }}
                   size="medium"
+                  icon={<HiPlus />}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
                     width: "auto",
                     textDecoration: "none",
+                    whiteSpace: "nowrap",
                   }}
                 >
-                  <HiPlus style={{ width: "20px", height: "20px" }} />
-                  <span>{t("accounts:accountsPage.button_add")}</span>
+                  {t("accounts:accountsPage.button_add")}
                 </Button>
               )}
             </S.ControlsGroup>
