@@ -73,7 +73,7 @@ export default function WishlistItems() {
       <S.HeaderSection>
         <S.BackButton onClick={() => navigate("/wishlist")}>
           <HiArrowLeft size={18} /> {t("common:common.return", "Назад")}
-        </S.HeaderSection>
+        </S.BackButton>
       </S.HeaderSection>
 
       <TableToolbar
