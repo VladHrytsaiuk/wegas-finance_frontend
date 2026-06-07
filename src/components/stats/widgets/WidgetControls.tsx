@@ -23,7 +23,6 @@ import { AccountTree } from "../../accounts/AccountTree";
 import * as S from "./WidgetControls.styles";
 import { useWidgetControls } from "../../../hooks/Stats/useWidgetControls";
 import { type StatsFilter } from "../../../services/apiStats";
-
 interface Props {
   onFilterChange: (filter: Partial<StatsFilter>) => void;
   currentLabel?: string;
@@ -34,6 +33,7 @@ interface Props {
   currentTo?: number;
   hidePeriod?: boolean;
   mini?: boolean;
+  restrictedAccountIds?: string[];
 }
 
 export const WidgetControls = (props: Props) => {
@@ -147,16 +147,16 @@ export const WidgetControls = (props: Props) => {
                         </S.MiniChip>
                         <S.MiniChip
                           $active={isActivePeriod(
-                            t("legacy:filters.periods.this_week")
+                            t("legacy:filters.periods.last_30_days")
                           )}
                           onClick={() =>
                             handlePeriod(
-                              "this_week",
-                              t("legacy:filters.periods.this_week")
+                              "last_30_days",
+                              t("legacy:filters.periods.last_30_days")
                             )
                           }
                         >
-                          {t("legacy:filters.periods.this_week")}
+                          {t("legacy:filters.chips.30_days")}
                         </S.MiniChip>
                         <S.MiniChip
                           $active={isActivePeriod(

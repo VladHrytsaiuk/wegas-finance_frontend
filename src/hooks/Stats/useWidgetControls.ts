@@ -5,7 +5,6 @@ import {
   endOfDay,
   startOfDay,
   subDays,
-  startOfWeek,
   endOfMonth,
   startOfMonth,
   subMonths,
@@ -26,6 +25,7 @@ interface UseWidgetControlsProps {
   currentFrom?: number;
   currentTo?: number;
   hidePeriod?: boolean;
+  restrictedAccountIds?: string[];
 }
 
 export const useWidgetControls = ({
@@ -35,6 +35,7 @@ export const useWidgetControls = ({
   currentFrom,
   currentTo,
   hidePeriod = false,
+  restrictedAccountIds = [],
 }: UseWidgetControlsProps) => {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +43,7 @@ export const useWidgetControls = ({
   const [tempRange, setTempRange] = useState<DateRange | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const dropdownWidth = hidePeriod ? 320 : 600;
+  const dropdownWidth = hidePeriod ? 280 : 520;
   const dateLocale = i18n.language === "uk" ? uk : enUS;
 
   const finalCurrentLabel = currentLabel || t("legacy:filters.period_label");
@@ -71,10 +72,19 @@ export const useWidgetControls = ({
     finalCurrentLabel === labelToCheck;
 
   const getButtonText = () => {
+    const isMyAccounts =
+      restrictedAccountIds.length > 0 &&
+      currentAccountIds.length === restrictedAccountIds.length &&
+      restrictedAccountIds.every((id) => currentAccountIds.includes(id));
+
     const accountsText =
       currentAccountIds.length === 0
         ? t("legacy:filters.all_accounts")
-        : t("legacy:filters.accounts_selected", { count: currentAccountIds.length });
+        : isMyAccounts
+        ? t("accounts:accountForm.owner_me", "Мої рахунки")
+        : t("legacy:filters.accounts_selected", {
+            count: currentAccountIds.length,
+          });
 
     if (hidePeriod) return accountsText;
     return `${finalCurrentLabel} • ${accountsText}`;
@@ -95,9 +105,6 @@ export const useWidgetControls = ({
         from = startOfDay(yest).getTime();
         to = endOfDay(yest).getTime();
         break;
-      case "this_week":
-        from = startOfWeek(now, { weekStartsOn: 1 }).getTime();
-        break;
       case "7_days":
         from = subDays(now, 6).getTime();
         break;
@@ -109,6 +116,12 @@ export const useWidgetControls = ({
         const lastMonth = subMonths(now, 1);
         from = startOfMonth(lastMonth).getTime();
         to = endOfMonth(lastMonth).getTime();
+        label = t("legacy:filters.periods.last_month");
+        break;
+      case "last_30_days":
+        from = subDays(now, 30).getTime();
+        to = now.getTime();
+        label = t("legacy:filters.periods.last_30_days");
         break;
       case "this_year":
         from = startOfYear(now).getTime();
@@ -146,9 +159,9 @@ export const useWidgetControls = ({
     const updates: Partial<StatsFilter> = { accountIds: [] };
     if (!hidePeriod) {
       const now = new Date();
-      updates.from = startOfMonth(now).getTime();
-      updates.to = endOfMonth(now).getTime();
-      updates.label = t("legacy:filters.periods.this_month");
+      updates.from = subDays(now, 30).getTime();
+      updates.to = now.getTime();
+      updates.label = t("legacy:filters.periods.last_30_days");
     }
     onFilterChange(updates);
     setSearchTerm("");

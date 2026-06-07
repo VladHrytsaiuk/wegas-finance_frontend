@@ -51,7 +51,7 @@ export const TriggerButton = styled(Button)<{
   $hasChanges: boolean;
 }>`
   justify-content: space-between;
-  min-width: 180px;
+  min-width: 150px;
   ${(p) =>
     p.$hasChanges &&
     css`
@@ -74,10 +74,10 @@ export const MegaDropdown = styled.div`
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-  border-radius: 16px;
+  border-radius: 12px;
 
-  height: 480px;
-  max-height: 85vh;
+  height: 400px;
+  max-height: 80vh;
   box-sizing: border-box;
 
   display: flex;
@@ -96,7 +96,7 @@ export const MegaDropdown = styled.div`
 export const ColumnsWrapper = styled.div<{ $hidePeriod?: boolean }>`
   display: grid;
   grid-template-columns: ${(p) =>
-    p.$hidePeriod ? "minmax(0, 1fr)" : "200px minmax(0, 1fr)"};
+    p.$hidePeriod ? "minmax(0, 1fr)" : "180px minmax(0, 1fr)"};
 
   flex: 1;
   min-height: 0;
@@ -120,14 +120,14 @@ export const RightColumn = styled.div`
 `;
 
 export const RightColumnHeader = styled.div`
-  padding: 16px 16px 0 16px;
+  padding: 12px 12px 0 12px;
   flex-shrink: 0;
 `;
 
 export const ScrollArea = styled.div`
   overflow-y: auto;
   height: 100%;
-  padding: 16px;
+  padding: 12px;
   &::-webkit-scrollbar {
     width: 4px;
   }
@@ -141,7 +141,7 @@ export const TreeScrollArea = styled.div`
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  padding: 0 16px 16px 16px;
+  padding: 0 12px 12px 12px;
   width: 100%;
   box-sizing: border-box;
 
@@ -162,7 +162,7 @@ export const TreeScrollArea = styled.div`
 
 export const DropdownFooter = styled.div`
   border-top: 1px solid var(--color-border);
-  padding: 12px 16px;
+  padding: 8px 12px;
   background: var(--color-bg-surface);
   position: relative;
   z-index: 10;
@@ -170,15 +170,15 @@ export const DropdownFooter = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  height: 60px;
+  height: 50px;
 `;
 
 export const SectionTitle = styled.div`
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--color-text-tertiary);
   text-transform: uppercase;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 `;
 
 export const ChipsGrid = styled.div`
@@ -196,8 +196,8 @@ export const MiniChip = styled.button<{ $active?: boolean }>`
     p.$active ? "var(--color-brand-600)" : "var(--color-text-main)"};
   font-weight: ${(p) => (p.$active ? "600" : "400")};
   border-radius: 6px;
-  padding: 6px 2px;
-  font-size: 0.75rem;
+  padding: 4px 2px;
+  font-size: 0.7rem;
   cursor: pointer;
   transition: all 0.2s;
   &:hover {
@@ -218,14 +218,14 @@ export const MenuItem = styled.button<{
 }>`
   width: 100%;
   text-align: left;
-  padding: 6px 10px;
+  padding: 4px 10px;
   border: none;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: ${(p) =>
     p.$active
       ? "var(--color-brand-50)"

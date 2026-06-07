@@ -191,7 +191,7 @@ function Dashboard() {
   const [globalFilter, setGlobalFilter] = useState<any>({
     from: subDays(new Date(), 30).getTime(),
     to: new Date().getTime(),
-    label: t("legacy:filters.last_30_days", "Останні 30 днів"),
+    label: t("legacy:filters.periods.last_30_days"),
     accountIds: [],
   });
 

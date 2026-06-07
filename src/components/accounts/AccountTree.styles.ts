@@ -41,12 +41,12 @@ export const TreeItem = styled.div<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0.5rem 0.5rem 0.2rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.2rem;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s;
   user-select: none;
-  min-height: 36px;
+  min-height: 32px;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -120,9 +120,9 @@ export const Info = styled.div`
 `;
 
 export const IconWrapper = styled.div<{ $color: string; $hasImage?: boolean }>`
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,7 +159,7 @@ export const Label = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: var(--color-text-main);
   line-height: 1.2;

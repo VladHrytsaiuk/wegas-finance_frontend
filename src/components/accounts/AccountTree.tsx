@@ -135,11 +135,11 @@ const TreeNode = ({
                       : "HiCreditCard"
                   }
                   color={node.color}
-                  // Логотип на весь блок (32), іконки — менші з фоном (18)
+                  // Логотип на весь блок (28), іконки — менші з фоном (16)
                   size={
                     node.type === "account" && node.icon?.startsWith("icon_")
-                      ? 32
-                      : 18
+                      ? 28
+                      : 16
                   }
                 />
               </S.IconWrapper>
