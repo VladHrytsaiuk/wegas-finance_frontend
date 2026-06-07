@@ -4,6 +4,8 @@ import { HiPlus } from "react-icons/hi2";
 // Components
 import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { HiOutlineFlag } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import CreateGoalModal from "../../components/goals/CreateGoalModal";
@@ -135,39 +137,36 @@ function Goals() {
         </S.Grid>
       ) : (
         !isLoading && (
-          <S.EmptyState>
-            <S.EmptyIconWrapper>
-              <SmartIcon iconName="HiFlag" size={32} />
-            </S.EmptyIconWrapper>
-            <div>
-              <h3>
-                {searchQuery
-                  ? t("common:common.no_results", "Нічого не знайдено")
-                  : t("goals_debts:goals.empty_title", "Список цілей порожній")}
-              </h3>
-              <p>
-                {searchQuery
-                  ? t(
-                      "common:common.try_adjusting_search",
-                      "Спробуйте змінити запит",
-                    )
-                  : t(
-                      "goals.empty_desc",
-                      "Створіть свою першу фінансову ціль, щоб почати відслідковувати прогрес.",
-                    )}
-              </p>
-            </div>
-
-            {!searchQuery && (
-              <Button
-                variation="primary"
-                onClick={handleCreate}
-                icon={<HiPlus />}
-              >
-                {t("goals_debts:goals.button_create_first")}
-              </Button>
-            )}
-          </S.EmptyState>
+          <EmptyState
+            icon={<HiOutlineFlag />}
+            title={
+              searchQuery
+                ? t("common:common.no_results", "Нічого не знайдено")
+                : t("goals_debts:goals.empty_title", "Список цілей порожній")
+            }
+            description={
+              searchQuery
+                ? t(
+                    "common:common.try_adjusting_search",
+                    "Спробуйте змінити запит",
+                  )
+                : t(
+                    "goals_debts:goals.empty_desc",
+                    "Створіть свою першу фінансову ціль, щоб почати відслідковувати прогрес.",
+                  )
+            }
+            action={
+              !searchQuery && (
+                <Button
+                  variation="primary"
+                  onClick={handleCreate}
+                  icon={<HiPlus />}
+                >
+                  {t("goals_debts:goals.button_create_first")}
+                </Button>
+              )
+            }
+          />
         )
       )}
 

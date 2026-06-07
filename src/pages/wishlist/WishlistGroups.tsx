@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiPlus, HiFolderPlus } from "react-icons/hi2";
 
-import Spinner from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 import CreateGroupModal from "../../components/wishlist/CreateGroupModal";
 import CreateWishModal from "../../components/wishlist/CreateWishModal";
@@ -48,14 +49,17 @@ export default function WishlistGroups() {
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <CenteredSpinner isContainer />;
 
   return (
     <S.PageContainer>
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("shopping_wishlist:wishlist.search_folders", "Пошук папок...")}
+        searchPlaceholder={t(
+          "shopping_wishlist:wishlist.search_folders",
+          "Пошук папок...",
+        )}
         filtersConfig={filtersConfig}
         filterValues={filters}
         onFilterChange={handleFilterChange}
@@ -131,37 +135,42 @@ export default function WishlistGroups() {
 
       {/* EMPTY STATE */}
       {processedGroups.length === 0 && !showMyVirtual && !showSharedVirtual && (
-        <S.EmptyState>
-          <S.EmptyIconWrapper>
-            <HiFolderPlus />
-          </S.EmptyIconWrapper>
-          <h3>
-            {searchQuery ||
+        <EmptyState
+          icon={<HiFolderPlus />}
+          title={
+            searchQuery ||
             filters.author.length > 0 ||
             filters.visibility.length > 0
               ? t("common:common.no_results", "Нічого не знайдено")
-              : t("shopping_wishlist:wishlist.empty_folders_title", "Поки що пусто")}
-          </h3>
-          <p>
-            {searchQuery ||
+              : t(
+                  "shopping_wishlist:wishlist.empty_folders_title",
+                  "Поки що пусто",
+                )
+          }
+          description={
+            searchQuery ||
             filters.author.length > 0 ||
             filters.visibility.length > 0
               ? t(
-                  "common.try_adjusting_search",
+                  "common:common.try_adjusting_search",
                   "Спробуйте змінити фільтри або пошук",
                 )
               : t(
-                  "wishlist.empty_folders_desc",
+                  "shopping_wishlist:wishlist.empty_folders_desc",
                   "Створіть свою першу папку або додайте бажання, щоб почати.",
-                )}
-          </p>
-          {!searchQuery &&
+                )
+          }
+          action={
+            !searchQuery &&
             filters.author.length === 0 &&
             filters.visibility.length === 0 && (
               <Modal>
                 <Modal.Open opens="create-group-empty">
                   <Button variation="secondary" icon={<HiFolderPlus />}>
-                    {t("shopping_wishlist:wishlist.btn_add_group", "Створити групу")}
+                    {t(
+                      "shopping_wishlist:wishlist.btn_add_group",
+                      "Створити групу",
+                    )}
                   </Button>
                 </Modal.Open>
                 <Modal.Window name="create-group-empty" padding="0">
@@ -178,8 +187,9 @@ export default function WishlistGroups() {
                   />
                 </Modal.Window>
               </Modal>
-            )}
-        </S.EmptyState>
+            )
+          }
+        />
       )}
     </S.PageContainer>
   );

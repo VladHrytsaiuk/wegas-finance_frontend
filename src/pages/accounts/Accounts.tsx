@@ -11,6 +11,8 @@ import { ViewToggle } from "../../components/ui/ViewToggle";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { HiCreditCard } from "react-icons/hi2";
 
 // Hook & Styles
 import { useAccountsPage } from "../../hooks/Accounts/useAccountsPage";
@@ -102,10 +104,23 @@ function Accounts() {
         </S.ControlsRow>
 
         {filteredAccounts.length === 0 ? (
-          <S.EmptyState>
-            <S.EmptyStateIcon>💳</S.EmptyStateIcon>
-            <div>{t("accounts:accountsPage.empty_title")}</div>
-          </S.EmptyState>
+          <EmptyState
+            icon={<HiCreditCard />}
+            title={t("accounts:accountsPage.empty_title")}
+            description={t("accounts:accountsPage.empty_description", "Створіть свій перший рахунок, щоб почати відстежувати фінанси")}
+            action={
+              canManageStructure ? (
+                <Button
+                  as={Link}
+                  to="new"
+                  state={{ background: location }}
+                  variation="primary"
+                >
+                  {t("accounts:accountsPage.button_add")}
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           <>
             {viewMode === "grid" ? (

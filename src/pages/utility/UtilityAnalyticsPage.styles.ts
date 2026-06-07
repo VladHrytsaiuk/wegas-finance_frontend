@@ -1,10 +1,12 @@
 import styled from "styled-components";
 
 export const PageContainer = styled.div`
-  padding: 0 2rem 2rem 2rem;
   width: 100%;
   max-width: none;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `;
 
 export const BackButton = styled.button`

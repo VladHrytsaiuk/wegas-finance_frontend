@@ -6,7 +6,7 @@ export const PageContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-  padding-bottom: 2rem;
+  flex: 1;
   overflow-x: hidden;
 `;
 
@@ -255,55 +255,6 @@ export const ActionButtons = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
   margin-top: auto;
-`;
-
-export const EmptyState = styled.div`
-  padding: 2rem 1rem;
-  text-align: center;
-  background: var(--color-bg-surface);
-  border: 1px dashed var(--color-border);
-  border-radius: 12px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  min-width: unset;
-  max-width: 450px;
-  margin: 0.2rem auto;
-
-  h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-text-main);
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    max-width: 280px;
-    margin: 0;
-  }
-`;
-
-export const EmptyIconWrapper = styled.div`
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: var(--color-brand-50);
-  color: var(--color-brand-500);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.25rem;
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
 `;
 
 export const SectionsContainer = styled.div`

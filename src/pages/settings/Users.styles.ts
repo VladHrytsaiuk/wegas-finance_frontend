@@ -21,12 +21,6 @@ export const UserGrid = styled.div`
   gap: 1.5rem;
 `;
 
-export const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-`;
-
 // Стилі для вмісту модалки
 export const ModalContent = styled.div`
   width: 800px;

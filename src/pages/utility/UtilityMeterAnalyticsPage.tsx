@@ -9,10 +9,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { HiArrowLeft } from "react-icons/hi2";
+import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 
 import TariffHistoryChart from "../../components/utility/TariffHistoryChart";
-import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
 import {
   CHART_COLORS,
   CustomTooltip,
@@ -28,7 +29,7 @@ export default function UtilityMeterAnalyticsPage() {
     useMeterAnalytics();
   const { t } = useTranslation();
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <CenteredSpinner isContainer />;
   if (!meter) return <div>{t("stats_utility:utility.not_found")}</div>;
 
   return (
@@ -48,11 +49,11 @@ export default function UtilityMeterAnalyticsPage() {
 
       {/* --- БЛОК ГРАФІКІВ --- */}
       {!hasData ? (
-        <S.ChartCard>
-          <S.EmptyStateWrapper>
-            {t("stats_utility:utility.analytics_meter_empty")}
-          </S.EmptyStateWrapper>
-        </S.ChartCard>
+        <EmptyState
+          isFullPage={false}
+          icon={<HiChartBar />}
+          title={t("stats_utility:utility.analytics_meter_empty")}
+        />
       ) : (
         <>
           {/* 1. Основний графік: Споживання та Вартість */}

@@ -20,9 +20,10 @@ const StyledAppLayout = styled.div<{ $collapsed: boolean }>`
 
 const Main = styled.main`
   background-color: var(--color-bg-page);
-  padding: 2rem;
   overflow-y: auto;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Container = styled.div`
@@ -31,6 +32,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+  flex: 1;
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
 `;
 
 // --- Стилі для Mobile заглушки ---

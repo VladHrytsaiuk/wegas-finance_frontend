@@ -3,7 +3,8 @@ import styled, { css } from "styled-components";
 export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
+  flex: 1;
+  width: 100%;
 `;
 
 export const ActionsBar = styled.div`
@@ -81,57 +82,6 @@ export const Badge = styled.span<{ $color: string }>`
         `;
     }
   }}
-`;
-
-export const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  opacity: 0.5;
-`;
-
-export const EmptyStateContainer = styled.div`
-  padding: 4rem 1.5rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2rem;
-  width: 100%;
-
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-text-main);
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    max-width: 320px;
-    margin: 0.5rem auto 0;
-  }
-`;
-
-export const EmptyIconWrapper = styled.div`
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: var(--color-brand-50);
-  color: var(--color-brand-500);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-
-  svg {
-    width: 32px;
-    height: 32px;
-  }
 `;
 
 // --- ACTIONS (Responsive) ---

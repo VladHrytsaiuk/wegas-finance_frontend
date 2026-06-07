@@ -7,6 +7,8 @@ import { Button } from "../../components/ui/Button";
 import { NoteOptions } from "../../components/shopping/NoteOptions";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { Pagination } from "../../components/ui/Pagination";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { HiOutlineQueueList } from "react-icons/hi2";
 import ShoppingNoteCard from "../../components/shopping/ShoppingNoteCard"; // Імпорт винесеної карточки
 import { DEFAULT_NOTE_COLOR } from "../../utils/constants";
 
@@ -132,16 +134,32 @@ function Shopping() {
         </div>
       </S.CreateNoteCard>
 
-      <S.MasonryGrid>
-        {paginatedLists.map((list) => (
-          <ShoppingNoteCard
-            key={list.id}
-            list={list}
-            handlers={handlers}
-            t={t}
-          />
-        ))}
-      </S.MasonryGrid>
+      {paginatedLists.length === 0 ? (
+        <EmptyState
+          icon={<HiOutlineQueueList />}
+          title={
+            searchQuery
+              ? t("common:common.no_results")
+              : t("shopping_wishlist:shopping.empty_title")
+          }
+          description={
+            searchQuery
+              ? t("common:common.try_adjusting_search")
+              : t("shopping_wishlist:shopping.empty_desc")
+          }
+        />
+      ) : (
+        <S.MasonryGrid>
+          {paginatedLists.map((list) => (
+            <ShoppingNoteCard
+              key={list.id}
+              list={list}
+              handlers={handlers}
+              t={t}
+            />
+          ))}
+        </S.MasonryGrid>
+      )}
 
       <S.PaginationWrapper>
         <Pagination

@@ -8,6 +8,8 @@ import AssetForm from "./AssetForm";
 import AssetsTable from "../../components/assets/AssetsTable";
 import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { HiOutlineCube } from "react-icons/hi2";
 
 import { useAssets } from "../../hooks/Assets/useAssets";
 import { useAssetsFilter } from "../../hooks/Assets/useAssetsFilter";
@@ -59,12 +61,24 @@ export default function Assets() {
         </TableToolbar>
 
         {/* Винесена таблиця */}
-        <AssetsTable
-          assets={filteredAssets}
-          helpers={helpers}
-          actions={actions}
-          t={t}
-        />
+        {filteredAssets.length === 0 ? (
+          <EmptyState
+            icon={<HiOutlineCube />}
+            title={t("assets:assetsPage.status_empty_title")}
+            description={
+              searchQuery
+                ? t("common:common.no_results")
+                : t("assets:assetsPage.status_empty_desc")
+            }
+          />
+        ) : (
+          <AssetsTable
+            assets={filteredAssets}
+            helpers={helpers}
+            actions={actions}
+            t={t}
+          />
+        )}
 
         {/* --- MODAL WINDOWS --- */}
         <Modal.Window name="create-asset" padding="0">

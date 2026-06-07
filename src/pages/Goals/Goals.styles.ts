@@ -7,7 +7,7 @@ export const PageContainer = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  padding-bottom: 2rem;
+  flex: 1;
 `;
 
 export const Grid = styled.div`
@@ -407,61 +407,5 @@ export const SourceChip = styled(Link)`
   }
   svg {
     opacity: 0.7;
-  }
-`;
-
-// 🔥 NEW: Оновлений EmptyState (як у Debts)
-export const EmptyState = styled.div`
-  padding: 3rem 1.5rem;
-  text-align: center;
-  background: var(--color-bg-surface);
-  border-radius: 16px;
-  border: 1px dashed var(--color-border);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2rem;
-  min-width: 500px;
-  max-width: 600px;
-  margin: 0.2rem auto;
-
-  /* Адаптивність для мобільних */
-  @media (max-width: 600px) {
-    min-width: 100%;
-    width: 100%;
-  }
-
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-text-main);
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    max-width: 320px;
-    margin: 0;
-  }
-`;
-
-export const EmptyIconWrapper = styled.div`
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: var(--color-brand-50);
-  color: var(--color-brand-500);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-
-  svg {
-    width: 32px;
-    height: 32px;
   }
 `;

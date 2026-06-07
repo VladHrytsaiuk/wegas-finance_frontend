@@ -5,7 +5,7 @@ export const PageContainer = styled.div`
   flex-direction: column;
   gap: 1.25rem;
   width: 100%;
-  padding-bottom: 2rem;
+  flex: 1;
 `;
 
 export const Header = styled.div`

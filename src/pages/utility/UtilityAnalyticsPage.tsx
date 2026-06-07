@@ -8,10 +8,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { HiArrowLeft } from "react-icons/hi2";
+import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
-import Spinner from "../../components/ui/Spinner";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
 import {
   CHART_COLORS,
   CustomTooltip,
@@ -25,7 +26,6 @@ import {
   BackButton,
   Header,
   ChartCard,
-  EmptyStateWrapper,
   SummaryCards,
   Card,
   CardTitle,
@@ -47,7 +47,7 @@ export default function UtilityAnalyticsPage() {
   } = useUtilityAnalytics();
   const { t } = useTranslation();
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <CenteredSpinner isContainer />;
 
   return (
     <PageContainer>
@@ -62,11 +62,11 @@ export default function UtilityAnalyticsPage() {
       </Header>
 
       {!hasData ? (
-        <ChartCard>
-          <EmptyStateWrapper>
-            {t("stats_utility:utility.analytics_empty")}
-          </EmptyStateWrapper>
-        </ChartCard>
+        <EmptyState
+          isFullPage={false}
+          icon={<HiChartBar />}
+          title={t("stats_utility:utility.analytics_empty")}
+        />
       ) : (
         <>
           <SummaryCards>

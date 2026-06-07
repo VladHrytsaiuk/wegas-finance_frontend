@@ -11,7 +11,9 @@ import { TransactionsTable } from "../../components/transactions/TransactionsTab
 import { Pagination } from "../../components/ui/Pagination";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
 import ExportModal from "../settings/ExportPage";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 
 // Hook & Styles
 import { useTransactionsPage } from "../../hooks/Transactions/useTransactionsPage";
@@ -125,15 +127,22 @@ function Transactions() {
 
         {/* ОСНОВНИЙ КОНТЕНТ */}
         {transactions.length === 0 && !isFetching ? (
-          <S.EmptyStateContainer>
-            <S.EmptyStateIcon>🔍</S.EmptyStateIcon>
-            <div>{t("transactions:transactionsPage.empty_title")}</div>
-            {hasActiveFilters && (
-              <S.ClearFilterButton onClick={handleClearAll}>
-                {t("transactions:transactionsPage.empty_button_clear")}
-              </S.ClearFilterButton>
-            )}
-          </S.EmptyStateContainer>
+          <EmptyState
+            icon={<HiMagnifyingGlass />}
+            title={t("transactions:transactionsPage.empty_title")}
+            description={
+              hasActiveFilters
+                ? t("transactions:transactionsPage.empty_description_filters", "Спробуйте змінити фільтри або пошуковий запит")
+                : undefined
+            }
+            action={
+              hasActiveFilters ? (
+                <Button variation="secondary" onClick={handleClearAll}>
+                  {t("transactions:transactionsPage.empty_button_clear")}
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           /* 🔥 ОБГОРТКА ДЛЯ ВІДОБРАЖЕННЯ ПОШУКУ */
           <div

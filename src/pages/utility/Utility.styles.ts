@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
 export const PageContainer = styled.div`
-  padding: 0 2rem 2rem 2rem;
   width: 100%;
-  margin: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 // Контейнер для груп (наприклад: "Квартира Львів")
@@ -191,53 +192,4 @@ export const Footer = styled.div`
 export const FooterActions = styled.div`
   display: flex;
   gap: 0.5rem;
-`;
-
-export const EmptyState = styled.div`
-  padding: 3rem 1.5rem;
-  text-align: center;
-  background: var(--color-bg-surface);
-  border-radius: 16px;
-  border: 1px dashed var(--color-border);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2rem;
-  min-width: 500px;
-  max-width: 600px;
-  margin: 2rem auto;
-
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-text-main);
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-    max-width: 320px;
-    margin: 0;
-  }
-`;
-
-export const EmptyIconWrapper = styled.div`
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: var(--color-brand-50);
-  color: var(--color-brand-500);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-
-  svg {
-    width: 32px;
-    height: 32px;
-  }
 `;

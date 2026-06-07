@@ -12,6 +12,8 @@ import {
 // UI Components
 import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
@@ -147,8 +149,10 @@ function Debts() {
   return (
     <S.PageContainer>
       {/* SUMMARY CARDS */}
-      {!searchQuery && Object.keys(filterValues.currency).length === 0 && (
-        <S.SummaryRow>
+      {!searchQuery &&
+        Object.keys(filterValues.currency).length === 0 &&
+        (positive.length > 0 || negative.length > 0) && (
+          <S.SummaryRow>
           <S.SummaryCard $type="positive">
             <S.SummaryLabel>
               <HiArrowUpRight size={16} /> {t("goals_debts:debtsPage.summary_owed_to_me")}
@@ -201,198 +205,204 @@ function Debts() {
       </TableToolbar>
 
       {/* LIST SECTIONS */}
-      <S.SectionsContainer>
-        {/* POSITIVE */}
-        {positive.length > 0 && (
-          <S.Section>
-            <S.SectionHeader>
-              <S.SectionTitle>
-                <HiArrowUpRight color="var(--color-green-600)" />
-                {t("goals_debts:debtsPage.section_positive")}
-              </S.SectionTitle>
-              <S.Badge $type="green">{positive.length}</S.Badge>
-            </S.SectionHeader>
-            <S.Grid>
-              {positive.map((cp) => (
-                <S.DebtCard key={cp.id}>
-                  <S.CardLink to={`/debts/${cp.id}`} className="card-link">
-                    <S.Avatar $color="var(--color-green-600)">
-                      {cp.logo ? (
-                        <img src={`/brands/${cp.logo}`} alt={cp.name} />
-                      ) : (
-                        <HiOutlineUser />
-                      )}
-                    </S.Avatar>
-                    <S.Info>
-                      <S.Name>{cp.name}</S.Name>
-                      <S.RoleLabel>{t("transactions:transactions.debt_person")}</S.RoleLabel>
-                    </S.Info>
-                    <S.ArrowIconWrapper className="arrow-icon">
-                      <HiChevronRight size={20} />
-                    </S.ArrowIconWrapper>
-                  </S.CardLink>
-                  <S.CardBody>
-                    <S.AmountBlock>
-                      {cp.balances
-                        .filter((b) => b.balance > 0)
-                        .filter(
-                          (b) =>
-                            filterValues.currency.length === 0 ||
-                            filterValues.currency.includes(b.currency),
-                        )
-                        .map((b) => (
-                          <S.AmountRow
-                            key={b.currency}
-                            $color="var(--color-green-600)"
-                          >
-                            <span>{formatMoney(b.balance, b.currency)}</span>
-                          </S.AmountRow>
-                        ))}
-                    </S.AmountBlock>
-                    <S.ActionButtons>
-                      <Button
-                        variation="secondary"
-                        size="small"
-                        $fullWidth
-                        onClick={() =>
-                          onOpenTransaction(cp.id, "give", "positive")
-                        }
-                      >
-                        <HiArrowUpRight /> {t("goals_debts:debtsPage.btn_lend")}
-                      </Button>
+      {(positive.length > 0 || negative.length > 0) && (
+        <S.SectionsContainer>
+          {/* POSITIVE */}
+          {positive.length > 0 && (
+            <S.Section>
+              <S.SectionHeader>
+                <S.SectionTitle>
+                  <HiArrowUpRight color="var(--color-green-600)" />
+                  {t("goals_debts:debtsPage.section_positive")}
+                </S.SectionTitle>
+                <S.Badge $type="green">{positive.length}</S.Badge>
+              </S.SectionHeader>
+              <S.Grid>
+                {positive.map((cp) => (
+                  <S.DebtCard key={cp.id}>
+                    <S.CardLink to={`/debts/${cp.id}`} className="card-link">
+                      <S.Avatar $color="var(--color-green-600)">
+                        {cp.logo ? (
+                          <img src={`/brands/${cp.logo}`} alt={cp.name} />
+                        ) : (
+                          <HiOutlineUser />
+                        )}
+                      </S.Avatar>
+                      <S.Info>
+                        <S.Name>{cp.name}</S.Name>
+                        <S.RoleLabel>
+                          {t("transactions:transactions.debt_person")}
+                        </S.RoleLabel>
+                      </S.Info>
+                      <S.ArrowIconWrapper className="arrow-icon">
+                        <HiChevronRight size={20} />
+                      </S.ArrowIconWrapper>
+                    </S.CardLink>
+                    <S.CardBody>
+                      <S.AmountBlock>
+                        {cp.balances
+                          .filter((b) => b.balance > 0)
+                          .filter(
+                            (b) =>
+                              filterValues.currency.length === 0 ||
+                              filterValues.currency.includes(b.currency),
+                          )
+                          .map((b) => (
+                            <S.AmountRow
+                              key={b.currency}
+                              $color="var(--color-green-600)"
+                            >
+                              <span>{formatMoney(b.balance, b.currency)}</span>
+                            </S.AmountRow>
+                          ))}
+                      </S.AmountBlock>
+                      <S.ActionButtons>
+                        <Button
+                          variation="secondary"
+                          size="small"
+                          $fullWidth
+                          onClick={() =>
+                            onOpenTransaction(cp.id, "give", "positive")
+                          }
+                        >
+                          <HiArrowUpRight />{" "}
+                          {t("goals_debts:debtsPage.btn_lend")}
+                        </Button>
 
-                      {/* 🔥 3. Передаємо баланс при кліку на Повернути */}
-                      <Button
-                        variation="primary"
-                        size="small"
-                        $fullWidth
-                        onClick={() => {
-                          // Знаходимо основний позитивний баланс (або перший-ліпший)
-                          // Тут трохи спрощено, беремо перший позитивний, але логіка правильна
-                          const balance = cp.balances.find(
-                            (b) => b.balance > 0,
-                          )?.balance;
-                          onOpenTransaction(
-                            cp.id,
-                            "repay",
-                            "positive",
-                            balance,
-                          );
-                        }}
-                      >
-                        <HiArrowDownLeft /> {t("goals_debts:debtsPage.btn_repay_to_me")}
-                      </Button>
-                    </S.ActionButtons>
-                  </S.CardBody>
-                </S.DebtCard>
-              ))}
-            </S.Grid>
-          </S.Section>
-        )}
+                        {/* 🔥 3. Передаємо баланс при кліку на Повернути */}
+                        <Button
+                          variation="primary"
+                          size="small"
+                          $fullWidth
+                          onClick={() => {
+                            // Знаходимо основний позитивний баланс (або перший-ліпший)
+                            // Тут трохи спрощено, беремо перший позитивний, але логіка правильна
+                            const balance = cp.balances.find(
+                              (b) => b.balance > 0,
+                            )?.balance;
+                            onOpenTransaction(
+                              cp.id,
+                              "repay",
+                              "positive",
+                              balance,
+                            );
+                          }}
+                        >
+                          <HiArrowDownLeft />{" "}
+                          {t("goals_debts:debtsPage.btn_repay_to_me")}
+                        </Button>
+                      </S.ActionButtons>
+                    </S.CardBody>
+                  </S.DebtCard>
+                ))}
+              </S.Grid>
+            </S.Section>
+          )}
 
-        {/* NEGATIVE */}
-        {negative.length > 0 && (
-          <S.Section>
-            <S.SectionHeader>
-              <S.SectionTitle>
-                <HiArrowDownLeft color="var(--color-red-600)" />
-                {t("goals_debts:debtsPage.section_negative")}
-              </S.SectionTitle>
-              <S.Badge $type="red">{negative.length}</S.Badge>
-            </S.SectionHeader>
-            <S.Grid>
-              {negative.map((cp) => (
-                <S.DebtCard key={cp.id}>
-                  <S.CardLink to={`/debts/${cp.id}`}>
-                    <S.Avatar $color="var(--color-red-600)">
-                      {cp.logo ? (
-                        <img src={`/brands/${cp.logo}`} alt={cp.name} />
-                      ) : (
-                        <HiOutlineUser />
-                      )}
-                    </S.Avatar>
-                    <S.Info>
-                      <S.Name>{cp.name}</S.Name>
-                      <S.RoleLabel>{t("transactions:transactions.debt_person")}</S.RoleLabel>
-                    </S.Info>
-                    <S.ArrowIconWrapper className="arrow-icon">
-                      <HiChevronRight size={20} />
-                    </S.ArrowIconWrapper>
-                  </S.CardLink>
-                  <S.CardBody>
-                    <S.AmountBlock>
-                      {cp.balances
-                        .filter((b) => b.balance < 0)
-                        .filter(
-                          (b) =>
-                            filterValues.currency.length === 0 ||
-                            filterValues.currency.includes(b.currency),
-                        )
-                        .map((b) => (
-                          <S.AmountRow
-                            key={b.currency}
-                            $color="var(--color-red-600)"
-                          >
-                            <span>
-                              {formatMoney(Math.abs(b.balance), b.currency)}
-                            </span>
-                          </S.AmountRow>
-                        ))}
-                    </S.AmountBlock>
-                    <S.ActionButtons>
-                      <Button
-                        variation="secondary"
-                        size="small"
-                        $fullWidth
-                        onClick={() =>
-                          onOpenTransaction(cp.id, "give", "negative")
-                        }
-                      >
-                        <HiArrowDownLeft /> {t("goals_debts:debtsPage.btn_borrow")}
-                      </Button>
+          {/* NEGATIVE */}
+          {negative.length > 0 && (
+            <S.Section>
+              <S.SectionHeader>
+                <S.SectionTitle>
+                  <HiArrowDownLeft color="var(--color-red-600)" />
+                  {t("goals_debts:debtsPage.section_negative")}
+                </S.SectionTitle>
+                <S.Badge $type="red">{negative.length}</S.Badge>
+              </S.SectionHeader>
+              <S.Grid>
+                {negative.map((cp) => (
+                  <S.DebtCard key={cp.id}>
+                    <S.CardLink to={`/debts/${cp.id}`}>
+                      <S.Avatar $color="var(--color-red-600)">
+                        {cp.logo ? (
+                          <img src={`/brands/${cp.logo}`} alt={cp.name} />
+                        ) : (
+                          <HiOutlineUser />
+                        )}
+                      </S.Avatar>
+                      <S.Info>
+                        <S.Name>{cp.name}</S.Name>
+                        <S.RoleLabel>
+                          {t("transactions:transactions.debt_person")}
+                        </S.RoleLabel>
+                      </S.Info>
+                      <S.ArrowIconWrapper className="arrow-icon">
+                        <HiChevronRight size={20} />
+                      </S.ArrowIconWrapper>
+                    </S.CardLink>
+                    <S.CardBody>
+                      <S.AmountBlock>
+                        {cp.balances
+                          .filter((b) => b.balance < 0)
+                          .filter(
+                            (b) =>
+                              filterValues.currency.length === 0 ||
+                              filterValues.currency.includes(b.currency),
+                          )
+                          .map((b) => (
+                            <S.AmountRow
+                              key={b.currency}
+                              $color="var(--color-red-600)"
+                            >
+                              <span>
+                                {formatMoney(Math.abs(b.balance), b.currency)}
+                              </span>
+                            </S.AmountRow>
+                          ))}
+                      </S.AmountBlock>
+                      <S.ActionButtons>
+                        <Button
+                          variation="secondary"
+                          size="small"
+                          $fullWidth
+                          onClick={() =>
+                            onOpenTransaction(cp.id, "give", "negative")
+                          }
+                        >
+                          <HiArrowDownLeft />{" "}
+                          {t("goals_debts:debtsPage.btn_borrow")}
+                        </Button>
 
-                      {/* 🔥 3. Передаємо баланс при кліку на Повернути борг */}
-                      <Button
-                        variation="primary"
-                        size="small"
-                        $fullWidth
-                        onClick={() => {
-                          const balance = cp.balances.find(
-                            (b) => b.balance < 0,
-                          )?.balance;
-                          onOpenTransaction(
-                            cp.id,
-                            "repay",
-                            "negative",
-                            balance,
-                          );
-                        }}
-                      >
-                        <HiArrowUpRight /> {t("goals_debts:debtsPage.btn_repay_my_debt")}
-                      </Button>
-                    </S.ActionButtons>
-                  </S.CardBody>
-                </S.DebtCard>
-              ))}
-            </S.Grid>
-          </S.Section>
-        )}
-      </S.SectionsContainer>
+                        {/* 🔥 3. Передаємо баланс при кліку на Повернути борг */}
+                        <Button
+                          variation="primary"
+                          size="small"
+                          $fullWidth
+                          onClick={() => {
+                            const balance = cp.balances.find(
+                              (b) => b.balance < 0,
+                            )?.balance;
+                            onOpenTransaction(
+                              cp.id,
+                              "repay",
+                              "negative",
+                              balance,
+                            );
+                          }}
+                        >
+                          <HiArrowUpRight />{" "}
+                          {t("goals_debts:debtsPage.btn_repay_my_debt")}
+                        </Button>
+                      </S.ActionButtons>
+                    </S.CardBody>
+                  </S.DebtCard>
+                ))}
+              </S.Grid>
+            </S.Section>
+          )}
+        </S.SectionsContainer>
+      )}
 
       {/* EMPTY STATE */}
       {!isLoading &&
         !searchQuery &&
         positive.length === 0 &&
         negative.length === 0 && (
-          <S.EmptyState>
-            <S.EmptyIconWrapper>
-              <HiWallet />
-            </S.EmptyIconWrapper>
-            <div>
-              <h3>{t("goals_debts:debtsPage.empty_title")}</h3>
-              <p>{t("goals_debts:debtsPage.empty_desc")}</p>
-            </div>
-          </S.EmptyState>
+          <EmptyState
+            icon={<HiWallet />}
+            title={t("goals_debts:debtsPage.empty_title")}
+            description={t("goals_debts:debtsPage.empty_desc")}
+          />
         )}
 
       {/* MODAL FOR TRANSACTIONS */}

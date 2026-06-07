@@ -3,13 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { HiPlus, HiArrowLeft, HiGift } from "react-icons/hi2";
 import { useQuery } from "@tanstack/react-query";
 
-import Spinner from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 import CreateWishModal from "../../components/wishlist/CreateWishModal";
-import WishItemCard from "../../components/wishlist/WishItemCard"; // Твій новий компонент
+import WishItemCard from "../../components/wishlist/WishItemCard";
 import { useWishlist } from "../../hooks/Wishlist/useWishlist";
 import { useWishlistFilters } from "../../hooks/Wishlist/useWishlistFilters";
 import { getMeApi, getFamilyMembers } from "../../services/apiUsers";
@@ -65,20 +66,23 @@ export default function WishlistItems() {
     return () => resetPageTitle();
   }, [groupName, setPageTitle, resetPageTitle]);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <CenteredSpinner isContainer />;
 
   return (
     <S.PageContainer onClick={() => setOpenMenuId(null)}>
       <S.HeaderSection>
         <S.BackButton onClick={() => navigate("/wishlist")}>
           <HiArrowLeft size={18} /> {t("common:common.return", "Назад")}
-        </S.BackButton>
+        </S.HeaderSection>
       </S.HeaderSection>
 
       <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder={t("shopping_wishlist:wishlist.search_placeholder", "Пошук бажань...")}
+        searchPlaceholder={t(
+          "shopping_wishlist:wishlist.search_placeholder",
+          "Пошук бажань...",
+        )}
         filtersConfig={filtersConfig}
         filterValues={filters}
         onFilterChange={handleFilterChange}
@@ -126,34 +130,36 @@ export default function WishlistItems() {
           ))}
         </S.Grid>
       ) : (
-        <S.EmptyState>
-          <S.EmptyIconWrapper>
-            <HiGift />
-          </S.EmptyIconWrapper>
-          <h3>
-            {searchQuery ? t("common:common.no_results") : t("shopping_wishlist:wishlist.empty_title")}
-          </h3>
-          {!searchQuery && (
-            <Modal>
-              <Modal.Open opens="create-wish-empty">
-                <Button variation="primary" icon={<HiPlus />}>
-                  {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
-                </Button>
-              </Modal.Open>
-              <Modal.Window name="create-wish-empty" padding="0">
-                <CreateWishModal
-                  groups={groups}
-                  onCreate={handlers.createItem}
-                  defaultGroupId={
-                    groupId !== "virtual-my" && groupId !== "virtual-shared"
-                      ? groupId
-                      : undefined
-                  }
-                />
-              </Modal.Window>
-            </Modal>
-          )}
-        </S.EmptyState>
+        <EmptyState
+          icon={<HiGift />}
+          title={
+            searchQuery
+              ? t("common:common.no_results")
+              : t("shopping_wishlist:wishlist.empty_title")
+          }
+          action={
+            !searchQuery && (
+              <Modal>
+                <Modal.Open opens="create-wish-empty">
+                  <Button variation="primary" icon={<HiPlus />}>
+                    {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
+                  </Button>
+                </Modal.Open>
+                <Modal.Window name="create-wish-empty" padding="0">
+                  <CreateWishModal
+                    groups={groups}
+                    onCreate={handlers.createItem}
+                    defaultGroupId={
+                      groupId !== "virtual-my" && groupId !== "virtual-shared"
+                        ? groupId
+                        : undefined
+                    }
+                  />
+                </Modal.Window>
+              </Modal>
+            )
+          }
+        />
       )}
     </S.PageContainer>
   );

@@ -1,4 +1,4 @@
-import { HiPlus } from "react-icons/hi2";
+import { HiPlus, HiTag } from "react-icons/hi2";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
@@ -7,6 +7,8 @@ import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { CategoryTree } from "../../components/categories/CategoryTree";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CategoryForm } from "../../components/categories/CategoryForm";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 // Styles & Logic
 import * as S from "./Categories.styles";
@@ -84,9 +86,13 @@ function Categories() {
         {/* CONTENT */}
         <S.TreeContainer>
           {isLoading ? (
-            <S.EmptyState>{t("categories:categoriesPage.status_loading")}</S.EmptyState>
+            <CenteredSpinner isContainer />
           ) : categoryTreeRoots.length === 0 ? (
-            <S.EmptyState>{t("categories:categoriesPage.status_not_found")}</S.EmptyState>
+            <EmptyState
+              isFullPage={false}
+              icon={<HiTag />}
+              title={t("categories:categoriesPage.status_not_found")}
+            />
           ) : (
             <CategoryTree
               categories={categoryTreeRoots}

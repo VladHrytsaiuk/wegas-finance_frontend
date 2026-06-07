@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { HiPlus, HiCube, HiChartBar } from "react-icons/hi2";
+import { HiPlus, HiOutlineBolt, HiChartBar } from "react-icons/hi2";
+import { EmptyState } from "../../components/ui/EmptyState";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -149,38 +150,34 @@ function UtilityContent() {
         </Button>
       </TableToolbar>
 
-      {Object.entries(groupedMeters).map(([groupName, groupMeters]) => (
-        <S.GroupSection key={groupName}>
-          {groupName !== t("stats_utility:filters.group_all") && (
-            <S.GroupHeader>{groupName}</S.GroupHeader>
-          )}
-          <S.Grid>
-            {groupMeters.map((meter) => (
-              <UtilityMeterCard
-                key={meter.id}
-                meter={meter}
-                onClick={handleMeterClick}
-                onEdit={handleMeterEdit}
-                onDelete={handleMeterDelete}
-                onPay={handleMeterPay}
-                onAddReading={handleMeterAddReading}
-              />
-            ))}
-          </S.Grid>
-        </S.GroupSection>
-      ))}
+      {Object.keys(groupedMeters).length > 0 &&
+        Object.entries(groupedMeters).map(([groupName, groupMeters]) => (
+          <S.GroupSection key={groupName}>
+            {groupName !== t("stats_utility:filters.group_all") && (
+              <S.GroupHeader>{groupName}</S.GroupHeader>
+            )}
+            <S.Grid>
+              {groupMeters.map((meter) => (
+                <UtilityMeterCard
+                  key={meter.id}
+                  meter={meter}
+                  onEdit={handleMeterEdit}
+                  onDelete={handleMeterDelete}
+                  onPay={handleMeterPay}
+                  onAddReading={handleMeterAddReading}
+                />
+              ))}
+            </S.Grid>
+          </S.GroupSection>
+        ))}
 
       {/* EMPTY STATE */}
       {!isLoading && Object.keys(groupedMeters).length === 0 && (
-        <S.EmptyState>
-          <S.EmptyIconWrapper>
-            <HiCube />
-          </S.EmptyIconWrapper>
-          <div>
-            <h3>{t("stats_utility:utilityPage.empty_title")}</h3>
-            <p>{t("stats_utility:utilityPage.empty_desc")}</p>
-          </div>
-        </S.EmptyState>
+        <EmptyState
+          icon={<HiOutlineBolt />}
+          title={t("stats_utility:utilityPage.empty_title")}
+          description={t("stats_utility:utilityPage.empty_desc")}
+        />
       )}
 
       {/* MODALS */}

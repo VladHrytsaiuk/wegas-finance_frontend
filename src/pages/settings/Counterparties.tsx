@@ -1,4 +1,4 @@
-import { HiPlus, HiFolderPlus } from "react-icons/hi2";
+import { HiPlus, HiFolderPlus, HiOutlineUserGroup } from "react-icons/hi2";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
@@ -6,6 +6,8 @@ import Modal from "../../components/ui/Modal";
 import { CounterpartyTree } from "../../components/counterparties/CounterpartyTree";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CounterpartyModals } from "../../components/counterparties/CounterpartyModals";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 // Styles & Logic
 import * as S from "./Counterparties.styles";
@@ -87,13 +89,13 @@ function Counterparties() {
         {/* --- Tree Content --- */}
         <S.TreeContainer>
           {isLoadingCps ? (
-            <S.EmptyState>
-              {t("counterparties:counterpartiesPage.status_loading")}
-            </S.EmptyState>
+            <CenteredSpinner isContainer />
           ) : treeRoots.length === 0 ? (
-            <S.EmptyState>
-              {t("counterparties:counterpartiesPage.status_not_found")}
-            </S.EmptyState>
+            <EmptyState
+              isFullPage={false}
+              icon={<HiOutlineUserGroup />}
+              title={t("counterparties:counterpartiesPage.status_not_found")}
+            />
           ) : (
             <CounterpartyTree
               nodes={treeRoots}

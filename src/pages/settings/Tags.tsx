@@ -1,9 +1,9 @@
-import { HiPlus } from "react-icons/hi2";
+import { HiPlus, HiTag } from "react-icons/hi2";
 
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { TagForm } from "../../components/tags/TagForm";
 import { TagItem } from "../../components/tags/TagItem";
@@ -51,7 +51,11 @@ function Tags() {
       ) : (
         <S.TagList>
           {tags.length === 0 ? (
-            <S.EmptyState>{t("settings:tagsPage.status_empty")}</S.EmptyState>
+            <EmptyState
+              isFullPage={false}
+              icon={<HiTag />}
+              title={t("settings:tagsPage.status_empty")}
+            />
           ) : (
             tags.map((tag: any) => (
               <TagItem

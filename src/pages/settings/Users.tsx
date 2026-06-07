@@ -1,10 +1,10 @@
-import { HiOutlineUserPlus } from "react-icons/hi2";
+import { HiOutlineUserPlus, HiOutlineUserGroup } from "react-icons/hi2";
 
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { EmptyState } from "../../components/ui/EmptyState";
 import { UserCard } from "../../components/users/UserCard";
 import { UserForm } from "../../components/users/UserForms";
 
@@ -30,6 +30,14 @@ function Users() {
       </S.HeaderRow>
 
       {isLoading && <CenteredSpinner />}
+
+      {!isLoading && users.length === 0 && (
+        <EmptyState
+          isFullPage={false}
+          icon={<HiOutlineUserGroup />}
+          title={t("settings:usersPage.status_empty", "Команда порожня")}
+        />
+      )}
 
       <S.UserGrid>
         {users.map((user: any) => (

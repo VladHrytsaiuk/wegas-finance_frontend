@@ -8,6 +8,7 @@ export const PageContainer = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   box-sizing: border-box;
+  flex: 1;
 
   @media (max-width: 768px) {
     padding: 0.8rem;

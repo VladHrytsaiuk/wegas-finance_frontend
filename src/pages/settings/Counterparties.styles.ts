@@ -36,13 +36,6 @@ export const TreeContainer = styled.div`
   min-height: 200px;
 `;
 
-export const EmptyState = styled.div`
-  padding: 3rem;
-  text-align: center;
-  color: var(--color-text-light);
-  font-size: 0.95rem;
-`;
-
 export const HiddenTriggers = styled.div`
   display: none;
 `;
