@@ -114,6 +114,11 @@ const ButtonLabel = styled.span<{ $collapsed: boolean }>`
   white-space: nowrap;
   font-weight: 600;
   font-size: 0.85rem;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    margin-left: 0.1rem;
+  }
 `;
 
 // Стилі кнопки фідбеку
@@ -159,6 +164,11 @@ const FeedbackLabel = styled.span<{ $collapsed: boolean }>`
   white-space: nowrap;
   opacity: ${(p) => (p.$collapsed ? 0 : 1)};
   transition: opacity 0.2s;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+    margin-left: 0.1rem;
+  }
 `;
 
 // --- COMPONENT ---

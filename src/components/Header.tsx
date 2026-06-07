@@ -38,12 +38,20 @@ const Title = styled.h1`
   margin: 0;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  @media (max-width: 1300px) {
+    font-size: 1rem;
+  }
 `;
 
 const Subtitle = styled.span`
   font-size: 0.9rem;
   color: var(--color-text-secondary);
   font-weight: 500;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+  }
 `;
 
 const SwitcherWrapper = styled.div`
@@ -74,6 +82,10 @@ const RatesWidget = styled.div`
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
   height: 40px;
+
+  @media (max-width: 1300px) {
+    gap: 0.7rem;
+  }
 
   @media (max-width: 850px) {
     padding: 0.4rem 0.5rem;
@@ -128,8 +140,8 @@ const UserArea = styled.div`
     border-color: var(--color-brand-500);
   }
 
-  /* 🔥 Повністю ховаємо блок профілю на 1280px і менше */
-  @media (max-width: 1280px) {
+  /* 🔥 Повністю ховаємо блок профілю на 1000px і менше */
+  @media (max-width: 1000px) {
     display: none;
   }
 `;

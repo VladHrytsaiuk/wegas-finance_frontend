@@ -44,6 +44,11 @@ const StyledNavLink = styled(NavLink)<{ $collapsed: boolean }>`
     color: var(--color-text-secondary);
     font-size: 0.85rem; /* 👈 Трохи менший шрифт */
     font-weight: 500;
+
+    @media (max-width: 1300px) {
+      font-size: 0.7rem;
+      gap: 0.1rem;
+    }
     border-radius: 6px; /* Менший радіус */
     transition: all 0.2s;
     margin: 0 auto;
