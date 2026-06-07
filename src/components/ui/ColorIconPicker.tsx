@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { HiCheck, HiChevronDown } from "react-icons/hi2";
 import * as Icons from "react-icons/hi2";
 
 import { useColorIconPicker } from "../../hooks/ui/useColorIconPicker";
+import { useDropdownPosition } from "../../hooks/useDropdownPosition";
 import * as S from "./ColorIconPicker.styles";
 
 interface ColorIconPickerProps {
@@ -57,48 +58,18 @@ export function ColorPicker({
   const { state, t } = useColorIconPicker({ icon: "" });
   const { presetColors } = state;
   const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const [portalCoords, setPortalCoords] = useState({ top: 0, left: 0 });
 
-  const updatePortalPosition = () => {
-    if (!triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    setPortalCoords({
-      top: rect.bottom + window.scrollY + 6,
-      left: rect.left + window.scrollX,
-    });
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      updatePortalPosition();
-      window.addEventListener("scroll", updatePortalPosition, true);
-      window.addEventListener("resize", updatePortalPosition);
-      return () => {
-        window.removeEventListener("scroll", updatePortalPosition, true);
-        window.removeEventListener("resize", updatePortalPosition);
-      };
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isOpen &&
-        triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  const { triggerRef, menuRef, style } = useDropdownPosition(
+    isOpen,
+    () => setIsOpen(false),
+    "left",
+    180,
+  );
 
   return (
     <S.Container style={{ width: square ? "auto" : "100%" }}>
       <S.PickerTrigger
-        ref={triggerRef}
+        ref={triggerRef as any}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         $square={square}
@@ -120,8 +91,17 @@ export function ColorPicker({
       {isOpen &&
         createPortal(
           <S.DropdownPortalContainer
-            $top={portalCoords.top}
-            $left={portalCoords.left}
+            ref={menuRef}
+            style={{
+              position: "fixed",
+              top: style.top !== undefined ? `${style.top}px` : "auto",
+              bottom: style.bottom !== undefined ? `${style.bottom}px` : "auto",
+              left: style.left !== undefined ? `${style.left}px` : "auto",
+              right: style.right !== undefined ? `${style.right}px` : "auto",
+              maxHeight: `${style.maxHeight}px`,
+              transformOrigin: style.transformOrigin,
+              zIndex: 20000,
+            }}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
           >
@@ -165,48 +145,18 @@ export function IconPicker({
   const { state, t } = useColorIconPicker({ icon });
   const { presetIcons, SelectedIconComponent } = state;
   const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const [portalCoords, setPortalCoords] = useState({ top: 0, left: 0 });
 
-  const updatePortalPosition = () => {
-    if (!triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    setPortalCoords({
-      top: rect.bottom + window.scrollY + 6,
-      left: rect.left + window.scrollX,
-    });
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      updatePortalPosition();
-      window.addEventListener("scroll", updatePortalPosition, true);
-      window.addEventListener("resize", updatePortalPosition);
-      return () => {
-        window.removeEventListener("scroll", updatePortalPosition, true);
-        window.removeEventListener("resize", updatePortalPosition);
-      };
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isOpen &&
-        triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  const { triggerRef, menuRef, style } = useDropdownPosition(
+    isOpen,
+    () => setIsOpen(false),
+    "left",
+    180,
+  );
 
   return (
     <S.Container style={{ width: square ? "auto" : "100%" }}>
       <S.PickerTrigger
-        ref={triggerRef}
+        ref={triggerRef as any}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         $square={square}
@@ -230,8 +180,17 @@ export function IconPicker({
       {isOpen &&
         createPortal(
           <S.DropdownPortalContainer
-            $top={portalCoords.top}
-            $left={portalCoords.left}
+            ref={menuRef}
+            style={{
+              position: "fixed",
+              top: style.top !== undefined ? `${style.top}px` : "auto",
+              bottom: style.bottom !== undefined ? `${style.bottom}px` : "auto",
+              left: style.left !== undefined ? `${style.left}px` : "auto",
+              right: style.right !== undefined ? `${style.right}px` : "auto",
+              maxHeight: `${style.maxHeight}px`,
+              transformOrigin: style.transformOrigin,
+              zIndex: 20000,
+            }}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
           >

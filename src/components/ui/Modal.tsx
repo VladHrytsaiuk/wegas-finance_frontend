@@ -156,6 +156,18 @@ function Window({
   }, [name, openName]);
 
   useEffect(() => {
+    if (name === openName) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [name, openName]);
+
+  useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (showConfirm) setShowConfirm(false);

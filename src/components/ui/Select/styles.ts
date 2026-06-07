@@ -125,6 +125,7 @@ export const OptionsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1px;
+  overscroll-behavior: contain;
 
   &::-webkit-scrollbar {
     width: 6px;

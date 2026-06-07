@@ -51,7 +51,7 @@ export function useDropdownPosition(
 
     const spaceBelow = windowHeight - rect.bottom;
     const spaceAbove = rect.top;
-    const openUpwards = spaceBelow < 300 && spaceAbove > spaceBelow;
+    const openUpwards = spaceBelow < 250 && spaceAbove > spaceBelow;
 
     let top: number | undefined;
     let bottom: number | undefined;
@@ -77,7 +77,7 @@ export function useDropdownPosition(
       transformOrigin,
       position: "fixed",
       width,
-      zIndex: 9999,
+      zIndex: 20001,
     });
   }, [preferredAlign, width]);
 
@@ -122,13 +122,20 @@ export function useDropdownPosition(
     const handleScroll = (e: Event) => {
       const target = e.target as Node;
 
-      // Якщо скролиться саме меню або його частина -> ігноруємо
-      // ТУТ КРИТИЧНО ВАЖЛИВО, ЩОБ menuRef БУВ ПРИВ'ЯЗАНИЙ
+      // 1. Якщо скролиться саме меню або його частина -> ігноруємо
       if (menuRef.current && menuRef.current.contains(target)) {
         return;
       }
 
-      // Якщо скролиться сторінка (window) або інший блок -> закриваємо
+      // 2. Якщо скролиться контейнер, в якому знаходиться тригер (напр. модалка) -> ПЕРЕРАХОВУЄМО
+      // Це запобігає "відриванню" меню при скролі всередині модалки
+      const isInsideScrollable = triggerRef.current?.parentElement?.contains(target);
+      if (isInsideScrollable) {
+        calculate();
+        return;
+      }
+
+      // Якщо скролиться зовнішній світ (window) -> закриваємо
       onClose();
     };
 

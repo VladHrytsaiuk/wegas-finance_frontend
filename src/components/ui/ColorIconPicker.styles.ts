@@ -122,6 +122,7 @@ export const IconGrid = styled.div`
   max-height: 160px; /* Approx 4 rows */
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
 
   /* Custom thin scrollbar */
   &::-webkit-scrollbar {

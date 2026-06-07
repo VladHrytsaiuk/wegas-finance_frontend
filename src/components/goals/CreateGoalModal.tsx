@@ -58,13 +58,23 @@ function CreateGoalFormContent({
   const { setIsDirty } = useModal();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    wizard: w,
-    formState: f,
-    data: d,
-    handleSubmit,
-    t,
-  } = useCreateGoalForm(isOpen, onClose, editingGoal);
+  const { wizard: w, formState: f, data: d, handleSubmit, t } = useCreateGoalForm(
+    isOpen,
+    onClose,
+    editingGoal,
+  );
+
+  // 🔥 Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   // Sync ESC key handling
   useEffect(() => {
