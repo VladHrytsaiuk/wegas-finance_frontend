@@ -133,8 +133,6 @@ export const TrendWidget = (props: Props) => {
           />
         ) : (
           <S.AbsoluteChartContainer>
-...
-
             <ResponsiveContainer width="99.9%" height="100%" debounce={50}>
               <AreaChart
                 data={chartData}
@@ -191,10 +189,12 @@ export const TrendWidget = (props: Props) => {
                   type={curveType}
                   dataKey="total"
                   stroke={activeColor}
-                  strokeWidth={2}
+                  strokeWidth={3}
                   fill={`url(#grad${activeType})`}
+                  connectNulls
                   animationDuration={600}
-                  activeDot={{ r: 4, strokeWidth: 0 }}
+                  activeDot={{ r: 5, strokeWidth: 0 }}
+                  dot={chartData.length < 15 ? { r: 2, fill: activeColor } : false}
                 />
               </AreaChart>
             </ResponsiveContainer>

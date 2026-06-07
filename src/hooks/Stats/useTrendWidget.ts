@@ -59,18 +59,22 @@ export const useTrendWidget = ({
 
   // Підготовка даних для графіка
   const chartDataInfo = useMemo(() => {
-    if (!data || data.length === 0) return { data: [], isMonthly: false };
+    // Якщо даних від API взагалі немає (помилка або ще не завантажилось) - повертаємо пустий масив
+    if (!data) return { data: [], isMonthly: false };
 
     let startDate = new Date(localFilter.from);
     const endDate = new Date(localFilter.to);
 
-    // Корекція дати старту, якщо прийшло 0 або дуже стара дата
-    if (startDate.getFullYear() < 2000 && data.length > 0) {
-      const firstTxDate = parseISO(data[0].date);
-      startDate = subWeeks(firstTxDate, 1);
-      // Якщо дані прийшли по місяцях (YYYY-MM)
-      if (data[0].date.length === 7) {
-        startDate = startOfMonth(startDate);
+    // Корекція дати старту, якщо прийшло 0 (Весь час) або дуже стара дата
+    if (startDate.getFullYear() < 2000) {
+      if (data.length > 0) {
+        // Якщо є дані, стартуємо за тиждень до першої транзакції
+        const firstTxDate = parseISO(data[0].date);
+        startDate = subWeeks(firstTxDate, 1);
+        if (data[0].date.length === 7) startDate = startOfMonth(startDate);
+      } else {
+        // Якщо даних немає і вибрано "Весь час" - показуємо останні 30 днів по нулях
+        startDate = subWeeks(new Date(), 4);
       }
     }
 
@@ -78,10 +82,15 @@ export const useTrendWidget = ({
     const isMonthly = daysDiff > 366;
 
     let ticks: Date[] = [];
-    if (isMonthly) {
-      ticks = eachMonthOfInterval({ start: startDate, end: endDate });
-    } else {
-      ticks = eachDayOfInterval({ start: startDate, end: endDate });
+    try {
+      if (isMonthly) {
+        ticks = eachMonthOfInterval({ start: startDate, end: endDate });
+      } else {
+        ticks = eachDayOfInterval({ start: startDate, end: endDate });
+      }
+    } catch (e) {
+      // Фолбек на випадок некоректних дат
+      ticks = [];
     }
 
     const mappedData = ticks.map((tickDate) => {
