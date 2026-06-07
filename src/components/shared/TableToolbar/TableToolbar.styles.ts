@@ -134,6 +134,12 @@ export const ResetButton = styled.button`
   justify-content: center;
   width: 38px;
   height: 38px;
+
+  @media (max-width: 1300px) {
+    width: 30px;
+    height: 30px;
+  }
+
   padding: 0;
   background: #fee2e2;
   color: #ef4444;
@@ -151,6 +157,11 @@ export const ResetButton = styled.button`
   svg {
     width: 20px;
     height: 20px;
+
+    @media (max-width: 1300px) {
+      width: 13px;
+      height: 13px;
+    }
   }
 
   &::after {
@@ -158,6 +169,11 @@ export const ResetButton = styled.button`
     position: absolute;
     width: 22px;
     height: 2px;
+
+    @media (max-width: 1300px) {
+      width: 15px;
+    }
+
     background-color: currentColor;
     top: 50%;
     left: 50%;
@@ -282,6 +298,12 @@ export const DateIconButton = styled.button<{ $active?: boolean }>`
   justify-content: center;
   width: 38px;
   height: 38px;
+
+  @media (max-width: 1300px) {
+    width: 30px;
+    height: 30px;
+  }
+
   border-radius: 8px;
   border: 1px solid
     ${(p) => (p.$active ? "var(--color-brand-200)" : "var(--color-border)")};
@@ -302,6 +324,11 @@ export const DateIconButton = styled.button<{ $active?: boolean }>`
   svg {
     width: 20px;
     height: 20px;
+
+    @media (max-width: 1300px) {
+      width: 13px;
+      height: 13px;
+    }
   }
 `;
 export const DatePopupPortal = styled.div`

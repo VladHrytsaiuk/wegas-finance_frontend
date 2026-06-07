@@ -11,6 +11,12 @@ const ToggleContainer = styled.div`
   border-radius: 8px;
   padding: 4px;
   gap: 4px;
+  height: 38px;
+
+  @media (max-width: 1300px) {
+    height: 30px;
+    padding: 2px;
+  }
 `;
 
 const ToggleButton = styled.button<{ $active: boolean }>`
@@ -18,6 +24,8 @@ const ToggleButton = styled.button<{ $active: boolean }>`
   align-items: center;
   justify-content: center;
   padding: 6px;
+  height: 100%;
+  aspect-ratio: 1;
   border: none;
   border-radius: 6px;
   background-color: ${(props) =>
@@ -36,6 +44,11 @@ const ToggleButton = styled.button<{ $active: boolean }>`
   svg {
     width: 20px;
     height: 20px;
+
+    @media (max-width: 1300px) {
+      width: 16px;
+      height: 16px;
+    }
   }
 `;
 

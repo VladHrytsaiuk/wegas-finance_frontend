@@ -173,6 +173,11 @@ export const ClearTextBtn = styled.button`
   justify-content: center;
   width: 38px;
   height: 38px;
+
+  @media (max-width: 1300px) {
+    width: 30px;
+    height: 30px;
+  }
   border-radius: 8px;
   flex-shrink: 0;
   transition: all 0.2s;

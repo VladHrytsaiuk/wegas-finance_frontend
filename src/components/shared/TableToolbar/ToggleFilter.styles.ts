@@ -5,6 +5,11 @@ export const Container = styled.div`
   align-items: center;
   gap: 0.8rem;
   padding: 0 0.5rem;
+
+  @media (max-width: 1300px) {
+    gap: 0.4rem;
+    padding: 0;
+  }
 `;
 
 export const Label = styled.span`
@@ -19,7 +24,7 @@ export const Label = styled.span`
 
   @media (max-width: 1300px) {
     font-size: 0.7rem;
-    padding: 0.35rem 0.5rem;
+    padding: 0;
   }
 `;
 

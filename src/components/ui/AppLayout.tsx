@@ -18,7 +18,7 @@ const StyledAppLayout = styled.div<{ $collapsed: boolean }>`
 
 const Main = styled.main`
   background-color: var(--color-bg-page);
-  padding: 3.2rem;
+  padding: 2rem;
   overflow-y: auto;
   min-height: 0;
 `;
