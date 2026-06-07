@@ -64,17 +64,17 @@ export const DateHeaderRow = styled.tr`
 `;
 
 export const DateHeaderCell = styled.td`
-  padding: 0.8rem 1rem;
+  padding: 0.7rem 0.8rem;
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-border);
 
   @media (max-width: 1300px) {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.7rem;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.6rem;
   }
 
   @media (max-width: 768px) {
@@ -86,15 +86,15 @@ export const DateHeaderCell = styled.td`
 export const TextStack = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 
   strong {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--color-text-main);
 
     @media (max-width: 1300px) {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     @media (max-width: 768px) {
@@ -104,11 +104,11 @@ export const TextStack = styled.div`
   }
 
   span {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--color-text-secondary);
 
     @media (max-width: 1300px) {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
     }
 
     @media (max-width: 768px) {
@@ -136,7 +136,7 @@ export const MobileAccountBadge = styled.span`
 `;
 
 export const NoteText = styled.div`
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-text-secondary);
   max-width: 260px; /* Ширина для великих моніторів */
   overflow: hidden;
@@ -144,7 +144,7 @@ export const NoteText = styled.div`
   white-space: nowrap;
 
   @media (max-width: 1300px) {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   /* На екранах ноутбуків (до 1500px) суттєво зменшуємо ширину примітки */
@@ -167,13 +167,13 @@ export const ReceiptBadge = styled.div`
 export const Amount = styled.div<{ $color: string; $isForgiveness?: boolean }>`
   font-family: "JetBrains Mono", monospace;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   text-align: right;
   color: ${(props) => props.$color};
   white-space: nowrap;
 
   @media (max-width: 1300px) {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   @media (max-width: 768px) {
@@ -191,10 +191,10 @@ export const Amount = styled.div<{ $color: string; $isForgiveness?: boolean }>`
 export const AccountName = styled.span<{ $isDeleted?: boolean }>`
   font-weight: 600;
   color: var(--color-text-main);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 
   @media (max-width: 1300px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   ${(p) =>

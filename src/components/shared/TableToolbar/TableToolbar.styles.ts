@@ -4,7 +4,7 @@ export const ToolbarWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-bottom: 0; /* Relying on parent container gap */
+  margin-bottom: 2.5rem;
 `;
 
 export const ChildrenTopRow = styled.div`

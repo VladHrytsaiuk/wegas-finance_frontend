@@ -5,7 +5,7 @@ export const ToolbarContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem; /* Зменшив відступ між блоками */
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
   width: 100%;
 `;
 

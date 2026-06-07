@@ -7,7 +7,7 @@ export const PageContainer = styled.div`
 `;
 
 export const ControlsRow = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 `;
 
 export const EmptyState = styled.div`

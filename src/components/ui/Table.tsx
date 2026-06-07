@@ -18,7 +18,7 @@ const StyledTable = styled.table`
   width: 100%; /* Замість max-content, щоб таблиця була гнучкою */
   min-width: 400px; /* Запобігає надмірному злипанню контенту */
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 
   @media (max-width: 1300px) {
     font-size: 0.85rem;
@@ -31,16 +31,16 @@ const StyledHeader = styled.thead`
 
   & tr th {
     text-align: left;
-    padding: 1rem 1.2rem;
+    padding: 0.8rem 1rem;
     font-weight: 600;
     color: var(--color-text-secondary);
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     letter-spacing: 0.05em;
 
     @media (max-width: 1300px) {
-      padding: 0.8rem 1rem;
-      font-size: 0.7rem;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.6rem;
     }
 
     /* Адаптивні відступи для мобільних */
@@ -67,12 +67,12 @@ const StyledRow = styled.tr<{ $isClickable?: boolean }>`
 `;
 
 const StyledCell = styled.td`
-  padding: 0.8rem 1.2rem;
+  padding: 0.7rem 1rem;
   color: var(--color-text-main);
   vertical-align: middle;
 
   @media (max-width: 1300px) {
-    padding: 0.6rem 0.8rem;
+    padding: 0.5rem 0.7rem;
   }
 
   /* Адаптивні відступи для мобільних */
