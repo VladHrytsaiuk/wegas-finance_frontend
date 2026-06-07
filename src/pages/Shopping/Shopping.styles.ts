@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
   width: 100%;
   padding-bottom: 2rem;
 `;
@@ -23,11 +23,11 @@ export const CreateNoteCard = styled.form`
   background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  padding: 1rem 1.5rem;
-  max-width: 600px;
+  padding: 0.6rem 1rem;
+  max-width: 500px;
   margin: 0 auto;
   width: 100%;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   display: flex;
   gap: 12px;
   transition: all 0.2s;
@@ -41,7 +41,7 @@ export const CreateNoteCard = styled.form`
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     color: var(--color-text-main);
     outline: none;
   }
@@ -89,11 +89,10 @@ export const NoteCard = styled.div`
 `;
 
 export const NoteHeader = styled.div`
-  padding: 1rem 1.2rem 0.5rem 1.2rem;
+  padding: 0.75rem 1rem 0.4rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  /* background-color: rgba(0,0,0,0.02); */ /* Можна прибрати фон заголовка для чистоти */
 `;
 
 // 🔥 ІНПУТ ДЛЯ РЕДАГУВАННЯ ЗАГОЛОВКА
@@ -101,7 +100,7 @@ export const TitleInput = styled.input`
   width: 100%;
   background: transparent;
   border: none;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-text-main);
   outline: none;
@@ -127,7 +126,7 @@ export const NoteFooter = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   opacity: 0; /* Приховані дії, поки не наведеш мишку (як у Keep) */
   transition: opacity 0.2s ease-in-out;
@@ -140,7 +139,7 @@ export const NoteFooter = styled.div`
 export const MetaData = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--color-text-tertiary);
   gap: 2px;
 
@@ -178,8 +177,8 @@ export const ActionButton = styled.button`
 export const ListItem = styled.div<{ $isBought?: boolean; $isInput?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 6px 1.2rem;
+  gap: 8px;
+  padding: 4px 1rem;
   transition: background-color 0.2s;
 
   &:hover {
@@ -191,7 +190,7 @@ export const ListItem = styled.div<{ $isBought?: boolean; $isInput?: boolean }>`
 
   span {
     flex: 1;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: ${(props) =>
       props.$isBought
         ? "var(--color-text-tertiary)"
@@ -213,7 +212,7 @@ export const AddItemInput = styled.input`
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: var(--color-text-main);
   outline: none;
   padding: 4px 0;
@@ -245,8 +244,8 @@ export const ItemDeleteBtn = styled.button`
 `;
 
 export const Checkbox = styled.div<{ $checked?: boolean; $isAdd?: boolean }>`
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
   border: ${(props) =>
     props.$isAdd
@@ -263,15 +262,15 @@ export const Checkbox = styled.div<{ $checked?: boolean; $isAdd?: boolean }>`
 
   svg {
     opacity: ${(props) => (props.$checked || props.$isAdd ? 1 : 0)};
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 `;
 
 export const Divider = styled.div`
   height: 1px;
   background: rgba(0, 0, 0, 0.05);
-  margin: 6px 0;
+  margin: 4px 0;
 `;
 
 export const PaginationWrapper = styled.div`
