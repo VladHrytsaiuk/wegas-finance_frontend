@@ -7,8 +7,8 @@ export const PageContainer = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding-bottom: 4rem;
+  gap: 1.25rem;
+  padding-bottom: 3rem;
 `;
 
 // --- HEADER ---
@@ -61,6 +61,10 @@ export const AssetTitleBlock = styled.div`
     color: var(--color-text-main);
     margin: 0;
     line-height: 1.2;
+
+    @media (max-width: 1300px) {
+      font-size: 1.4rem;
+    }
   }
 `;
 
@@ -114,6 +118,12 @@ export const StyledCard = styled.div<{
   height: 100%;
   min-width: 0;
 
+  @media (max-width: 1300px) {
+    padding: ${(p) => (p.$noPadding ? "0" : "1.1rem")};
+    gap: 1rem;
+    border-radius: 12px;
+  }
+
   ${(p) =>
     p.$isInactive &&
     css`
@@ -135,10 +145,19 @@ export const CardHeader = styled.div`
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
+
+    @media (max-width: 1300px) {
+      font-size: 0.95rem;
+    }
   }
   svg {
     color: var(--color-brand-600);
     flex-shrink: 0;
+
+    @media (max-width: 1300px) {
+      width: 18px;
+      height: 18px;
+    }
   }
 `;
 
@@ -154,10 +173,19 @@ export const MainValueBlock = styled.div`
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--color-border);
 
+  @media (max-width: 1300px) {
+    padding-bottom: 1rem;
+    gap: 0.3rem;
+  }
+
   .label {
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--color-text-secondary);
+
+    @media (max-width: 1300px) {
+      font-size: 0.8rem;
+    }
   }
 
   .value {
@@ -168,6 +196,10 @@ export const MainValueBlock = styled.div`
     letter-spacing: -0.03em;
     line-height: 1;
     word-wrap: break-word;
+
+    @media (max-width: 1300px) {
+      font-size: 1.8rem;
+    }
   }
 `;
 
@@ -175,6 +207,10 @@ export const MetaDataGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
+
+  @media (max-width: 1300px) {
+    gap: 1rem;
+  }
 `;
 
 export const MetaItem = styled.div<{ $fullWidth?: boolean }>`
@@ -183,12 +219,10 @@ export const MetaItem = styled.div<{ $fullWidth?: boolean }>`
   gap: 0.4rem;
   min-width: 0;
 
-  ${(p) =>
-    p.$fullWidth &&
-    css`
-      grid-column: 1 / -1;
-    `}
-
+  @media (max-width: 1300px) {
+    gap: 0.2rem;
+  }
+...
   .icon-label {
     display: flex;
     align-items: center;
@@ -200,8 +234,16 @@ export const MetaItem = styled.div<{ $fullWidth?: boolean }>`
     letter-spacing: 0.025em;
     white-space: nowrap;
 
+    @media (max-width: 1300px) {
+      font-size: 0.7rem;
+    }
+
     svg {
       flex-shrink: 0;
+      @media (max-width: 1300px) {
+        width: 14px;
+        height: 14px;
+      }
     }
   }
 
@@ -210,6 +252,10 @@ export const MetaItem = styled.div<{ $fullWidth?: boolean }>`
     font-weight: 600;
     color: var(--color-text-main);
     word-wrap: break-word;
+
+    @media (max-width: 1300px) {
+      font-size: 0.9rem;
+    }
   }
 `;
 
@@ -269,6 +315,10 @@ export const TCORow = styled.div`
     font-size: 0.9rem;
     color: var(--color-text-secondary);
     font-weight: 500;
+
+    @media (max-width: 1300px) {
+      font-size: 0.8rem;
+    }
   }
 
   .value {
@@ -278,6 +328,10 @@ export const TCORow = styled.div`
     color: var(--color-text-main);
     text-align: right;
     white-space: nowrap;
+
+    @media (max-width: 1300px) {
+      font-size: 0.9rem;
+    }
   }
 
   .expense {
@@ -296,6 +350,10 @@ export const TCOTotal = styled.div`
   border: 1px solid var(--color-brand-100);
   margin-top: auto;
   flex: 1;
+
+  @media (max-width: 1300px) {
+    padding: 0.75rem 1rem;
+  }
 
   /* 🔥 Переводимо контент плашки в колонку, коли місця стає мало */
   @media (max-width: 1150px) {
@@ -322,6 +380,10 @@ export const TCOTotal = styled.div`
     color: var(--color-brand-700);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+
+    @media (max-width: 1300px) {
+      font-size: 0.75rem;
+    }
   }
 
   .value {
@@ -330,6 +392,10 @@ export const TCOTotal = styled.div`
     font-weight: 800;
     color: var(--color-brand-700);
     white-space: nowrap; /* 🔥 Гарантує, що пробіли в сумі не розірвуться */
+
+    @media (max-width: 1300px) {
+      font-size: 1.2rem;
+    }
   }
 `;
 
@@ -379,11 +445,22 @@ export const PhotoPlaceholder = styled.div`
     color: var(--color-text-tertiary);
     font-size: 2rem;
     box-shadow: var(--shadow-sm);
+
+    @media (max-width: 1300px) {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      font-size: 1.5rem;
+    }
   }
 
   span {
     font-size: 0.9rem;
     opacity: 0.8;
+
+    @media (max-width: 1300px) {
+      font-size: 0.8rem;
+    }
   }
 `;
 
@@ -451,6 +528,10 @@ export const WarrantyMainDate = styled.div`
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--color-text-main);
+
+    @media (max-width: 1300px) {
+      font-size: 1.1rem;
+    }
   }
 `;
 
@@ -538,12 +619,11 @@ export const DocumentsGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 `;
-
 export const DocumentItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1rem;
+  padding: 0.6rem 0.85rem;
   background-color: var(--color-bg-page);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -556,10 +636,12 @@ export const DocumentItem = styled.div`
   .doc-info {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    font-size: 0.9rem;
+    gap: 0.6rem;
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--color-text-main);
+...
+
     overflow: hidden; /* Щоб довгі імена обрізались */
 
     svg {

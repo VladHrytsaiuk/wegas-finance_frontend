@@ -79,7 +79,7 @@ export default function AssetDetails() {
   if (!asset) {
     return (
       <S.NotFoundState>
-        <HiOutlineCube size={64} color="var(--color-text-tertiary)" />
+        <HiOutlineCube size={48} color="var(--color-text-tertiary)" />
         <h2>{t("assets:assetDetails.not_found")}</h2>
         <Button
           variation="secondary"
