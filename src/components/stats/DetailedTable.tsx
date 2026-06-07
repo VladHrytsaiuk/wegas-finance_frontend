@@ -27,9 +27,6 @@ export const DetailedTable = ({
       <S.TableHead>
         <div>{t("stats_utility:statisticsPage.table_header_name")}</div>
         <div style={{ textAlign: "right" }}>
-          {t("stats_utility:statisticsPage.table_header_percent")}
-        </div>
-        <div style={{ textAlign: "right" }}>
           {t("stats_utility:statisticsPage.table_header_amount")}
         </div>
       </S.TableHead>
@@ -37,35 +34,37 @@ export const DetailedTable = ({
       <S.TableBody>
         {rows.map((item, idx) => (
           <S.TableRow key={idx}>
-            <S.NameCell>
-              <S.IconBox $color={item.finalColor} $hasLogo={!!item.logo}>
-                <SmartIcon
-                  iconName={item.displayIcon}
-                  logo={item.logo}
-                  size={24}
-                  color={item.finalColor}
-                />
-              </S.IconBox>
+            <S.RowContent>
+              <S.NameCell>
+                <S.IconBox $color={item.finalColor} $hasLogo={!!item.logo}>
+                  <SmartIcon
+                    iconName={item.displayIcon}
+                    logo={item.logo}
+                    size={24}
+                    color={item.finalColor}
+                  />
+                </S.IconBox>
 
-              <S.NameText title={item.name}>
-                {item.name || t("stats_utility:statisticsPage.table_unnamed")}
-              </S.NameText>
-            </S.NameCell>
+                <S.NameText title={item.name}>
+                  {item.name || t("stats_utility:statisticsPage.table_unnamed")}
+                </S.NameText>
+              </S.NameCell>
 
-            <S.PercentCell>
-              <div className="value">{item.percent.toFixed(1)}%</div>
-              <S.ProgressBar>
-                <div
-                  className="fill"
-                  style={{
-                    width: `${item.percent}%`,
-                    background: item.finalColor,
-                  }}
-                />
-              </S.ProgressBar>
-            </S.PercentCell>
+              <S.AmountCell>
+                <div className="amount">{formatMoney(item.total, currency)}</div>
+                <div className="percent">{item.percent.toFixed(1)}%</div>
+              </S.AmountCell>
+            </S.RowContent>
 
-            <S.AmountCell>{formatMoney(item.total, currency)}</S.AmountCell>
+            <S.ProgressBar>
+              <div
+                className="fill"
+                style={{
+                  width: `${item.percent}%`,
+                  background: item.finalColor,
+                }}
+              />
+            </S.ProgressBar>
           </S.TableRow>
         ))}
       </S.TableBody>

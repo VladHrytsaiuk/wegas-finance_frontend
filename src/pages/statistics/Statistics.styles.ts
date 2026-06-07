@@ -70,15 +70,21 @@ export const ToggleBtn = styled.button<{
 
 export const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 500px 1fr;
+  /* 🔥 40/60 split for large screens */
+  grid-template-columns: 4fr 6fr; 
   gap: 1.5rem;
-  align-items: start; /* 🔥 Не розтягуємо, щоб не стрибало */
+  align-items: start;
 
-  @media (max-width: 1200px) {
+  @media (max-width: 1300px) {
+    /* Дозволяємо лівій колонці стискатись */
+    grid-template-columns: minmax(300px, 4fr) 6fr;
+  }
+
+  @media (max-width: 1100px) {
+    /* Ставимо в одну колонку */
     grid-template-columns: 1fr;
   }
 `;
-
 export const ChartSection = styled.div`
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);

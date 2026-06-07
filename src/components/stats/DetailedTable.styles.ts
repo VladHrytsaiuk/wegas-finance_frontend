@@ -8,7 +8,7 @@ export const TableWrapper = styled.div`
 
 export const TableHead = styled.div`
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
   padding: 0.75rem 1rem;
   font-size: 0.75rem;
   color: var(--color-text-tertiary);
@@ -24,11 +24,11 @@ export const TableBody = styled.div`
 `;
 
 export const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
+  display: flex;
+  flex-direction: column;
   padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--color-border);
-  align-items: center;
+  gap: 12px;
   transition: background 0.1s ease;
   &:last-child {
     border-bottom: none;
@@ -36,6 +36,13 @@ export const TableRow = styled.div`
   &:hover {
     background: var(--color-bg-hover);
   }
+`;
+
+export const RowContent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
 `;
 
 export const NameCell = styled.div`
@@ -87,24 +94,9 @@ export const NameText = styled.span`
   font-size: 0.95rem;
 `;
 
-export const PercentCell = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-start;
-  padding-right: 2rem;
-  
-  .value {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--color-text-main);
-  }
-`;
-
 export const ProgressBar = styled.div`
   width: 100%;
-  max-width: 180px;
-  height: 8px;
+  height: 6px;
   background: var(--color-bg-main);
   border: 1px solid var(--color-border);
   border-radius: 4px;
@@ -117,9 +109,21 @@ export const ProgressBar = styled.div`
 `;
 
 export const AmountCell = styled.div`
-  text-align: right;
-  font-weight: 600;
-  color: var(--color-text-main);
-  font-feature-settings: "tnum";
-  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  
+  .amount {
+    font-weight: 600;
+    color: var(--color-text-main);
+    font-feature-settings: "tnum";
+    font-size: 0.95rem;
+  }
+  
+  .percent {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
 `;
