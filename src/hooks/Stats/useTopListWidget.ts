@@ -82,21 +82,26 @@ export const useTopListWidget = ({
     return topItems.map((item) => {
       const percent = maxValue > 0 ? (item.total / maxValue) * 100 : 0;
       let displayColor = item.metadata;
+      let logo = null;
+      let icon = null;
 
-      // Color Logic
+      // Color & Logo Logic
       if (entity === "category") {
         const cat = categories.find((c: any) => c.name === item.name);
         if (cat?.color) displayColor = cat.color;
+        if (cat?.icon) icon = cat.icon;
       } else if (entity === "counterparty") {
         const cp = counterparties.find((c: any) => c.name === item.name);
         if (cp) {
+          if (cp.logo) logo = cp.logo;
+
           if (cp.color) {
             displayColor = cp.color;
           } else if (cp.category?.color) {
             displayColor = cp.category.color;
           } else if (cp.category_id) {
             const parentCat = categories.find(
-              (c: any) => String(c.id) === String(cp.category_id)
+              (c: any) => String(c.id) === String(cp.category_id),
             );
             if (parentCat?.color) displayColor = parentCat.color;
           }
@@ -111,6 +116,8 @@ export const useTopListWidget = ({
         ...item,
         displayColor,
         percent,
+        logo,
+        icon,
         displayName: item.name || t("dashboard:dashboard.filter_other", "Інше"),
       };
     });

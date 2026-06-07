@@ -9,6 +9,7 @@ import { HiListBullet } from "react-icons/hi2";
 import * as S from "./TopListWidget.styles";
 import { useTopListWidget } from "../../../hooks/Stats/useTopListWidget";
 import { formatMoney } from "../../../utils/helpers";
+import { SmartIcon } from "../../../utils/IconMap";
 import type { StatsFilter } from "../../../services/apiStats";
 
 interface Props {
@@ -63,7 +64,22 @@ export const TopListWidget = (props: Props) => {
             <S.ListItem key={idx}>
               <S.Row>
                 <S.NameGroup>
-                  <S.ColorDot $color={item.displayColor} />
+                  <S.Logo
+                    $color={item.displayColor}
+                    $hasImage={!!item.logo || !!item.icon}
+                  >
+                    {item.logo ? (
+                      <img src={`/brands/${item.logo}`} alt={item.displayName} />
+                    ) : item.icon ? (
+                      <SmartIcon
+                        iconName={item.icon}
+                        color={item.displayColor}
+                        size={14}
+                      />
+                    ) : (
+                      <S.ColorDot $color={item.displayColor} />
+                    )}
+                  </S.Logo>
                   <S.Name title={item.displayName}>{item.displayName}</S.Name>
                 </S.NameGroup>
                 <S.Value>{formatMoney(item.total, currency, language)}</S.Value>

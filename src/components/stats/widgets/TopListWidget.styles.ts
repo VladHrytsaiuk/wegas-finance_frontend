@@ -60,7 +60,35 @@ export const Row = styled.div`
 export const NameGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+`;
+
+export const Logo = styled.div<{ $color?: string; $hasImage?: boolean }>`
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: ${(p) => (p.$hasImage ? "transparent" : `${p.$color}15`)};
+  border: ${(p) =>
+    p.$hasImage ? "1px solid var(--color-border)" : "none"};
+  color: ${(p) => p.$color || "var(--color-text-secondary)"};
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 `;
 
 export const Name = styled.span`
