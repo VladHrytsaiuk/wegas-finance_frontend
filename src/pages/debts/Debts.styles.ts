@@ -99,12 +99,12 @@ export const Section = styled.section`
 export const SectionHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   padding-left: 4px;
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--color-text-main);
   display: flex;

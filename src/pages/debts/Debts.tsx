@@ -108,7 +108,7 @@ function Debts() {
             <span>
               {formatMoney(totals[curr], curr).replace(curr, "").trim()}
             </span>
-            <span style={{ fontSize: "0.9rem", opacity: 0.7 }}>{curr}</span>
+            <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>{curr}</span>
           </S.SummaryValue>
         ))}
       </S.CurrencyList>
@@ -133,7 +133,7 @@ function Debts() {
           return (
             <S.SummaryValue key={curr} $color={color}>
               <span>{formatMoney(val, curr).replace(curr, "").trim()}</span>
-              <span style={{ fontSize: "0.9rem", opacity: 0.7 }}>{curr}</span>
+              <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>{curr}</span>
             </S.SummaryValue>
           );
         })}
@@ -150,7 +150,7 @@ function Debts() {
         <S.SummaryRow>
           <S.SummaryCard $type="positive">
             <S.SummaryLabel>
-              <HiArrowUpRight size={18} /> {t("goals_debts:debtsPage.summary_owed_to_me")}
+              <HiArrowUpRight size={16} /> {t("goals_debts:debtsPage.summary_owed_to_me")}
             </S.SummaryLabel>
             {renderSummaryValues(
               totalsOwedToMe,
@@ -161,14 +161,14 @@ function Debts() {
 
           <S.SummaryCard $type="negative">
             <S.SummaryLabel>
-              <HiArrowDownLeft size={18} /> {t("goals_debts:debtsPage.summary_i_owe")}
+              <HiArrowDownLeft size={16} /> {t("goals_debts:debtsPage.summary_i_owe")}
             </S.SummaryLabel>
             {renderSummaryValues(totalsIOwe, "var(--color-red-600)", "0.00")}
           </S.SummaryCard>
 
           <S.SummaryCard $type="neutral">
             <S.SummaryLabel>
-              <HiWallet size={18} /> {t("goals_debts:debtsPage.summary_balance")}
+              <HiWallet size={16} /> {t("goals_debts:debtsPage.summary_balance")}
             </S.SummaryLabel>
             {renderNetBalance()}
           </S.SummaryCard>

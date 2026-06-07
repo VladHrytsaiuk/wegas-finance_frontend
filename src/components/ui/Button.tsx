@@ -34,10 +34,17 @@ const variations = {
 // 2. Описуємо варіанти розмірів
 const sizes = {
   small: css`
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
-    font-weight: 500;
+    font-size: 0.7rem;
+    padding: 0 0.8rem;
+    height: 30px;
+    font-weight: 600;
+
+    & svg {
+      width: 13px !important;
+      height: 13px !important;
+    }
   `,
+
   medium: css`
     font-size: 0.95rem;
     padding: 0 1rem;
