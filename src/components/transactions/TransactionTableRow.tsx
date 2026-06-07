@@ -44,7 +44,7 @@ export const TransactionTableRow = memo(
     return (
       <Table.Row onClick={() => onClick(tx.id)}>
         {/* ICON */}
-        <Table.Cell style={{ width: 60 }}>
+        <Table.Cell className="col-icon">
           <TransactionIcon
             logoUrl={display.logoUrl}
             iconName={display.iconName}

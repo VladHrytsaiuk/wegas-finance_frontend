@@ -47,7 +47,7 @@ export const TransactionsTable = ({
       <Table>
         <Table.Header>
           <tr>
-            <th style={{ width: 60 }} />
+            <th className="col-icon" />
             <th>{t("transactions:transactionsTable.header_category_description")}</th>
             <th className="col-account">
               {t("transactions:transactionsTable.header_account")}

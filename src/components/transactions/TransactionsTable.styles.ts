@@ -10,13 +10,22 @@ export const TableWrapper = styled.div`
   display: block;
 
   table {
-    border-collapse: collapse;
-    width: 100%;
-    min-width: unset;
+  border-collapse: collapse;
+  width: 100%;
+  min-width: unset;
+  }
+
+  /* ICON */
+  .col-icon {
+  width: 60px;
+  @media (max-width: 1300px) {
+    width: 50px;
+  }
   }
 
   /* NOTE (Примітки) */
   .col-note {
+
     /* Змінено з 1400px на 1300px за твоїм бажанням */
     @media (max-width: 1300px) {
       display: none;
@@ -63,6 +72,11 @@ export const DateHeaderCell = styled.td`
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-border);
 
+  @media (max-width: 1300px) {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.7rem;
+  }
+
   @media (max-width: 768px) {
     padding: 0.6rem;
   }
@@ -79,6 +93,10 @@ export const TextStack = styled.div`
     font-size: 0.95rem;
     color: var(--color-text-main);
 
+    @media (max-width: 1300px) {
+      font-size: 0.85rem;
+    }
+
     @media (max-width: 768px) {
       font-size: 0.85rem;
       line-height: 1.2;
@@ -88,6 +106,10 @@ export const TextStack = styled.div`
   span {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
+
+    @media (max-width: 1300px) {
+      font-size: 0.7rem;
+    }
 
     @media (max-width: 768px) {
       font-size: 0.7rem;
@@ -121,6 +143,10 @@ export const NoteText = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 
+  @media (max-width: 1300px) {
+    font-size: 0.75rem;
+  }
+
   /* На екранах ноутбуків (до 1500px) суттєво зменшуємо ширину примітки */
   @media (max-width: 1500px) {
     max-width: 120px;
@@ -146,6 +172,10 @@ export const Amount = styled.div<{ $color: string; $isForgiveness?: boolean }>`
   color: ${(props) => props.$color};
   white-space: nowrap;
 
+  @media (max-width: 1300px) {
+    font-size: 0.85rem;
+  }
+
   @media (max-width: 768px) {
     font-size: 0.9rem;
   }
@@ -162,6 +192,10 @@ export const AccountName = styled.span<{ $isDeleted?: boolean }>`
   font-weight: 600;
   color: var(--color-text-main);
   font-size: 0.9rem;
+
+  @media (max-width: 1300px) {
+    font-size: 0.8rem;
+  }
 
   ${(p) =>
     p.$isDeleted &&

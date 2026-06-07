@@ -90,6 +90,21 @@ export const IconBox = styled.div<{
   flex-shrink: 0;
   overflow: hidden;
 
+  @media (max-width: 1300px) {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+
+    & svg {
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    & span {
+      font-size: 16px !important;
+    }
+  }
+
   background: ${(p) =>
     p.$hasLogo
       ? "transparent"
