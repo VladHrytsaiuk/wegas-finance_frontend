@@ -4,6 +4,8 @@ export const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 `;
 
 export const TableHead = styled.div`
@@ -16,11 +18,23 @@ export const TableHead = styled.div`
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 `;
 
 export const TableBody = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 4px;
+  }
 `;
 
 export const TableRow = styled.div`

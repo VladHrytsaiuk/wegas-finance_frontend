@@ -93,7 +93,8 @@ export const ChartSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-height: 450px;
+  height: 450px; /* 🔥 Fixed height to match Pie chart and allow scrolling */
+  overflow: hidden;
 `;
 
 /* --- TABS --- */
