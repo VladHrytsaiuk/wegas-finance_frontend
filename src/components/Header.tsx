@@ -16,8 +16,12 @@ const StyledHeader = styled.header`
   align-items: center;
   gap: 1rem;
 
+  @media (max-width: 1300px) {
+    padding: 0.8rem 1.5rem;
+  }
+
   @media (max-width: 1024px) {
-    padding: 1.2rem 1.5rem; /* Зменшуємо "мертву зону" по боках */
+    padding: 0.8rem 1rem; /* Зменшуємо "мертву зону" по боках */
   }
 `;
 
@@ -84,6 +88,8 @@ const RatesWidget = styled.div`
   height: 40px;
 
   @media (max-width: 1300px) {
+    height: 32px;
+    padding: 0.2rem 0.8rem;
     gap: 0.7rem;
   }
 
@@ -136,6 +142,12 @@ const UserArea = styled.div`
   cursor: pointer;
   transition: all 0.2s;
 
+  @media (max-width: 1300px) {
+    height: 32px;
+    padding: 0.2rem 0.2rem 0.2rem 0.8rem;
+    gap: 0.6rem;
+  }
+
   &:hover {
     border-color: var(--color-brand-500);
   }
@@ -150,7 +162,10 @@ const UserName = styled.span`
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-main);
-  /* Зайві медіа-запити прибрані, бо батьківський UserArea вже схований */
+
+  @media (max-width: 1300px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const Avatar = styled.div`
@@ -163,9 +178,19 @@ const Avatar = styled.div`
   align-items: center;
   justify-content: center;
 
+  @media (max-width: 1300px) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
   & svg {
     width: 1.2rem;
     height: 1.2rem;
+
+    @media (max-width: 1300px) {
+      width: 1rem;
+      height: 1rem;
+    }
   }
 `;
 

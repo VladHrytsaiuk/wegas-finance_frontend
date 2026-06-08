@@ -25,6 +25,10 @@ const StyledSidebar = styled.aside<{ $collapsed: boolean }>`
   padding: 1rem ${(p) => (p.$collapsed ? "0.6rem" : "1.2rem")} 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+
+  @media (max-width: 1300px) {
+    padding: 0.75rem ${(p) => (p.$collapsed ? "0.4rem" : "0.8rem")} 1rem;
+  }
 `;
 
 const NavContainer = styled.div`

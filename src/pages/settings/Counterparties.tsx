@@ -74,6 +74,7 @@ function Counterparties() {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             searchPlaceholder={t("counterparties:counterpartiesPage.search_placeholder")}
+            searchPosition="top"
             filtersConfig={filtersConfig}
             filterValues={filters}
             onFilterChange={(k, v) =>

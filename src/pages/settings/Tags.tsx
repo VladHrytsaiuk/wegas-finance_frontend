@@ -34,7 +34,7 @@ function Tags() {
           searchQuery={searchQuery}
           onSearchChange={actions.setSearchQuery}
           searchPlaceholder={t("settings:tagsPage.search_placeholder")}
-          searchPosition="inline"
+          searchPosition="top"
           filtersConfig={[]} // Теги поки не мають складних фільтрів
           filterValues={{}}
           onFilterChange={() => {}}

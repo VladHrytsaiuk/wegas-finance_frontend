@@ -4,17 +4,18 @@ export const HeaderRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
 `;
 
 export const ControlsRow = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 `;
 
 export const TagList = styled.div`

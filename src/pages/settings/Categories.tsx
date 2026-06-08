@@ -71,6 +71,7 @@ function Categories() {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             searchPlaceholder={t("categories:categoriesPage.search_placeholder")}
+            searchPosition="top"
             filtersConfig={filtersConfig}
             filterValues={filters}
             onFilterChange={(k, v) =>
