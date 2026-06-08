@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { HiPhoto, HiUser, HiXMark } from "react-icons/hi2";
 
@@ -6,6 +7,7 @@ import { Button } from "../../ui/Button";
 import { ColorPicker, IconPicker } from "../../ui/ColorIconPicker";
 import { TypeSelector } from "./TypeSelector";
 import { CategorySelect } from "../../categories/CategorySelect";
+import { useModal } from "../../ui/Modal";
 
 import * as S from "./styles";
 import { useCounterpartyForm } from "../../../hooks/Counterparties/useCounterpartyForm";
@@ -22,11 +24,12 @@ export default function CounterpartyForm({
   isLoading = false,
 }: CounterpartyFormProps) {
   const { t } = useTranslation();
+  const { setIsDirty } = useModal();
 
   const {
     form: {
       register,
-      formState: { errors },
+      formState: { errors, isDirty },
       setValue,
     },
     refs: { fileInputRef },
@@ -49,8 +52,13 @@ export default function CounterpartyForm({
     },
   } = useCounterpartyForm({ onSubmit, defaultValues });
 
+  useEffect(() => {
+    setIsDirty(isDirty);
+    return () => setIsDirty(false);
+  }, [isDirty, setIsDirty]);
+
   return (
-    <S.Form onSubmit={submitHandler}>
+    <S.Form onSubmit={submitHandler} key={defaultValues?.id || "new"}>
       <S.Title>{title}</S.Title>
 
       {/* 1. Type (Person / Shop) */}
@@ -104,7 +112,7 @@ export default function CounterpartyForm({
                     square
                   />
                   
-                  {selectedType === "shop" && (
+                  {(selectedType === "shop" || selectedType === "other") && (
                     <>
                       <S.DividerText>{t("counterparties:counterpartyForm.divider_or")}</S.DividerText>
                       <input
@@ -134,7 +142,7 @@ export default function CounterpartyForm({
 
       {/* 3. Name & Category Combined */}
       <S.CompactRow>
-        <S.FieldGroup style={{ flex: 1.5 }}>
+        <S.FieldGroup style={{ flex: 1 }}>
           <S.Label>{t("counterparties:counterpartyForm.label_name")}</S.Label>
           <Input
             placeholder={t("counterparties:counterpartyForm.placeholder_name_default")}
@@ -148,7 +156,7 @@ export default function CounterpartyForm({
           )}
         </S.FieldGroup>
 
-        <S.FieldGroup style={{ flex: 1 }}>
+        <S.FieldGroup style={{ flex: 1.5 }}>
           <S.Label>{t("counterparties:counterpartyForm.label_category")}</S.Label>
           <CategorySelect
             categories={availableCategories}

@@ -3,13 +3,13 @@ import styled from "styled-components";
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  width: 560px;
-  padding: 1.5rem 2rem; /* Balanced padding */
+  gap: 1rem;
+  width: 550px;
+  padding: 0.5rem;
 
   @media (max-width: 600px) {
     width: 100%;
-    padding: 1.5rem;
+    padding: 0.5rem;
   }
 `;
 
@@ -58,7 +58,7 @@ export const Title = styled.h3`
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-text-main);
-  margin: 0;
+  margin-bottom: 0.5rem;
 `;
 
 /* --- New Styles replacing Inline Objects --- */
@@ -138,6 +138,7 @@ export const PickerContainer = styled.div`
   align-items: center;
   gap: 0.75rem;
   width: 100%;
+  min-height: 44px;
 `;
 
 export const DividerText = styled.span`

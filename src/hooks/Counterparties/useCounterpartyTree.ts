@@ -244,12 +244,12 @@ export function useCounterpartyTree({
     });
 
     // Only return roots that have content
-    // ПОРЯДОК: Пріоритет -> Інше -> Магазини -> Люди
+    // ПОРЯДОК: Пріоритет -> Магазини -> Люди -> Інше
     return [
       ...(rootPriority ? [rootPriority] : []),
-      ...(rootOther.children.length ? [rootOther] : []),
       ...(rootShops.children.length ? [rootShops] : []),
       ...(rootPeople.children.length ? [rootPeople] : []),
+      ...(rootOther.children.length ? [rootOther] : []),
     ];
   }, [
     counterparties,

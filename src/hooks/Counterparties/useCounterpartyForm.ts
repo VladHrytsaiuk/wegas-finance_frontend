@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,13 @@ export const useCounterpartyForm = ({
     staleTime: 5 * 60 * 1000,
   });
 
+  const initialCategoryId = defaultValues?.category_id || defaultValues?.category?.id || "";
+
+  // Стан для запам'ятовування вибраних категорій для кожного типу
+  const [categoryHistory, setCategoryHistory] = useState<Record<string, string>>({
+    [defaultValues?.type || "shop"]: initialCategoryId,
+  });
+
   // 2. Form Setup
   const form = useForm({
     defaultValues: {
@@ -36,8 +43,7 @@ export const useCounterpartyForm = ({
       icon: "HiBuildingStorefront",
       logo: "",
       ...defaultValues,
-      category_id:
-        defaultValues?.category_id || defaultValues?.category?.id || "",
+      category_id: initialCategoryId,
     },
   });
 
@@ -56,7 +62,8 @@ export const useCounterpartyForm = ({
   }, [categories, selectedType]);
 
   const logoPreviewSrc = getLogoSrc(currentLogo);
-  const showLogoPreview = selectedType === "shop" && !!currentLogo;
+  // 🔥 Додаємо 'other' до списку тих, хто підтримує лого
+  const showLogoPreview = (selectedType === "shop" || selectedType === "other") && !!currentLogo;
   const isPerson = selectedType === "person";
   const showIconPicker = !isPerson && !showLogoPreview;
 
@@ -66,20 +73,29 @@ export const useCounterpartyForm = ({
 
   // 5. Handlers
   const handleTypeSelect = (newType: string) => {
+    if (newType === selectedType) return;
+    
+    // Зберігаємо поточну категорію перед перемиканням
+    setCategoryHistory(prev => ({
+      ...prev,
+      [selectedType]: currentCategoryId
+    }));
+
     setValue("type", newType, { shouldDirty: true });
-    setValue("category_id", "");
+    
+    // Відновлюємо категорію для нового типу, якщо вона була раніше вибрана
+    const restoredCategory = categoryHistory[newType] || "";
+    setValue("category_id", restoredCategory);
 
-    if (newType !== "shop") {
-      setValue("logo", "", { shouldDirty: true });
-    }
-
-    // Default Icons Logic
-    if (newType === "person") {
-      setValue("icon", "HiUser");
-    } else if (newType === "shop") {
-      setValue("icon", "HiBuildingStorefront");
-    } else {
-      setValue("icon", "HiGlobeAlt");
+    // Встановлюємо дефолтну іконку ТІЛЬКИ якщо це створення нового (немає defaultValues.id)
+    if (!defaultValues?.id) {
+      if (newType === "person") {
+        setValue("icon", "HiUser", { shouldDirty: true });
+      } else if (newType === "shop") {
+        setValue("icon", "HiBuildingStorefront", { shouldDirty: true });
+      } else {
+        setValue("icon", "HiGlobeAlt", { shouldDirty: true });
+      }
     }
   };
 
@@ -88,11 +104,15 @@ export const useCounterpartyForm = ({
     if (!file) return;
 
     if (file.type !== "image/svg+xml") {
-      toast.error(t("counterparties:counterpartyForm.error_svg_only", "Тільки SVG файли"));
+      toast.error(
+        t("counterparties:counterpartyForm.error_svg_only", "Тільки SVG файли"),
+      );
       return;
     }
     if (file.size > 20 * 1024) {
-      toast.error(t("counterparties:counterpartyForm.error_size_limit", "Макс 20КБ"));
+      toast.error(
+        t("counterparties:counterpartyForm.error_size_limit", "Макс 20КБ"),
+      );
       return;
     }
 
@@ -110,7 +130,12 @@ export const useCounterpartyForm = ({
   };
 
   const onFormSubmit = (data: any) => {
-    const payload = { ...data, category_id: data.category_id || null };
+    // 🔥 Очищення даних перед відправкою (якщо це людина, лого нам не треба)
+    const payload = { 
+      ...data, 
+      category_id: data.category_id || null,
+      logo: (data.type === "shop" || data.type === "other") ? data.logo : ""
+    };
     onSubmit(payload);
     close();
   };
