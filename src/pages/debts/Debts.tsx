@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   HiPlus,
   HiArrowUpRight,
@@ -51,6 +52,8 @@ function Debts() {
     },
     t,
   } = useDebtsPage();
+
+  usePageTitle(t("goals_debts:debtsPage.title", "Борги"));
 
   // --- LOCAL STATE FOR MODALS ---
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);

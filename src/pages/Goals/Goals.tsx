@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus } from "react-icons/hi2";
 
 // Components
@@ -34,6 +35,8 @@ function Goals() {
     },
     t,
   } = useGoalsPage();
+
+  usePageTitle(t("goals_debts:goals.title", "Цілі"));
 
   const {
     searchQuery,

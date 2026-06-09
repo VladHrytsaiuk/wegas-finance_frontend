@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus, HiOutlineBolt, HiChartBar } from "react-icons/hi2";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +37,7 @@ function UtilityContent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+  usePageTitle(t("stats_utility:utilityPage.title", "Комунальні"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
   const {

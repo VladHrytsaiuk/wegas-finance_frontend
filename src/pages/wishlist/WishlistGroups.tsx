@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus, HiFolderPlus } from "react-icons/hi2";
 
 import { Button } from "../../components/ui/Button";
@@ -21,6 +22,7 @@ import * as S from "./Wishlist.styles";
 export default function WishlistGroups() {
   const navigate = useNavigate();
   const { items, groups, isLoading, handlers, t } = useWishlist();
+  usePageTitle(t("shopping_wishlist:wishlist.title", "Бажання"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
   const {

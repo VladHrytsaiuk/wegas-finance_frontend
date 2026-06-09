@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus } from "react-icons/hi2";
 
 import Spinner from "../../components/ui/Spinner";
@@ -19,6 +20,7 @@ import * as S from "./Shopping.styles";
 
 function Shopping() {
   const { lists, isLoading, handlers, t } = useShopping();
+  usePageTitle(t("shopping_wishlist:shopping.title", "Покупки"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
   const {

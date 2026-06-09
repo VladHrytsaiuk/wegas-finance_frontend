@@ -5,6 +5,7 @@ import { HiCheck, HiPencil, HiXMark } from "react-icons/hi2";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import type { ResponsiveLayouts as Layouts } from "react-grid-layout/legacy";
 import { useTranslation } from "react-i18next";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -125,6 +126,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
 
 function Dashboard() {
   const { t } = useTranslation();
+  usePageTitle(t("nav.dashboard", "Дашборд"));
   const { setPageTitle, resetPageTitle } = useHeader();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);

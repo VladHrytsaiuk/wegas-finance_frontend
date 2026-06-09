@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 // Force rebuild after hook rename
 import { Link } from "react-router-dom";
 import { HiArrowDownTray, HiPlus } from "react-icons/hi2";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 // UI Components
 import Modal from "../../components/ui/Modal";
@@ -57,6 +58,8 @@ function Transactions() {
     handleRowClick,
     deleteTransaction,
   } = useTransactionsPage();
+
+  usePageTitle(t("transactions:transactionsPage.title", "Транзакції"));
 
   // Scroll logic
   useLayoutEffect(() => {

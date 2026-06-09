@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 // Force rebuild after hook rename
 import { HiPlus } from "react-icons/hi2";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 // Components
 import { Button } from "../../components/ui/Button";
@@ -43,7 +44,6 @@ function Accounts() {
     // UI Helpers
     t,
     navigate,
-    location,
     canManageStructure,
 
     // Delete Logic
@@ -52,6 +52,8 @@ function Accounts() {
     handleDeleteConfirm,
     isDeleting,
   } = useAccountsPage();
+
+  usePageTitle(t("accounts:accountsPage.title", "Рахунки"));
 
   if (isLoading)
     return (

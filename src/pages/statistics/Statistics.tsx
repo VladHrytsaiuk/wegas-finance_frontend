@@ -1,4 +1,5 @@
 import { HiArrowDownTray, HiChartPie } from "react-icons/hi2";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 import { WidgetControls } from "../../components/stats/widgets/WidgetControls";
 import { TrendWidget } from "../../components/stats/widgets/TrendWidget";
@@ -15,6 +16,7 @@ import * as S from "./Statistics.styles";
 
 export const Statistics = () => {
   const { state, actions, t } = useStatistics();
+  usePageTitle(t("stats_utility:statisticsPage.title", "Статистика"));
   const {
     filter,
     isExportModalOpen,

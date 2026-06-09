@@ -1,4 +1,5 @@
 import { HiPlus } from "react-icons/hi2";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
@@ -17,6 +18,7 @@ import * as S from "./Assets.styles";
 
 export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
+  usePageTitle(t("assets:assetsPage.title", "Майно"));
   const { assets, isLoading, isDeleting } = state;
 
   const {
