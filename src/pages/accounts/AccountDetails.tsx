@@ -28,6 +28,7 @@ import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import ExportModal from "../settings/ExportPage";
 
 import { useAccountDetails } from "../../hooks/Accounts/useAccountDetails";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { useHeader } from "../../context/HeaderContext";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./AccountDetails.styles";
@@ -53,6 +54,8 @@ function AccountDetails() {
     isDeleting,
     navigate,
   } = useAccountDetails();
+
+  usePageTitle(account?.name);
 
   useEffect(() => {
     if (account)

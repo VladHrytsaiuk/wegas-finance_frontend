@@ -37,7 +37,7 @@ function UtilityContent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  usePageTitle(t("stats_utility:utilityPage.title", "Комунальні"));
+  usePageTitle(t("navigation:general.utility", "Комунальні"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
   const {

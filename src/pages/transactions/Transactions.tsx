@@ -59,7 +59,7 @@ function Transactions() {
     deleteTransaction,
   } = useTransactionsPage();
 
-  usePageTitle(t("transactions:transactionsPage.title", "Транзакції"));
+  usePageTitle(t("navigation:general.transactions", "Транзакції"));
 
   // Scroll logic
   useLayoutEffect(() => {

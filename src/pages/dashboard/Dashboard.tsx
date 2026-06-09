@@ -126,7 +126,7 @@ const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
 
 function Dashboard() {
   const { t } = useTranslation();
-  usePageTitle(t("nav.dashboard", "Дашборд"));
+  usePageTitle(t("navigation:general.dashboard", "Головна"));
   const { setPageTitle, resetPageTitle } = useHeader();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);

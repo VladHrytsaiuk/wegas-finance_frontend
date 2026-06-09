@@ -18,7 +18,7 @@ import * as S from "./Assets.styles";
 
 export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
-  usePageTitle(t("assets:assetsPage.title", "Майно"));
+  usePageTitle(t("navigation:general.assets", "Майно"));
   const { assets, isLoading, isDeleting } = state;
 
   const {

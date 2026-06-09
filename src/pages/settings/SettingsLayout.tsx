@@ -13,10 +13,12 @@ import Modal from "../../components/ui/Modal";
 import ConfirmLogout from "../../components/ui/ConfirmLogout";
 
 import { useSettingsLayout } from "../../hooks/Settings/useSettingsLayout";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import * as S from "./SettingsLayout.styles";
 
 function SettingsLayout() {
   const { actions, t } = useSettingsLayout();
+  usePageTitle(t("navigation:general.settings", "Налаштування"));
 
   return (
     <Modal>

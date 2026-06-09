@@ -11,9 +11,11 @@ import {
 } from "../../components/auth/AuthLayout";
 
 import { useRegister } from "../../hooks/Auth/useRegister";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 function Register() {
   const { state, actions, t } = useRegister();
+  usePageTitle(t("auth:auth.register_title", "Реєстрація"));
   const { name, email, password, inviteCode, isPending } = state;
 
   // Додаємо стан для видимості пароля

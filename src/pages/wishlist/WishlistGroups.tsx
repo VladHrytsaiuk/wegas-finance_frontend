@@ -22,7 +22,7 @@ import * as S from "./Wishlist.styles";
 export default function WishlistGroups() {
   const navigate = useNavigate();
   const { items, groups, isLoading, handlers, t } = useWishlist();
-  usePageTitle(t("shopping_wishlist:wishlist.title", "Бажання"));
+  usePageTitle(t("navigation:general.wishlist", "Бажання"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
   const {

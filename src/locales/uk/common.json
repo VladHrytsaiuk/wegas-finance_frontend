@@ -53,6 +53,8 @@
     "error_date_required": "Будь ласка, оберіть дату"
   },
   "shared": {
+    "app_name": "Фінансовий дашборд",
+    "page_title_template": "{{page}} | {{app}}",
     "save_changes": "Зберегти зміни",
     "create": "Створити",
     "loading": "Завантаження...",

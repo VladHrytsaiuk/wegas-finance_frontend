@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import { usePageTitle } from "../hooks/usePageTitle";
 import { useMoveBack } from "../hooks/useMoveBack";
 import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -15,6 +16,7 @@ const StyledPageNotFound = styled.main`
 
 function PageNotFound() {
   const { t } = useTranslation();
+  usePageTitle(t("legacy:pageNotFound.title", "Сторінку не знайдено"));
   const moveBack = useMoveBack();
 
   return (

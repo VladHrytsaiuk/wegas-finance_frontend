@@ -10,6 +10,7 @@ import ConfirmDelete from "../../components/ui/ConfirmDelete";
 
 // Hook & Styles
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import * as S from "./TransactionPage.styles";
 
 function TransactionPage() {
@@ -34,6 +35,8 @@ function TransactionPage() {
     t,
     location,
   } = useTransactionPage();
+
+  usePageTitle(t("navigation:general.transactions", "Транзакція"));
 
   if (isLoading) {
     return (

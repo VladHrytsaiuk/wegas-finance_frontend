@@ -53,7 +53,7 @@ function Debts() {
     t,
   } = useDebtsPage();
 
-  usePageTitle(t("goals_debts:debtsPage.title", "Борги"));
+  usePageTitle(t("navigation:general.debts", "Борги"));
 
   // --- LOCAL STATE FOR MODALS ---
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);

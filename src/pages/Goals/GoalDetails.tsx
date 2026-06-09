@@ -26,12 +26,15 @@ import { SmartIcon } from "../../utils/IconMap";
 import { EmptyState } from "../../components/ui/EmptyState";
 
 import { useGoalDetails } from "../../hooks/Goals/useGoalDetails";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./GoalDetails.styles";
 
 function GoalDetails() {
   const { state, actions, t, i18n } = useGoalDetails();
   const { goal, stats, isLoading, isEditModalOpen, isToggling } = state;
+
+  usePageTitle(goal?.name);
 
   const currentLocale = i18n.language === "uk" ? uk : enUS;
 

@@ -11,6 +11,7 @@ import {
 } from "../../components/auth/AuthLayout";
 
 import { useLogin } from "../../hooks/Auth/useLogin";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 interface LoginProps {
   setToken: (token: string) => void;
@@ -18,6 +19,7 @@ interface LoginProps {
 
 function Login({ setToken }: LoginProps) {
   const { state, actions, t } = useLogin({ setToken });
+  usePageTitle(t("auth:auth.login_title", "Вхід"));
   const { email, password, isPending } = state;
 
   // Додаємо стан для видимості пароля

@@ -16,7 +16,7 @@ import * as S from "./Statistics.styles";
 
 export const Statistics = () => {
   const { state, actions, t } = useStatistics();
-  usePageTitle(t("stats_utility:statisticsPage.title", "Статистика"));
+  usePageTitle(t("navigation:general.statistics", "Статистика"));
   const {
     filter,
     isExportModalOpen,

@@ -34,6 +34,7 @@ import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
 import AssetForm from "./AssetForm";
 
 import { useAssetDetails } from "../../hooks/Assets/useAssetDetails";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import * as S from "./AssetDetails.styles";
 
 import { getUploadedFileUrl } from "../../utils/helpers"; // Не забудь додати імпорт
@@ -74,6 +75,8 @@ export default function AssetDetails() {
     images,
     mainPhotoUrl,
   } = state;
+
+  usePageTitle(asset?.name);
 
   if (isLoading)
     return (

@@ -20,6 +20,7 @@ import { ForgiveDebtWindow } from "../../components/debts/ForgiveDebtWindow";
 
 import * as S from "./DebtorDetails.styles";
 import { useDebtorDetails } from "../../hooks/Debts/useDebtorDetails";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
 
 function DebtorDetails() {
@@ -49,6 +50,8 @@ function DebtorDetails() {
     },
     t,
   } = useDebtorDetails();
+
+  usePageTitle(counterparty?.name);
 
   // 🔥 1. Локальний стейт для суми та примітки
   const [initialAmount, setInitialAmount] = useState<number | undefined>(

@@ -53,7 +53,7 @@ function Accounts() {
     isDeleting,
   } = useAccountsPage();
 
-  usePageTitle(t("accounts:accountsPage.title", "Рахунки"));
+  usePageTitle(t("navigation:general.accounts", "Рахунки"));
 
   if (isLoading)
     return (

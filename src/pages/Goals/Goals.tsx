@@ -36,7 +36,7 @@ function Goals() {
     t,
   } = useGoalsPage();
 
-  usePageTitle(t("goals_debts:goals.title", "Цілі"));
+  usePageTitle(t("navigation:general.goals", "Цілі"));
 
   const {
     searchQuery,

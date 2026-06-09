@@ -28,6 +28,7 @@ import { useUtilityMeters } from "../../hooks/Utility/useUtility";
 
 // Hook & Styles
 import { useUtilityDetails } from "../../hooks/Utility/useUtilityDetails";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./UtilityDetails.styles";
 import { patchUtilityReading } from "../../services/apiUtility";
@@ -43,6 +44,7 @@ export default function UtilityDetails() {
 
 function UtilityDetailsContent() {
   const { data, state, actions } = useUtilityDetails();
+  usePageTitle(data.meter?.name);
   const { open, close, openName } = useModal();
   const queryClient = useQueryClient();
   const navigate = useNavigate();

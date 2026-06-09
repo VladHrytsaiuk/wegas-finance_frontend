@@ -20,7 +20,7 @@ import * as S from "./Shopping.styles";
 
 function Shopping() {
   const { lists, isLoading, handlers, t } = useShopping();
-  usePageTitle(t("shopping_wishlist:shopping.title", "Покупки"));
+  usePageTitle(t("navigation:general.shoppingList", "Покупки"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
   const {
