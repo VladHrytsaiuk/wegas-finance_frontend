@@ -107,7 +107,7 @@ export const ItemsTable = ({
       <S.ItemsFooter>
         <span
           style={{
-            fontSize: "0.85rem",
+            fontSize: "0.75rem",
             fontWeight: 600,
             color: "var(--color-text-secondary)",
             textTransform: "uppercase",

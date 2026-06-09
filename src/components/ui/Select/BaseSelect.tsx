@@ -18,6 +18,7 @@ export interface BaseSelectProps {
   isMulti?: boolean;
   onSearchChange?: (value: string) => void;
   searchValue?: string;
+  size?: "small" | "medium";
 }
 
 export const BaseSelect = ({
@@ -32,6 +33,7 @@ export const BaseSelect = ({
   isMulti = false,
   onSearchChange,
   searchValue = "",
+  size = "medium",
 }: BaseSelectProps) => {
   const { t } = useTranslation();
 
@@ -53,6 +55,7 @@ export const BaseSelect = ({
         $isOpen={state.isOpen}
         $hasError={hasError}
         $disabled={disabled}
+        $size={size}
         role="combobox"
         aria-expanded={state.isOpen}
       >
@@ -75,11 +78,11 @@ export const BaseSelect = ({
               title={t("legacy:filterComponent.clear_selection")}
               aria-label={t("legacy:filterComponent.clear_selection")}
             >
-              <HiXMark size={16} />
+              <HiXMark size={size === "small" ? 14 : 16} />
             </S.ClearButton>
           )}
           <HiChevronDown
-            size={16}
+            size={size === "small" ? 14 : 16}
             style={{
               transform: state.isOpen ? "rotate(180deg)" : "rotate(0)",
               transition: "transform 0.2s ease",

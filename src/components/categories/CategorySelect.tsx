@@ -20,6 +20,7 @@ interface CategorySelectProps {
   placeholder?: string;
   hasError?: boolean;
   dropdownWidth?: string;
+  size?: "small" | "medium";
 }
 
 // --- HELPER FUNCTION ---
@@ -55,7 +56,10 @@ export function CategorySelect(props: CategorySelectProps) {
 
   const triggerLabel = selectedCategory ? (
     <S.TriggerContent>
-      <S.IconWrapper $color={selectedCategory.color}>
+      <S.IconWrapper
+        $color={selectedCategory.color}
+        style={props.size === "small" ? { fontSize: "0.9rem" } : {}}
+      >
         <CategoryIcon name={selectedCategory.icon || "HiTag"} />
       </S.IconWrapper>
       <S.LabelText>{selectedCategory.name}</S.LabelText>
@@ -69,6 +73,7 @@ export function CategorySelect(props: CategorySelectProps) {
       onClear={props.value ? handleClear : undefined}
       hasError={props.hasError}
       menuWidth={props.dropdownWidth}
+      size={props.size}
     >
       <S.DropdownContentWrapper>
         <S.SearchBox>

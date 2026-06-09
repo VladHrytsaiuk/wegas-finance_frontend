@@ -16,9 +16,10 @@ export const Trigger = styled.div<{
   $isOpen: boolean;
   $hasError?: boolean;
   $disabled?: boolean;
+  $size?: "small" | "medium";
 }>`
-  min-height: 38px;
-  padding: 0.3rem 0.6rem;
+  min-height: ${(p) => (p.$size === "small" ? "28px" : "46px")};
+  padding: ${(p) => (p.$size === "small" ? "0.1rem 0.4rem" : "0.4rem 0.6rem")};
   background-color: var(--color-bg-surface, #fff);
   color: var(--color-text-main, #333);
 
@@ -31,14 +32,14 @@ export const Trigger = styled.div<{
         : "var(--color-border, #d1d5db)"};
 
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: ${(p) => (p.$size === "small" ? "0.8rem" : "0.9rem")};
   cursor: ${(p) => (p.$disabled ? "not-allowed" : "pointer")};
   opacity: ${(p) => (p.$disabled ? 0.6 : 1)};
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: ${(p) => (p.$size === "small" ? "4px" : "8px")};
 
   transition: all 0.2s ease;
   user-select: none;

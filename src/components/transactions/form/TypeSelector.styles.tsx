@@ -21,10 +21,10 @@ export const Tab = styled.button<{ $isActive: boolean; $activeColor: string }>`
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 6px 4px;
+  padding: 4px;
   border-radius: 7px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (max-width: 1300px) {
@@ -50,8 +50,8 @@ export const Tab = styled.button<{ $isActive: boolean; $activeColor: string }>`
   }
 
   & svg {
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 1rem;
+    height: 1rem;
     opacity: ${(props) => (props.$isActive ? 1 : 0.7)};
   }
 `;
@@ -79,12 +79,12 @@ export const SubButton = styled.button<{ $isActive: boolean; $color: string }>`
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px;
+  padding: 6px;
   border-radius: 8px;
   border: 1px solid ${(p) => (p.$isActive ? p.$color : "var(--color-border)")};
   background-color: ${(p) => (p.$isActive ? `${p.$color}10` : "white")};
   color: ${(p) => (p.$isActive ? p.$color : "var(--color-text-secondary)")};
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
 
   @media (max-width: 1300px) {
@@ -103,7 +103,7 @@ export const SubButton = styled.button<{ $isActive: boolean; $color: string }>`
   }
 
   & svg {
-    width: 1rem;
-    height: 1rem;
+    width: 0.9rem;
+    height: 0.9rem;
   }
 `;

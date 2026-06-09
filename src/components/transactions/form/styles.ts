@@ -10,13 +10,13 @@ const fadeIn = keyframes`
 
 export const ModalContainer = styled.div<{ $hasImage: boolean }>`
   width: 95vw;
-  max-width: 1600px;
-  height: 90vh;
+  max-width: 1400px;
+  height: 85vh;
 
   display: flex;
   flex-direction: column;
   background: var(--color-bg-surface);
-  border-radius: 24px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
@@ -151,19 +151,19 @@ export const RightSideWrapper = styled.div`
 
 export const FormScrollArea = styled.div`
   flex: 1;
-  padding: 0.5rem 2rem 2.5rem 2rem;
+  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.8rem;
   background-color: var(--color-bg-surface);
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   &::-webkit-scrollbar-thumb {
     background-color: var(--color-text-secondary);
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
   @media (max-width: 768px) {
@@ -176,7 +176,7 @@ export const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem 0.8rem 2rem;
+  padding: 0.8rem 1.5rem 0.6rem 1.5rem;
   background-color: var(--color-bg-surface);
   border-bottom: 1px solid var(--color-border);
   z-index: 10;
@@ -184,7 +184,7 @@ export const HeaderContainer = styled.div`
 `;
 
 export const Title = styled.h2`
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
@@ -197,21 +197,21 @@ export const ConditionalFieldsContainer = styled.div`
 export const RowGroup = styled.div<{ $columns?: string }>`
   display: grid;
   grid-template-columns: ${(props) => props.$columns || "1fr 1fr"};
-  gap: 1rem;
+  gap: 0.8rem;
   align-items: start;
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 `;
 
 export const Label = styled.label`
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-text-secondary);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
 `;
 
 export const LabelLockWrapper = styled.span`
@@ -256,15 +256,15 @@ export const StyledInput = styled.input<{
   $isLocked?: boolean;
 }>`
   width: 100%;
-  padding: 0.75rem 0.9rem;
+  padding: 0.5rem 0.7rem;
   border: 1px solid
     ${(props) =>
       props.$hasError ? "var(--color-red-600)" : "var(--color-text-light)"};
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: ${(props) =>
     props.$isLocked ? "var(--color-bg-secondary)" : "var(--color-bg-surface)"};
   color: var(--color-text-main);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   transition: all 0.2s;
   cursor: ${(props) => (props.$isLocked ? "not-allowed" : "text")};
@@ -280,7 +280,7 @@ export const StyledInput = styled.input<{
     border-color: ${(props) =>
       props.$isLocked ? "var(--color-text-light)" : "var(--color-brand-600)"};
     box-shadow: ${(props) =>
-      props.$isLocked ? "none" : "0 0 0 3px var(--color-brand-50)"};
+      props.$isLocked ? "none" : "0 0 0 2px var(--color-brand-50)"};
   }
 `;
 
@@ -298,16 +298,16 @@ export const ExchangeRateHint = styled.div`
 
 export const StyledTextarea = styled.textarea`
   width: 100%;
-  padding: 0.75rem 0.9rem;
+  padding: 0.5rem 0.7rem;
   border: 1px solid var(--color-text-light);
-  border-radius: 8px;
+  border-radius: 6px;
   background-color: var(--color-bg-surface);
   color: var(--color-text-main);
   resize: vertical;
-  min-height: 38px;
-  height: 38px;
+  min-height: 32px;
+  height: 32px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.2s;
 
   &:hover {
@@ -316,15 +316,15 @@ export const StyledTextarea = styled.textarea`
   &:focus {
     outline: none;
     border-color: var(--color-brand-600);
-    box-shadow: 0 0 0 3px var(--color-brand-50);
+    box-shadow: 0 0 0 2px var(--color-brand-50);
   }
 `;
 
 export const Footer = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.25rem 2rem;
+  gap: 1rem;
+  padding: 0.8rem 1.5rem;
   background-color: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
   z-index: 20;
@@ -333,7 +333,7 @@ export const Footer = styled.div`
   /* Sticky behavior */
   position: sticky;
   bottom: 0;
-  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -2px 4px -1px rgba(0, 0, 0, 0.05);
 
   @media (max-width: 768px) {
     padding: 1rem;
@@ -354,7 +354,7 @@ export const DetailsTriggerButton = styled.button`
   background: none;
   border: none;
   color: var(--color-brand-600);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -362,6 +362,10 @@ export const DetailsTriggerButton = styled.button`
   cursor: pointer;
   padding: 0.5rem 0;
   transition: color 0.2s;
+
+  @media (max-width: 1300px) {
+    font-size: 0.7rem;
+  }
 
   &:hover {
     text-decoration: underline;
@@ -536,7 +540,7 @@ export const ItemsHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
+  padding: 0.5rem 0.8rem;
   background-color: var(--color-bg-surface);
   border-bottom: 1px solid var(--color-border);
 `;
@@ -544,8 +548,8 @@ export const ItemsHeader = styled.div`
 export const ItemsTitle = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
+  gap: 8px;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-text-main);
 `;
@@ -591,19 +595,19 @@ const TABLE_GRID_TEMPLATE = "40px 1.5fr 1.5fr 0.8fr 1fr 1fr 1.2fr 40px";
 export const TableGridRow = styled.div`
   display: grid;
   grid-template-columns: ${TABLE_GRID_TEMPLATE};
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  padding: 0.4rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   border-bottom: 1px solid var(--color-border);
 `;
 
 export const TableHeaderRow = styled(TableGridRow)`
   background-color: rgba(0, 0, 0, 0.02);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-text-secondary);
-  height: 40px;
+  height: 32px;
   border-top: 1px solid var(--color-border);
 `;
 
@@ -620,13 +624,13 @@ export const TableRow = styled(TableGridRow)`
 
 export const TableInput = styled.input`
   width: 100%;
-  height: 32px;
-  padding: 4px 8px;
+  height: 28px;
+  padding: 2px 6px;
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
   color: var(--color-text-main);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s;
 
   &:hover {
@@ -706,13 +710,13 @@ export const ItemsFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 0.6rem 1rem;
   background-color: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
 `;
 
 export const TotalAmount = styled.span`
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   font-family: "Roboto Mono", monospace;
   color: var(--color-text-main);
