@@ -62,7 +62,6 @@ export const OptionItem = styled.div<{ $isActive: boolean; $isSynced?: boolean }
   transition: all 0.2s;
   user-select: none;
   min-height: 44px;
-  margin: 0 4px;
 
   background-color: ${(p) =>
     p.$isActive ? "var(--color-brand-50)" : "transparent"};
@@ -130,7 +129,7 @@ export const TypeRow = styled.div<{ $isExpanded: boolean }>`
   user-select: none;
   transition: all 0.2s;
   border-radius: 4px;
-  margin: 1px 4px;
+  margin: 1px 0;
 
   &:hover {
     background-color: var(--color-bg-hover);

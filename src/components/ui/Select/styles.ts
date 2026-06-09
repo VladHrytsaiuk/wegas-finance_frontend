@@ -2,8 +2,8 @@ import styled, { keyframes } from "styled-components";
 
 // --- ANIMATIONS ---
 export const fadeIn = keyframes`
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 // --- STYLED COMPONENTS ---
@@ -68,7 +68,7 @@ export const Trigger = styled.div<{
 `;
 
 export const Dropdown = styled.div<{ $isAbove: boolean }>`
-  position: fixed;
+  position: absolute;
   background-color: var(--color-bg-surface, #fff);
   border: 1px solid var(--color-border, #d1d5db);
   border-radius: 6px;
@@ -80,9 +80,10 @@ export const Dropdown = styled.div<{ $isAbove: boolean }>`
   padding: 4px;
   max-height: 300px;
   overflow-y: hidden;
+  box-sizing: border-box;
+  margin: 0;
 
   animation: ${fadeIn} 0.15s ease-out forwards;
-  transform-origin: ${(p) => (p.$isAbove ? "bottom center" : "top center")};
 
   &:focus {
     outline: none;
@@ -100,12 +101,9 @@ export const SearchInputContainer = styled.div`
 `;
 
 export const TriggerSearchInput = styled.input`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  flex: 1;
   height: 100%;
-  padding: inherit;
+  padding: 0;
   border: none;
   outline: none;
   background: transparent;
@@ -113,6 +111,7 @@ export const TriggerSearchInput = styled.input`
   font-size: inherit;
   font-family: inherit;
   z-index: 2;
+  min-width: 50px;
 
   &::placeholder {
     color: var(--color-text-tertiary);
@@ -147,12 +146,10 @@ export const OptionsList = styled.div`
 `;
 
 export const ContentWrapper = styled.div<{ $isHidden?: boolean }>`
-  display: flex;
+  display: ${(p) => (p.$isHidden ? "none" : "flex")};
   align-items: center;
   flex: 1;
   overflow: hidden;
-  opacity: ${(p) => (p.$isHidden ? 0 : 1)};
-  pointer-events: ${(p) => (p.$isHidden ? "none" : "auto")};
 `;
 
 export const TextTruncate = styled.span`

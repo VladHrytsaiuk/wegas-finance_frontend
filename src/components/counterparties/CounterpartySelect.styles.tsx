@@ -162,7 +162,6 @@ export const ScrollArea = styled.div`
   overflow-y: auto;
   max-height: 250px;
   flex: 1;
-  padding: 4px;
 
   &::-webkit-scrollbar {
     width: 6px;

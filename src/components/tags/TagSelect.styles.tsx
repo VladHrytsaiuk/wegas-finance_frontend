@@ -95,7 +95,6 @@ export const List = styled.div`
   min-height: 0;
   max-height: 250px;
   overflow-y: auto;
-  padding: 4px;
   display: flex;
   flex-direction: column;
   gap: 1px;

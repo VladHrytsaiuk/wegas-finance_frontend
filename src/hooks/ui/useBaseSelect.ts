@@ -42,32 +42,27 @@ export const useBaseSelect = ({
     if (!triggerRef.current) return;
 
     const rect = triggerRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
     const viewportHeight = window.innerHeight;
 
-    let calculatedWidth = rect.width;
-    if (menuWidth) {
-      if (typeof menuWidth === "number") calculatedWidth = menuWidth;
-      else calculatedWidth = parseInt(menuWidth as string, 10) || rect.width;
-    }
-
-    let left = rect.left;
-    if (left + calculatedWidth > viewportWidth - 10) {
-      left = rect.right - calculatedWidth;
-    }
-    if (left < 10) left = 10;
+    // Exact matching requirements
+    const calculatedWidth = rect.width;
+    const left = rect.left + scrollX;
 
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
-    const showAbove = spaceBelow < 250 && spaceAbove > spaceBelow;
+    
+    // Dynamic threshold: if space below is less than 280px and there's more space above
+    const showAbove = spaceBelow < 280 && spaceAbove > spaceBelow;
 
     setCoords({
-      top: showAbove ? rect.top - 4 : rect.bottom + 6,
+      top: showAbove ? rect.top + scrollY - 4 : rect.bottom + scrollY + 4,
       left: left,
-      width: menuWidth || rect.width,
+      width: calculatedWidth,
       isAbove: showAbove,
     });
-  }, [menuWidth]);
+  }, []);
 
   // --- Actions ---
   const toggle = () => {
@@ -272,30 +267,30 @@ export const useBaseSelect = ({
       }
     };
 
-    // Close on scroll
-    const handleScroll = (event: Event) => {
+    // Update position on scroll/resize instead of closing
+    const handleUpdate = (event: Event) => {
+      // If we are scrolling INSIDE the dropdown, don't update coords (to avoid jitter)
       if (
+        event.type === "scroll" &&
         dropdownRef.current &&
         dropdownRef.current.contains(event.target as Node)
       ) {
         return;
       }
-      setIsOpen(false);
+      updateCoords();
     };
 
-    const handleResize = () => setIsOpen(false);
-
     document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleUpdate);
+    window.addEventListener("scroll", handleUpdate, true);
 
     return () => {
       clearTimeout(timer);
       document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleUpdate);
+      window.removeEventListener("scroll", handleUpdate, true);
     };
-  }, [isOpen, onSearchChange]);
+  }, [isOpen, onSearchChange, updateCoords]);
 
   return {
     state: {

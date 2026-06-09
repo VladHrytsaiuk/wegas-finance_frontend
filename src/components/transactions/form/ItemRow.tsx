@@ -47,7 +47,6 @@ export const ItemRow = memo(
             categories={categories}
             value={item.categoryId}
             onChange={handleManualCategoryChange}
-            dropdownWidth="300px"
             placeholder={t("categories:categorySelect.placeholder_default")}
             size="small"
           />
