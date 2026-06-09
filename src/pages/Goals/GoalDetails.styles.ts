@@ -612,3 +612,80 @@ export const CardFooter = styled.div`
     }
   }
 `;
+
+export const CardHeaderPadded = styled(CardHeader)`
+  padding: 1.25rem 2rem 0.5rem;
+  margin-bottom: 0;
+  border-bottom: none;
+`;
+
+export const BottomGrid = styled(TopGrid)`
+  grid-template-columns: 1fr 1fr;
+  height: auto;
+  min-height: 400px;
+`;
+
+export const ForecastContent = styled.div`
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .main-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .date {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+  }
+`;
+
+export const ForecastStatus = styled.div<{ $status: string }>`
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: ${(p) => {
+    if (p.$status === "on_track") return "var(--color-green-600)";
+    if (p.$status === "behind") return "var(--color-red-600)";
+    return "var(--color-text-main)";
+  }};
+`;
+
+export const ForecastDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-bg-page);
+    border-radius: 10px;
+
+    .label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    .value {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--color-text-main);
+    }
+  }
+`;
+
+export const NoteText = styled.div`
+  font-size: 0.95rem;
+  color: var(--color-text-main);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin-top: 0.5rem;
+`;

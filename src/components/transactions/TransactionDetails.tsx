@@ -319,13 +319,12 @@ function TransactionDetails({
                   <S.DetailRow>
                     <S.RowIcon
                       $color={
-                        hasCounterparty
+                        category?.color ||
+                        (hasCounterparty
                           ? "var(--color-yellow-600)"
-                          : "var(--color-grey-100)"
+                          : "var(--color-grey-100)")
                       }
                       $hasImage={shouldShowLogo}
-                    <S.RowIcon
-                      $color={category?.color || "var(--color-yellow-600)"}
                     >
                       <SmartIcon
                         logo={counterparty?.logo}

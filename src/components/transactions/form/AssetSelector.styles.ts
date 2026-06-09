@@ -399,3 +399,68 @@ export const ActionButton = styled.button<{
           }
         `}
 `;
+
+// --- ALIASES FOR LEGACY / FLY COMPONENTS ---
+export const FlyFormWrapper = CreateContainer;
+export const FlyFormRow = Row;
+export const FlyLabel = Label;
+export const FlyActions = ButtonsRow;
+
+export const FlyFormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const FlyButton = styled(ActionButton)<{ $primary?: boolean }>`
+  ${(p) =>
+    p.$primary &&
+    css`
+      background-color: var(--color-brand-600);
+      color: white;
+      &:hover {
+        background-color: var(--color-brand-700);
+      }
+    `}
+`;
+
+export const FilesRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+`;
+
+export const AddFileBtn = styled(UploadButton)``;
+
+export const FileBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+
+  span {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--color-text-tertiary);
+    &:hover {
+      color: var(--color-red-600);
+    }
+  }
+`;

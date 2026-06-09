@@ -193,3 +193,37 @@ export const MenuItemButton = styled.button<{ $variant?: "delete" }>`
     opacity: 0.4;
   }
 `;
+
+export const EmptyStateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  margin: 1rem 0;
+
+  h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-main);
+  }
+
+  p {
+    font-size: 0.9rem;
+    max-width: 400px;
+  }
+`;
+
+export const EmptyIconWrapper = styled.div`
+  font-size: 3rem;
+  opacity: 0.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+`;
