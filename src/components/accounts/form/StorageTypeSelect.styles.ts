@@ -16,12 +16,13 @@ export const Trigger = styled.div<TriggerProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1rem;
+  padding: 0.3rem 0.6rem;
+  min-height: 38px;
   background-color: var(--color-bg-surface);
 
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   color: var(--color-text-main);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
   outline: none;
   transition: all 0.2s ease;

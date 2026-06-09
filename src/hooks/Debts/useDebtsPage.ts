@@ -10,7 +10,33 @@ export type DebtTotals = Record<string, number>;
 export const useDebtsPage = () => {
   const { t } = useTranslation();
   const { setPageTitle, resetPageTitle } = useHeader();
-  const { counterparties, isLoading } = useCounterpartyData();
+  const { counterparties: rawCounterparties, categories, isLoading } = useCounterpartyData();
+
+  const counterparties = useMemo(() => {
+    if (!rawCounterparties) return [];
+    return rawCounterparties.map((cp) => {
+      if (cp.logo || cp.icon) return cp;
+
+      const cpCat =
+        cp.category ||
+        categories?.find((c) => String(c.id) === String(cp.category_id));
+
+      return {
+        ...cp,
+        icon: cpCat?.icon,
+      };
+    });
+  }, [rawCounterparties, categories]);
+
+  // View Mode
+  const [viewMode, setViewMode] = useState<"grid" | "table">(() => {
+    const saved = localStorage.getItem("debtsViewMode");
+    return saved === "table" ? "table" : "grid";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("debtsViewMode", viewMode);
+  }, [viewMode]);
 
   // Modal State
   const [selectedCP, setSelectedCP] = useState<Counterparty | null>(null);
@@ -208,6 +234,7 @@ export const useDebtsPage = () => {
       selectedCP,
       txType,
       isModalOpen,
+      viewMode,
     },
     config: {
       filtersConfig,
@@ -222,6 +249,7 @@ export const useDebtsPage = () => {
       handleAction,
       handleCreateNew,
       handleCloseModal,
+      setViewMode,
     },
     t,
   };

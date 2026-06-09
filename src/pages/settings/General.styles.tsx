@@ -6,12 +6,17 @@ export const Container = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin-bottom: 2rem;
   color: var(--color-text-main);
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 1rem;
+
+  @media (max-width: 1300px) {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+  }
 `;
 
 export const FormGroup = styled.div`

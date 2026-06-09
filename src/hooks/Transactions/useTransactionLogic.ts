@@ -183,6 +183,7 @@ export const useTransactionLogic = ({
     queryClient.invalidateQueries({ queryKey: ["goal"] });
     queryClient.invalidateQueries({ queryKey: ["goals"] });
     queryClient.invalidateQueries({ queryKey: ["stats"] });
+    queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     if (isEditSession && transactionToEdit) {
       queryClient.invalidateQueries({
         queryKey: ["transaction", transactionToEdit.id],

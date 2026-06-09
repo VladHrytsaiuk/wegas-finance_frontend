@@ -23,10 +23,10 @@ export const SummaryCard = styled.div<{
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
@@ -52,7 +52,7 @@ export const SummaryCard = styled.div<{
 `;
 
 export const SummaryLabel = styled.div`
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
   font-weight: 700;
   text-transform: uppercase;
@@ -69,15 +69,15 @@ export const SummaryLabel = styled.div`
 export const CurrencyList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 `;
 
 export const SummaryValue = styled.div<{ $color?: string }>`
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   font-family: "JetBrains Mono", monospace;
   color: ${(props) => props.$color || "var(--color-text-main)"};
-  line-height: 1.2;
+  line-height: 1.1;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -86,7 +86,7 @@ export const SummaryValue = styled.div<{ $color?: string }>`
   text-overflow: ellipsis;
 
   @media (max-width: 1300px) {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
 `;
 
@@ -157,7 +157,7 @@ export const CardLink = styled(Link)`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.8rem;
   border-bottom: 1px dashed var(--color-border);
   background: var(--color-bg-surface);
   transition: background 0.2s;
@@ -171,9 +171,9 @@ export const CardLink = styled(Link)`
 `;
 
 export const Avatar = styled.div<{ $color: string }>`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 10px;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,25 +181,25 @@ export const Avatar = styled.div<{ $color: string }>`
     `color-mix(in srgb, ${props.$color}, transparent 90%)`};
   color: ${(props) => props.$color};
   flex-shrink: 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 8px;
   }
 `;
 
 export const Info = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
   min-width: 0;
 `;
 
 export const Name = styled.h3`
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-text-main);
   white-space: nowrap;
@@ -209,7 +209,7 @@ export const Name = styled.h3`
 `;
 
 export const RoleLabel = styled.span`
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--color-text-secondary);
   font-weight: 500;
 `;
@@ -222,28 +222,28 @@ export const ArrowIconWrapper = styled.div`
 `;
 
 export const CardBody = styled.div`
-  padding: 1rem;
+  padding: 0.75rem 0.8rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
   background: var(--color-bg-surface);
 `;
 
 export const AmountBlock = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 `;
 
 export const AmountRow = styled.div<{ $color: string }>`
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-family: "JetBrains Mono", monospace;
   font-weight: 700;
   color: ${(props) => props.$color};
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 0;
+  padding: 1px 0;
   border-bottom: 1px solid transparent;
   &:not(:last-child) {
     border-bottom-color: var(--color-border);

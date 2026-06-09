@@ -14,11 +14,17 @@ export const PageContainer = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin-bottom: 1.5rem;
   color: var(--color-text-main);
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 1rem;
+
+  @media (max-width: 1300px) {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+  }
 `;
 
 // --- Profile Form ---
@@ -123,12 +129,20 @@ export const IntegrationCard = styled.div`
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background-color: var(--color-bg-surface);
+
+  @media (max-width: 1300px) {
+    padding: 1rem;
+  }
 `;
 
 export const IntegrationLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+
+  @media (max-width: 1300px) {
+    gap: 0.75rem;
+  }
 `;
 
 export const IconWrapper = styled.div`
@@ -138,6 +152,11 @@ export const IconWrapper = styled.div`
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--color-border-light);
+
+  @media (max-width: 1300px) {
+    width: 32px;
+    height: 32px;
+  }
 `;
 
 export const BankLogo = styled.img`
@@ -163,6 +182,10 @@ export const BankTitle = styled.h4`
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-text-main);
+
+  @media (max-width: 1300px) {
+    font-size: 0.9rem;
+  }
 `;
 
 export const BankDescription = styled.p`

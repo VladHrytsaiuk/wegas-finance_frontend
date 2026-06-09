@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   HiKey,
   HiLinkSlash,
@@ -113,6 +113,7 @@ function Profile() {
 
   const { statusData, startPolling, stopPolling } = useSync();
   const isSyncing = statusData.is_running;
+  const prevIsSyncing = useRef(isSyncing);
 
   const [isMonoConnected, setIsMonoConnected] = useState(false);
   const [isCheckingMono, setIsCheckingMono] = useState(true);
@@ -172,7 +173,7 @@ function Profile() {
 
   // 4. Update status when sync finishes
   useEffect(() => {
-    if (!isSyncing) {
+    if (prevIsSyncing.current && !isSyncing) {
       const checkStatus = async () => {
         try {
           await monobankApi.getSettings();
@@ -186,13 +187,14 @@ function Profile() {
       const timer = setTimeout(checkStatus, 1000);
       return () => clearTimeout(timer);
     }
+    prevIsSyncing.current = isSyncing;
   }, [isSyncing]);
 
   if (isLoading) return <CenteredSpinner />;
 
   return (
     <Modal>
-      <S.SectionTitle>{t("settings:profilePage.title_profile")}</S.SectionTitle>
+      <S.SectionTitle style={{ fontSize: "1.2rem", fontWeight: 700 }}>{t("settings:profilePage.title_profile")}</S.SectionTitle>
 
       <S.Form onSubmit={actions.handleUpdateProfile}>
         <S.FormGroup>
@@ -232,7 +234,7 @@ function Profile() {
       </S.Form>
 
       <S.IntegrationsSection>
-        <S.SectionTitle>{t("settings:integrations.title")}</S.SectionTitle>
+        <S.SectionTitle style={{ fontSize: "1.2rem", fontWeight: 700 }}>{t("settings:integrations.title")}</S.SectionTitle>
 
         <S.IntegrationCard>
           <S.IntegrationLeft>

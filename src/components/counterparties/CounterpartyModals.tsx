@@ -62,7 +62,7 @@ export function CounterpartyModals({
       </Modal.Window>
 
       {/* 3. Створення Контрагента */}
-      <Modal.Window name="create-cp" padding="0">
+      <Modal.Window name="create-cp" padding="2rem 2.5rem">
         <CounterpartyForm
           onSubmit={(data) => actions.createCp.mutate(data)}
           isLoading={actions.createCp.isPending}
@@ -70,7 +70,7 @@ export function CounterpartyModals({
       </Modal.Window>
 
       {/* 4. Редагування Контрагента */}
-      <Modal.Window name="edit-cp" padding="0">
+      <Modal.Window name="edit-cp" padding="2rem 2.5rem">
         <CounterpartyForm
           defaultValues={selectedCp}
           onSubmit={(data) =>

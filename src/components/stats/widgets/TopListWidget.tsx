@@ -68,17 +68,12 @@ export const TopListWidget = (props: Props) => {
                     $color={item.displayColor}
                     $hasImage={!!item.logo || !!item.icon}
                   >
-                    {item.logo ? (
-                      <img src={`/brands/${item.logo}`} alt={item.displayName} />
-                    ) : item.icon ? (
-                      <SmartIcon
-                        iconName={item.icon}
-                        color={item.displayColor}
-                        size={16}
-                      />
-                    ) : (
-                      <S.ColorDot $color={item.displayColor} />
-                    )}
+                    <SmartIcon
+                      logo={item.logo}
+                      iconName={item.icon}
+                      color={item.displayColor}
+                      size={16}
+                    />
                   </S.Logo>
                   <S.Name title={item.displayName}>{item.displayName}</S.Name>
                 </S.NameGroup>

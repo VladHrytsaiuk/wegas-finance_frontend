@@ -44,13 +44,6 @@ interface CounterpartyTreeProps {
   withCheckboxes?: boolean;
 }
 
-// --- Helper for URL ---
-const getLogoUrl = (filename: string) => {
-  if (!filename) return "";
-  if (filename.startsWith("http")) return filename;
-  return `/brands/${filename}`;
-};
-
 // --- Recursive Node Component ---
 const CPTreeNode: React.FC<{
   node: TreeNodeData;
@@ -60,17 +53,6 @@ const CPTreeNode: React.FC<{
   props: Omit<CounterpartyTreeProps, "nodes">;
 }> = ({ node, level, expandedIds, toggle, props }) => {
   const { t } = useTranslation();
-
-  // --- ЛОГІКА КАРТИНКИ ---
-  const [imgError, setImgError] = useState(false);
-
-  // Скидаємо помилку, якщо змінюється ID ноди (на випадок ре-юзу компонента)
-  useEffect(() => {
-    setImgError(false);
-  }, [node.id, node.logo]);
-
-  const shouldShowLogo = node.logo && !imgError;
-  // -----------------------
 
   const hasChildren = node.children && node.children.length > 0;
   const isExpanded = expandedIds.has(node.id);
@@ -168,36 +150,22 @@ const CPTreeNode: React.FC<{
                 $color={node.color}
                 // 🔥 Якщо є лого: прозорий фон, без паддінгів, з бордером
                 style={
-                  shouldShowLogo
+                  node.logo
                     ? {
                         backgroundColor: "transparent",
                         padding: 0,
                         border: "1px solid rgba(0,0,0,0.1)",
-                        overflow: "hidden", // Щоб обрізати картинку по колу (borderRadius є в стилях врапера)
+                        overflow: "hidden",
                       }
                     : {}
                 }
               >
-                {shouldShowLogo ? (
-                  <img
-                    src={getLogoUrl(node.logo!)}
-                    alt={node.name}
-                    onError={() => setImgError(true)}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
-                    }}
-                  />
-                ) : (
-                  <SmartIcon
-                    iconName={node.iconName}
-                    // logo={node.logo} // Прибираємо, бо обробили вище
-                    size={16}
-                    color={node.color}
-                  />
-                )}
+                <SmartIcon
+                  logo={node.logo}
+                  iconName={node.iconName}
+                  size={16}
+                  color={node.color}
+                />
               </S.IconWrapper>
 
               <S.Label>{node.name}</S.Label>

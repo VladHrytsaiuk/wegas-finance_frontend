@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Input = styled.input<{ $hasError?: boolean }>`
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.75rem;
 
   background-color: var(--color-bg-surface);
   color: var(--color-text-main);
@@ -13,7 +13,7 @@ export const Input = styled.input<{ $hasError?: boolean }>`
       props.$hasError ? "var(--color-red-600)" : "var(--color-border)"};
 
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.2s;
 
   &::placeholder {

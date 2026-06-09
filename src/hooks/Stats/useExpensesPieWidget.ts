@@ -112,7 +112,15 @@ export const useExpensesPieWidget = ({
           );
           if (cp) {
             if (cp.logo) logo = cp.logo;
-            if (cp.icon) icon = cp.icon;
+            
+            // Icon Logic: CP icon -> Category icon
+            icon = cp.icon || cp.category?.icon;
+            if (!icon && cp.category_id) {
+              const parentCat = categories.find(
+                (c: any) => String(c.id) === String(cp.category_id)
+              );
+              if (parentCat?.icon) icon = parentCat.icon;
+            }
             
             if (cp.color) color = cp.color;
             else if (cp.category?.color) color = cp.category.color;

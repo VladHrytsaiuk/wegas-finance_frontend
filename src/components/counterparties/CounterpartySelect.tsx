@@ -35,8 +35,8 @@ const getAllRecursiveIds = (nodes: any[]): string[] => {
 
 export default function CounterpartySelect(props: CounterpartySelectProps) {
   const {
-    state: { isOpen, searchQuery, imgError },
-    setters: { setSearchQuery, setImgError },
+    state: { isOpen, searchQuery },
+    setters: { setSearchQuery },
     refs: {
       triggerRef,
       menuRef,
@@ -63,12 +63,6 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
     },
     t,
   } = useCounterpartySelect(props);
-
-  const getLogoUrl = (filename: string) => {
-    if (!filename) return "";
-    if (filename.startsWith("http")) return filename;
-    return `/brands/${filename}`;
-  };
 
   // --- ЛОГІКА РОЗКРИТТЯ ---
   const expandedIds = useMemo(() => {
@@ -105,7 +99,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
               <S.IconWrapper
                 $color={selectedCP.color}
                 style={
-                  selectedCP.logo && !imgError
+                  selectedCP.logo
                     ? {
                         backgroundColor: "transparent",
                         padding: 0,
@@ -118,24 +112,12 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
                     : { width: "24px", height: "24px", flexShrink: 0 }
                 }
               >
-                {selectedCP.logo && !imgError ? (
-                  <img
-                    src={getLogoUrl(selectedCP.logo)}
-                    alt={selectedCP.name}
-                    onError={() => setImgError(true)}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  <SmartIcon
-                    iconName={displayIconName}
-                    size={18}
-                    color={selectedCP.color}
-                  />
-                )}
+                <SmartIcon
+                  logo={selectedCP.logo}
+                  iconName={displayIconName}
+                  size={18}
+                  color={selectedCP.color}
+                />
               </S.IconWrapper>
 
               <S.LabelText>{selectedCP.name}</S.LabelText>

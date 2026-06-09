@@ -4,16 +4,17 @@ import styled, { css } from "styled-components";
 
 export const FormContainer = styled.div`
   display: flex;
-  gap: 3rem;
+  gap: 2.5rem;
   position: relative;
-  min-height: 420px;
+  height: 480px;
   width: 900px;
   align-items: flex-start;
 
   @media (max-width: 900px) {
     flex-direction: column;
     width: 100%;
-    gap: 2rem;
+    gap: 1.5rem;
+    height: auto;
   }
 `;
 
@@ -21,11 +22,35 @@ export const Form = styled.form`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.75rem;
   min-width: 400px;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-right: 1rem;
 
   @media (max-width: 600px) {
     min-width: 100%;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+  }
+`;
+
+export const Row = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  & > div {
+    flex: 1;
   }
 `;
 
@@ -34,7 +59,7 @@ export const RightColumn = styled.div`
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 
   @media (max-width: 900px) {
     width: 100%;
@@ -48,16 +73,16 @@ export const PreviewSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   background-color: var(--color-bg-page);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 1px solid var(--color-border);
   width: 100%;
   flex-shrink: 0;
   box-shadow:
-    0 20px 20px -20px rgba(0, 0, 0, 0.8),
-    0 2px 4px -1px rgba(0, 0, 0, 0.6);
+    0 15px 15px -15px rgba(0, 0, 0, 0.6),
+    0 2px 4px -1px rgba(0, 0, 0, 0.4);
 `;
 
 export const PreviewLabel = styled.label`
@@ -94,22 +119,22 @@ export const ChangeSkinBtn = styled.button`
 export const SegmentControl = styled.div`
   display: flex;
   background-color: var(--color-bg-page);
-  padding: 4px;
-  border-radius: 10px;
+  padding: 2px;
+  border-radius: 8px;
   border: 1px solid var(--color-border);
 `;
 
 export const SegmentButton = styled.button<{ $active: boolean }>`
   flex: 1;
-  padding: 0.6rem;
-  border-radius: 8px;
+  padding: 0.4rem;
+  border-radius: 6px;
   border: none;
   background-color: ${(props) =>
     props.$active ? "var(--color-bg-surface)" : "transparent"};
   color: ${(props) =>
     props.$active ? "var(--color-brand-600)" : "var(--color-text-secondary)"};
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: ${(props) =>
@@ -202,9 +227,9 @@ export const BankTabs = styled.div`
 `;
 
 export const BankTab = styled.button<{ $active: boolean }>`
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -225,11 +250,12 @@ export const BankTab = styled.button<{ $active: boolean }>`
 
 export const SkinGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.8rem;
   overflow-y: auto;
-  max-height: 400px;
-  padding: 1rem;
+  overflow-x: hidden;
+  max-height: 350px;
+  padding: 1rem 1rem 1rem 1rem;
   margin: 0 -1rem;
 `;
 
@@ -240,7 +266,7 @@ export const SkinOption = styled.button<{
 }>`
   aspect-ratio: 1.58;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   background: ${(p) => p.$bg};
@@ -250,9 +276,9 @@ export const SkinOption = styled.button<{
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   text-align: center;
-  padding: 0.5rem;
+  padding: 0.4rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition:
     transform 0.2s,
@@ -293,20 +319,20 @@ export const SkinOption = styled.button<{
 export const SkinSelectorContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   outline: none; /* Щоб при фокусі на контейнері не було рамки */
 `;
 
 export const SkinSelectorTitle = styled.h3`
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
 `;
 
 export const SkinSelectorFooter = styled.div`
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
@@ -317,14 +343,14 @@ const CardBase = css`
   width: 100%;
 
   /* 🔥 FIX 1: Задаємо min-height, щоб картка не була "сплюснутою" */
-  min-height: 210px;
+  min-height: 180px;
   /* aspect-ratio залишаємо як рекомендацію, але min-height головніший */
   aspect-ratio: 1.586;
 
-  border-radius: 16px;
+  border-radius: 12px;
 
   /* 🔥 FIX 2: Зменшуємо padding з 1.2rem до 1rem (або 1.1), щоб було більше місця */
-  padding: 1.1rem;
+  padding: 1rem;
 
   display: flex;
   flex-direction: column;

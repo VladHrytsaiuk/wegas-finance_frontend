@@ -69,7 +69,7 @@ function CreateAccountModalContent() {
         <Overlay onClick={handleCloseAttempt}>
           <StyledModal
             onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: "fit-content", padding: "2rem" }}
+            style={{ maxWidth: "fit-content", padding: "1.5rem" }}
           >
             <ModalCloseButton onClick={handleCloseAttempt}>
               <HiXMark />
@@ -77,8 +77,8 @@ function CreateAccountModalContent() {
 
             <h2
               style={{
-                marginBottom: "1.5rem",
-                fontSize: "1.5rem",
+                marginBottom: "1rem",
+                fontSize: "1.25rem",
                 fontWeight: 600,
               }}
             >
@@ -90,7 +90,6 @@ function CreateAccountModalContent() {
                 create.mutate(data, {
                   onSuccess: () => {
                     options?.onSuccess?.();
-                    forceClose();
                   },
                 });
               }}

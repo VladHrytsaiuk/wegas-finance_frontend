@@ -172,7 +172,24 @@ export const useTransactionItem = ({
         subtitle = title;
         title = tx.counterparty.name;
         logoUrl = tx.counterparty.logo;
-        if (!category) iconName = "HiBanknotes";
+
+        // 🔥 FALLBACK: Якщо у транзакції немає категорії, беремо її з контрагента
+        if (!category) {
+          const cpCat =
+            tx.counterparty.category ||
+            categories?.find(
+              (c) => String(c.id) === String(tx.counterparty.category_id),
+            );
+
+          if (cpCat) {
+            iconName = cpCat.icon;
+            iconColor = cpCat.color;
+            // Якщо ми підставили категорію з контрагента, покажемо її назву в підзаголовку
+            subtitle = cpCat.name;
+          } else {
+            iconName = "HiBanknotes";
+          }
+        }
       }
     }
 

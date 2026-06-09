@@ -51,6 +51,11 @@ export const ToggleBtn = styled.button<{
   font-size: 0.9rem;
   transition: all 0.2s;
 
+  @media (max-width: 1300px) {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
   ${(p) =>
     p.$active
       ? `
@@ -121,6 +126,11 @@ export const Tab = styled.button<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.9rem;
+
+  @media (max-width: 1300px) {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
   
   &:hover {
     color: var(--color-text-main);

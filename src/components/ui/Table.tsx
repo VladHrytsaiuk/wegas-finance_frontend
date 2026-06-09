@@ -146,14 +146,16 @@ function Cell({
   className,
   colSpan,
   style,
+  ...props
 }: {
   children: ReactNode;
   className?: string;
   colSpan?: number;
   style?: React.CSSProperties;
+  [key: string]: any;
 }) {
   return (
-    <StyledCell className={className} colSpan={colSpan} style={style}>
+    <StyledCell className={className} colSpan={colSpan} style={style} {...props}>
       {children}
     </StyledCell>
   );

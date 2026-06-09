@@ -128,7 +128,7 @@ function DebtorDetails() {
         <S.ProfileInfo>
           <S.LargeAvatar $color={profileColor}>
             {counterparty.logo ? (
-              <img src={counterparty.logo} alt={counterparty.name} />
+              <img src={`/brands/${counterparty.logo}`} alt={counterparty.name} />
             ) : (
               <HiOutlineUser />
             )}
@@ -162,7 +162,7 @@ function DebtorDetails() {
 
 
 
-            <Modal.Window name="edit-cp">
+            <Modal.Window name="edit-cp" padding="2rem 2.5rem">
               <CounterpartyForm
                 defaultValues={counterparty}
                 onSubmit={updateCounterparty}

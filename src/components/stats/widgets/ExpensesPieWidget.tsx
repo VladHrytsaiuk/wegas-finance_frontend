@@ -35,20 +35,12 @@ const CustomPieTooltip = ({ active, payload, currency, language }: any) => {
     return (
       <S.TooltipContainer>
         <S.TooltipIconBox $color={data.color} $hasLogo={!!data.logo}>
-          {data.logo ? (
-            <img src={`/brands/${data.logo}`} alt={data.name} />
-          ) : data.icon ? (
-            <SmartIcon iconName={data.icon} color={data.color} size={16} />
-          ) : (
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                background: data.color,
-              }}
-            />
-          )}
+          <SmartIcon
+            logo={data.logo}
+            iconName={data.icon}
+            color={data.color}
+            size={16}
+          />
         </S.TooltipIconBox>
         <div className="info">
           <span className="name">{data.name}</span>

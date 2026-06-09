@@ -282,9 +282,9 @@ function TransactionDetails({
 
               {isDebt ? (
                 <S.DetailRow>
-                  <S.RowIcon $color="var(--color-yellow-600)">
-                    <SmartIcon name={counterparty?.icon || "HiUser"} />
-                  </S.RowIcon>
+              <S.RowIcon $color="var(--color-yellow-600)">
+                <SmartIcon iconName={counterparty?.icon || "HiUser"} />
+              </S.RowIcon>
                   <S.RowContent>
                     <div className="label">
                       {t("transactions:transactions.counterparty")}
@@ -324,22 +324,20 @@ function TransactionDetails({
                           : "var(--color-grey-100)"
                       }
                       $hasImage={shouldShowLogo}
+                    <S.RowIcon
+                      $color={category?.color || "var(--color-yellow-600)"}
                     >
-                      {shouldShowLogo ? (
-                        <img
-                          src={getLogoUrl(counterparty.logo)}
-                          alt={counterparty.name}
-                        />
-                      ) : (
-                        <SmartIcon
-                          // Якщо немає в базі — ставимо нейтральну іконку (наприклад, будівлю)
-                          name={
-                            hasCounterparty
-                              ? counterparty?.icon || "HiUser"
-                              : "HiOutlineBuildingStorefront"
-                          }
-                        />
-                      )}
+                      <SmartIcon
+                        logo={counterparty?.logo}
+                        iconName={
+                          counterparty?.icon ||
+                          category?.icon ||
+                          (hasCounterparty
+                            ? "HiUser"
+                            : "HiOutlineBuildingStorefront")
+                        }
+                        color={category?.color}
+                      />
                     </S.RowIcon>
                     <S.RowContent>
                       <div className="label">

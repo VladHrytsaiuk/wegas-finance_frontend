@@ -83,7 +83,7 @@ export const TransactionIcon = ({
     }
 
     // D. Default SmartIcon
-    return <SmartIcon name={iconName} size={size * 0.5} />;
+    return <SmartIcon iconName={iconName} size={size * 0.5} />;
   };
 
   return (

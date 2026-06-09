@@ -17,8 +17,8 @@ export const Trigger = styled.div<{
   $hasError?: boolean;
   $disabled?: boolean;
 }>`
-  min-height: 46px;
-  padding: 0.4rem 0.6rem;
+  min-height: 38px;
+  padding: 0.3rem 0.6rem;
   background-color: var(--color-bg-surface, #fff);
   color: var(--color-text-main, #333);
 
@@ -31,7 +31,7 @@ export const Trigger = styled.div<{
         : "var(--color-border, #d1d5db)"};
 
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: ${(p) => (p.$disabled ? "not-allowed" : "pointer")};
   opacity: ${(p) => (p.$disabled ? 0.6 : 1)};
 

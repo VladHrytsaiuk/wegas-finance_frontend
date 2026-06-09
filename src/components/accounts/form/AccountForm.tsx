@@ -29,6 +29,7 @@ import StorageTypeSelect from "./StorageTypeSelect";
 // Custom Hooks & Styles
 import { useAccountForm } from "../../../hooks/Accounts/useAccountForm";
 import { SkinSelector } from "./SkinSelector";
+import { ColorPicker } from "../../ui/ColorIconPicker";
 import * as S from "./AccountForm.styles";
 import { focusNextElement } from "../../../utils/focusUtils";
 import { BANK_SKINS } from "../bankSkins";
@@ -293,7 +294,7 @@ export function AccountFormContent(props: AccountFormProps) {
       <S.Form ref={refs.formRef} onSubmit={actions.handleSubmit} noValidate>
         {/* TYPE SELECTOR */}
         <DisabledWrapper $disabled={isSynced}>
-          <div style={{ marginBottom: "0.5rem" }}>
+          <div style={{ marginBottom: "0.3rem" }}>
             <label className="label">
               <LabelWithLock
                 label={t("accounts:accountForm.label_account_type")}
@@ -337,7 +338,7 @@ export function AccountFormContent(props: AccountFormProps) {
         </DisabledWrapper>
 
         {/* --- NAME & CURRENCY --- */}
-        <div style={{ display: "flex", gap: "1rem" }}>
+        <S.Row>
           {/* NAME */}
           <div style={{ flex: 1 }}>
             <label className="label">{t("accounts:accountForm.label_name")}</label>
@@ -360,7 +361,7 @@ export function AccountFormContent(props: AccountFormProps) {
           </div>
 
           {/* CURRENCY */}
-          <div style={{ width: "130px" }}>
+          <div style={{ flex: "0 0 130px" }}>
             <label className="label">
               <LabelWithLock
                 label={t("accounts:accountForm.label_currency")}
@@ -391,11 +392,11 @@ export function AccountFormContent(props: AccountFormProps) {
               </BaseSelect>
             </DisabledWrapper>
           </div>
-        </div>
+        </S.Row>
 
         {/* --- CARD SPECIFIC FIELDS --- */}
         {state.type === "card" && (
-          <div style={{ display: "flex", gap: "1rem" }}>
+          <S.Row>
             <div style={{ flex: 1 }}>
               <label className="label">
                 {t("accounts:accountForm.label_card_number")}
@@ -415,7 +416,7 @@ export function AccountFormContent(props: AccountFormProps) {
               )}
             </div>
 
-            <div style={{ width: "160px" }}>
+            <div style={{ flex: "0 0 160px" }}>
               <label className="label">Система</label>
               <BaseSelect
                 triggerLabel={
@@ -456,13 +457,13 @@ export function AccountFormContent(props: AccountFormProps) {
                 ))}
               </BaseSelect>
             </div>
-          </div>
+          </S.Row>
         )}
 
         {/* --- SAVINGS SPECIFIC FIELDS --- */}
         {state.type === "savings" && (
-          <>
-            <div>
+          <S.Row>
+            <div style={{ flex: 1 }}>
               <label className="label">Тип скарбнички</label>
               <StorageTypeSelect
                 types={state.storageTypes}
@@ -472,134 +473,173 @@ export function AccountFormContent(props: AccountFormProps) {
               />
             </div>
 
-            {/* ВИБІР ЦІЛІ */}
-            <div>
-              <label className="label">Приєднати до цілі</label>
+            <div style={{ flex: "0 0 100px" }}>
+              <label className="label">{t("accounts:accountForm.label_color")}</label>
+              <ColorPicker
+                color={state.color}
+                onColorChange={actions.setColor}
+              />
+            </div>
+          </S.Row>
+        )}
+
+        {/* --- BALANCE, OWNER & CASH COLOR --- */}
+        <S.Row>
+          <div style={{ flex: 1 }}>
+            <label className="label">
+              <LabelWithLock
+                label={
+                  state.isEditing
+                    ? t("accounts:accountForm.label_balance_adjust")
+                    : t("accounts:accountForm.label_balance_initial")
+                }
+                isLocked={isSynced}
+              />
+            </label>
+            <Input
+              type="number"
+              value={state.balance}
+              onChange={(e) => {
+                actions.setBalance(e.target.value);
+                actions.clearError("balance");
+              }}
+              placeholder="0.00"
+              $hasError={!!state.errors.balance}
+              disabled={isSynced}
+              style={isSynced ? { opacity: 0.7, cursor: "not-allowed" } : {}}
+            />
+            {state.errors.balance && (
+              <S.ErrorText>{state.errors.balance}</S.ErrorText>
+            )}
+          </div>
+
+          {state.type === "cash" && (
+            <div style={{ flex: "0 0 100px" }}>
+              <label className="label">{t("accounts:accountForm.label_color")}</label>
+              <ColorPicker
+                color={state.color}
+                onColorChange={actions.setColor}
+              />
+            </div>
+          )}
+
+          {state.type === "savings" && (
+            <div style={{ flex: 1 }}>
+              <label className="label">{t("accounts:accountForm.label_owner")}</label>
               <BaseSelect
+                placeholder={t("accounts:accountForm.owner_placeholder")}
                 triggerLabel={
-                  selectedGoal ? (
+                  selectedOwnerOption ? (
                     <div
                       style={{ display: "flex", alignItems: "center", gap: 8 }}
                     >
-                      <SmartIcon iconName={selectedGoal.icon} color={selectedGoal.color} />
-                      <span>{selectedGoal.name}</span>
+                      {selectedOwnerOption.icon} {selectedOwnerOption.label}
                     </div>
-                  ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        opacity: 0.6,
-                      }}
-                    >
-                      <HiNoSymbol />
-                      <span>Без цілі</span>
-                    </div>
-                  )
+                  ) : null
                 }
               >
-                <S.SelectItem
-                  type="button"
-                  $isSelected={state.goalId === ""}
-                  onClick={() => actions.setGoalId("")}
-                >
-                  <HiNoSymbol /> Не прив'язувати
-                </S.SelectItem>
-                {state.goals.map((goal: any) => (
+                {ownerOptions.map((opt) => (
                   <S.SelectItem
-                    key={goal.id}
+                    key={opt.value}
                     type="button"
-                    $isSelected={goal.id === state.goalId}
-                    onClick={() => actions.setGoalId(goal.id)}
+                    $isSelected={opt.value === state.ownerId}
+                    onClick={() => actions.setOwnerId(opt.value)}
                   >
-                    <SmartIcon iconName={goal.icon} color={goal.color} />
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <span>{goal.name}</span>
-                      <small style={{ fontSize: "0.7rem", opacity: 0.6 }}>
-                        {formatMoney(goal.target_amount, goal.currency)}
-                      </small>
-                    </div>
+                    {opt.icon} {opt.label}
                   </S.SelectItem>
                 ))}
               </BaseSelect>
             </div>
-          </>
-        )}
-
-        {/* --- BALANCE --- */}
-        <div>
-          <label className="label">
-            <LabelWithLock
-              label={
-                state.isEditing
-                  ? t("accounts:accountForm.label_balance_adjust")
-                  : t("accounts:accountForm.label_balance_initial")
-              }
-              isLocked={isSynced}
-            />
-          </label>
-          <Input
-            type="number"
-            value={state.balance}
-            onChange={(e) => {
-              actions.setBalance(e.target.value);
-              actions.clearError("balance");
-            }}
-            placeholder="0.00"
-            $hasError={!!state.errors.balance}
-            disabled={isSynced}
-            style={isSynced ? { opacity: 0.7, cursor: "not-allowed" } : {}}
-          />
-          {state.errors.balance && (
-            <S.ErrorText>{state.errors.balance}</S.ErrorText>
           )}
-        </div>
+        </S.Row>
 
-        {/* --- COLOR (FOR CASH & SAVINGS) --- */}
-        {state.type !== "card" && (
+        {/* --- OWNER (CARD & CASH ONLY) --- */}
+        {state.type !== "savings" && (
           <div>
-            <label className="label">{t("accounts:accountForm.label_color")}</label>
-            <S.ColorGrid>
-              {CASH_COLORS.map((c) => (
-                <S.ColorSwatch
-                  as="button"
-                  key={c}
+            <label className="label">{t("accounts:accountForm.label_owner")}</label>
+            <BaseSelect
+              placeholder={t("accounts:accountForm.owner_placeholder")}
+              triggerLabel={
+                selectedOwnerOption ? (
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    {selectedOwnerOption.icon} {selectedOwnerOption.label}
+                  </div>
+                ) : null
+              }
+            >
+              {ownerOptions.map((opt) => (
+                <S.SelectItem
+                  key={opt.value}
                   type="button"
-                  $color={c}
-                  $selected={state.color === c}
-                  onClick={() => actions.setColor(c)}
-                />
+                  $isSelected={opt.value === state.ownerId}
+                  onClick={() => actions.setOwnerId(opt.value)}
+                >
+                  {opt.icon} {opt.label}
+                </S.SelectItem>
               ))}
-            </S.ColorGrid>
+            </BaseSelect>
           </div>
         )}
 
-        {/* --- OWNER --- */}
-        <div>
-          <label className="label">{t("accounts:accountForm.label_owner")}</label>
-          <BaseSelect
-            placeholder={t("accounts:accountForm.owner_placeholder")}
-            triggerLabel={
-              selectedOwnerOption ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {selectedOwnerOption.icon} {selectedOwnerOption.label}
-                </div>
-              ) : null
-            }
-          >
-            {ownerOptions.map((opt) => (
+        {/* --- GOAL (SAVINGS ONLY) --- */}
+        {state.type === "savings" && (
+          <div>
+            <label className="label">Приєднати до цілі</label>
+            <BaseSelect
+              triggerLabel={
+                selectedGoal ? (
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <SmartIcon
+                      iconName={selectedGoal.icon}
+                      color={selectedGoal.color}
+                    />
+                    <span>{selectedGoal.name}</span>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      opacity: 0.6,
+                    }}
+                  >
+                    <HiNoSymbol />
+                    <span>Без цілі</span>
+                  </div>
+                )
+              }
+            >
               <S.SelectItem
-                key={opt.value}
                 type="button"
-                $isSelected={opt.value === state.ownerId}
-                onClick={() => actions.setOwnerId(opt.value)}
+                $isSelected={state.goalId === ""}
+                onClick={() => actions.setGoalId("")}
               >
-                {opt.icon} {opt.label}
+                <HiNoSymbol /> Не прив'язувати
               </S.SelectItem>
-            ))}
-          </BaseSelect>
-        </div>
+              {state.goals.map((goal: any) => (
+                <S.SelectItem
+                  key={goal.id}
+                  type="button"
+                  $isSelected={goal.id === state.goalId}
+                  onClick={() => actions.setGoalId(goal.id)}
+                >
+                  <SmartIcon iconName={goal.icon} color={goal.color} />
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <span>{goal.name}</span>
+                    <small style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+                      {formatMoney(goal.target_amount, goal.currency)}
+                    </small>
+                  </div>
+                </S.SelectItem>
+              ))}
+            </BaseSelect>
+          </div>
+        )}
 
         {/* --- ACTIONS --- */}
         <S.FooterRow>

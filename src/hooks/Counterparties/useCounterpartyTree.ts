@@ -155,8 +155,14 @@ export function useCounterpartyTree({
 
     // 5. Distribute Counterparties
     cps.forEach((cp) => {
+      // Знаходимо іконку категорії для фолбеку
+      const cpCategory =
+        cp.category ||
+        categories.find((c) => String(c.id) === String(cp.category_id));
+
       const normalizedIcon =
         normalizeIconName(cp.icon) ||
+        (cpCategory?.icon ? normalizeIconName(cpCategory.icon) : undefined) ||
         (cp.type === "person" ? "HiUser" : "HiShoppingCart");
 
       const node: CounterpartyTreeNode = {
