@@ -48,7 +48,20 @@ export const useBaseSelect = ({
 
     // Exact matching requirements
     const calculatedWidth = rect.width;
-    const left = rect.left + scrollX;
+    let left = rect.left + scrollX;
+
+    // Viewport overflow protection (Right edge)
+    // We assume the dropdown might be around 300px wide (max-content)
+    const viewportWidth = window.innerWidth;
+    const padding = 10;
+    const estimatedMaxContentWidth = 300; 
+
+    if (rect.left + estimatedMaxContentWidth > viewportWidth - padding) {
+      // If it overflows right, align the right edge of dropdown with right edge of trigger
+      left = rect.right + scrollX - estimatedMaxContentWidth;
+      // But don't go past the left edge of the screen
+      if (left < scrollX + padding) left = scrollX + padding;
+    }
 
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;

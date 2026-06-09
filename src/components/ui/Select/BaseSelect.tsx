@@ -128,7 +128,7 @@ export const BaseSelect = ({
             style={{
               top: state.coords.top,
               left: state.coords.left,
-              width: state.coords.width,
+              minWidth: state.coords.width,
               transform: state.coords.isAbove ? "translateY(-100%)" : "none",
             }}
             onClick={actions.handleDropdownClick}

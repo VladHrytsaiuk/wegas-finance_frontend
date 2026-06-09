@@ -590,15 +590,20 @@ export const TableInnerContent = styled.div`
   min-width: 800px;
 `;
 
-const TABLE_GRID_TEMPLATE = "40px 1.5fr 1.5fr 0.8fr 1fr 1fr 1.2fr 40px";
+const TABLE_GRID_TEMPLATE = "32px 1.8fr 1.6fr 0.8fr 1fr 1fr 1.2fr 32px";
 
 export const TableGridRow = styled.div`
   display: grid;
   grid-template-columns: ${TABLE_GRID_TEMPLATE};
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.4rem;
   border-bottom: 1px solid var(--color-border);
+
+  @media (max-width: 1300px) {
+    gap: 4px;
+    padding: 0.2rem 0.3rem;
+  }
 `;
 
 export const TableHeaderRow = styled(TableGridRow)`
