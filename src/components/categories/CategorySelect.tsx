@@ -74,23 +74,10 @@ export function CategorySelect(props: CategorySelectProps) {
       hasError={props.hasError}
       menuWidth={props.dropdownWidth}
       size={props.size}
+      searchValue={searchQuery}
+      onSearchChange={setSearchQuery}
     >
       <S.DropdownContentWrapper>
-        <S.SearchBox>
-          <S.SearchInputWrapper>
-            <S.SearchIconPosition>
-              <HiMagnifyingGlass />
-            </S.SearchIconPosition>
-            <S.SearchInput
-              autoFocus
-              placeholder={t("categories:categorySelect.search_placeholder")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </S.SearchInputWrapper>
-        </S.SearchBox>
-
         <S.ScrollArea>
           {treeData.length > 0 ? (
             <CategoryTree

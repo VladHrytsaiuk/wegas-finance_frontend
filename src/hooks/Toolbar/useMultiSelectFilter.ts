@@ -64,11 +64,55 @@ export const useMultiSelectFilter = ({
 
   // --- Keyboard Navigation ---
   const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (isOpen) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const firstFocusable = menuRef.current?.querySelector(
+          'button, [href], [role="button"], [tabindex]:not([tabindex="-1"])'
+        ) as HTMLElement;
+        firstFocusable?.focus();
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const firstFocusable = treeContainerRef.current?.querySelector(
+          'button, [href], [role="button"], [tabindex]:not([tabindex="-1"])'
+        ) as HTMLElement;
+        if (firstFocusable) {
+          firstFocusable.click();
+        }
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+      return; // Дозволяємо типити
+    }
+
     if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
       e.preventDefault();
-      setIsOpen((prev) => !prev);
+      setIsOpen(true);
     }
   };
+
+  // Ефект для автоматичного "підсвічування" першого елемента при пошуку
+  useEffect(() => {
+    if (isOpen && search && treeContainerRef.current) {
+      const firstFocusable = treeContainerRef.current.querySelector(
+        'button, [href], [role="button"], [tabindex]:not([tabindex="-1"])'
+      ) as HTMLElement;
+
+      const highlighted = treeContainerRef.current.querySelectorAll("[data-autofocus]");
+      highlighted.forEach((el) => el.removeAttribute("data-autofocus"));
+
+      if (firstFocusable) {
+        firstFocusable.setAttribute("data-autofocus", "true");
+      }
+    }
+  }, [isOpen, search, treeContainerRef]);
 
   const handleMenuKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
@@ -82,7 +126,7 @@ export const useMultiSelectFilter = ({
     if (!menuElement) return;
 
     const focusableSelectors =
-      'input, button, [href], [tabindex]:not([tabindex="-1"])';
+      'button, [href], input, [role="button"], [tabindex]:not([tabindex="-1"])';
     const focusableElements = Array.from(
       menuElement.querySelectorAll(focusableSelectors)
     ) as HTMLElement[];
@@ -93,16 +137,6 @@ export const useMultiSelectFilter = ({
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      // Logic to jump from search input to tree list
-      if (activeEl === searchInputRef.current) {
-        const firstListItem = treeContainerRef.current?.querySelector(
-          'button, [tabindex="0"]'
-        );
-        if (firstListItem instanceof HTMLElement) {
-          firstListItem.focus();
-          return;
-        }
-      }
       const nextIndex =
         currentIndex + 1 < focusableElements.length ? currentIndex + 1 : 0;
       focusableElements[nextIndex]?.focus();
@@ -111,15 +145,10 @@ export const useMultiSelectFilter = ({
 
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      // Logic to jump back to search input
-      if (treeContainerRef.current?.contains(activeEl)) {
-        const listItems = Array.from(
-          treeContainerRef.current.querySelectorAll(focusableSelectors)
-        );
-        if (listItems.length > 0 && listItems[0] === activeEl) {
-          searchInputRef.current?.focus();
-          return;
-        }
+      // Logic to jump back to search input (trigger)
+      if (currentIndex === 0) {
+        searchInputRef.current?.focus();
+        return;
       }
       const nextIndex =
         currentIndex - 1 >= 0 ? currentIndex - 1 : focusableElements.length - 1;

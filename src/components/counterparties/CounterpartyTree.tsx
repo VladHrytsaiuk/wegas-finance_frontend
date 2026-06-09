@@ -91,6 +91,7 @@ const CPTreeNode: React.FC<{
 
   const handleExpandClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     toggle(node.id);
   };
 
@@ -123,6 +124,8 @@ const CPTreeNode: React.FC<{
           onKeyDown={handleKeyDown}
           tabIndex={0}
           role="button"
+          aria-expanded={isExpanded}
+          aria-haspopup={hasChildren ? "true" : undefined}
         >
           <S.LeftSide>
             {hasChildren ? (

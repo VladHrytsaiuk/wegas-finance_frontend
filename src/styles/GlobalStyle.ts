@@ -143,4 +143,41 @@ background-color: var(--color-text-main);
 ::-webkit-scrollbar-corner {
 background-color: var(--color-bg-page);
 }
+
+/* Авто-фокус для селектів при пошуку (курсор на першому елементі) */
+[data-autofocus="true"] {
+  background-color: var(--color-brand-50) !important;
+  box-shadow: inset 0 0 0 1px var(--color-brand-500) !important;
+  outline: none !important;
+  transition: all 0.1s ease;
+}
+
+/* Глобальний фокус для інтерактивних елементів (кнопки, лінки, пункти списків, стрілки) */
+button:focus-visible, 
+a:focus-visible, 
+[role="button"]:focus-visible,
+input:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 1.5px var(--color-brand-200) !important;
+}
+
+/* Спеціальний стан для пунктів селекту та стрілок розгортання при фокусі */
+[role="button"][tabindex="0"]:focus-visible,
+button[type="button"]:focus-visible {
+  background-color: var(--color-brand-50) !important;
+  box-shadow: inset 0 0 0 1px var(--color-brand-400) !important;
+}
+
+[data-theme="dark"] [data-autofocus="true"] {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  box-shadow: inset 0 0 0 1px var(--color-brand-500) !important;
+}
+
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] a:focus-visible,
+[data-theme="dark"] [role="button"]:focus-visible,
+[data-theme="dark"] input:focus-visible {
+  box-shadow: 0 0 0 1.5px rgba(16, 185, 129, 0.4) !important;
+}
 `;

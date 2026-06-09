@@ -43,7 +43,13 @@ export const BaseSelect = ({
     isMulti,
     onSearchChange,
     onClear,
+    searchValue,
   });
+
+  const handleInputClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!state.isOpen) actions.toggle();
+  };
 
   return (
     <S.Wrapper className={className}>
@@ -59,7 +65,7 @@ export const BaseSelect = ({
         role="combobox"
         aria-expanded={state.isOpen}
       >
-        <S.ContentWrapper>
+        <S.ContentWrapper $isHidden={state.isOpen && !!onSearchChange}>
           {triggerLabel ? (
             <S.TextTruncate>{triggerLabel}</S.TextTruncate>
           ) : (
@@ -69,8 +75,22 @@ export const BaseSelect = ({
           )}
         </S.ContentWrapper>
 
+        {onSearchChange && state.isOpen && (
+          <S.TriggerSearchInput
+            ref={refs.searchInputRef}
+            value={searchValue}
+            onChange={(e) => onSearchChange(e.target.value)}
+            onClick={handleInputClick}
+            placeholder={
+              triggerLabel ? "" : placeholder || t("common:ui.search_placeholder_default")
+            }
+            autoComplete="off"
+            autoFocus
+          />
+        )}
+
         <S.IconWrapper>
-          {triggerLabel && onClear && !disabled && (
+          {triggerLabel && onClear && !disabled && !state.isOpen && (
             <S.ClearButton
               onClick={actions.handleClear}
               type="button"
@@ -81,13 +101,20 @@ export const BaseSelect = ({
               <HiXMark size={size === "small" ? 14 : 16} />
             </S.ClearButton>
           )}
-          <HiChevronDown
-            size={size === "small" ? 14 : 16}
-            style={{
-              transform: state.isOpen ? "rotate(180deg)" : "rotate(0)",
-              transition: "transform 0.2s ease",
-            }}
-          />
+          {onSearchChange && state.isOpen ? (
+            <HiMagnifyingGlass
+              size={size === "small" ? 14 : 16}
+              style={{ color: "var(--color-brand-500)" }}
+            />
+          ) : (
+            <HiChevronDown
+              size={size === "small" ? 14 : 16}
+              style={{
+                transform: state.isOpen ? "rotate(180deg)" : "rotate(0)",
+                transition: "transform 0.2s ease",
+              }}
+            />
+          )}
         </S.IconWrapper>
       </S.Trigger>
 
@@ -106,30 +133,6 @@ export const BaseSelect = ({
             }}
             onClick={actions.handleDropdownClick}
           >
-            {onSearchChange && (
-              <S.SearchWrapper>
-                <S.SearchInputContainer>
-                  <HiMagnifyingGlass
-                    style={{
-                      position: "absolute",
-                      left: "8px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      color: "#9ca3af",
-                    }}
-                  />
-                  <S.StyledSearchInput
-                    ref={refs.searchInputRef}
-                    value={searchValue}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    placeholder={t("common:ui.search_placeholder_default")}
-                    autoComplete="off"
-                    onKeyDown={(e) => e.stopPropagation()}
-                  />
-                </S.SearchInputContainer>
-              </S.SearchWrapper>
-            )}
-
             <S.OptionsList>{children}</S.OptionsList>
           </S.Dropdown>,
           document.body

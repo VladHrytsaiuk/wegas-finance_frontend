@@ -93,6 +93,7 @@ export const FilterButton = styled.button<{
   gap: 0.4rem;
   padding: 0 0.8rem;
   height: 38px;
+  position: relative;
 
   background-color: ${(props) =>
     props.$isActive || props.$isOpen ? "var(--color-brand-50)" : "transparent"};
@@ -141,6 +142,35 @@ export const FilterButton = styled.button<{
     transition: transform 0.2s;
     transform: ${(props) => (props.$isOpen ? "rotate(180deg)" : "rotate(0)")};
   }
+`;
+
+export const TriggerSearchInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: inherit;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text-main);
+  font-size: inherit;
+  font-family: inherit;
+  z-index: 2;
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+`;
+
+export const TriggerContentWrapper = styled.div<{ $isHidden?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  opacity: ${(p) => (p.$isHidden ? 0 : 1)};
+  pointer-events: ${(p) => (p.$isHidden ? "none" : "auto")};
+  width: 100%;
 `;
 
 export const Badge = styled.span`
@@ -213,6 +243,13 @@ export const PortalMenu = styled.div`
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Авто-фокус при пошуку */
+  & [data-autofocus="true"] {
+    background-color: var(--color-bg-page, #f3f4f6) !important;
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: -2px;
   }
 `;
 export const MenuOption = styled.div<{ $selected: boolean }>`

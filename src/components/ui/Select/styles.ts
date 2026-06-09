@@ -43,6 +43,7 @@ export const Trigger = styled.div<{
 
   transition: all 0.2s ease;
   user-select: none;
+  position: relative;
 
   box-shadow: ${(p) =>
     p.$isOpen
@@ -89,13 +90,7 @@ export const Dropdown = styled.div<{ $isAbove: boolean }>`
 `;
 
 export const SearchWrapper = styled.div`
-  padding: 4px 4px 8px 4px;
-  position: sticky;
-  top: 0;
-  background: var(--color-bg-surface, #fff);
-  z-index: 10;
-  border-bottom: 1px solid var(--color-border, #eee);
-  margin-bottom: 4px;
+  display: none; /* Тепер пошук у тригері */
 `;
 
 export const SearchInputContainer = styled.div`
@@ -104,19 +99,23 @@ export const SearchInputContainer = styled.div`
   color: var(--color-text-secondary, #6b7280);
 `;
 
-export const StyledSearchInput = styled.input`
+export const TriggerSearchInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 6px 8px 6px 30px;
-  border: 1px solid var(--color-border, #d1d5db);
-  border-radius: 4px;
-  font-size: 0.85rem;
+  height: 100%;
+  padding: inherit;
+  border: none;
   outline: none;
-  background: var(--color-bg-page, #f9fafb);
-  color: var(--color-text-main, #333);
+  background: transparent;
+  color: var(--color-text-main);
+  font-size: inherit;
+  font-family: inherit;
+  z-index: 2;
 
-  &:focus {
-    border-color: var(--color-brand-500);
-    background: var(--color-bg-surface, #fff);
+  &::placeholder {
+    color: var(--color-text-tertiary);
   }
 `;
 
@@ -138,13 +137,22 @@ export const OptionsList = styled.div`
     background-color: var(--color-border, #d1d5db);
     border-radius: 10px;
   }
+
+  /* Авто-фокус при пошуку */
+  & [data-autofocus="true"] {
+    background-color: var(--color-bg-hover, #f3f4f6) !important;
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: -2px;
+  }
 `;
 
-export const ContentWrapper = styled.div`
+export const ContentWrapper = styled.div<{ $isHidden?: boolean }>`
   display: flex;
   align-items: center;
   flex: 1;
   overflow: hidden;
+  opacity: ${(p) => (p.$isHidden ? 0 : 1)};
+  pointer-events: ${(p) => (p.$isHidden ? "none" : "auto")};
 `;
 
 export const TextTruncate = styled.span`

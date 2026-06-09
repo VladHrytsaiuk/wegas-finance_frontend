@@ -201,8 +201,9 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                 tabIndex={0}
                 role="button"
                 aria-expanded={isOwnerExpanded}
+                aria-haspopup="true"
               >
-                <S.ExpandIcon $isExpanded={isOwnerExpanded}>
+                <S.ExpandIcon $isExpanded={isOwnerExpanded} as="span">
                   <HiChevronDown />
                 </S.ExpandIcon>
                 <HiUser size={14} color="var(--color-brand-600)" />
@@ -222,8 +223,9 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
                           tabIndex={0}
                           role="button"
                           aria-expanded={isTypeExpanded}
+                          aria-haspopup="true"
                         >
-                          <S.ExpandIcon $isExpanded={isTypeExpanded}>
+                          <S.ExpandIcon $isExpanded={isTypeExpanded} as="span">
                             <HiChevronDown />
                           </S.ExpandIcon>
                           <SmartIcon

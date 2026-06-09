@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { HiFunnel, HiChevronDown, HiCheck } from "react-icons/hi2";
+import { HiFunnel, HiChevronDown, HiCheck, HiMagnifyingGlass } from "react-icons/hi2";
 
 // Components
 import { CategoryTree } from "../../categories/CategoryTree";
@@ -13,9 +13,10 @@ import {
   FilterButton,
   Badge,
   PortalMenu,
-  SearchInput,
   MenuOption,
   Checkbox,
+  TriggerSearchInput,
+  TriggerContentWrapper,
 } from "./styles";
 
 // Specific Styles
@@ -94,10 +95,17 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
       return (
         <MenuOption
           key={opt.value}
-          type="button"
           $selected={isSelected}
           onClick={() => toggleFlat(opt.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              toggleFlat(opt.value);
+            }
+          }}
           style={{ gap: "10px", padding: "0.6rem 0.8rem" }}
+          tabIndex={0}
+          role="button"
         >
           <Checkbox $checked={isSelected}>
             <HiCheck />
@@ -123,18 +131,47 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
   };
 
   return (
-    <div ref={triggerRef} style={{ position: "relative" }}>
+    <div ref={triggerRef as any} style={{ position: "relative" }}>
       <FilterButton
-        type="button"
+        as="div"
         $isActive={activeCount > 0}
         $isOpen={isOpen}
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleTriggerKeyDown}
+        tabIndex={0}
+        role="combobox"
+        aria-expanded={isOpen}
       >
-        {activeCount === 0 && <HiFunnel style={{ opacity: 0.6 }} />}
-        {config.label}
-        {activeCount > 0 && <Badge>{activeCount}</Badge>}
-        <HiChevronDown className="chevron" />
+        <TriggerContentWrapper $isHidden={isOpen}>
+          {activeCount === 0 && <HiFunnel style={{ opacity: 0.6 }} />}
+          {config.label}
+          {activeCount > 0 && <Badge>{activeCount}</Badge>}
+        </TriggerContentWrapper>
+
+        {isOpen && (
+          <TriggerSearchInput
+            ref={searchInputRef}
+            placeholder={t("legacy:filterComponent.search_placeholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            autoComplete="off"
+            autoFocus
+          />
+        )}
+
+        {isOpen ? (
+          <HiMagnifyingGlass
+            style={{
+              width: "12px",
+              height: "12px",
+              color: "var(--color-brand-600)",
+              flexShrink: 0,
+            }}
+          />
+        ) : (
+          <HiChevronDown className="chevron" />
+        )}
       </FilterButton>
 
       {isOpen &&
@@ -155,16 +192,6 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
               flexDirection: "column",
             }}
           >
-            <S.SearchContainer>
-              <SearchInput
-                ref={searchInputRef}
-                placeholder={t("legacy:filterComponent.search_placeholder")}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.stopPropagation()}
-              />
-            </S.SearchContainer>
-
             <S.TreeContainer ref={treeContainerRef}>
               {config.treeType === "categories" ? (
                 categoryTreeData.length > 0 ? (
@@ -235,3 +262,4 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
     </div>
   );
 };
+
