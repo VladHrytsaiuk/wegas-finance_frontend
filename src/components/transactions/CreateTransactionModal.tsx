@@ -16,10 +16,10 @@ const CenteredLayout = styled.div`
   padding: 1rem;
 `;
 
-// 🔥 1. Описуємо інтерфейс пропсів
 interface CreateTransactionModalProps {
   isOpen?: boolean;
   onClose?: () => void;
+  onSuccess?: (data: any) => void;
   initialData?: {
     type?: string;
     account_id?: string;
@@ -33,6 +33,7 @@ interface CreateTransactionModalProps {
 function CreateTransactionModal({
   isOpen = true,
   onClose,
+  onSuccess,
   initialData = {},
 }: CreateTransactionModalProps) {
   const navigate = useNavigate();
@@ -78,6 +79,7 @@ function CreateTransactionModal({
         {/* 🔥 3. Передаємо дані у форму */}
         <CreateTransactionForm
           onCloseModal={handleClose}
+          onSuccess={onSuccess}
           // 🔥 ПЕРЕДАЄМО ДАНІ ДАЛІ
           initialType={(initialData.type || typeParam || undefined) as TransactionType}
           initialAccountId={

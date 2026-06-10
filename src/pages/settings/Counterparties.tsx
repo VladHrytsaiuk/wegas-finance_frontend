@@ -17,7 +17,7 @@ function Counterparties() {
   const {
     state: {
       treeRoots,
-      isLoadingCps,
+      isLoading,
       searchQuery,
       filters,
       sortValue,
@@ -89,7 +89,7 @@ function Counterparties() {
 
         {/* --- Tree Content --- */}
         <S.TreeContainer>
-          {isLoadingCps ? (
+          {isLoading ? (
             <CenteredSpinner isContainer />
           ) : treeRoots.length === 0 ? (
             <EmptyState

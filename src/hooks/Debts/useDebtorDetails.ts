@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 // API Services
 import {
@@ -21,6 +22,7 @@ export function useDebtorDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const [counterparty, setCounterparty] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -89,6 +91,12 @@ export function useDebtorDetails() {
       const updatedCp = await getCounterpartyApi(id!);
       setCounterparty(updatedCp);
 
+      // Інвалідуємо кеш для всього застосунку
+      queryClient.invalidateQueries({ queryKey: ["counterparties"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+
       toast.success(t("transactions:transactions.delete_success"));
     } catch (error) {
       console.error(error);
@@ -96,13 +104,14 @@ export function useDebtorDetails() {
     }
   };
 
-
-
   const handleUpdateCounterparty = async (data: any) => {
     setIsUpdating(true);
     try {
       const updated = await updateCounterpartyApi(id!, data);
       setCounterparty(updated);
+
+      queryClient.invalidateQueries({ queryKey: ["counterparties"] });
+
       toast.success(t("counterparties:counterparties.update_success"));
       return true;
     } catch (error) {
@@ -130,6 +139,12 @@ export function useDebtorDetails() {
         note: "Списання боргу (Forgiveness)",
         is_forgiveness: true, // 👈 ОБОВ'ЯЗКОВО: Це зупинить зміну твого балансу
       });
+
+      // Інвалідуємо кеш
+      queryClient.invalidateQueries({ queryKey: ["counterparties"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
 
       toast.success(t("goals_debts:debtsPage.forgive_success"));
       fetchData(); // Оновити дані сторінки
@@ -166,10 +181,10 @@ export function useDebtorDetails() {
       id,
     },
     actions: {
-
       updateCounterparty: handleUpdateCounterparty,
       forgiveDebt: handleForgiveDebt,
       deleteTransaction, // Експортуємо виправлену функцію
+      refreshData: fetchData, // 🔥 Експортуємо функцію оновлення
       openTxModal: (type: any) => {
         setTxType(type);
         setIsTxModalOpen(true);

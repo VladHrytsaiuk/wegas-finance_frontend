@@ -44,6 +44,7 @@ function DebtorDetails() {
       updateCounterparty,
       forgiveDebt,
       deleteTransaction,
+      refreshData,
       openTxModal,
       closeTxModal,
       navigateToTransaction,
@@ -303,6 +304,7 @@ function DebtorDetails() {
           key={initialAmount ? `modal-amt-${initialAmount}` : "modal-empty"} // Force update
           isOpen={isTxModalOpen}
           onClose={handleCloseTx}
+          onSuccess={() => refreshData()}
           initialData={{
             type: txType,
             counterparty_id: counterparty.id, // 🔥 ВИПРАВЛЕНО: тут був selectedCpId

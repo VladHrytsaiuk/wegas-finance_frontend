@@ -401,7 +401,9 @@ function Dashboard() {
           {isEditMode && (
             <EditButton onClick={handleResetLayout}>
               <HiXMark />
-              <ButtonLabel>{t("dashboard:dashboardPage.reset_layout")}</ButtonLabel>
+              <ButtonLabel>
+                {t("dashboard:dashboardPage.reset_layout")}
+              </ButtonLabel>
             </EditButton>
           )}
         </div>

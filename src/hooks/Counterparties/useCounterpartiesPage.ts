@@ -10,7 +10,7 @@ export const useCounterpartiesPage = () => {
   const { canManageStructure } = useUserRole();
 
   // Data
-  const { counterparties, categories, isLoadingCps, actions } =
+  const { counterparties, categories, isLoading, actions } =
     useCounterpartyData();
 
   // Local State
@@ -134,7 +134,7 @@ export const useCounterpartiesPage = () => {
   return {
     state: {
       treeRoots,
-      isLoadingCps,
+      isLoading,
       searchQuery,
       filters,
       sortValue,

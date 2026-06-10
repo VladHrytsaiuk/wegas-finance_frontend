@@ -17,7 +17,7 @@ export function useCounterpartyData() {
   const queryClient = useQueryClient();
 
   // --- QUERIES ---
-  const { data: counterparties = [], isLoading: isLoadingCps } = useQuery({
+  const { data: counterparties = [], isLoading } = useQuery({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
   });
@@ -91,7 +91,7 @@ export function useCounterpartyData() {
   return {
     counterparties,
     categories,
-    isLoadingCps,
+    isLoading,
     actions: {
       createCat,
       updateCat,
