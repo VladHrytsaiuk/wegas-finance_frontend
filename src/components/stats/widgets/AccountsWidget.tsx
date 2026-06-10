@@ -1,3 +1,4 @@
+import React from "react";
 import { HiArrowLongRight, HiCreditCard } from "react-icons/hi2";
 
 // Components
@@ -10,7 +11,7 @@ import { useAccountsWidget } from "../../../hooks/Stats/useAccountsWidget";
 import { formatMoney } from "../../../utils/helpers";
 import { SmartIcon } from "../../../utils/IconMap";
 
-export const AccountsWidget = () => {
+export const AccountsWidget = React.memo(() => {
   const {
     accounts,
     isLoading,
@@ -40,7 +41,6 @@ export const AccountsWidget = () => {
           title={t("accounts:accountsPage.status_empty")}
         />
       ) : (
-
         <S.ScrollArea>
           <S.List>
             {accounts.map((acc: any) => {
@@ -92,4 +92,4 @@ export const AccountsWidget = () => {
       )}
     </S.Card>
   );
-};
+});

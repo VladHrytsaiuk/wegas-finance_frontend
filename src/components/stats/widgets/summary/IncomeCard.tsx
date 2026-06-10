@@ -1,3 +1,4 @@
+import React from "react";
 import { HiArrowTrendingUp } from "react-icons/hi2";
 import * as S from "./Summary.styles";
 
@@ -6,7 +7,7 @@ interface IncomeCardProps {
   value: string;
 }
 
-export const IncomeCard = ({ label, value }: IncomeCardProps) => {
+export const IncomeCard = React.memo(({ label, value }: IncomeCardProps) => {
   return (
     <S.StatCard>
       <S.CardIcon $color="var(--color-green-600)">
@@ -18,4 +19,4 @@ export const IncomeCard = ({ label, value }: IncomeCardProps) => {
       </S.CardContent>
     </S.StatCard>
   );
-};
+});

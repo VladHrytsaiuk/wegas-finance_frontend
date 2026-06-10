@@ -29,8 +29,21 @@ export const useSummaryWidget = ({ globalFilter }: UseSummaryWidgetProps) => {
     return accounts.map((acc: any) => acc.id);
   }, [globalFilter.accountIds, accounts]);
 
-  // 3. Запит статистики
-  const { data: stats, isLoading: isStatsLoading } = useQuery({
+  // 3. Запит загального балансу (не залежить від дат)
+  const { data: balanceStats } = useQuery({
+    queryKey: ["stats", "balance", targetAccountIds, currency],
+    queryFn: () =>
+      statsService.getDashboard({
+        from: 0,
+        to: 0,
+        accountIds: targetAccountIds,
+        currency,
+      }),
+    enabled: targetAccountIds.length > 0,
+  });
+
+  // 4. Запит статистики за період (доходи/витрати)
+  const { data: periodStats, isLoading: isStatsLoading } = useQuery({
     queryKey: ["stats", "summary", globalFilter, targetAccountIds, currency],
     queryFn: () =>
       statsService.getDashboard({
@@ -43,9 +56,9 @@ export const useSummaryWidget = ({ globalFilter }: UseSummaryWidgetProps) => {
 
   const isLoading = isStatsLoading || isAccountsLoading;
 
-  const totalBalance = stats?.total_balance || 0;
-  const totalIncome = stats?.total_income || 0;
-  const totalExpense = stats?.total_expense || 0;
+  const totalBalance = balanceStats?.total_balance || 0;
+  const totalIncome = periodStats?.total_income || 0;
+  const totalExpense = periodStats?.total_expense || 0;
 
   return {
     totals: {

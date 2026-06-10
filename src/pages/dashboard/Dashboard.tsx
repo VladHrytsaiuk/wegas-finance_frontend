@@ -241,6 +241,148 @@ function Dashboard() {
       />
     );
 
+  const balanceWidget = useMemo(
+    () => (
+      <GridItem key="balance">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <BalanceCard
+            label={t("dashboard:dashboard.total_balance")}
+            value={formatMoney(balance, currency, language)}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, t, balance, currency, language],
+  );
+
+  const incomeWidget = useMemo(
+    () => (
+      <GridItem key="income">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <IncomeCard
+            label={t("dashboard:dashboard.income_period")}
+            value={formatMoney(income, currency, language)}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, t, income, currency, language],
+  );
+
+  const expenseWidget = useMemo(
+    () => (
+      <GridItem key="expense">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <ExpenseCard
+            label={t("dashboard:dashboard.expense_period")}
+            value={formatMoney(expense, currency, language)}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, t, expense, currency, language],
+  );
+
+  const accountsWidget = useMemo(
+    () => (
+      <GridItem key="accounts">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <AccountsWidget />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode],
+  );
+
+  const recentWidget = useMemo(
+    () => (
+      <GridItem key="recent">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <RecentTransactionsWidget
+            globalFilter={globalFilter}
+            onDiverge={handleLocalChange}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, globalFilter, handleLocalChange],
+  );
+
+  const trendWidget = useMemo(
+    () => (
+      <GridItem key="trend">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <TrendWidget
+            type="expense"
+            title={t("dashboard:dashboardPage.widget_trend_expenses")}
+            color="#ef4444"
+            globalFilter={globalFilter}
+            onDiverge={handleLocalChange}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, t, globalFilter, handleLocalChange],
+  );
+
+  const pieWidget = useMemo(
+    () => (
+      <GridItem key="pie">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <ExpensesPieWidget
+            globalFilter={globalFilter}
+            onDiverge={handleLocalChange}
+            type="expense"
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, globalFilter, handleLocalChange],
+  );
+
+  const topCategoriesWidget = useMemo(
+    () => (
+      <GridItem key="top_categories">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <TopListWidget
+            type="expense"
+            entity="category"
+            title={t("dashboard:dashboardPage.widget_top_categories")}
+            globalFilter={globalFilter}
+            onDiverge={handleLocalChange}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, t, globalFilter, handleLocalChange],
+  );
+
+  const topCounterpartiesWidget = useMemo(
+    () => (
+      <GridItem key="top_counterparties">
+        <WidgetInnerContainer $isEditMode={isEditMode}>
+          <TopListWidget
+            type="expense"
+            entity="counterparty"
+            title={t("dashboard:dashboardPage.widget_top_shops")}
+            globalFilter={globalFilter}
+            onDiverge={handleLocalChange}
+          />
+          {isEditMode && <DragOverlay className="drag-overlay" />}
+        </WidgetInnerContainer>
+      </GridItem>
+    ),
+    [isEditMode, t, globalFilter, handleLocalChange],
+  );
+
   return (
     <DashboardContainer $isEditMode={isEditMode} $isMounted={isMounted}>
       <FilterBar>
@@ -292,102 +434,15 @@ function Dashboard() {
         useCSSTransforms={true}
         measureBeforeMount={false}
       >
-        <GridItem key="balance">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <BalanceCard
-              label={t("dashboard:dashboard.total_balance")}
-              value={formatMoney(balance, currency, language)}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="income">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <IncomeCard
-              label={t("dashboard:dashboard.income_period")}
-              value={formatMoney(income, currency, language)}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="expense">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <ExpenseCard
-              label={t("dashboard:dashboard.expense_period")}
-              value={formatMoney(expense, currency, language)}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="accounts">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <AccountsWidget />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="recent">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <RecentTransactionsWidget
-              globalFilter={globalFilter}
-              onDiverge={handleLocalChange}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="trend">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <TrendWidget
-              type="expense"
-              title={t("dashboard:dashboardPage.widget_trend_expenses")}
-              color="#ef4444"
-              globalFilter={globalFilter}
-              onDiverge={handleLocalChange}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="pie">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <ExpensesPieWidget
-              globalFilter={globalFilter}
-              onDiverge={handleLocalChange}
-              type="expense"
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="top_categories">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <TopListWidget
-              type="expense"
-              entity="category"
-              title={t("dashboard:dashboardPage.widget_top_categories")}
-              globalFilter={globalFilter}
-              onDiverge={handleLocalChange}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
-
-        <GridItem key="top_counterparties">
-          <WidgetInnerContainer $isEditMode={isEditMode}>
-            <TopListWidget
-              type="expense"
-              entity="counterparty"
-              title={t("dashboard:dashboardPage.widget_top_shops")}
-              globalFilter={globalFilter}
-              onDiverge={handleLocalChange}
-            />
-            {isEditMode && <DragOverlay className="drag-overlay" />}
-          </WidgetInnerContainer>
-        </GridItem>
+        {balanceWidget}
+        {incomeWidget}
+        {expenseWidget}
+        {accountsWidget}
+        {recentWidget}
+        {trendWidget}
+        {pieWidget}
+        {topCategoriesWidget}
+        {topCounterpartiesWidget}
       </ResponsiveGridLayout>
     </DashboardContainer>
   );

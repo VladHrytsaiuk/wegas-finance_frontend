@@ -1,3 +1,4 @@
+import React from "react";
 import { HiWallet } from "react-icons/hi2";
 import * as S from "./Summary.styles";
 
@@ -6,7 +7,7 @@ interface BalanceCardProps {
   value: string;
 }
 
-export const BalanceCard = ({ label, value }: BalanceCardProps) => {
+export const BalanceCard = React.memo(({ label, value }: BalanceCardProps) => {
   return (
     <S.MainCard $variant="primary">
       <S.CardIcon>
@@ -18,4 +19,4 @@ export const BalanceCard = ({ label, value }: BalanceCardProps) => {
       </S.CardContent>
     </S.MainCard>
   );
-};
+});
