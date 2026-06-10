@@ -47,6 +47,11 @@ export function useDebtFilters(availableCurrencies: string[]) {
             // "Я винен" (з блоку Summary)
             label: t("goals_debts:debtsPage.summary_i_owe"),
           },
+          {
+            value: "settled",
+            // "Закриті"
+            label: t("goals_debts:debtsPage.section_settled", "Закриті"),
+          },
         ],
       },
       {

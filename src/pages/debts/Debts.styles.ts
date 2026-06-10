@@ -112,7 +112,7 @@ export const SectionTitle = styled.h2`
   gap: 8px;
 `;
 
-export const Badge = styled.span<{ $type: "green" | "red" }>`
+export const Badge = styled.span<{ $type: "green" | "red" | "neutral" }>`
   font-size: 0.65rem;
   padding: 2px 8px;
   border-radius: 12px;
@@ -120,11 +120,15 @@ export const Badge = styled.span<{ $type: "green" | "red" }>`
   background-color: ${(props) =>
     props.$type === "green"
       ? "var(--color-green-100)"
-      : "var(--color-red-100)"};
+      : props.$type === "red"
+        ? "var(--color-red-100)"
+        : "var(--color-grey-100)"};
   color: ${(props) =>
     props.$type === "green"
       ? "var(--color-green-700)"
-      : "var(--color-red-700)"};
+      : props.$type === "red"
+        ? "var(--color-red-700)"
+        : "var(--color-grey-700)"};
 `;
 
 export const Grid = styled.div`

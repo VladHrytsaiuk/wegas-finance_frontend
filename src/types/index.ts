@@ -123,6 +123,8 @@ export interface Counterparty extends BaseEntity {
   logo?: string;
   icon: string;
 
+  hasDebtHistory?: boolean;
+
   balances: CounterpartyBalance[];
 }
 export interface Tag extends BaseEntity {

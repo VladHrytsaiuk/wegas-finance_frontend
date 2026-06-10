@@ -82,12 +82,13 @@ export const useDebtsPage = () => {
   }, [setPageTitle, resetPageTitle, t]);
 
   // 4. Main Filtering & Sorting Logic
-  const { positive, negative, totalsOwedToMe, totalsIOwe, netBalances } =
+  const { debtors, creditors, settled, totalsOwedToMe, totalsIOwe, netBalances } =
     useMemo(() => {
       if (!counterparties)
         return {
-          positive: [],
-          negative: [],
+          debtors: [],
+          creditors: [],
+          settled: [],
           totalsOwedToMe: {},
           totalsIOwe: {},
           netBalances: {},
@@ -100,43 +101,59 @@ export const useDebtsPage = () => {
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
 
-        // Has Debt?
-        const hasDebt =
+        // Has Active Debt?
+        const hasActiveDebt =
           cp.balances && cp.balances.some((b) => Math.abs(b.balance) > 0.01);
+        
+        // Has History?
+        const hasHistory = !!cp.hasDebtHistory;
 
         // Currency Filter
         let matchesCurrency = true;
         if (filterValues.currency && filterValues.currency.length > 0) {
+          // Keep if has ANY balance entry in this currency (even if 0)
           matchesCurrency = cp.balances.some(
-            (b) =>
-              filterValues.currency.includes(b.currency) &&
-              Math.abs(b.balance) > 0.01
+            (b) => filterValues.currency.includes(b.currency)
           );
         }
 
-        return matchesSearch && hasDebt && matchesCurrency;
+        return matchesSearch && (hasActiveDebt || hasHistory) && matchesCurrency;
       });
 
-      const pos: Counterparty[] = [];
-      const neg: Counterparty[] = [];
+      const listDebtors: Counterparty[] = [];
+      const listCreditors: Counterparty[] = [];
+      const listSettled: Counterparty[] = [];
+
       const sumPos: DebtTotals = {};
       const sumNeg: DebtTotals = {};
       const netSum: DebtTotals = {};
 
       filtered.forEach((cp) => {
-        const hasPos = cp.balances.some((b) => b.balance > 0.01); // Threshold fix
-        const hasNeg = cp.balances.some((b) => b.balance < -0.01);
+        const hasActivePos = cp.balances.some((b) => b.balance > 0.01);
+        const hasActiveNeg = cp.balances.some((b) => b.balance < -0.01);
+        const isSettled = !hasActivePos && !hasActiveNeg;
 
-        // Type Filter (Debtor vs Creditor)
+        // Type Filter (Debtor vs Creditor vs Settled)
         const showDebtors =
           filterValues.type.length === 0 ||
           filterValues.type.includes("debtor");
         const showCreditors =
           filterValues.type.length === 0 ||
           filterValues.type.includes("creditor");
+        const showSettled =
+          filterValues.type.length === 0 ||
+          filterValues.type.includes("settled");
 
-        if (hasPos && showDebtors) pos.push(cp);
-        if (hasNeg && showCreditors) neg.push(cp);
+        // Distribution logic
+        if (hasActivePos && showDebtors) {
+          listDebtors.push(cp);
+        }
+        if (hasActiveNeg && showCreditors) {
+          listCreditors.push(cp);
+        }
+        if (isSettled && !!cp.hasDebtHistory && showSettled) {
+          listSettled.push(cp);
+        }
 
         // Calculate Totals
         cp.balances.forEach((b) => {
@@ -147,30 +164,34 @@ export const useDebtsPage = () => {
           )
             return;
 
-          if (b.balance > 0) {
+          if (b.balance > 0 && showDebtors) {
             sumPos[b.currency] = (sumPos[b.currency] || 0) + b.balance;
-          } else if (b.balance < 0) {
+          } else if (b.balance < 0 && showCreditors) {
             sumNeg[b.currency] =
               (sumNeg[b.currency] || 0) + Math.abs(b.balance);
           }
-          netSum[b.currency] = (netSum[b.currency] || 0) + b.balance;
+          
+          if ((b.balance > 0 && showDebtors) || (b.balance < 0 && showCreditors)) {
+            netSum[b.currency] = (netSum[b.currency] || 0) + b.balance;
+          }
         });
       });
 
-      // Sort
+      // Sorting
       const sortFn = (a: Counterparty, b: Counterparty) => {
         if (sortValue === "name-asc") return a.name.localeCompare(b.name);
         if (sortValue === "name-desc") return b.name.localeCompare(a.name);
-        // Add amount sorting logic here if needed later
         return 0;
       };
 
-      pos.sort(sortFn);
-      neg.sort(sortFn);
+      listDebtors.sort(sortFn);
+      listCreditors.sort(sortFn);
+      listSettled.sort(sortFn);
 
       return {
-        positive: pos,
-        negative: neg,
+        debtors: listDebtors,
+        creditors: listCreditors,
+        settled: listSettled,
         totalsOwedToMe: sumPos,
         totalsIOwe: sumNeg,
         netBalances: netSum,
@@ -182,9 +203,8 @@ export const useDebtsPage = () => {
     setSelectedCP(cp);
 
     // Визначаємо контекст: чи це боржник (позитивний баланс) чи кредитор (негативний)
-    // Це важливо, бо кнопка "give" (дати/взяти ще) має різний сенс
-    const isDebtor = cp.balances.some((b) => b.balance > 0);
-    const isCreditor = cp.balances.some((b) => b.balance < 0);
+    const isDebtor = (cp.balances || []).some((b) => b.balance > 0);
+    const isCreditor = (cp.balances || []).some((b) => b.balance < 0);
 
     // Пріоритет: якщо він в списку positive (боржники), то ми працюємо з позикою (loan)
     // Якщо він тільки в negative (кредитори), то з боргом (debt)
@@ -226,8 +246,9 @@ export const useDebtsPage = () => {
       isLoading,
       searchQuery,
       filterValues,
-      positive,
-      negative,
+      debtors,
+      creditors,
+      settled,
       totalsOwedToMe,
       totalsIOwe,
       netBalances,
