@@ -1,4 +1,15 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const tooltipFadeIn = keyframes`
+  from { 
+    opacity: 0; 
+    transform: scale(0.98) translateY(2px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+`;
 
 export const WidgetCard = styled.div`
   background: var(--color-bg-surface);
@@ -139,10 +150,14 @@ export const TooltipContainer = styled.div`
   border: 1px solid var(--color-border);
   padding: 8px 12px;
   border-radius: 12px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
   gap: 10px;
+  pointer-events: none;
+  
+  /* Плавна поява самого контенту */
+  animation: ${tooltipFadeIn} 0.2s ease-out;
   
   .info {
     display: flex;
@@ -194,4 +209,3 @@ export const TooltipIconBox = styled.div<{ $color: string; $hasLogo?: boolean }>
     padding: 0;
   }
 `;
-

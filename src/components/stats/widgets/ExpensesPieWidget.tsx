@@ -151,6 +151,9 @@ export const ExpensesPieWidget = (props: Props) => {
                     activeShape={renderActiveShape}
                     onMouseEnter={onPieEnter}
                     onMouseLeave={onPieLeave}
+                    isAnimationActive={true}
+                    animationBegin={0}
+                    animationDuration={400}
                   >
                     {chartData.map((entry, index) => (
                       <Cell
@@ -167,8 +170,13 @@ export const ExpensesPieWidget = (props: Props) => {
                         language={language}
                       />
                     }
-                    wrapperStyle={{ zIndex: 1000 }}
+                    wrapperStyle={{
+                      zIndex: 1000,
+                      transition: "opacity 0.2s ease-out",
+                      outline: "none",
+                    }}
                     cursor={{ fill: "transparent" }}
+                    isAnimationActive={false} // Transition is handled by CSS for better control
                   />
                 </PieChart>
               </ResponsiveContainer>
