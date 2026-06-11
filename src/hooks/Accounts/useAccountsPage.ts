@@ -43,6 +43,7 @@ export const useAccountsPage = () => {
 
   return {
     // Data & Status
+    accounts,
     isLoading,
     isError,
     users,

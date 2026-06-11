@@ -22,6 +22,7 @@ import * as S from "./Accounts.styles";
 function Accounts() {
   const {
     // Data & Status
+    accounts,
     isLoading,
     isError,
     users,
@@ -44,6 +45,7 @@ function Accounts() {
     // UI Helpers
     t,
     navigate,
+    location,
     canManageStructure,
 
     // Delete Logic
@@ -64,6 +66,8 @@ function Accounts() {
     );
   if (isError)
     return <S.ErrorState>{t("accounts:accountsPage.status_error")}</S.ErrorState>;
+
+  const hasNoAccountsAtAll = accounts.length === 0;
 
   return (
     <S.PageContainer>
@@ -108,10 +112,18 @@ function Accounts() {
         {filteredAccounts.length === 0 ? (
           <EmptyState
             icon={<HiCreditCard />}
-            title={t("accounts:accountsPage.empty_title")}
-            description={t("accounts:accountsPage.empty_description", "Створіть свій перший рахунок, щоб почати відстежувати фінанси")}
+            title={
+              hasNoAccountsAtAll
+                ? t("accounts:accountsPage.status_empty")
+                : t("common:common.no_results", "Нічого не знайдено")
+            }
+            description={
+              hasNoAccountsAtAll
+                ? t("accounts:accountsPage.status_empty_desc")
+                : t("common:common.try_adjusting_search", "Спробуйте змінити параметри пошуку або фільтри")
+            }
             action={
-              canManageStructure ? (
+              hasNoAccountsAtAll && canManageStructure ? (
                 <Button
                   as={Link}
                   to="new"
@@ -119,6 +131,10 @@ function Accounts() {
                   variation="primary"
                 >
                   {t("accounts:accountsPage.button_add")}
+                </Button>
+              ) : !hasNoAccountsAtAll ? (
+                <Button variation="secondary" onClick={handleClearAll}>
+                  {t("common:common.clear_filters", "Очистити фільтри")}
                 </Button>
               ) : undefined
             }
