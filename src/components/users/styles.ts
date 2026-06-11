@@ -12,6 +12,7 @@ export const Card = styled.div<{ $roleColor: string }>`
   position: relative;
   overflow: hidden;
   transition: transform 0.2s, border-color 0.2s;
+  height: 100%;
 
   @media (max-width: 1300px) {
     padding: 1rem;
