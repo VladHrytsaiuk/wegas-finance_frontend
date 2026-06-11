@@ -65,17 +65,17 @@ export function useTeamSettings() {
     }
   };
 
-  const joinFamily = async () => {
-    if (joinCodeInput.length !== 6) {
+  const joinFamily = async (code: string) => {
+    const finalCode = code.trim();
+    if (finalCode.length !== 6) {
       toast.error(t("settings:usersPage.error_invalid_code_format", "Код має містити 6 цифр"));
       return;
     }
 
     try {
       setIsJoining(true);
-      await api.post("/families/join", { code: joinCodeInput });
+      await api.post("/families/join", { code: finalCode });
       toast.success(t("settings:usersPage.alert_join_success", "Ви успішно приєдналися до сім'ї!"));
-      setJoinCodeInput("");
       
       // Refresh user data and team list
       queryClient.invalidateQueries({ queryKey: ["me"] });

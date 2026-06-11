@@ -27,8 +27,12 @@ export const JoinFamilySection: React.FC<JoinFamilySectionProps> = ({
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (otpString.length === 6) {
-      onJoin(otpString);
+    
+    // Strictly combine and trim
+    const finalCode = otp.join("").trim();
+    
+    if (finalCode.length === 6) {
+      onJoin(finalCode);
     }
   };
 
@@ -70,7 +74,7 @@ export const JoinFamilySection: React.FC<JoinFamilySectionProps> = ({
             type="submit"
             isLoading={isJoining}
             icon={<HiOutlineUserPlus />}
-            disabled={otpString.length !== 6 || isJoining}
+            disabled={otp.join("").trim().length !== 6 || isJoining}
             size="large"
             style={{ width: "100%" }}
           >
