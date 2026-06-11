@@ -27,7 +27,7 @@ export const useUsers = () => {
   const users = Array.isArray(usersData) ? usersData : [];
 
   // --- Mutations ---
-  const { mutate: addUser, isPending: isAdding } = useMutation({
+  const { mutateAsync: addUser, isPending: isAdding } = useMutation({
     mutationFn: addUserApi,
     onSuccess: () => {
       toast.success(t("settings:usersPage.alert_add_success", "Користувача додано"));
@@ -40,7 +40,7 @@ export const useUsers = () => {
       ),
   });
 
-  const { mutate: updateUser, isPending: isUpdating } = useMutation({
+  const { mutateAsync: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateUserApi,
     onSuccess: () => {
       toast.success(t("settings:usersPage.alert_update_success", "Дані оновлено"));
@@ -50,7 +50,7 @@ export const useUsers = () => {
       toast.error(t("settings:usersPage.alert_update_error", "Помилка оновлення")),
   });
 
-  const { mutate: removeUser, isPending: isDeleting } = useMutation({
+  const { mutateAsync: removeUser, isPending: isDeleting } = useMutation({
     mutationFn: deleteUserApi,
     onSuccess: () => {
       toast.success(
@@ -63,12 +63,31 @@ export const useUsers = () => {
   });
 
   // Обгортки для хендлерів
-  const handleUpdate = (id: string, data: any) => {
-    updateUser({ id, ...data });
+  const handleUpdate = async (id: string, data: any) => {
+    try {
+      await updateUser({ id, ...data });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
-  const handleDelete = (id: string) => {
-    removeUser(id);
+  const handleDelete = async (id: string) => {
+    try {
+      await removeUser(id);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleAddUser = async (data: any) => {
+    try {
+      await addUser(data);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   return {
@@ -86,7 +105,7 @@ export const useUsers = () => {
       canManageTeam,
     },
     actions: {
-      addUser,
+      addUser: handleAddUser,
       handleUpdate,
       handleDelete,
     },

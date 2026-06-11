@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+
 import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { SyncWidget } from "./Feedback/SyncWidget";
 import { useAccountsData } from "../../hooks/Accounts/useAccountsData";
+import { useUserRole } from "../../hooks/useUserRole";
+import { useWebSocketAuth } from "../../hooks/useWebSocketAuth";
 import CenteredSpinner from "./CenteredSpinner";
 
 // --- Стилі для Desktop версії ---
@@ -81,8 +86,44 @@ const MobileText = styled.p`
 `;
 
 function AppLayout() {
-  const { t } = useTranslation(["common", "accounts"]);
+  const { t } = useTranslation(["common", "accounts", "settings"]);
   const { isLoading: isAccLoading } = useAccountsData();
+  const { user } = useUserRole();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // 1. WebSocket logic for global events (like being removed from family)
+  const onWebSocketMessage = useCallback((data: any) => {
+    if (data.type === "member_removed") {
+      if (data.user_id === user?.id) {
+        // This user was removed/kicked
+        toast.error(t("settings:usersPage.alert_kicked", "Вас було видалено з сім'ї"), { 
+          duration: 6000,
+          id: "kicked-notice" 
+        });
+
+        // 1. Invalidate all cached data
+        queryClient.invalidateQueries();
+        
+        // 2. Clear specific finance data to prevent seeing old family data
+        queryClient.removeQueries({ queryKey: ["accounts"] });
+        queryClient.removeQueries({ queryKey: ["transactions"] });
+        queryClient.removeQueries({ queryKey: ["dashboard"] });
+        
+        // 3. Force re-fetch of current user to get new FamilyID
+        queryClient.refetchQueries({ queryKey: ["me"] });
+
+        // 4. Redirect to dashboard and reload to ensure clean state
+        navigate("/dashboard");
+        setTimeout(() => window.location.reload(), 500);
+      } else {
+        // Someone else was removed, just refresh the team list
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+      }
+    }
+  }, [user?.id, queryClient, navigate, t]);
+
+  useWebSocketAuth(onWebSocketMessage);
 
   // 1. Стейт для перевірки мобільного пристрою
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);

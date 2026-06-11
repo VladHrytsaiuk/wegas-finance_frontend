@@ -1,5 +1,5 @@
-import React from "react";
-import { HiOutlineQrCode, HiOutlineClock } from "react-icons/hi2";
+import React, { useState } from "react";
+import { HiOutlineQrCode, HiOutlineClock, HiOutlineShieldCheck, HiOutlineUser, HiOutlineFaceSmile } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import * as S from "./TeamSettings.styles";
 
@@ -8,7 +8,7 @@ interface GenerateInviteCodeSectionProps {
   timeLeft: number;
   formattedTime: string;
   isGenerating: boolean;
-  onGenerate: () => void;
+  onGenerate: (roleID: string) => void;
   t: any;
 }
 
@@ -20,6 +20,14 @@ export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps>
   onGenerate,
   t,
 }) => {
+  const [selectedRole, setSelectedRole] = useState("member");
+
+  const roles = [
+    { id: "admin", label: t("settings:userRoles.admin_label"), icon: <HiOutlineShieldCheck /> },
+    { id: "member", label: t("settings:userRoles.member_label"), icon: <HiOutlineUser /> },
+    { id: "child", label: t("settings:userRoles.child_label"), icon: <HiOutlineFaceSmile /> },
+  ];
+
   return (
     <S.Section>
       <S.SectionHeader>
@@ -30,9 +38,41 @@ export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps>
       </S.SectionHeader>
 
       {!inviteCode ? (
-        <S.ActionRow style={{ marginTop: "1rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginTop: "1rem" }}>
+          {/* Role Selector */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+            <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--color-text-main)" }}>
+              {t("settings:userForm.label_role", "Роль для нового учасника")}
+            </span>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+              {roles.map((role) => (
+                <button
+                  key={role.id}
+                  onClick={() => setSelectedRole(role.id)}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.8rem",
+                    borderRadius: "12px",
+                    border: "2px solid",
+                    borderColor: selectedRole === role.id ? "var(--color-brand-500)" : "var(--color-border)",
+                    background: selectedRole === role.id ? "var(--color-brand-50)" : "transparent",
+                    color: selectedRole === role.id ? "var(--color-brand-700)" : "var(--color-text-secondary)",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  <span style={{ fontSize: "1.2rem" }}>{role.icon}</span>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 600 }}>{role.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Button
-            onClick={onGenerate}
+            onClick={() => onGenerate(selectedRole)}
             isLoading={isGenerating}
             icon={<HiOutlineQrCode />}
             variation="primary"
@@ -41,7 +81,7 @@ export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps>
           >
             {t("settings:usersPage.btn_generate_code", "Згенерувати код")}
           </Button>
-        </S.ActionRow>
+        </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <S.CodeDisplay style={{ opacity: timeLeft === 0 ? 0.6 : 1 }}>
@@ -55,7 +95,7 @@ export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps>
           </S.CodeDisplay>
           
           <Button
-            onClick={onGenerate}
+            onClick={() => onGenerate(selectedRole)}
             isLoading={isGenerating}
             variation="secondary"
             size="medium"

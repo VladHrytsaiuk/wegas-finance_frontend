@@ -42,14 +42,16 @@ const LocalModal: React.FC<{
 };
 
 function TeamSettings() {
-  const { state: usersState, actions: usersActions, t } = useUsers();
-  const { state: teamState, actions: teamActions } = useTeamSettings();
-
   // Explicit boolean states for addition-related modals
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [isManualAddOpen, setIsManualAddOpen] = useState(false);
+
+  const { state: usersState, actions: usersActions, t } = useUsers();
+  const { state: teamState, actions: teamActions } = useTeamSettings({
+    onMemberJoined: () => setIsInviteOpen(false),
+  });
 
   const { users, isLoading, isAdding, isUpdating, isDeleting, canManageTeam } = usersState;
 
@@ -147,7 +149,7 @@ function TeamSettings() {
               timeLeft={teamState.timeLeft}
               formattedTime={teamState.formattedTime}
               isGenerating={teamState.isGenerating}
-              onGenerate={teamActions.generateInviteCode}
+              onGenerate={(roleID) => teamActions.generateInviteCode(roleID)}
               t={t}
             />
           </S.ModalContent>
@@ -158,9 +160,9 @@ function TeamSettings() {
           <S.ModalContent style={{ width: "500px" }}>
             <JoinFamilySection
               isJoining={teamState.isJoining}
-              onJoin={(code) => {
-                teamActions.joinFamily(code);
-                // Optionally close on success, but JoinFamilySection usually stays open until it handles error/success
+              onJoin={async (code) => {
+                const success = await teamActions.joinFamily(code);
+                if (success) setIsJoinOpen(false);
               }}
               t={t}
             />
@@ -173,8 +175,8 @@ function TeamSettings() {
             <S.ModalTitle>{t("settings:usersPage.modal_add_title")}</S.ModalTitle>
             <UserForm 
               onSubmit={async (data) => {
-                await usersActions.addUser(data);
-                setIsManualAddOpen(false);
+                const success = await usersActions.addUser(data);
+                if (success !== false) setIsManualAddOpen(false);
               }} 
               onCloseModal={() => setIsManualAddOpen(false)}
               isLoading={isAdding} 

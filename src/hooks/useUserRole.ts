@@ -11,6 +11,7 @@ export function useUserRole() {
   const role = user?.role_id || "child"; // За замовчуванням найменші права
 
   return {
+    user,
     role,
     isLoading,
     isCEO: role === "admin",

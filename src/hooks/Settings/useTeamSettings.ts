@@ -7,10 +7,10 @@ import { useUserRole } from "../useUserRole";
 import { useWebSocketAuth } from "../useWebSocketAuth";
 import { getMeApi } from "../../services/apiUsers";
 
-export function useTeamSettings() {
+export function useTeamSettings(options?: { onMemberJoined?: () => void }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { canManageTeam } = useUserRole();
+  const { canManageTeam, user } = useUserRole();
 
   const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [joinCodeInput, setJoinCodeInput] = useState("");
@@ -26,8 +26,13 @@ export function useTeamSettings() {
       // Clear invite code if someone joined
       setInviteCode(null);
       setTimeLeft(0);
+
+      // Auto-close modal if callback provided
+      if (options?.onMemberJoined) {
+        options.onMemberJoined();
+      }
     }
-  }, [t, queryClient]);
+  }, [t, queryClient, options]);
 
   useWebSocketAuth(onWebSocketMessage);
 
@@ -42,24 +47,25 @@ export function useTeamSettings() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  const generateInviteCode = async () => {
+  const generateInviteCode = async (roleID: string) => {
     try {
       setIsGenerating(true);
-      // We need family_id. We can get it from 'me' query or call getMeApi directly if not available.
-      const user = await getMeApi();
-      const familyId = user.family_id;
+      const me = await getMeApi();
+      const familyId = me.family_id;
 
       if (!familyId) {
         toast.error(t("settings:usersPage.error_no_family", "Сім'я не знайдена"));
-        return;
+        return false;
       }
 
-      const response = await api.post(`/families/${familyId}/generate-code`);
+      const response = await api.post(`/families/${familyId}/generate-code`, { role_id: roleID });
       setInviteCode(response.data.code);
       setTimeLeft(120); // 2 minutes
       toast.success(t("settings:usersPage.alert_code_generated", "Код згенеровано"));
+      return true;
     } catch (error: any) {
       toast.error(error.response?.data?.error || t("settings:usersPage.error_generating_code", "Помилка генерації коду"));
+      return false;
     } finally {
       setIsGenerating(false);
     }
@@ -69,7 +75,7 @@ export function useTeamSettings() {
     const finalCode = code.trim();
     if (finalCode.length !== 6) {
       toast.error(t("settings:usersPage.error_invalid_code_format", "Код має містити 6 цифр"));
-      return;
+      return false;
     }
 
     try {
@@ -80,8 +86,10 @@ export function useTeamSettings() {
       // Refresh user data and team list
       queryClient.invalidateQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      return true;
     } catch (error: any) {
       toast.error(error.response?.data?.error || t("settings:usersPage.error_joining_family", "Помилка приєднання"));
+      return false;
     } finally {
       setIsJoining(false);
     }

@@ -77,6 +77,7 @@
     "invite_description": "Generate a temporary code so another user can join your family.",
     "btn_generate_code": "Generate Code",
     "btn_regenerate": "Refresh",
+    "alert_kicked": "You have been removed from the family",
     "alert_code_generated": "Code generated",
     "error_no_family": "Family not found",
     "error_generating_code": "Code generation error",

@@ -77,6 +77,7 @@
     "invite_description": "Згенеруйте тимчасовий код, щоб інший користувач міг приєднатися до вашої сім'ї.",
     "btn_generate_code": "Згенерувати код",
     "btn_regenerate": "Оновити",
+    "alert_kicked": "Вас було видалено з сім'ї",
     "alert_code_generated": "Код згенеровано",
     "error_no_family": "Сім'я не знайдена",
     "error_generating_code": "Помилка генерації коду",
