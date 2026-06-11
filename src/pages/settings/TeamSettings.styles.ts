@@ -193,8 +193,8 @@ export const UserGrid = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  width: 500px;
-  max-width: 90vw;
+  width: 900px;
+  max-width: 95vw;
 `;
 
 export const ModalTitle = styled.h3`

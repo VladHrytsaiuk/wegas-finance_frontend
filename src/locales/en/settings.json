@@ -63,7 +63,7 @@
   },
   "usersPage": {
     "title": "Family Team",
-    "button_add_user": "Add Manually",
+    "btn_add_user": "Add Member",
     "modal_add_title": "New Member",
     "modal_edit_title": "Edit Member",
     "alert_add_success": "Member added successfully!",

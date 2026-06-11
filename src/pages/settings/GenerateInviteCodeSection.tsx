@@ -44,11 +44,13 @@ export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps>
         </S.ActionRow>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <S.CodeDisplay>
-            <S.CodeText>{inviteCode}</S.CodeText>
-            <S.TimerText $isUrgent={timeLeft < 30}>
+          <S.CodeDisplay style={{ opacity: timeLeft === 0 ? 0.6 : 1 }}>
+            <S.CodeText style={{ textDecoration: timeLeft === 0 ? "line-through" : "none" }}>
+              {inviteCode}
+            </S.CodeText>
+            <S.TimerText $isUrgent={timeLeft < 30 && timeLeft > 0}>
               <HiOutlineClock size={18} />
-              {formattedTime}
+              {timeLeft > 0 ? formattedTime : t("common:sync_widget.status_done_short", "Вийшов час")}
             </S.TimerText>
           </S.CodeDisplay>
           
@@ -58,6 +60,8 @@ export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps>
             variation="secondary"
             size="medium"
             style={{ alignSelf: "center" }}
+            disabled={timeLeft > 0}
+            title={timeLeft > 0 ? `Оновити можна через ${formattedTime}` : ""}
           >
             {t("settings:usersPage.btn_regenerate", "Згенерувати новий")}
           </Button>

@@ -143,7 +143,8 @@
   "validation": {
     "invalid_amount": "Invalid amount",
     "required": "Required field",
-    "same_account": "Accounts must be different"
+    "same_account": "Accounts must be different",
+    "invalid_email": "Invalid email format"
   },
   "feedback": {
     "success_title": "Sent!",

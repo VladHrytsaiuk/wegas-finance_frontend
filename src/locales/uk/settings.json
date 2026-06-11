@@ -63,7 +63,7 @@
   },
   "usersPage": {
     "title": "Команда Сім'ї",
-    "button_add_user": "Додати вручну",
+    "btn_add_user": "Додати учасника",
     "modal_add_title": "Новий учасник",
     "modal_edit_title": "Редагувати учасника",
     "alert_add_success": "Учасника додано!",

@@ -10,28 +10,74 @@ interface BaseFormProps {
   onSubmit: (data: any) => void;
   isLoading: boolean;
   initialData?: any;
+  onCloseModal?: () => void; // Provided by Modal.Window cloneElement
 }
+
+type ErrorType = "required" | "invalid_email" | null;
 
 export function UserForm({
   onSubmit,
   isLoading,
   initialData = {},
+  onCloseModal,
 }: BaseFormProps) {
-  const { t } = useTranslation();
+  // Loading namespaces explicitly
+  const { t } = useTranslation(["common", "settings"]);
   const { close } = useModal();
   const [name, setName] = useState(initialData.name || "");
   const [email, setEmail] = useState(initialData.email || "");
   const [password, setPassword] = useState("");
   const [roleId, setRoleId] = useState(initialData.role_id || "member");
+  const [errors, setErrors] = useState<{ [key: string]: ErrorType }>({
+    name: null,
+    email: null,
+    password: null,
+  });
 
   const isEditSession = Boolean(initialData.id);
 
+  // Use the local onCloseModal if provided by Modal.Window, otherwise use context close
+  const closeSelf = onCloseModal || close;
+
+  const validate = () => {
+    const newErrors: { [key: string]: ErrorType } = {
+      name: null,
+      email: null,
+      password: null,
+    };
+
+    if (!name.trim()) newErrors.name = "required";
+
+    const emailTrimmed = email.trim();
+    if (!emailTrimmed) {
+      newErrors.email = "required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailTrimmed)) {
+        newErrors.email = "invalid_email";
+      }
+    }
+
+    if (!isEditSession && !password) {
+      newErrors.password = "required";
+    }
+    
+    setErrors(newErrors);
+    return !newErrors.name && !newErrors.email && !newErrors.password;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || (!isEditSession && !password)) return;
+    if (!validate()) return;
 
-    onSubmit({ name, email, password, role_id: roleId });
-    close();
+    onSubmit({ name, email: email.trim(), password, role_id: roleId });
+    closeSelf();
+  };
+
+  const handleCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeSelf();
   };
 
   // Динамічний переклад ролей на основі їх ID
@@ -46,23 +92,48 @@ export function UserForm({
       {/* Column 1: Basic Info */}
       <S.Column>
         <S.FieldGroup>
-          <S.Label>{t("settings:userForm.label_name")}</S.Label>
+          <S.Label>
+            {t("settings:userForm.label_name")}
+            {errors.name === "required" && (
+              <span style={{ color: "var(--color-red-600)", fontSize: "0.7rem", marginLeft: "0.5rem" }}>
+                — {t("common:validation.required")}
+              </span>
+            )}
+          </S.Label>
           <Input
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors(prev => ({ ...prev, name: null }));
+            }}
             placeholder={t("settings:userForm.placeholder_name")}
-            required
+            $hasError={!!errors.name}
           />
         </S.FieldGroup>
 
         <S.FieldGroup>
-          <S.Label>{t("settings:userForm.label_email")}</S.Label>
+          <S.Label>
+            {t("settings:userForm.label_email")}
+            {errors.email === "required" && (
+              <span style={{ color: "var(--color-red-600)", fontSize: "0.7rem", marginLeft: "0.5rem" }}>
+                — {t("common:validation.required")}
+              </span>
+            )}
+            {errors.email === "invalid_email" && (
+              <span style={{ color: "var(--color-red-600)", fontSize: "0.7rem", marginLeft: "0.5rem" }}>
+                — {t("common:validation.invalid_email")}
+              </span>
+            )}
+          </S.Label>
           <Input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors(prev => ({ ...prev, email: null }));
+            }}
             placeholder="user@example.com"
-            required
+            $hasError={!!errors.email}
           />
         </S.FieldGroup>
 
@@ -71,13 +142,21 @@ export function UserForm({
             {isEditSession
               ? t("settings:userForm.label_new_password")
               : t("settings:userForm.label_password")}
+            {!isEditSession && errors.password === "required" && (
+              <span style={{ color: "var(--color-red-600)", fontSize: "0.7rem", marginLeft: "0.5rem" }}>
+                — {t("common:validation.required")}
+              </span>
+            )}
           </S.Label>
           <Input
             type="text"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) setErrors(prev => ({ ...prev, password: null }));
+            }}
             placeholder={t("settings:userForm.placeholder_password_default")}
-            required={!isEditSession}
+            $hasError={!!errors.password}
           />
         </S.FieldGroup>
       </S.Column>
@@ -124,12 +203,16 @@ export function UserForm({
         <Button
           type="button"
           variation="secondary"
-          onClick={close}
+          onClick={handleCancel}
           style={{ width: "auto" }}
         >
           {t("settings:userForm.button_cancel")}
         </Button>
-        <Button style={{ width: "auto" }} disabled={isLoading} type="submit">
+        <Button 
+          style={{ width: "auto" }} 
+          disabled={isLoading} 
+          type="submit"
+        >
           {isEditSession ? t("settings:userForm.button_save") : t("settings:userForm.button_add")}
         </Button>
       </S.ButtonRow>

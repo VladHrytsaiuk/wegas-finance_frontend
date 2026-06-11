@@ -162,12 +162,12 @@ export const RoleLabel = styled.label<{ $isActive: boolean; $color: string }>`
 export const FormLayout = styled.form`
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 2rem;
-  align-items: stretch;
+  gap: 3.5rem; /* Increased gap for better separation */
+  align-items: flex-start;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     grid-template-columns: 1fr;
-    gap: 1.2rem;
+    gap: 1.5rem;
   }
 `;
 

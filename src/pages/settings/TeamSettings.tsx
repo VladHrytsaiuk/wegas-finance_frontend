@@ -96,7 +96,7 @@ function TeamSettings() {
 
                 {/* Edit & Delete modals still use the string-based Modal system from parent/Layout */}
                 <Modal.Window name={`edit-user-${user.id}`}>
-                  <S.ModalContent>
+                  <S.ModalContent style={{ width: "900px" }}>
                     <S.ModalTitle>{t("settings:usersPage.modal_edit_title")}</S.ModalTitle>
                     <UserForm
                       initialData={user}
@@ -119,7 +119,7 @@ function TeamSettings() {
             {canManageTeam && (
               <S.AddMemberCard onClick={() => setIsChoiceOpen(true)}>
                 <HiOutlineUserPlus />
-                <span>{t("settings:usersPage.btn_add_user", "Додати учасника")}</span>
+                <span>{t("settings:usersPage.btn_add_user")}</span>
               </S.AddMemberCard>
             )}
           </S.UserGrid>
@@ -141,7 +141,7 @@ function TeamSettings() {
 
         {/* Generate Code Modal */}
         <LocalModal isOpen={isInviteOpen} onClose={() => setIsInviteOpen(false)}>
-          <S.ModalContent>
+          <S.ModalContent style={{ width: "500px" }}>
             <GenerateInviteCodeSection
               inviteCode={teamState.inviteCode}
               timeLeft={teamState.timeLeft}
@@ -155,7 +155,7 @@ function TeamSettings() {
 
         {/* Join Family Modal */}
         <LocalModal isOpen={isJoinOpen} onClose={() => setIsJoinOpen(false)}>
-          <S.ModalContent>
+          <S.ModalContent style={{ width: "500px" }}>
             <JoinFamilySection
               isJoining={teamState.isJoining}
               onJoin={(code) => {
@@ -169,13 +169,14 @@ function TeamSettings() {
 
         {/* Manual Add User Modal */}
         <LocalModal isOpen={isManualAddOpen} onClose={() => setIsManualAddOpen(false)}>
-          <S.ModalContent>
+          <S.ModalContent style={{ width: "900px" }}>
             <S.ModalTitle>{t("settings:usersPage.modal_add_title")}</S.ModalTitle>
             <UserForm 
               onSubmit={async (data) => {
                 await usersActions.addUser(data);
                 setIsManualAddOpen(false);
               }} 
+              onCloseModal={() => setIsManualAddOpen(false)}
               isLoading={isAdding} 
             />
           </S.ModalContent>

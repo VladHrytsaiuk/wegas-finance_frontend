@@ -42,12 +42,6 @@ export function useTeamSettings() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  useEffect(() => {
-    if (timeLeft === 0) {
-      setInviteCode(null);
-    }
-  }, [timeLeft]);
-
   const generateInviteCode = async () => {
     try {
       setIsGenerating(true);
