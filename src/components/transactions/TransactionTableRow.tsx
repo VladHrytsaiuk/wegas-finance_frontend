@@ -20,7 +20,16 @@ import { useDropdownPosition } from "../../hooks/useDropdownPosition";
 import * as S from "./TransactionsTable.styles";
 
 export const TransactionTableRow = memo(
-  ({ tx, categories, accounts, baseCurrency, language, onDelete, onClick }) => {
+  ({
+    tx,
+    categories,
+    accounts,
+    baseCurrency,
+    language,
+    onDelete,
+    onClick,
+    isDeleting,
+  }) => {
     const { t } = useTranslation();
     const location = useLocation();
 
@@ -40,6 +49,8 @@ export const TransactionTableRow = memo(
       baseCurrency,
       language,
     });
+
+    const isBankTx = !!tx.external_id;
 
     return (
       <Table.Row onClick={() => onClick(tx.id)}>
@@ -106,13 +117,19 @@ export const TransactionTableRow = memo(
             <S.ActionLink
               to={`/transactions/${tx.id}/edit`}
               state={{ background: location }}
+              $disabled={isBankTx}
+              title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
             >
               <HiPencil size={18} />
             </S.ActionLink>
 
             <Modal>
-              <Modal.Open opens="delete">
-                <S.ActionBtn $variant="delete">
+              <Modal.Open opens={isBankTx ? "" : "delete"}>
+                <S.ActionBtn
+                  $variant="delete"
+                  disabled={isBankTx}
+                  title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted", "Це банківська транзакція. Видалення заборонено") : undefined}
+                >
                   <HiTrash size={18} />
                 </S.ActionBtn>
               </Modal.Open>
@@ -121,6 +138,7 @@ export const TransactionTableRow = memo(
                 <ConfirmDelete
                   resourceName={t("transactions:transactionsTable.resource_name")}
                   onConfirm={() => onDelete(tx.id)}
+                  disabled={isDeleting}
                 />
               </Modal.Window>
             </Modal>
@@ -162,11 +180,17 @@ export const TransactionTableRow = memo(
                     <S.MenuItemLink
                       to={`/transactions/${tx.id}/edit`}
                       state={{ background: location }}
+                      $disabled={isBankTx}
+                      title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
                     >
                       <HiPencil size={16} /> {t("common:common.edit")}
                     </S.MenuItemLink>
-                    <Modal.Open opens="delete">
-                      <S.MenuItemButton $variant="delete">
+                    <Modal.Open opens={isBankTx ? "" : "delete"}>
+                      <S.MenuItemButton
+                        $variant="delete"
+                        disabled={isBankTx}
+                        title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted") : undefined}
+                      >
                         <HiTrash size={16} /> {t("common:common.delete")}
                       </S.MenuItemButton>
                     </Modal.Open>
@@ -179,6 +203,7 @@ export const TransactionTableRow = memo(
                 <ConfirmDelete
                   resourceName={t("transactions:transactionsTable.resource_name")}
                   onConfirm={() => onDelete(tx.id)}
+                  disabled={isDeleting}
                 />
               </Modal.Window>
             </Modal>

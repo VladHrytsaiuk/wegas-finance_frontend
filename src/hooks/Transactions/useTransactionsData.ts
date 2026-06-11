@@ -62,7 +62,12 @@ export function useTransactionsData(apiParams: any) {
       queryClient.invalidateQueries({ queryKey: ["stats"] });
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
-    onError: () => toast.error(t("transactions:transactionsDataHook.alert_delete_error")),
+    onError: (err: any) => {
+      const errorMessage =
+        err.response?.data?.error ||
+        t("transactions:transactionsDataHook.alert_delete_error");
+      toast.error(errorMessage);
+    },
   });
 
   return {

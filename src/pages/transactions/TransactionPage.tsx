@@ -61,6 +61,8 @@ function TransactionPage() {
     );
   }
 
+  const isBankTx = !!transaction.external_id;
+
   return (
     <Modal>
       <S.PageContainer>
@@ -72,11 +74,13 @@ function TransactionPage() {
 
           <S.ButtonGroup>
             <Button
-              as={Link}
-              to="edit"
+              as={isBankTx ? "button" : Link}
+              to={isBankTx ? undefined : "edit"}
               state={{ background: location }}
               size="small"
               variation="secondary"
+              disabled={isBankTx}
+              title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
               style={{
                 width: "auto",
                 textDecoration: "none",
@@ -88,10 +92,12 @@ function TransactionPage() {
               {t("legacy:transactionPage.edit_button")}
             </Button>
 
-            <Modal.Open opens="delete-transaction">
+            <Modal.Open opens={isBankTx ? "" : "delete-transaction"}>
               <Button
                 size="small"
                 variation="danger"
+                disabled={isBankTx}
+                title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted") : undefined}
                 style={{ width: "auto", display: "flex", alignItems: "center" }}
               >
                 <HiTrash style={{ marginRight: "6px" }} />

@@ -20,6 +20,8 @@
     "debt_person": "Debt counterparty",
     "acc_status_debt": "Debt Status",
     "bank_description": "Bank Description",
+    "bank_tx_delete_restricted": "This is a bank transaction. Deletion is restricted",
+    "bank_tx_edit_restricted": "This is a bank transaction. Editing main fields is restricted",
     "debt_take_label": "Borrowed",
     "delete_success": "Transaction deleted",
     "give_label": "Gave",

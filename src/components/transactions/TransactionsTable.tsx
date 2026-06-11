@@ -19,6 +19,7 @@ export const TransactionsTable = ({
   accounts,
   onDelete,
   onClick,
+  isDeleting,
   sortValue,
 }) => {
   const { t } = useTranslation();
@@ -80,6 +81,7 @@ export const TransactionsTable = ({
                       language={language}
                       onDelete={onDelete}
                       onClick={onClick}
+                      isDeleting={isDeleting}
                     />
                   ))}
                 </React.Fragment>
@@ -94,6 +96,7 @@ export const TransactionsTable = ({
                   language={language}
                   onDelete={onDelete}
                   onClick={onClick}
+                  isDeleting={isDeleting}
                 />
               ))}
         </Table.Body>

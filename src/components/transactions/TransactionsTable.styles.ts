@@ -253,9 +253,15 @@ export const ActionBtn = styled.button<{ $variant?: "edit" | "delete" }>`
             color: var(--color-red-700);
           `}
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+    /* pointer-events: none; */ /* Прибираємо, щоб працював title/tooltip якщо треба */
+  }
 `;
 
-export const ActionLink = styled(Link)`
+export const ActionLink = styled(Link)<{ $disabled?: boolean }>`
   background: transparent;
   border: none;
   padding: 8px;
@@ -271,6 +277,14 @@ export const ActionLink = styled(Link)`
     background: var(--color-brand-100);
     color: var(--color-brand-600);
   }
+
+  ${(p) =>
+    p.$disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.3;
+      pointer-events: none;
+    `}
 `;
 
 export const MenuToggle = styled.button`
@@ -317,9 +331,14 @@ export const MenuItemButton = styled.button<{ $variant?: "delete" }>`
         ? "var(--color-red-50)"
         : "var(--color-brand-50)"};
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
 `;
 
-export const MenuItemLink = styled(Link)`
+export const MenuItemLink = styled(Link)<{ $disabled?: boolean }>`
   width: 100%;
   text-align: left;
   padding: 10px 12px;
@@ -333,4 +352,12 @@ export const MenuItemLink = styled(Link)`
     background: var(--color-brand-50);
     color: var(--color-brand-600);
   }
+
+  ${(p) =>
+    p.$disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.3;
+      pointer-events: none;
+    `}
 `;

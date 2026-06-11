@@ -20,6 +20,8 @@
     "debt_person": "Контрагент по боргу",
     "acc_status_debt": "Статус боргу",
     "bank_description": "Банківський опис",
+    "bank_tx_delete_restricted": "Це банківська транзакція. Видалення заборонено",
+    "bank_tx_edit_restricted": "Це банківська транзакція. Редагування основних полів заборонено",
     "debt_take_label": "Взято в борг",
     "delete_success": "Транзакцію видалено",
     "give_label": "Дано в борг",
