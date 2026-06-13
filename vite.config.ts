@@ -1,9 +1,48 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: true // Дозволяє тестувати PWA на localhost під час розробки
+      },
+      includeAssets: ["favicon.svg", "Logo.svg", "Logo_full.svg"],
+      manifest: {
+        name: "FERP Finance System",
+        short_name: "FERP",
+        description: "Financial Enterprise Resource Planning System",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        orientation: "portrait",
+        scope: "/",
+        start_url: "/",
+        icons: [
+          {
+            src: "Logo.svg",
+            sizes: "192x192",
+            type: "image/svg+xml",
+          },
+          {
+            src: "Logo.svg",
+            sizes: "512x512",
+            type: "image/svg+xml",
+          },
+          {
+            src: "Logo.svg",
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "any maskable",
+          },
+        ],
+      },
+    }),
+  ],
   server: {
     // 👇 ДОДАЙТЕ ЦЕЙ БЛОК
     proxy: {
