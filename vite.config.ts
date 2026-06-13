@@ -11,7 +11,7 @@ export default defineConfig({
       devOptions: {
         enabled: true // Дозволяє тестувати PWA на localhost під час розробки
       },
-      includeAssets: ["favicon.svg", "Logo.svg", "Logo_full.svg"],
+      includeAssets: ["favicon.svg", "Logo.svg", "Logo_full.svg", "favicon_phone.png"],
       manifest: {
         name: "FERP Finance System",
         short_name: "FERP",
@@ -24,14 +24,14 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "Logo.svg",
+            src: "favicon_phone.png",
             sizes: "192x192",
-            type: "image/svg+xml",
+            type: "image/png",
           },
           {
-            src: "Logo.svg",
+            src: "favicon_phone.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
           },
           {
             src: "Logo.svg",
