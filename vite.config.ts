@@ -24,17 +24,17 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "favicon_phone.png",
+            src: "favicon_phone.png?v=1",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "favicon_phone.png",
+            src: "favicon_phone.png?v=1",
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "Logo.svg",
+            src: "Logo.svg?v=1",
             sizes: "512x512",
             type: "image/svg+xml",
             purpose: "any maskable",
