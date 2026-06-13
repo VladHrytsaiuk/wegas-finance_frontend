@@ -12,7 +12,6 @@ const StyledMobileLayout = styled.div`
 const Main = styled.main`
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
   padding-bottom: 80px; /* Space for MobileNav */
 `;
 

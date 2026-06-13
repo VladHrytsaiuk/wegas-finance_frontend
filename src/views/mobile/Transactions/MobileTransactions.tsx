@@ -1,80 +1,102 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { usePageTitle } from "../../../hooks/usePageTitle";
+import { ExpensesPieWidget } from "../../../components/stats/widgets/ExpensesPieWidget";
+import { TopListWidget } from "../../../components/stats/widgets/TopListWidget";
+import { useMemo } from "react";
+import { startOfMonth, endOfMonth } from "date-fns";
 
-const StyledMobileTransactions = styled.div`
+const StyledMobileStats = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--color-bg-page);
+  min-height: 100%;
 `;
 
 const Title = styled.h1`
   font-size: 24px;
   font-weight: 700;
   color: var(--color-text-main);
+  margin-bottom: 10px;
 `;
 
-const TransactionItem = styled.div`
-  background-color: var(--color-bg-surface);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid var(--color-border);
-`;
-
-const Info = styled.div`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
 `;
 
-const Counterparty = styled.div`
-  font-size: 16px;
-  font-weight: 600;
+const SectionTitle = styled.h2`
+  font-size: 18px;
+  font-weight: 700;
   color: var(--color-text-main);
 `;
 
-const Category = styled.div`
-  font-size: 13px;
-  color: var(--color-text-secondary);
-`;
+const WidgetWrapper = styled.div`
+  background-color: var(--color-bg-surface);
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
 
-const Amount = styled.div<{ $isExpense: boolean }>`
-  font-size: 16px;
-  font-weight: 700;
-  color: ${props => props.$isExpense ? 'var(--color-red-600)' : 'var(--color-green-600)'};
+  /* Override internal widget card styles */
+  & > div {
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
 `;
 
 function MobileTransactions() {
   const { t } = useTranslation();
-  usePageTitle(t("navigation:general.transactions"));
+  usePageTitle(t("navigation:general.stats", "Статистика"));
+
+  const globalFilter = useMemo(() => ({
+    from: startOfMonth(new Date()).getTime(),
+    to: endOfMonth(new Date()).getTime(),
+    accountIds: [],
+  }), []);
 
   return (
-    <StyledMobileTransactions>
-      <Title>{t("navigation:general.transactions")}</Title>
+    <StyledMobileStats>
+      <Title>Аналітика</Title>
       
-      <TransactionItem>
-        <Info>
-          <Counterparty>Silpo</Counterparty>
-          <Category>Food & Drinks</Category>
-        </Info>
-        <Amount $isExpense={true}>-₴ 450.00</Amount>
-      </TransactionItem>
+      <Section>
+        <SectionTitle>Розподіл витрат</SectionTitle>
+        <WidgetWrapper>
+          <ExpensesPieWidget 
+            globalFilter={globalFilter}
+            type="expense"
+          />
+        </WidgetWrapper>
+      </Section>
 
-      <TransactionItem>
-        <Info>
-          <Counterparty>Salary</Counterparty>
-          <Category>Income</Category>
-        </Info>
-        <Amount $isExpense={false}>+₴ 45,000.00</Amount>
-      </TransactionItem>
+      <Section>
+        <SectionTitle>Топ категорій</SectionTitle>
+        <WidgetWrapper>
+          <TopListWidget 
+            type="expense"
+            entity="category"
+            title=""
+            globalFilter={globalFilter}
+          />
+        </WidgetWrapper>
+      </Section>
 
-      <div style={{ textAlign: "center", color: "var(--color-text-tertiary)", marginTop: "20px" }}>
-        Transaction list coming soon...
-      </div>
-    </StyledMobileTransactions>
+      <Section>
+        <SectionTitle>Топ магазинів</SectionTitle>
+        <WidgetWrapper>
+          <TopListWidget 
+            type="expense"
+            entity="counterparty"
+            title=""
+            globalFilter={globalFilter}
+          />
+        </WidgetWrapper>
+      </Section>
+    </StyledMobileStats>
   );
 }
 

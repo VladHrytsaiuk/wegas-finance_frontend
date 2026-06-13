@@ -1,12 +1,12 @@
 import { useIsMobile } from "../../hooks/useIsMobile";
 import DesktopTransactions from "./DesktopTransactions";
-import MobileTransactions from "../../views/mobile/Transactions/MobileTransactions";
+import MobileTransactionHistory from "../../views/mobile/Transactions/MobileTransactionHistory";
 
 function Transactions() {
   const isMobile = useIsMobile();
 
   if (isMobile) {
-    return <MobileTransactions />;
+    return <MobileTransactionHistory />;
   }
 
   return <DesktopTransactions />;

@@ -88,7 +88,7 @@ function MobileNav() {
         
         <StyledNavLink to="/transactions">
           <HiOutlineBanknotes />
-          <span>{t("navigation:general.transactions")}</span>
+          <span>Операції</span>
         </StyledNavLink>
 
         <ActionButtonWrapper>

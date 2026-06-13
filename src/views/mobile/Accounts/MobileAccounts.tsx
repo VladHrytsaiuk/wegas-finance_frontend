@@ -6,6 +6,7 @@ const StyledMobileAccounts = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 16px;
 `;
 
 const Title = styled.h1`

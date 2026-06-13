@@ -13,6 +13,7 @@ const StyledMobileSettings = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 16px;
 `;
 
 const Title = styled.h1`
