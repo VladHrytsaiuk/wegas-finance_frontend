@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import {
   HiOutlineHome,
-  HiOutlineBanknotes,
+  HiOutlineChartBar,
   HiOutlineWallet,
   HiOutlineCog6Tooth,
   HiPlus,
@@ -16,13 +16,19 @@ const Nav = styled.nav`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 65px;
+  height: 75px; /* Increased height from 65px */
   background-color: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: space-around;
   align-items: center;
+
+  /* Added top padding for better breathing room and handle safe areas */
+  padding-top: 8px;
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
   padding-bottom: env(safe-area-inset-bottom);
+
   z-index: 1000;
 `;
 
@@ -30,20 +36,20 @@ const StyledNavLink = styled(NavLink)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
   color: var(--color-text-secondary);
   text-decoration: none;
-  font-size: 10px;
   transition: all 0.2s;
   flex: 1;
+  height: 48px; /* Fixed height for icons to stay centered below the top padding */
 
   &.active {
     color: var(--color-brand-600);
   }
 
   & svg {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
   }
 `;
 
@@ -52,6 +58,7 @@ const ActionButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 48px;
 `;
 
 const ActionButton = styled.button`
@@ -64,7 +71,7 @@ const ActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: -30px;
+  margin-top: -35px; /* Adjusted from -30px to stay proportional to new height */
   box-shadow: var(--shadow-lg);
   cursor: pointer;
 
@@ -83,12 +90,10 @@ function MobileNav() {
       <Nav>
         <StyledNavLink to="/dashboard">
           <HiOutlineHome />
-          <span>{t("navigation:general.dashboard")}</span>
         </StyledNavLink>
         
-        <StyledNavLink to="/transactions">
-          <HiOutlineBanknotes />
-          <span>Операції</span>
+        <StyledNavLink to="/statistics">
+          <HiOutlineChartBar />
         </StyledNavLink>
 
         <ActionButtonWrapper>
@@ -99,12 +104,10 @@ function MobileNav() {
 
         <StyledNavLink to="/accounts">
           <HiOutlineWallet />
-          <span>{t("navigation:general.accounts")}</span>
         </StyledNavLink>
 
         <StyledNavLink to="/settings">
           <HiOutlineCog6Tooth />
-          <span>{t("navigation:general.settings")}</span>
         </StyledNavLink>
       </Nav>
 
