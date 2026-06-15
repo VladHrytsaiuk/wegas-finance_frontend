@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { usePageTitle } from "../../../hooks/usePageTitle";
@@ -6,9 +6,9 @@ import { useSummaryWidget } from "../../../hooks/Stats/useSummaryWidget";
 import { useAccountsData } from "../../../hooks/Accounts/useAccountsData";
 import { useRecentTransactionsWidget } from "../../../hooks/Stats/useRecentTransactionsWidget";
 import { formatMoney } from "../../../utils/helpers";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { subDays, endOfDay } from "date-fns";
 import CenteredSpinner from "../../../components/ui/CenteredSpinner";
-import { ExpensesPieWidget } from "../../../components/stats/widgets/ExpensesPieWidget";
+import { TrendWidget } from "../../../components/stats/widgets/TrendWidget";
 import { TopListWidget } from "../../../components/stats/widgets/TopListWidget";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
 import { 
@@ -17,18 +17,22 @@ import {
   HiOutlineArrowLongRight,
   HiOutlineUser,
   HiOutlineUsers,
-  HiOutlineWallet
+  HiPlus,
+  HiOutlineShoppingCart,
+  HiOutlineTrophy,
+  HiOutlineGift,
+  HiOutlineBolt,
+  HiOutlineComputerDesktop,
 } from "react-icons/hi2";
 import { useUserRole } from "../../../hooks/useUserRole";
-import { BANK_SKINS } from "../../../components/accounts/bankSkins";
-import { BankLogo } from "../../../components/accounts/form/CardStyles";
 import { useNavigate } from "react-router-dom";
 
 const StyledMobileDashboard = styled.div`
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-page);
-  min-height: 100%;
+  min-height: 100vh;
+  padding-bottom: 80px; /* Місце для FAB */
 `;
 
 const StickyHeader = styled.div`
@@ -37,6 +41,7 @@ const StickyHeader = styled.div`
   z-index: 100;
   background-color: var(--color-bg-surface);
   padding: 16px 20px;
+  padding-top: max(16px, env(safe-area-inset-top));
   border-bottom: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
@@ -69,6 +74,9 @@ const TotalBalance = styled.div`
   font-weight: 800;
   color: var(--color-text-main);
   letter-spacing: -0.5px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
 `;
 
 const WorkspaceToggle = styled.div`
@@ -102,7 +110,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 20px;
+  padding: 16px;
 `;
 
 const SummaryGrid = styled.div`
@@ -119,6 +127,12 @@ const SummaryCard = styled.div<{ $type: 'income' | 'expense' }>`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  cursor: pointer;
+  transition: transform 0.1s;
+
+  &:active {
+    transform: scale(0.98);
+  }
 
   .icon-box {
     width: 26px;
@@ -143,13 +157,67 @@ const SummaryCard = styled.div<{ $type: 'income' | 'expense' }>`
     font-size: 15px;
     font-weight: 700;
     color: var(--color-text-main);
+    min-height: 22px;
+  }
+`;
+
+const QuickLinks = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 8px; /* Reduced gap from 12px to fit 5 items */
+  padding: 0;
+`;
+
+const QuickLinkButton = styled.button`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s;
+  min-width: 0; /* Allow shrinking */
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .icon-box {
+    width: 44px; /* Reduced from 48px to fit 5 items */
+    height: 44px;
+    border-radius: 12px;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-brand-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .label {
+    font-size: 10px; /* Slightly smaller text */
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
   }
 `;
 
 const Section = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 `;
 
 const SectionHeader = styled.div`
@@ -191,46 +259,68 @@ const WidgetWrapper = styled.div`
   }
 `;
 
-const AccountList = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const AccountItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-  background-color: var(--color-bg-surface);
+const AnalyticsWrapper = styled(WidgetWrapper)`
+  height: 280px;
   
-  &:last-child { border-bottom: none; }
-  &:active { background-color: var(--color-bg-hover); }
+  & > div {
+    height: 100%;
+    padding: 12px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  & > div > div {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  header {
+    margin-bottom: 12px;
+    padding: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  div[class*="TitleGroup"] {
+    gap: 8px;
+  }
+
+  h3 {
+    display: none;
+  }
+
+  button[class*="ToggleBtn"] {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
 `;
 
-const AccInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
+const TopListWrapper = styled(WidgetWrapper)`
+  & > div {
+    padding: 12px;
+  }
 
-const AccIconFallback = styled.div<{ $color?: string }>`
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  background-color: ${props => props.$color || 'var(--color-brand-600)'};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  svg { width: 14px; height: 14px; }
-`;
+  header {
+    margin-bottom: 12px;
+    padding: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
-const AccBalance = styled.div`
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-text-main);
+  div[class*="TitleGroup"] {
+    gap: 8px;
+  }
+
+  h3 {
+    display: none;
+  }
+
+  button[class*="ToggleBtn"] {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
 `;
 
 const TransactionList = styled.div`
@@ -243,10 +333,37 @@ const TransactionList = styled.div`
   }
 `;
 
+const FAB = styled.button`
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: var(--color-brand-600);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
 function MobileDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useUserRole();
+  const { user, isLoading: isUserLoading } = useUserRole();
   const [viewScope, setViewScope] = useState<'personal' | 'family'>('personal');
   
   usePageTitle(t("navigation:general.dashboard"));
@@ -256,14 +373,15 @@ function MobileDashboard() {
   const targetAccountIds = useMemo(() => {
     if (!accounts) return [];
     if (viewScope === 'personal') {
+      if (!user) return [];
       return accounts.filter((acc: any) => acc.user_id === user?.id).map((acc: any) => acc.id);
     }
     return accounts.map((acc: any) => acc.id);
-  }, [accounts, viewScope, user?.id]);
+  }, [accounts, viewScope, user]);
 
   const globalFilter = useMemo(() => ({
-    from: startOfMonth(new Date()).getTime(),
-    to: endOfMonth(new Date()).getTime(),
+    from: subDays(new Date(), 30).getTime(),
+    to: endOfDay(new Date()).getTime(),
     accountIds: targetAccountIds,
   }), [targetAccountIds]);
 
@@ -276,38 +394,8 @@ function MobileDashboard() {
     state: { recentItems, categories },
   } = useRecentTransactionsWidget({ globalFilter });
 
-  const getSkin = (account: any) => {
-    // 🔥 Витягуємо скін так само, як у useAccountsGrid
-    if (account.type === "card") {
-      const bank = account.bank_name;
-      const design = account.card_type || account.card_design;
-
-      if (bank && design) {
-        const key = `${bank}-${design}`;
-        if (BANK_SKINS[key]) return BANK_SKINS[key];
-      }
-      
-      // Спробуємо за іконкою (вона часто містить повний ключ скіна)
-      if (account.icon && BANK_SKINS[account.icon]) {
-        return BANK_SKINS[account.icon];
-      }
-
-      return BANK_SKINS["default"];
-    }
-
-    // Для готівки та інших
-    return {
-      bg: account.color || "#10b981",
-      color: "#ffffff",
-      bankId: account.type === "cash" ? "cash" : "savings",
-      logoFile: "",
-      iconType: account.storage_type?.slug || account.type
-    };
-  };
-
-  if (isAccLoading || (isStatsLoading && targetAccountIds.length > 0)) return <CenteredSpinner fullHeight />;
-
-  const filteredAccounts = accounts.filter((acc: any) => targetAccountIds.includes(acc.id));
+  // Блокуємо екран ТІЛЬКИ при завантаженні критичних даних користувача або рахунків
+  if (isUserLoading || isAccLoading) return <CenteredSpinner fullHeight />;
 
   return (
     <StyledMobileDashboard>
@@ -315,7 +403,9 @@ function MobileDashboard() {
         <HeaderTop>
           <BalanceInfo>
             <Greeting>{viewScope === 'personal' ? 'Мій баланс' : 'Сімейний баланс'}</Greeting>
-            <TotalBalance>{formatMoney(balance, currency, language)}</TotalBalance>
+            <TotalBalance>
+              {isStatsLoading && balance === 0 ? '...' : formatMoney(balance, currency, language)}
+            </TotalBalance>
           </BalanceInfo>
           
           <WorkspaceToggle>
@@ -339,56 +429,58 @@ function MobileDashboard() {
 
       <Content>
         <SummaryGrid>
-          <SummaryCard $type="income">
+          <SummaryCard $type="income" onClick={() => navigate('/transactions?type=income')}>
             <div className="icon-box"><HiOutlineArrowTrendingUp /></div>
             <div className="label">Доходи</div>
-            <div className="value">{formatMoney(income, currency, language)}</div>
+            <div className="value">
+              {isStatsLoading && income === 0 ? '...' : formatMoney(income, currency, language)}
+            </div>
           </SummaryCard>
-          <SummaryCard $type="expense">
+          <SummaryCard $type="expense" onClick={() => navigate('/transactions?type=expense')}>
             <div className="icon-box"><HiOutlineArrowTrendingDown /></div>
             <div className="label">Витрати</div>
-            <div className="value">{formatMoney(expense, currency, language)}</div>
+            <div className="value">
+              {isStatsLoading && expense === 0 ? '...' : formatMoney(expense, currency, language)}
+            </div>
           </SummaryCard>
         </SummaryGrid>
 
-        <Section>
-          <SectionHeader>
-            <SectionTitle>Рахунки</SectionTitle>
-            <ViewAll onClick={() => navigate('/accounts')}>
-              Всі <HiOutlineArrowLongRight />
-            </ViewAll>
-          </SectionHeader>
-          <WidgetWrapper style={{ padding: 0 }}>
-            <AccountList>
-              {filteredAccounts.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--color-text-secondary)', fontSize: '14px' }}>
-                  Рахунків не знайдено
-                </div>
-              ) : (
-                filteredAccounts.slice(0, 5).map(acc => {
-                  const skin = getSkin(acc);
-                  const isCard = acc.type === 'card';
-                  
-                  return (
-                    <AccountItem key={acc.id} onClick={() => navigate(`/accounts/${acc.id}`)}>
-                      <AccInfo>
-                        {isCard && skin.logoFile ? (
-                          <BankLogo skin={skin} />
-                        ) : (
-                          <AccIconFallback $color={acc.color}>
-                            <HiOutlineWallet />
-                          </AccIconFallback>
-                        )}
-                        <div style={{ fontSize: '14px', fontWeight: 600 }}>{acc.name}</div>
-                      </AccInfo>
-                      <AccBalance>{formatMoney(acc.balance || acc.calculated_balance || 0, acc.currency || currency, language)}</AccBalance>
-                    </AccountItem>
-                  );
-                })
-              )}
-            </AccountList>
-          </WidgetWrapper>
-        </Section>
+        <QuickLinks>
+          <QuickLinkButton onClick={() => navigate('/shopping')}>
+            <div className="icon-box">
+              <HiOutlineShoppingCart />
+            </div>
+            <span className="label">Покупки</span>
+          </QuickLinkButton>
+
+          <QuickLinkButton onClick={() => navigate('/goals')}>
+            <div className="icon-box">
+              <HiOutlineTrophy />
+            </div>
+            <span className="label">Цілі</span>
+          </QuickLinkButton>
+
+          <QuickLinkButton onClick={() => navigate('/wishlist')}>
+            <div className="icon-box">
+              <HiOutlineGift />
+            </div>
+            <span className="label">Бажання</span>
+          </QuickLinkButton>
+
+          <QuickLinkButton onClick={() => navigate('/utility')}>
+            <div className="icon-box">
+              <HiOutlineBolt />
+            </div>
+            <span className="label">Комуналка</span>
+          </QuickLinkButton>
+
+          <QuickLinkButton onClick={() => navigate('/assets')}>
+            <div className="icon-box">
+              <HiOutlineComputerDesktop />
+            </div>
+            <span className="label">Активи</span>
+          </QuickLinkButton>
+        </QuickLinks>
 
         <Section>
           <SectionHeader>
@@ -413,6 +505,7 @@ function MobileDashboard() {
                     currency={currency}
                     language={language}
                     isWidget={true}
+                    onClick={() => navigate(`/transactions/${tx.id}`)}
                   />
                 ))
               )}
@@ -422,31 +515,36 @@ function MobileDashboard() {
 
         <Section>
           <SectionHeader>
-            <SectionTitle>Аналітика витрат</SectionTitle>
+            <SectionTitle>Динаміка витрат</SectionTitle>
           </SectionHeader>
-          <WidgetWrapper>
-            <ExpensesPieWidget 
+          <AnalyticsWrapper>
+            <TrendWidget 
               globalFilter={globalFilter}
               type="expense"
-              hideHeader
+              color="#ef4444"
+              title=""
             />
-          </WidgetWrapper>
+          </AnalyticsWrapper>
         </Section>
 
         <Section style={{ paddingBottom: '20px' }}>
           <SectionHeader>
             <SectionTitle>Топ категорій</SectionTitle>
           </SectionHeader>
-          <WidgetWrapper>
+          <TopListWrapper>
             <TopListWidget 
               type="expense"
               entity="category"
               title=""
               globalFilter={globalFilter}
             />
-          </WidgetWrapper>
+          </TopListWrapper>
         </Section>
       </Content>
+
+      <FAB onClick={() => navigate('/transactions/new')}>
+        <HiPlus />
+      </FAB>
     </StyledMobileDashboard>
   );
 }
