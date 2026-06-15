@@ -1,10 +1,9 @@
 import { useState, useMemo } from "react";
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { 
   HiChevronDown, 
   HiCheck, 
   HiMagnifyingGlass,
-  HiXMark
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
@@ -12,28 +11,38 @@ import { useTranslation } from "react-i18next";
 import { CategoryTree } from "../../categories/CategoryTree";
 import { CounterpartyTree } from "../../counterparties/CounterpartyTree";
 import { AccountTree } from "../../accounts/AccountTree";
-import { SmartIcon } from "../../../utils/IconMap";
 import { Checkbox } from "./styles";
 
 // Logic
 import type { FilterConfig } from "./types";
-import { useCategoryTreeState, type CategoryNode } from "../../../hooks/Categories/useCategoryTreeState";
+import { useCategoryTreeState } from "../../../hooks/Categories/useCategoryTreeState";
 import { useCounterpartyTree } from "../../../hooks/Counterparties/useCounterpartyTree";
 
-const ItemContainer = styled.div`
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  background-color: var(--color-bg-surface);
-  overflow: hidden;
-  transition: all 0.2s ease;
+const slideIn = keyframes`
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 `;
 
-const ItemHeader = styled.button<{ $isOpen: boolean }>`
+const ItemContainer = styled.div<{ $isOpen: boolean; $hasValue: boolean }>`
+  border: 1px solid ${props => props.$isOpen ? 'var(--color-brand-400)' : 'var(--color-border)'};
+  border-radius: 18px;
+  background-color: var(--color-bg-surface);
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: ${props => props.$isOpen ? '0 8px 24px -6px rgba(0, 0, 0, 0.08)' : 'var(--shadow-sm)'};
+  
+  ${props => props.$hasValue && !props.$isOpen && css`
+    border-color: var(--color-brand-200);
+    background-color: var(--color-brand-50);
+  `}
+`;
+
+const ItemHeader = styled.button<{ $isOpen: boolean; $hasValue: boolean }>`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
+  padding: 14px 18px;
   background: none;
   border: none;
   cursor: pointer;
@@ -50,36 +59,40 @@ const ItemHeader = styled.button<{ $isOpen: boolean }>`
   }
 
   .title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--color-text-main);
+    font-size: 11px;
+    font-weight: 800;
+    color: ${props => props.$isOpen ? 'var(--color-brand-600)' : 'var(--color-text-tertiary)'};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .value-summary {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-brand-600);
+    font-size: 15px;
+    font-weight: 700;
+    color: ${props => props.$hasValue ? 'var(--color-brand-700)' : 'var(--color-text-main)'};
   }
 
   .chevron {
     color: var(--color-text-tertiary);
-    transition: transform 0.2s;
+    transition: transform 0.3s;
     transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0)'};
   }
 `;
 
 const ItemContent = styled.div`
+  background-color: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
-  background-color: var(--color-bg-page);
+  padding: 12px;
+  animation: ${slideIn} 0.2s ease-out;
 `;
 
 const SearchBox = styled.div`
-  padding: 12px;
+  margin-bottom: 12px;
   position: relative;
   
   svg {
     position: absolute;
-    left: 22px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-tertiary);
@@ -90,11 +103,11 @@ const SearchBox = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  height: 36px;
-  padding: 0 12px 0 32px;
-  border-radius: 10px;
+  height: 38px;
+  padding: 0 12px 0 36px;
+  border-radius: 12px;
   border: 1px solid var(--color-border);
-  background-color: var(--color-bg-surface);
+  background-color: var(--color-bg-page);
   font-size: 14px;
   color: var(--color-text-main);
 
@@ -107,7 +120,8 @@ const SearchInput = styled.input`
 const TreeWrapper = styled.div`
   max-height: 300px;
   overflow-y: auto;
-  padding: 4px 0;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
 `;
 
 const FlatOption = styled.button<{ $selected: boolean }>`
@@ -123,15 +137,6 @@ const FlatOption = styled.button<{ $selected: boolean }>`
 
   &:last-child { border-bottom: none; }
   &:active { background-color: var(--color-bg-hover); }
-
-  .icon-box {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-  }
 
   .label {
     font-size: 14px;
@@ -152,7 +157,7 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
   const [search, setSearch] = useState("");
   const { calculateNewSelection } = useCategoryTreeState({});
 
-  // 1. Categories Data
+  // Data processing logic
   const categoryTreeData = useMemo(() => {
     if (config.treeType !== "categories" || !config.rawData) return [];
     const categories = config.rawData;
@@ -172,7 +177,6 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
     return roots;
   }, [config.treeType, config.rawData, search]);
 
-  // 2. Counterparties Data
   const counterpartyTreeData = useCounterpartyTree({
     counterparties: config.treeType === "counterparties" ? config.rawData || [] : [],
     categories: config.treeType === "counterparties" ? config.relatedData || [] : [],
@@ -181,7 +185,6 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
     sortValue: "name-asc",
   });
 
-  // 3. Flat List
   const filteredFlatOptions = useMemo(() => {
     if (config.treeType) return [];
     return (config.options || []).filter((o) =>
@@ -192,7 +195,6 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
   const valueSummary = useMemo(() => {
     if (value.length === 0) return t("common:shared.all", "Всі");
     if (value.length === 1) {
-      // Find label from options or rawData
       const opt = config.options?.find(o => o.value === value[0]);
       if (opt) return opt.label;
       const raw = config.rawData?.find((r: any) => String(r.id) === String(value[0]));
@@ -207,11 +209,20 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
     else onChange([...value, val]);
   };
 
+  const hasValue = value.length > 0;
+
+  // Clean label - remove "Filter" or common redundant suffixes
+  const cleanLabel = config.label.replace(/фільтр/gi, '').trim();
+
   return (
-    <ItemContainer>
-      <ItemHeader $isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+    <ItemContainer $isOpen={isOpen} $hasValue={hasValue}>
+      <ItemHeader 
+        $isOpen={isOpen} 
+        $hasValue={hasValue}
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <div className="label-group">
-          <span className="title">{config.label}</span>
+          <span className="title">{cleanLabel}</span>
           <span className="value-summary">{valueSummary}</span>
         </div>
         <HiChevronDown className="chevron" size={20} />
@@ -226,6 +237,7 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
                   placeholder={t("legacy:filterComponent.search_placeholder")}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
+                  autoFocus
                 />
              </SearchBox>
           ) : null}

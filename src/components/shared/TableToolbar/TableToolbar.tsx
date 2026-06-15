@@ -9,9 +9,11 @@ import { RangeFilter } from "./RangeFilter";
 import { ToggleFilter } from "./ToggleFilter";
 import { SortControl } from "./SortControl";
 import { DateRangePicker } from "../../ui/DateRangePicker";
+import { MobileTableToolbar } from "./MobileTableToolbar";
 
 // Hooks
 import { useDropdownPosition } from "../../../hooks/useDropdownPosition";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 // Styles & Types
 import * as S from "./TableToolbar.styles";
@@ -56,6 +58,7 @@ export const TableToolbar = ({
   children,
 }: TableToolbarProps) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Стейт для відстеження самого факту прилипання
@@ -109,6 +112,35 @@ export const TableToolbar = ({
       if (typeof val === "object" && val !== null) return val.min || val.max;
       return !!val;
     });
+
+  const activeFiltersCount = 
+    (searchQuery !== "" ? 1 : 0) +
+    (hasDateFilter ? 1 : 0) +
+    Object.values(filterValues).reduce((acc: number, val: any) => {
+      if (Array.isArray(val)) return acc + (val.length > 0 ? 1 : 0);
+      if (typeof val === "object" && val !== null) return acc + (val.min || val.max ? 1 : 0);
+      return acc + (!!val ? 1 : 0);
+    }, 0);
+
+  if (isMobile) {
+    return (
+      <MobileTableToolbar 
+        searchQuery={searchQuery}
+        onSearchChange={onSearchChange}
+        searchPlaceholder={searchPlaceholder}
+        filtersConfig={filtersConfig}
+        filterValues={filterValues}
+        onFilterChange={onFilterChange}
+        sortOptions={sortOptions}
+        sortValue={sortValue}
+        onSortChange={onSortChange}
+        onClearAll={onClearAll}
+        activeFiltersCount={activeFiltersCount}
+        dateRange={dateRange}
+        onDateRangeChange={onDateRangeChange}
+      />
+    );
+  }
 
   const showControlsRow =
     searchPosition === "inline" ||
