@@ -12,6 +12,8 @@ import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 // Styles & Logic
 import * as S from "./Counterparties.styles";
 import { useCounterpartiesPage } from "../../hooks/Counterparties/useCounterpartiesPage";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 
 function Counterparties() {
   const {
@@ -40,36 +42,41 @@ function Counterparties() {
     t,
   } = useCounterpartiesPage();
 
+  const isMobile = useIsMobile();
+
   return (
     <Modal>
-      <S.PageWrapper>
+      {isMobile && <MobilePageHeader title={t("counterparties:counterpartiesPage.title")} />}
+      <S.PageWrapper style={{ padding: isMobile ? "0" : undefined }}>
         {/* --- Header --- */}
-        <S.HeaderRow>
-          <S.Title>{t("counterparties:counterpartiesPage.title")}</S.Title>
-          <S.HeaderActions>
-            {canManageStructure && (
-              <>
-                <Modal.Open opens="create-cat">
-                  <Button
-                    icon={<HiFolderPlus />}
-                    variation="secondary"
-                    size="medium"
-                  >
-                    {t("counterparties:counterpartiesPage.add_category_button")}
-                  </Button>
-                </Modal.Open>
-                <Modal.Open opens="create-cp">
-                  <Button icon={<HiPlus />} size="medium">
-                    {t("counterparties:counterpartiesPage.add_counterparty_button")}
-                  </Button>
-                </Modal.Open>
-              </>
-            )}
-          </S.HeaderActions>
-        </S.HeaderRow>
+        {!isMobile && (
+          <S.HeaderRow>
+            <S.Title>{t("counterparties:counterpartiesPage.title")}</S.Title>
+            <S.HeaderActions>
+              {canManageStructure && (
+                <>
+                  <Modal.Open opens="create-cat">
+                    <Button
+                      icon={<HiFolderPlus />}
+                      variation="secondary"
+                      size="medium"
+                    >
+                      {t("counterparties:counterpartiesPage.add_category_button")}
+                    </Button>
+                  </Modal.Open>
+                  <Modal.Open opens="create-cp">
+                    <Button icon={<HiPlus />} size="medium">
+                      {t("counterparties:counterpartiesPage.add_counterparty_button")}
+                    </Button>
+                  </Modal.Open>
+                </>
+              )}
+            </S.HeaderActions>
+          </S.HeaderRow>
+        )}
 
         {/* --- Toolbar --- */}
-        <S.ControlsRow>
+        <S.ControlsRow style={{ padding: isMobile ? "12px 16px" : undefined }}>
           <TableToolbar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -88,7 +95,7 @@ function Counterparties() {
         </S.ControlsRow>
 
         {/* --- Tree Content --- */}
-        <S.TreeContainer>
+        <S.TreeContainer style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
           {isLoading ? (
             <CenteredSpinner isContainer />
           ) : treeRoots.length === 0 ? (
@@ -110,6 +117,28 @@ function Counterparties() {
             />
           )}
         </S.TreeContainer>
+
+        {isMobile && canManageStructure && (
+          <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+             <Modal.Open opens="create-cat">
+              <Button
+                icon={<HiFolderPlus />}
+                variation="secondary"
+                size="large"
+                shape="circle"
+                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)', backgroundColor: 'var(--color-bg-surface)' }}
+              />
+            </Modal.Open>
+            <Modal.Open opens="create-cp">
+              <Button
+                icon={<HiPlus />}
+                size="large"
+                shape="circle"
+                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
+              />
+            </Modal.Open>
+          </div>
+        )}
 
         {/* --- Hidden Triggers for programmatic modals --- */}
         <S.HiddenTriggers>

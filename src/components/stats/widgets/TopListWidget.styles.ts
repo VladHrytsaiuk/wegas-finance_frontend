@@ -19,12 +19,43 @@ export const Header = styled.div`
   gap: 1rem;
 `;
 
+export const TitleGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding-top: 6px;
+`;
+
 export const Title = styled.h3`
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-text-main);
   margin: 0;
-  padding-top: 6px;
+`;
+
+export const TypeToggle = styled.div`
+  display: flex;
+  background: var(--color-bg-page);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+`;
+
+export const ToggleBtn = styled.button<{ $active: boolean; $color: string }>`
+  border: none;
+  background: ${(p) => (p.$active ? "var(--color-bg-surface)" : "transparent")};
+  color: ${(p) => (p.$active ? p.$color : "var(--color-text-secondary)")};
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: ${(p) => (p.$active ? "0 2px 4px rgba(0,0,0,0.05)" : "none")};
+
+  &:hover {
+    color: ${(p) => (p.$active ? p.$color : "var(--color-text-main)")};
+  }
 `;
 
 export const List = styled.div`

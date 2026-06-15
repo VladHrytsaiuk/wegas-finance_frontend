@@ -3,6 +3,8 @@ import { Button } from "../../components/ui/Button";
 import { BaseSelect } from "../../components/ui/Select/BaseSelect";
 
 import { useGeneralSettings } from "../../hooks/Settings/useGeneralSettings";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./General.styles";
 
 interface OptionType {
@@ -25,6 +27,7 @@ const getTriggerLabel = (options: OptionType[], value: string) => {
 
 function General() {
   const { state, actions, t } = useGeneralSettings();
+  const isMobile = useIsMobile();
   const {
     localCurrency,
     localLanguage,
@@ -41,11 +44,17 @@ function General() {
   }
 
   return (
-    <S.Container style={{ opacity: isPending ? 0.7 : 1, transition: "opacity 0.2s" }}>
-      <S.SectionTitle>{t("settings:settingsPage.title")}</S.SectionTitle>
+    <>
+      {isMobile && <MobilePageHeader title={t("settings:settingsPage.title")} />}
+      <S.Container style={{ 
+        opacity: isPending ? 0.7 : 1, 
+        transition: "opacity 0.2s",
+        padding: isMobile ? "20px 16px" : undefined 
+      }}>
+        {!isMobile && <S.SectionTitle>{t("settings:settingsPage.title")}</S.SectionTitle>}
 
-      {/* Тема */}
-      <S.FormGroup>
+        {/* Тема */}
+        <S.FormGroup>
         <S.SettingRow>
           <S.Label>
             <S.LabelText>{t("settings:settingsPage.theme_label")}</S.LabelText>

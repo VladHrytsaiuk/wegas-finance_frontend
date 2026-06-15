@@ -37,9 +37,9 @@ export const useFilterMenu = ({ onFilterChange }: UseFilterMenuProps) => {
 
   // 2. State Snapshot (Applied vs Temporary)
   const appliedRef = useRef<FilterState>({
-    from: startOfMonth(new Date()).getTime(),
+    from: subDays(new Date(), 30).getTime(),
     to: endOfDay(new Date()).getTime(),
-    label: t("transactions:transactionsModal.sort_date_desc"), // Дефолтний лейбл
+    label: t("export_import:importModal.period_30days", "Останні 30 днів"), // Дефолтний лейбл
     accountIds: [],
   });
 

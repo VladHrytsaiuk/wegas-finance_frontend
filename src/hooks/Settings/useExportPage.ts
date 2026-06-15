@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { startOfMonth, endOfMonth, format } from "date-fns";
+import { subDays, endOfDay, format } from "date-fns";
 import { uk, enGB } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -31,8 +31,8 @@ export const useExportPage = () => {
 
   // --- Date Range ---
   const [dateRange, setDateRange] = useState({
-    from: startOfMonth(new Date()).getTime(),
-    to: endOfMonth(new Date()).getTime(),
+    from: subDays(new Date(), 30).getTime(),
+    to: endOfDay(new Date()).getTime(),
   });
 
   // --- Transactions Filters & Format ---

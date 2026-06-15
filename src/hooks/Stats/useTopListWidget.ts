@@ -15,13 +15,20 @@ interface UseTopListWidgetProps {
 }
 
 export const useTopListWidget = ({
-  type,
+  type: initialType,
   entity,
   globalFilter,
   onDiverge,
 }: UseTopListWidgetProps) => {
   const { t } = useTranslation();
   const { currency, language } = useSettings();
+
+  const [activeType, setActiveType] = useState<"income" | "expense">(initialType);
+
+  // Sync with prop type changes (e.g. from parent)
+  useEffect(() => {
+    setActiveType(initialType);
+  }, [initialType]);
 
   // Local Filter State
   const [localFilter, setLocalFilter] = useState<StatsFilter>(globalFilter);
@@ -46,16 +53,16 @@ export const useTopListWidget = ({
     JSON.stringify(localFilter) !== JSON.stringify(globalFilter);
 
   // --- Queries ---
-  const { data, isLoading: isStatsLoading } = useQuery({
-    queryKey: ["stats", "top", type, entity, localFilter, currency],
+  const { data, isLoading: isStatsLoading, isFetching } = useQuery({
+    queryKey: ["stats", "top", activeType, entity, localFilter, currency],
     queryFn: async () => {
-      const res = await statsService.getTopStats(type, entity, {
+      const res = await statsService.getTopStats(activeType, entity, {
         ...localFilter,
         currency,
       });
       return res.sort((a, b) => b.total - a.total);
     },
-    placeholderData: (prev) => prev,
+    // We remove placeholderData to see the loading state clearly when switching types
   });
 
   const { data: categories = [] } = useQuery({
@@ -77,7 +84,7 @@ export const useTopListWidget = ({
 
     const topItems = data.slice(0, 5);
     const maxValue = topItems.length > 0 ? topItems[0].total : 0;
-    const DEFAULT_COLOR = type === "income" ? "#22c55e" : "#ef4444";
+    const DEFAULT_COLOR = activeType === "income" ? "#22c55e" : "#ef4444";
 
     return topItems.map((item) => {
       const percent = maxValue > 0 ? (item.total / maxValue) * 100 : 0;
@@ -130,12 +137,13 @@ export const useTopListWidget = ({
         displayName: item.name || t("dashboard:dashboard.filter_other", "Інше"),
       };
     });
-  }, [data, categories, counterparties, entity, type, t]);
+  }, [data, categories, counterparties, entity, activeType, t]);
 
-  const isLoading = isStatsLoading;
+  const isLoading = isStatsLoading || (isFetching && !data);
 
   return {
     state: {
+      activeType,
       processedData,
       isLoading,
       localFilter,
@@ -144,6 +152,7 @@ export const useTopListWidget = ({
       language,
     },
     actions: {
+      setActiveType,
       handleFilterUpdate,
     },
     t,

@@ -1,6 +1,5 @@
 // Components
 import { WidgetControls } from "./WidgetControls";
-import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { EmptyState } from "../../ui/EmptyState";
 import { HiListBullet } from "react-icons/hi2";
@@ -18,11 +17,13 @@ interface Props {
   title: string;
   globalFilter: StatsFilter;
   onDiverge?: () => void;
+  hideHeader?: boolean;
 }
 
 export const TopListWidget = (props: Props) => {
   const {
     state: {
+      activeType,
       processedData,
       isLoading,
       localFilter,
@@ -30,28 +31,48 @@ export const TopListWidget = (props: Props) => {
       currency,
       language,
     },
-    actions: { handleFilterUpdate },
+    actions: { handleFilterUpdate, setActiveType },
     t,
   } = useTopListWidget(props);
 
   return (
     <S.WidgetCard>
-      <S.Header>
-        <S.Title>{props.title}</S.Title>
-        <WidgetControls
-          mini={true}
-          currentLabel={localFilter.label || t("legacy:filters.period_label")}
-          currentAccountIds={localFilter.accountIds || []}
-          onFilterChange={handleFilterUpdate}
-          currentFrom={localFilter.from}
-          currentTo={localFilter.to}
-          variant="local"
-          hasChanges={hasChanges}
-        />
-      </S.Header>
+      {!props.hideHeader && (
+        <S.Header>
+          <S.TitleGroup>
+            {props.title && <S.Title>{props.title}</S.Title>}
+            <S.TypeToggle>
+              <S.ToggleBtn
+                $active={activeType === "expense"}
+                $color="#ef4444"
+                onClick={() => setActiveType("expense")}
+              >
+                {t("dashboard:filters.periods.expense_label")}
+              </S.ToggleBtn>
+              <S.ToggleBtn
+                $active={activeType === "income"}
+                $color="#22c55e"
+                onClick={() => setActiveType("income")}
+              >
+                {t("dashboard:filters.periods.income_label")}
+              </S.ToggleBtn>
+            </S.TypeToggle>
+          </S.TitleGroup>
+          <WidgetControls
+            mini={true}
+            currentLabel={localFilter.label || t("legacy:filters.period_label")}
+            currentAccountIds={localFilter.accountIds || []}
+            onFilterChange={handleFilterUpdate}
+            currentFrom={localFilter.from}
+            currentTo={localFilter.to}
+            variant="local"
+            hasChanges={hasChanges}
+          />
+        </S.Header>
+      )}
 
       {isLoading ? (
-        <CenteredSpinner isContainer />
+        <CenteredSpinner isContainer size="2.4rem" />
       ) : processedData.length === 0 ? (
         <EmptyState
           compact

@@ -4,7 +4,7 @@ import { usePageTitle } from "../../../hooks/usePageTitle";
 import { ExpensesPieWidget } from "../../../components/stats/widgets/ExpensesPieWidget";
 import { TopListWidget } from "../../../components/stats/widgets/TopListWidget";
 import { useMemo } from "react";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { subDays, endOfDay } from "date-fns";
 
 const StyledMobileStats = styled.div`
   display: flex;
@@ -54,8 +54,8 @@ function MobileTransactions() {
   usePageTitle(t("navigation:general.stats", "Статистика"));
 
   const globalFilter = useMemo(() => ({
-    from: startOfMonth(new Date()).getTime(),
-    to: endOfMonth(new Date()).getTime(),
+    from: subDays(new Date(), 30).getTime(),
+    to: endOfDay(new Date()).getTime(),
     accountIds: [],
   }), []);
 

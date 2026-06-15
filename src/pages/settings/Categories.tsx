@@ -13,6 +13,8 @@ import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 // Styles & Logic
 import * as S from "./Categories.styles";
 import { useCategoriesPage } from "../../hooks/Categories/useCategoriesPage";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 
 function Categories() {
   const {
@@ -44,29 +46,34 @@ function Categories() {
     t,
   } = useCategoriesPage();
 
+  const isMobile = useIsMobile();
+
   return (
     <Modal>
-      <S.PageWrapper>
+      {isMobile && <MobilePageHeader title={t("categories:categoriesPage.title")} />}
+      <S.PageWrapper style={{ padding: isMobile ? "0" : undefined }}>
         {/* HEADER */}
-        <S.HeaderRow>
-          <S.Title>{t("categories:categoriesPage.title")}</S.Title>
-          {canManageStructure && (
-            <S.HeaderActions>
-              <Modal.Open opens="create-category">
-                <Button
-                  icon={<HiPlus />}
-                  size="medium"
-                  onClick={handleCreateClick}
-                >
-                  {t("categories:categoriesPage.add_category_button")}
-                </Button>
-              </Modal.Open>
-            </S.HeaderActions>
-          )}
-        </S.HeaderRow>
+        {!isMobile && (
+          <S.HeaderRow>
+            <S.Title>{t("categories:categoriesPage.title")}</S.Title>
+            {canManageStructure && (
+              <S.HeaderActions>
+                <Modal.Open opens="create-category">
+                  <Button
+                    icon={<HiPlus />}
+                    size="medium"
+                    onClick={handleCreateClick}
+                  >
+                    {t("categories:categoriesPage.add_category_button")}
+                  </Button>
+                </Modal.Open>
+              </S.HeaderActions>
+            )}
+          </S.HeaderRow>
+        )}
 
         {/* TOOLBAR */}
-        <S.ControlsRow>
+        <S.ControlsRow style={{ padding: isMobile ? "12px 16px" : undefined }}>
           <TableToolbar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -85,7 +92,7 @@ function Categories() {
         </S.ControlsRow>
 
         {/* CONTENT */}
-        <S.TreeContainer>
+        <S.TreeContainer style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
           {isLoading ? (
             <CenteredSpinner isContainer />
           ) : categoryTreeRoots.length === 0 ? (
@@ -104,6 +111,20 @@ function Categories() {
             />
           )}
         </S.TreeContainer>
+
+        {isMobile && canManageStructure && (
+          <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100 }}>
+            <Modal.Open opens="create-category">
+              <Button
+                icon={<HiPlus />}
+                size="large"
+                shape="circle"
+                onClick={handleCreateClick}
+                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
+              />
+            </Modal.Open>
+          </div>
+        )}
       </S.PageWrapper>
 
       {/* --- MODALS --- */}

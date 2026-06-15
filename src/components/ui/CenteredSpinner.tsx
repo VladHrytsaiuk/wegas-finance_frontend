@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import Spinner from "./Spinner";
 
 const fadeIn = keyframes`
@@ -21,17 +21,22 @@ const Container = styled.div<{ $fullHeight?: boolean; $isContainer?: boolean }>`
   z-index: 50;
 `;
 
-const FixedSpinnerWrapper = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+const SpinnerWrapper = styled.div<{ $fixed?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
   pointer-events: none;
   z-index: 100;
+
+  ${(props) =>
+    props.$fixed &&
+    css`
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    `}
 `;
 
 const Message = styled.p`
@@ -59,10 +64,10 @@ export function CenteredSpinner({
 }: CenteredSpinnerProps) {
   return (
     <Container $fullHeight={fullHeight} $isContainer={isContainer}>
-      <FixedSpinnerWrapper>
+      <SpinnerWrapper $fixed={fullHeight}>
         <Spinner size={size} />
         {message && <Message key={message}>{message}</Message>}
-      </FixedSpinnerWrapper>
+      </SpinnerWrapper>
     </Container>
   );
 }

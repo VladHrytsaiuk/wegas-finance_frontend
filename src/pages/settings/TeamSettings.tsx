@@ -13,6 +13,8 @@ import { UserForm } from "../../components/users/UserForms";
 
 import { useUsers } from "../../hooks/Settings/useUsers";
 import { useTeamSettings } from "../../hooks/Settings/useTeamSettings";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { GenerateInviteCodeSection } from "./GenerateInviteCodeSection";
 import { JoinFamilySection } from "./JoinFamilySection";
 import { AddMemberChoiceModal } from "./AddMemberChoiceModal";
@@ -54,6 +56,7 @@ function TeamSettings() {
   });
 
   const { users, isLoading, isAdding, isUpdating, isDeleting, canManageTeam } = usersState;
+  const isMobile = useIsMobile();
 
   const handleOpenInvite = () => {
     setIsChoiceOpen(false);
@@ -67,20 +70,34 @@ function TeamSettings() {
 
   return (
     <Modal>
-      <S.TeamContainer>
-        <S.HeaderRow style={{ borderBottom: "none", marginBottom: 0 }}>
-          <S.SectionTitle>{t("settings:usersPage.team_list_title", "Склад команди")}</S.SectionTitle>
-          
-          <Button 
-            variation="secondary" 
-            icon={<HiOutlineLink size="medium" />}
-            onClick={() => setIsJoinOpen(true)}
-          >
-            {t("settings:usersPage.btn_join", "Приєднатися до сім'ї")}
-          </Button>
-        </S.HeaderRow>
+      {isMobile && <MobilePageHeader title={t("settings:usersPage.team_list_title")} />}
+      <S.TeamContainer style={{ padding: isMobile ? "0" : undefined }}>
+        {!isMobile && (
+          <S.HeaderRow style={{ borderBottom: "none", marginBottom: 0 }}>
+            <S.SectionTitle>{t("settings:usersPage.team_list_title", "Склад команди")}</S.SectionTitle>
+            
+            <Button 
+              variation="secondary" 
+              icon={<HiOutlineLink size="medium" />}
+              onClick={() => setIsJoinOpen(true)}
+            >
+              {t("settings:usersPage.btn_join", "Приєднатися до сім'ї")}
+            </Button>
+          </S.HeaderRow>
+        )}
 
-        <section>
+        <section style={{ padding: isMobile ? "16px" : undefined }}>
+          {isMobile && (
+             <Button 
+              variation="secondary" 
+              icon={<HiOutlineLink size="medium" />}
+              onClick={() => setIsJoinOpen(true)}
+              style={{ width: '100%', marginBottom: '20px' }}
+            >
+              {t("settings:usersPage.btn_join", "Приєднатися до сім'ї")}
+            </Button>
+          )}
+
           {isLoading && <CenteredSpinner />}
 
           {!isLoading && users.length === 0 && (
@@ -98,7 +115,7 @@ function TeamSettings() {
 
                 {/* Edit & Delete modals still use the string-based Modal system from parent/Layout */}
                 <Modal.Window name={`edit-user-${user.id}`}>
-                  <S.ModalContent style={{ width: "900px" }}>
+                  <S.ModalContent style={{ width: isMobile ? "100%" : "900px" }}>
                     <S.ModalTitle>{t("settings:usersPage.modal_edit_title")}</S.ModalTitle>
                     <UserForm
                       initialData={user}
@@ -118,20 +135,32 @@ function TeamSettings() {
               </div>
             ))}
 
-            {canManageTeam && (
+            {canManageTeam && !isMobile && (
               <S.AddMemberCard onClick={() => setIsChoiceOpen(true)}>
                 <HiOutlineUserPlus />
                 <span>{t("settings:usersPage.btn_add_user")}</span>
               </S.AddMemberCard>
             )}
           </S.UserGrid>
+
+          {isMobile && canManageTeam && (
+            <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100 }}>
+              <Button
+                icon={<HiOutlineUserPlus />}
+                size="large"
+                shape="circle"
+                onClick={() => setIsChoiceOpen(true)}
+                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
+              />
+            </div>
+          )}
         </section>
 
         {/* --- EXPLICIT MODALS --- */}
 
         {/* Choice Modal */}
         <LocalModal isOpen={isChoiceOpen} onClose={() => setIsChoiceOpen(false)}>
-          <S.ModalContent style={{ width: "450px" }}>
+          <S.ModalContent style={{ width: isMobile ? "100%" : "450px" }}>
             <S.ModalTitle>{t("settings:usersPage.modal_add_title", "Додати учасника")}</S.ModalTitle>
             <AddMemberChoiceModal
               onInviteViaCode={handleOpenInvite}
@@ -143,7 +172,7 @@ function TeamSettings() {
 
         {/* Generate Code Modal */}
         <LocalModal isOpen={isInviteOpen} onClose={() => setIsInviteOpen(false)}>
-          <S.ModalContent style={{ width: "500px" }}>
+          <S.ModalContent style={{ width: isMobile ? "100%" : "500px" }}>
             <GenerateInviteCodeSection
               inviteCode={teamState.inviteCode}
               timeLeft={teamState.timeLeft}
@@ -157,7 +186,7 @@ function TeamSettings() {
 
         {/* Join Family Modal */}
         <LocalModal isOpen={isJoinOpen} onClose={() => setIsJoinOpen(false)}>
-          <S.ModalContent style={{ width: "500px" }}>
+          <S.ModalContent style={{ width: isMobile ? "100%" : "500px" }}>
             <JoinFamilySection
               isJoining={teamState.isJoining}
               onJoin={async (code) => {
@@ -171,7 +200,7 @@ function TeamSettings() {
 
         {/* Manual Add User Modal */}
         <LocalModal isOpen={isManualAddOpen} onClose={() => setIsManualAddOpen(false)}>
-          <S.ModalContent style={{ width: "900px" }}>
+          <S.ModalContent style={{ width: isMobile ? "100%" : "900px" }}>
             <S.ModalTitle>{t("settings:usersPage.modal_add_title")}</S.ModalTitle>
             <UserForm 
               onSubmit={async (data) => {

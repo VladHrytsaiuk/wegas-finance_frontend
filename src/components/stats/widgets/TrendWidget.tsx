@@ -124,7 +124,7 @@ export const TrendWidget = (props: Props) => {
 
       <S.ChartWrapper>
         {isLoading ? (
-          <CenteredSpinner isContainer />
+          <CenteredSpinner isContainer size="2.4rem" />
         ) : chartData.length === 0 ? (
           <EmptyState
             compact
