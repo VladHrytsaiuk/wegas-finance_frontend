@@ -254,7 +254,7 @@ const WidgetWrapper = styled.div`
 
   & > div {
     border: none;
-    padding: 16px;
+    padding: 0;
     background: transparent;
   }
 `;
