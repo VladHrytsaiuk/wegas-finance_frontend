@@ -30,7 +30,6 @@ const MobileToolbarContainer = styled.div`
   flex-direction: column;
   width: 100%;
   margin-bottom: 16px;
-  padding: 0 16px;
 `;
 
 const SearchBarRow = styled.div`
@@ -56,7 +55,7 @@ const SearchInputWrapper = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  height: 44px;
+  height: 42px;
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
@@ -72,8 +71,8 @@ const SearchInput = styled.input`
 `;
 
 const IconButton = styled.button<{ $active?: boolean }>`
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   background-color: ${props => props.$active ? 'var(--color-brand-600)' : 'var(--color-bg-surface)'};
   color: ${props => props.$active ? 'white' : 'var(--color-text-main)'};

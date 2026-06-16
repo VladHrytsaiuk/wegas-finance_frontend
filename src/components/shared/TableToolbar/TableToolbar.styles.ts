@@ -5,6 +5,15 @@ export const ToolbarWrapper = styled.div`
   flex-direction: column;
   gap: 0;
   margin-bottom: 2.5rem;
+
+  @media (max-width: 480px) {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+  }
 `;
 
 export const ChildrenTopRow = styled.div`

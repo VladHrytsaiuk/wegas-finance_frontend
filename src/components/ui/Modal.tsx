@@ -18,27 +18,35 @@ export const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   z-index: 1000;
-  transition: all 0.5s;
+  transition: all 0.3s;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
 `;
 
 export const StyledModal = styled.div<{ $padding?: string }>`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background-color: var(--color-bg-surface);
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
   padding: ${(props) => props.$padding || "3.2rem 4rem"};
-  transition: all 0.5s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1001;
   border: 1px solid var(--color-border);
 
-  max-height: 95vh;
+  max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
+  width: auto;
+
+  @media (max-width: 480px) {
+    width: 96%;
+    padding: ${(props) => props.$padding || "1.5rem 1rem 1.25rem 1rem"};
+    border-radius: 12px;
+  }
 
   &::-webkit-scrollbar {
     width: 8px;

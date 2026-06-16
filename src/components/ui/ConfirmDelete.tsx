@@ -19,7 +19,6 @@ const StyledConfirmDelete = styled.div`
 
   & p {
     color: var(--color-text-secondary);
-    margin-bottom: 1.5rem;
     font-size: 0.95rem;
     line-height: 1.5;
   }
@@ -28,6 +27,10 @@ const StyledConfirmDelete = styled.div`
     display: flex;
     justify-content: flex-end;
     gap: 0.8rem;
+
+    @media (max-width: 480px) {
+      gap: 0.5rem;
+    }
   }
 `;
 
@@ -37,6 +40,13 @@ const DangerButton = styled(Button)`
   color: white;
   border: 1px solid var(--color-red-700);
   width: auto;
+
+  @media (max-width: 480px) {
+    flex: 1;
+    height: 42px;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+  }
 
   /* Використовуємо && щоб підвищити пріоритет (CSS specificity) */
   &&:hover:not(:disabled) {
@@ -64,6 +74,13 @@ const CancelButton = styled(Button)`
   color: var(--color-text-main);
   box-shadow: none;
   width: auto;
+
+  @media (max-width: 480px) {
+    flex: 1;
+    height: 42px;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+  }
 
   /* Використовуємо && для перебивання стилів базової кнопки */
   &&:hover:not(:disabled) {
