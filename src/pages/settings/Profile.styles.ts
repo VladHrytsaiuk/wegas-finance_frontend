@@ -74,13 +74,25 @@ export const ModalTitle = styled.h3`
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
   color: var(--color-text-main);
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
 `;
 
 export const PasswordFormContainer = styled.div`
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @media (max-width: 480px) {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
 `;
 
 export const PasswordForm = styled.form`
@@ -110,6 +122,87 @@ export const CancelButton = styled(Button)`
 
   &:hover {
     background-color: var(--color-bg-hover);
+  }
+`;
+
+// --- Security Section ---
+export const SecuritySection = styled.div`
+  margin-top: 3rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 2rem;
+`;
+
+export const SecurityList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const SecurityItem = styled.div<{ $disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  transition: all 0.2s;
+
+  ${props => props.$disabled && css`
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-grey-50);
+  `}
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+`;
+
+export const SecurityInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const SecurityText = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const SecurityLabel = styled.span`
+  font-weight: 600;
+  color: var(--color-text-main);
+  font-size: 0.95rem;
+`;
+
+export const SecurityDesc = styled.span`
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+`;
+
+export const StatusTag = styled.span<{ $active: boolean }>`
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  background-color: ${props => props.$active ? 'var(--color-success-50)' : 'var(--color-grey-100)'};
+  color: ${props => props.$active ? 'var(--color-success)' : 'var(--color-grey-500)'};
+  margin-left: 0.5rem;
+`;
+
+export const SecurityActions = styled.div`
+  display: flex;
+  gap: 0.75rem;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    & button {
+      flex: 1;
+    }
   }
 `;
 

@@ -11,11 +11,19 @@ import FeedbackWidget from "../ui/FeedbackWidget";
 
 const PageContainer = styled.div`
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   position: relative;
+  background-color: var(--color-bg-subtle);
+
+  @media (max-width: 480px) {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 5rem;
+  }
 `;
 
 // Правий верхній кут (Мова + Тема)
@@ -81,6 +89,19 @@ const Card = styled.div`
   gap: 1.5rem;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 480px) {
+    padding: 2rem 1.5rem;
+    gap: 1rem;
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
+  }
+
+  @media (max-height: 700px) {
+    padding: 1.5rem 1.5rem;
+    gap: 0.75rem;
+  }
 `;
 
 const Header = styled.div`

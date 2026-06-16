@@ -10,6 +10,9 @@ export interface UserProfile {
   role_id?: string;
   family_id?: string;
   base_currency?: string;
+  has_password?: boolean;
+  has_pin?: boolean;
+  has_passkeys?: boolean;
 }
 
 // Отримати дані про себе (хто залогінився)

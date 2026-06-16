@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
 import { GlobalStyle } from "./styles/GlobalStyle";
+import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import { HeaderProvider } from "./context/HeaderContext";
@@ -24,6 +25,7 @@ import { CenteredSpinner } from "./components/ui/CenteredSpinner";
 
 // --- LAZY LOADED PAGES ---
 const Login = lazy(() => import("./pages/auth/Login"));
+const PinLogin = lazy(() => import("./pages/auth/PinLogin"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
 const Accounts = lazy(() => import("./pages/accounts/Accounts"));
@@ -162,6 +164,7 @@ function AppRoutes() {
         </Route>
 
         <Route path="login" element={<Login setToken={NOOP_SET_TOKEN} />} />
+        <Route path="pin-login" element={<PinLogin />} />
         <Route path="register" element={<Register />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
@@ -189,29 +192,31 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-      <SyncProvider>
-        <ThemeProvider>
-          <SettingsProvider>
-            <HeaderProvider>
-              <GlobalStyle />
-              <BrowserRouter>
-                <WorkspaceProvider>
-                  {" "}
-                  {/* 👈 Перенесли сюди */}
-                  <GlobalStyle />
-                  <AppRoutes />
-                </WorkspaceProvider>
-              </BrowserRouter>
-              <Toaster
-                position="top-center"
-                gutter={12}
-                containerStyle={TOASTER_CONTAINER_STYLE}
-                toastOptions={TOASTER_OPTIONS}
-              />
-            </HeaderProvider>
-          </SettingsProvider>
-        </ThemeProvider>
-      </SyncProvider>
+      <AuthProvider>
+        <SyncProvider>
+          <ThemeProvider>
+            <SettingsProvider>
+              <HeaderProvider>
+                <GlobalStyle />
+                <BrowserRouter>
+                  <WorkspaceProvider>
+                    {" "}
+                    {/* 👈 Перенесли сюди */}
+                    <GlobalStyle />
+                    <AppRoutes />
+                  </WorkspaceProvider>
+                </BrowserRouter>
+                <Toaster
+                  position="top-center"
+                  gutter={12}
+                  containerStyle={TOASTER_CONTAINER_STYLE}
+                  toastOptions={TOASTER_OPTIONS}
+                />
+              </HeaderProvider>
+            </SettingsProvider>
+          </ThemeProvider>
+        </SyncProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

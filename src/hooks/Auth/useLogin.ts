@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import { loginApi } from "../../services/apiAuth";
 import { settingsService } from "../../services/apiSettings";
+import { useAuth } from "../../context/AuthContext";
 
 interface UseLoginProps {
   setToken: (token: string) => void;
@@ -16,6 +17,7 @@ export const useLogin = ({ setToken }: UseLoginProps) => {
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { unlock } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,11 +29,16 @@ export const useLogin = ({ setToken }: UseLoginProps) => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user_name", data.user.name);
       localStorage.setItem("user_id", data.user.id);
+      localStorage.setItem("user_email", data.user.email);
+      localStorage.setItem("has_pin", String(!!data.user.has_pin)); // Зберігаємо хінт про ПІН
 
       // 2. Оновлюємо глобальний стейт авторизації
       setToken(data.token);
 
-      // 3. Синхронізація налаштувань (фоном)
+      // 3. Розблоковуємо сесію (ПІН не потрібен відразу після логіну)
+      unlock();
+
+      // 4. Синхронізація налаштувань (фоном)
       // Ми не чекаємо await тут, щоб не блокувати перехід на дешборд,
       // але catch ловить помилки, щоб не ламати UI
       settingsService

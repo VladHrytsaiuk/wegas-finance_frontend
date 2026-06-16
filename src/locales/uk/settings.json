@@ -22,6 +22,8 @@
     "label_email": "Email",
     "button_update_profile": "Зберегти зміни",
     "button_change_password": "Змінити пароль",
+    "button_register_passkey": "Зареєструвати Passkey",
+    "passkey_loading": "Зачекайте...",
     "alert_profile_success": "Профіль оновлено",
     "alert_profile_error": "Помилка оновлення.",
     "pass_label_old": "Старий пароль",

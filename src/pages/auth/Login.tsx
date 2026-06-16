@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
+import { Link, useNavigate } from "react-router-dom";
+import { HiOutlineEye, HiOutlineEyeSlash, HiFingerPrint } from "react-icons/hi2";
 
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -12,6 +12,8 @@ import {
 
 import { useLogin } from "../../hooks/Auth/useLogin";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import { usePasskeys } from "../../hooks/usePasskeys";
+import { useAuth } from "../../context/AuthContext";
 
 interface LoginProps {
   setToken: (token: string) => void;
@@ -19,8 +21,12 @@ interface LoginProps {
 
 function Login({ setToken }: LoginProps) {
   const { state, actions, t } = useLogin({ setToken });
+  const navigate = useNavigate();
+  const { unlock } = useAuth();
+  
   usePageTitle(t("auth:auth.login_title", "Вхід"));
   const { email, password, isPending } = state;
+  const { loginWithPasskey, loading: passkeyLoading, isSupported } = usePasskeys();
 
   // Додаємо стан для видимості пароля
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +60,34 @@ function Login({ setToken }: LoginProps) {
             placeholder="name@example.com"
           />
         </FormGroup>
+
+        {isSupported && (
+          <Button
+            type="button"
+            $variation="secondary"
+            onClick={async () => {
+              const success = await loginWithPasskey(email);
+              if (success) {
+                unlock();
+                navigate("/dashboard", { replace: true });
+              }
+            }}
+            disabled={isPending || passkeyLoading}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.8rem",
+              marginTop: "-0.5rem",
+              marginBottom: "1rem",
+            }}
+          >
+            <HiFingerPrint size={20} />
+            {passkeyLoading
+              ? t("auth:auth.passkey_loading", "Зачекайте...")
+              : t("auth:auth.login_with_passkey", "Увійти за допомогою FaceID / TouchID")}
+          </Button>
+        )}
 
         <FormGroup>
           <label htmlFor="password">{t("auth:auth.login_label_password")}</label>
