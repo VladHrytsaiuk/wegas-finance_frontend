@@ -1,37 +1,57 @@
 import styled from "styled-components";
 import { Button } from "./Button";
-import { useTranslation } from "react-i18next"; // ⬅️ ІМПОРТ ДЛЯ ПЕРЕКЛАДУ
+import { useTranslation } from "react-i18next";
 
 const StyledConfirm = styled.div`
   width: 100%;
   max-width: 32rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
 
   & h3 {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--color-text-main);
+    line-height: 1.2;
+
+    @media (max-width: 480px) {
+      font-size: 1.25rem;
+    }
   }
 
   & p {
     color: var(--color-text-secondary);
-    margin-bottom: 1.2rem;
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.5;
+
+    @media (max-width: 480px) {
+      font-size: 0.95rem;
+    }
   }
 
   & div {
     display: flex;
     justify-content: flex-end;
     gap: 0.8rem;
+    margin-top: 0.5rem;
+
+    @media (max-width: 480px) {
+      gap: 0.5rem;
+    }
   }
 `;
 
 const ConfirmButton = styled(Button)`
   background-color: var(--color-brand-600);
   width: auto;
+
+  @media (max-width: 480px) {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+    height: 42px;
+  }
 
   &:hover {
     background-color: var(--color-brand-700);
@@ -45,6 +65,13 @@ const CancelButton = styled(Button)`
   box-shadow: none;
   width: auto;
 
+  @media (max-width: 480px) {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+    height: 42px;
+  }
+
   &:hover {
     background-color: var(--color-bg-page);
     border-color: var(--color-text-light);
@@ -57,22 +84,18 @@ interface ConfirmLogoutProps {
 }
 
 function ConfirmLogout({ onConfirm, onCloseModal }: ConfirmLogoutProps) {
-  const { t } = useTranslation(); // ⬅️ ВИКОРИСТАННЯ ХУКА
+  const { t } = useTranslation();
 
   return (
     <StyledConfirm>
-      {/* ➡️ ПЕРЕКЛАД ЗАГОЛОВКА */}
       <h3>{t("auth:auth.logout_confirm_title")}</h3>
-      {/* ➡️ ПЕРЕКЛАД ПОВІДОМЛЕННЯ */}
       <p>{t("auth:auth.logout_confirm_message")}</p>
 
       <div>
         <CancelButton onClick={onCloseModal}>
-          {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
           {t("auth:auth.logout_button_cancel")}
         </CancelButton>
         <ConfirmButton onClick={onConfirm}>
-          {/* ➡️ ПЕРЕКЛАД КНОПКИ */}
           {t("auth:auth.logout_button_confirm")}
         </ConfirmButton>
       </div>
