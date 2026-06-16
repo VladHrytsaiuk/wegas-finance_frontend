@@ -18,6 +18,8 @@ import { SmartIcon } from "../../utils/IconMap";
 import { useGoalsPage } from "../../hooks/Goals/useGoalsPage";
 import { useGoalsFilter } from "../../hooks/Goals/useGoalsFilter";
 import { useHeader } from "../../context/HeaderContext"; // Імпорт хедера
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Goals.styles";
 import type { Goal } from "../../types";
 
@@ -36,6 +38,7 @@ function Goals() {
     t,
   } = useGoalsPage();
 
+  const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.goals", "Цілі"));
 
   const {
@@ -106,8 +109,10 @@ function Goals() {
     );
 
   return (
-    <S.PageContainer>
-      <TableToolbar
+    <>
+      {isMobile && <MobilePageHeader title={t("goals_debts:goals.title", "Фінансові цілі")} />}
+      <S.PageContainer>
+        <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder={t(
@@ -193,7 +198,8 @@ function Goals() {
         }}
       />
     </S.PageContainer>
-  );
+  </>
+);
 }
 
 export default Goals;

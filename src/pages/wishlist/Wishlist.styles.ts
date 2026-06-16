@@ -9,6 +9,10 @@ export const PageContainer = styled.div`
   padding-bottom: 4rem;
   max-width: 1600px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 16px 16px 0 16px;
+  }
 `;
 
 export const Grid = styled.div`

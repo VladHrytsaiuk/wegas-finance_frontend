@@ -14,10 +14,13 @@ import { HiOutlineCube } from "react-icons/hi2";
 
 import { useAssets } from "../../hooks/Assets/useAssets";
 import { useAssetsFilter } from "../../hooks/Assets/useAssetsFilter";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Assets.styles";
 
 export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
+  const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.assets", "Майно"));
   const { assets, isLoading, isDeleting } = state;
 
@@ -37,9 +40,11 @@ export default function Assets() {
   if (isLoading) return <CenteredSpinner />;
 
   return (
-    <S.PageContainer>
-      <Modal>
-        <TableToolbar
+    <>
+      {isMobile && <MobilePageHeader title={t("navigation:general.assets", "Майно")} />}
+      <S.PageContainer>
+        <Modal>
+          <TableToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           searchPlaceholder={t(
@@ -115,5 +120,6 @@ export default function Assets() {
         })}
       </Modal>
     </S.PageContainer>
+  </>
   );
 }

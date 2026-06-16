@@ -17,11 +17,14 @@ import VirtualGroupCard from "../../components/wishlist/VirtualGroupCard";
 import { useWishlist } from "../../hooks/Wishlist/useWishlist";
 import { useWishlistGroupFilters } from "../../hooks/Wishlist/useWishlistGroupFilters";
 import { useHeader } from "../../context/HeaderContext";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Wishlist.styles";
 
 export default function WishlistGroups() {
   const navigate = useNavigate();
   const { items, groups, isLoading, handlers, t } = useWishlist();
+  const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.wishlist", "Бажання"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
@@ -54,8 +57,10 @@ export default function WishlistGroups() {
   if (isLoading) return <CenteredSpinner isContainer />;
 
   return (
-    <S.PageContainer>
-      <TableToolbar
+    <>
+      {isMobile && <MobilePageHeader title={t("shopping_wishlist:wishlist.title", "Список бажань")} />}
+      <S.PageContainer>
+        <TableToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder={t(
@@ -194,5 +199,6 @@ export default function WishlistGroups() {
         />
       )}
     </S.PageContainer>
+  </>
   );
 }

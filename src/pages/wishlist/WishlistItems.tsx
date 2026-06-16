@@ -15,6 +15,8 @@ import { useWishlist } from "../../hooks/Wishlist/useWishlist";
 import { useWishlistFilters } from "../../hooks/Wishlist/useWishlistFilters";
 import { getMeApi, getFamilyMembers } from "../../services/apiUsers";
 import { useHeader } from "../../context/HeaderContext";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Wishlist.styles";
 
 export default function WishlistItems() {
@@ -22,6 +24,7 @@ export default function WishlistItems() {
   const navigate = useNavigate();
   const { items, groups, isLoading, handlers, t } = useWishlist();
   const { setPageTitle, resetPageTitle } = useHeader();
+  const isMobile = useIsMobile();
 
   const { data: user } = useQuery({ queryKey: ["me"], queryFn: getMeApi });
   const { data: familyMembers } = useQuery({
@@ -69,12 +72,16 @@ export default function WishlistItems() {
   if (isLoading) return <CenteredSpinner isContainer />;
 
   return (
-    <S.PageContainer onClick={() => setOpenMenuId(null)}>
-      <S.HeaderSection>
-        <S.BackButton onClick={() => navigate("/wishlist")}>
-          <HiArrowLeft size={18} /> {t("common:common.return", "Назад")}
-        </S.BackButton>
-      </S.HeaderSection>
+    <>
+      {isMobile && <MobilePageHeader title={groupName} onBack={() => navigate("/wishlist")} />}
+      <S.PageContainer onClick={() => setOpenMenuId(null)}>
+        {!isMobile && (
+          <S.HeaderSection>
+            <S.BackButton onClick={() => navigate("/wishlist")}>
+              <HiArrowLeft size={18} /> {t("common:common.return", "Назад")}
+            </S.BackButton>
+          </S.HeaderSection>
+        )}
 
       <TableToolbar
         searchQuery={searchQuery}
@@ -162,5 +169,6 @@ export default function WishlistItems() {
         />
       )}
     </S.PageContainer>
+  </>
   );
 }

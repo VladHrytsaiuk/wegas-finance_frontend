@@ -5,6 +5,10 @@ export const PageContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    padding: 16px 16px 0 16px;
+  }
 `;
 
 // Контейнер для груп (наприклад: "Квартира Львів")
@@ -151,6 +155,8 @@ export const StatUnit = styled.span`
   font-weight: 500;
   color: var(--color-text-secondary);
 `;
+
+export const ModalWrapper = styled.div``;
 
 // --- НОВИЙ ЕЛЕМЕНТ: БОРГ ---
 export const DebtBadge = styled.div`

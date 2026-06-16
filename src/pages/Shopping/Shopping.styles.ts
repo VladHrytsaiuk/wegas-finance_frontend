@@ -6,6 +6,10 @@ export const PageContainer = styled.div`
   gap: 1.25rem;
   width: 100%;
   flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 16px 16px 0 16px;
+  }
 `;
 
 export const Header = styled.div`

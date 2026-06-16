@@ -16,10 +16,13 @@ import { DEFAULT_NOTE_COLOR } from "../../utils/constants";
 import { useShopping } from "../../hooks/Shopping/useShoppingPage";
 import { useShoppingFilters } from "../../hooks/Shopping/useShoppingFilters";
 import { useHeader } from "../../context/HeaderContext"; // Імпорт контексту заголовка
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Shopping.styles";
 
 function Shopping() {
   const { lists, isLoading, handlers, t } = useShopping();
+  const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.shoppingList", "Покупки"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
@@ -82,11 +85,10 @@ function Shopping() {
     );
 
   return (
-    <S.PageContainer>
-      {/* <S.Header> з <h2> видалено */}
-
-      <TableToolbar
-        searchQuery={searchQuery}
+    <>
+      {isMobile && <MobilePageHeader title={t("shopping_wishlist:shopping.title", "Списки покупок")} />}
+      <S.PageContainer>
+        <TableToolbar        searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder={t("shopping_wishlist:shopping.search_placeholder", "Пошук списків...")}
         filtersConfig={filtersConfig as any}
@@ -172,6 +174,7 @@ function Shopping() {
         />
       </S.PaginationWrapper>
     </S.PageContainer>
+  </>
   );
 }
 

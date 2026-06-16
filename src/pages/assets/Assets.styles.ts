@@ -5,6 +5,10 @@ export const PageContainer = styled.div`
   flex-direction: column;
   flex: 1;
   width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 16px 16px 0 16px;
+  }
 `;
 
 export const ActionsBar = styled.div`

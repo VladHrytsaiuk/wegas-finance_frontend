@@ -16,6 +16,8 @@ import CreateTransactionModal from "../../components/transactions/CreateTransact
 import { useUtilityMeters } from "../../hooks/Utility/useUtility";
 import { useUtilityFilters } from "../../hooks/Utility/useUtilityFilters";
 import { useHeader } from "../../context/HeaderContext";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Utility.styles";
 
 import CreateMeterForm from "../../components/utility/CreateMeterModal";
@@ -37,6 +39,7 @@ function UtilityContent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.utility", "Комунальні"));
   const { setPageTitle, resetPageTitle } = useHeader();
 
@@ -119,106 +122,111 @@ function UtilityContent() {
   };
 
   return (
-    <S.PageContainer>
-      <TableToolbar
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        searchPlaceholder={t("stats_utility:utilityPage.search_placeholder")}
-        filtersConfig={filtersConfig}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        sortOptions={sortOptions}
-        sortValue={sortValue}
-        onSortChange={handleSortChange}
-        onClearAll={handleClearAll}
-      >
-        <Button
-          variation="secondary"
-          icon={<HiChartBar />}
-          onClick={() => navigate("analytics")}
+    <>
+      {isMobile && <MobilePageHeader title={t("stats_utility:utilityPage.title")} />}
+      <S.PageContainer>
+        <TableToolbar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          searchPlaceholder={t("stats_utility:utilityPage.search_placeholder")}
+          filtersConfig={filtersConfig}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          sortOptions={sortOptions}
+          sortValue={sortValue}
+          onSortChange={handleSortChange}
+          onClearAll={handleClearAll}
         >
-          {t("stats_utility:utilityPage.analytics_btn")}
-        </Button>
-        <Button
-          variation="primary"
-          size="medium"
-          icon={<HiPlus />}
-          onClick={() => {
-            setActiveMeter(null);
-            open("create-meter");
-          }}
-        >
-          {t("stats_utility:utilityPage.add_btn")}
-        </Button>
-      </TableToolbar>
+          <Button
+            variation="secondary"
+            icon={<HiChartBar />}
+            onClick={() => navigate("analytics")}
+          >
+            {t("stats_utility:utilityPage.analytics_btn")}
+          </Button>
+          <Button
+            variation="primary"
+            size="medium"
+            icon={<HiPlus />}
+            onClick={() => {
+              setActiveMeter(null);
+              open("create-meter");
+            }}
+          >
+            {t("stats_utility:utilityPage.add_btn")}
+          </Button>
+        </TableToolbar>
 
-      {Object.keys(groupedMeters).length > 0 &&
-        Object.entries(groupedMeters).map(([groupName, groupMeters]) => (
-          <S.GroupSection key={groupName}>
-            {groupName !== t("stats_utility:filters.group_all") && (
-              <S.GroupHeader>{groupName}</S.GroupHeader>
-            )}
-            <S.Grid>
-              {groupMeters.map((meter) => (
-                <UtilityMeterCard
-                  key={meter.id}
-                  meter={meter}
-                  onEdit={handleMeterEdit}
-                  onDelete={handleMeterDelete}
-                  onPay={handleMeterPay}
-                  onAddReading={handleMeterAddReading}
-                />
-              ))}
-            </S.Grid>
-          </S.GroupSection>
-        ))}
+        {Object.keys(groupedMeters).length > 0 &&
+          Object.entries(groupedMeters).map(([groupName, groupMeters]) => (
+            <S.GroupSection key={groupName}>
+              {groupName !== t("stats_utility:filters.group_all") && (
+                <S.GroupHeader>{groupName}</S.GroupHeader>
+              )}
+              <S.Grid>
+                {groupMeters.map((meter) => (
+                  <UtilityMeterCard
+                    key={meter.id}
+                    meter={meter}
+                    onEdit={handleMeterEdit}
+                    onDelete={handleMeterDelete}
+                    onPay={handleMeterPay}
+                    onAddReading={handleMeterAddReading}
+                  />
+                ))}
+              </S.Grid>
+            </S.GroupSection>
+          ))}
 
-      {/* EMPTY STATE */}
-      {!isLoading && Object.keys(groupedMeters).length === 0 && (
-        <EmptyState
-          icon={<HiOutlineBolt />}
-          title={t("stats_utility:utilityPage.empty_title")}
-          description={t("stats_utility:utilityPage.empty_desc")}
-        />
-      )}
+        {/* EMPTY STATE */}
+        {!isLoading && Object.keys(groupedMeters).length === 0 && (
+          <EmptyState
+            icon={<HiOutlineBolt />}
+            title={t("stats_utility:utilityPage.empty_title")}
+            description={t("stats_utility:utilityPage.empty_desc")}
+          />
+        )}
 
-      {/* MODALS */}
-      <Modal.Window name="create-meter">
-        <CreateMeterForm meterToEdit={activeMeter} onCloseModal={close} />
-      </Modal.Window>
+        {/* MODALS */}
+        <S.ModalWrapper>
+          <Modal.Window name="create-meter">
+            <CreateMeterForm meterToEdit={activeMeter} onCloseModal={close} />
+          </Modal.Window>
 
-      <Modal.Window name="add-reading">
-        <AddReadingForm
-          meter={activeMeter as UtilityMeter}
-          onCloseModal={close}
-        />
-      </Modal.Window>
+          <Modal.Window name="add-reading">
+            <AddReadingForm
+              meter={activeMeter as UtilityMeter}
+              onCloseModal={close}
+            />
+          </Modal.Window>
 
-      <Modal.Window name="delete-confirm">
-        <ConfirmDelete
-          resourceName={
-            activeMeter?.name || t("stats_utility:utility.resource_name")
-          }
-          onConfirm={() => activeMeter && remove(activeMeter.id)}
-        />
-      </Modal.Window>
+          <Modal.Window name="delete-confirm">
+            <ConfirmDelete
+              resourceName={
+                activeMeter?.name || t("stats_utility:utility.resource_name")
+              }
+              onConfirm={() => activeMeter && remove(activeMeter.id)}
+            />
+          </Modal.Window>
 
-      {openName === "pay-utility-debt" && activeMeter && (
-        <CreateTransactionModal
-          key={activeMeter.id}
-          isOpen={true}
-          onClose={close}
-          onSuccess={handlePaymentSuccess}
-          initialData={{
-            type: "debt_repay",
-            counterparty_id: activeMeter.counterparty_id || "",
-            amount: getActiveDebt(),
-            note: t("stats_utility:utility.payment_note", {
-              name: activeMeter.name,
-            }),
-          }}
-        />
-      )}
-    </S.PageContainer>
+          {openName === "pay-utility-debt" && activeMeter && (
+            <CreateTransactionModal
+              key={activeMeter.id}
+              isOpen={true}
+              onClose={close}
+              onSuccess={handlePaymentSuccess}
+              initialData={{
+                type: "debt_repay",
+                counterparty_id: activeMeter.counterparty_id || "",
+                amount: getActiveDebt(),
+                note: t("stats_utility:utility.payment_note", {
+                  name: activeMeter.name,
+                }),
+              }}
+            />
+          )}
+        </S.ModalWrapper>
+      </S.PageContainer>
+    </>
   );
 }

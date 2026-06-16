@@ -8,6 +8,10 @@ export const PageContainer = styled.div`
   gap: 1.5rem;
   width: 100%;
   flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 16px 16px 0 16px;
+  }
 `;
 
 export const Grid = styled.div`

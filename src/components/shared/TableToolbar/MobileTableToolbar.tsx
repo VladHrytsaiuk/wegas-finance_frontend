@@ -29,7 +29,8 @@ const MobileToolbarContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  padding: 0 16px;
 `;
 
 const SearchBarRow = styled.div`
