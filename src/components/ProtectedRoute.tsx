@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { getMeApi } from "../services/apiUsers";
@@ -9,21 +9,30 @@ import { useAuth } from "../context/AuthContext";
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isUnlocked } = useAuth();
+  const location = useLocation();
+  const { isUnlocked: contextUnlocked } = useAuth();
+  
+  // 🔥 ВАЖЛИВО: Перевіряємо sessionStorage + location.state.
+  // Це дозволяє миттєво побачити розблокування навіть на симуляторі.
+  const isUnlocked = 
+    contextUnlocked || 
+    sessionStorage.getItem("is_unlocked") === "true" ||
+    (location.state as any)?.unlocked === true;
+
   const token = localStorage.getItem("token");
   const userEmail = localStorage.getItem("user_email");
   const hasPinHint = localStorage.getItem("has_pin") === "true";
 
-  // 1. Стукаємо на сервер: "Хто я?"
   const {
     isLoading,
     isError,
     data: user,
-    status
+    status,
+    isFetching
   } = useQuery({
     queryKey: ["me", token],
     queryFn: getMeApi,
-    retry: false, 
+    retry: 1, 
     enabled: !!token, 
   });
 
@@ -31,54 +40,46 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const needsPin = !!user?.has_passkeys || !!user?.has_pin || hasPinHint;
   const isLocked = needsPin && !isUnlocked;
 
-  // Debugging logs
   useEffect(() => {
-    console.log("ProtectedRoute State:", {
-      isLoading,
-      status,
-      isAuthenticated,
-      isLocked,
-      token: !!token,
-      userEmail,
-      hasPinHint,
-      pathname: window.location.pathname
-    });
-  }, [isLoading, status, isAuthenticated, isLocked, token, userEmail, hasPinHint]);
+    if (token) {
+      console.log("ProtectedRoute State:", {
+        isLoading,
+        isFetching,
+        status,
+        isAuthenticated,
+        isLocked,
+        isUnlocked,
+        pathname: window.location.pathname
+      });
+    }
+  }, [isLoading, isFetching, status, isAuthenticated, isLocked, isUnlocked, token]);
 
   useEffect(
     function () {
-      if (!isLoading) {
-        if (!isAuthenticated) {
-          // НЕМАЄ АВТОРИЗАЦІЇ
-          if (userEmail && hasPinHint) {
-            console.log("Redirecting to PinLogin (Unauthenticated but has PIN hint)");
-            if (!window.location.pathname.startsWith("/pin-login")) {
-              navigate("/pin-login", { replace: true });
-            }
-          } else {
-            console.log("Redirecting to Login (Unauthenticated, no PIN hint)");
-            // Видаляємо тільки токен, щоб не зациклити, якщо проблема в ньому
-            localStorage.removeItem("token");
-            if (!window.location.pathname.startsWith("/login")) {
-              navigate("/login", { replace: true });
-            }
-          }
-        } else if (isLocked) {
-          // АВТОРИЗОВАНИЙ, АЛЕ ЗАБЛОКОВАНО
-          console.log("Redirecting to PinLogin (Authenticated but Locked)");
-          if (!window.location.pathname.startsWith("/pin-login")) {
+      if (isLoading || isFetching) return;
+
+      if (!isAuthenticated) {
+        if (userEmail && hasPinHint) {
+          if (!window.location.pathname.startsWith("/pin-login") && !window.location.pathname.startsWith("/login")) {
             navigate("/pin-login", { replace: true });
           }
+        } else {
+          if (!window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/pin-login")) {
+            localStorage.removeItem("token");
+            navigate("/login", { replace: true });
+          }
+        }
+      } else if (isLocked) {
+        console.warn("LOCKED: Redirecting to pin-login");
+        if (!window.location.pathname.startsWith("/pin-login")) {
+          navigate("/pin-login", { replace: true });
         }
       }
     },
-    [isLoading, isAuthenticated, isLocked, userEmail, hasPinHint, navigate],
+    [isLoading, isFetching, isAuthenticated, isLocked, userEmail, hasPinHint, navigate],
   );
 
-  // Якщо ми в процесі завантаження і у нас Є токен, показуємо спінер.
-  // Але якщо ми знаємо, що вже треба редіректити (isAuthenticated false і ми не вантажимось), 
-  // то повертаємо null, щоб не блокувати перехід.
-  if (isLoading && !!token) {
+  if ((isLoading || (isFetching && !user)) && !!token) {
     return (
       <CenteredSpinner
         fullHeight
@@ -87,13 +88,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Якщо ми авторизовані ТА не заблоковані
   if (isAuthenticated && !isLocked) {
     return children;
   }
 
-  // Фолбек: якщо ми не авторизовані, useEffect зробить свою справу.
-  // Повертаємо null, щоб не було білого екрану зі спінером, який нікуди не веде.
   return null;
 }
 

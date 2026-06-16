@@ -9,16 +9,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // We use useState(false) to ensure the PIN is requested every time the app is loaded/refreshed.
-  // Using sessionStorage would persist the unlock state as long as the tab is open.
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  // Повертаємо sessionStorage: він переживає перезавантаження (це лікує баг симулятора),
+  // але очищується при закритті вкладки/додатка (це важливо для безпеки).
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    return sessionStorage.getItem("is_unlocked") === "true";
+  });
 
   const unlock = () => {
     setIsUnlocked(true);
+    sessionStorage.setItem("is_unlocked", "true");
   };
 
   const lock = () => {
     setIsUnlocked(false);
+    sessionStorage.removeItem("is_unlocked");
   };
 
   return (

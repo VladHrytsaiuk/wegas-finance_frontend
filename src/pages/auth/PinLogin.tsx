@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { HiFingerPrint } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { ModernPinInput } from "../../components/auth/ModernPinInput";
 import { AuthLayout } from "../../components/auth/AuthLayout";
@@ -52,6 +53,7 @@ const PasskeyButton = styled.button`
 const PinLogin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { unlock } = useAuth();
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,9 +84,10 @@ const PinLogin = () => {
       }
 
       localStorage.setItem("token", finalToken);
-      console.log("Token saved to localStorage");
       
       if (user) {
+        queryClient.setQueryData(["me", finalToken], user);
+        
         if (user.name) localStorage.setItem("user_name", user.name);
         if (user.id) localStorage.setItem("user_id", user.id);
         if (user.email) localStorage.setItem("user_email", user.email);
@@ -92,9 +95,9 @@ const PinLogin = () => {
       }
 
       unlock(); 
-      console.log("AuthContext unlocked, navigating to dashboard...");
+      
       toast.success(t("auth:auth.login_alert_success", { name: user?.name || "" }));
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard", { replace: true, state: { unlocked: true } });
     } catch (err: unknown) {
       console.error("PIN login ERROR detail:", err);
       if (axios.isAxiosError(err)) {
@@ -107,7 +110,6 @@ const PinLogin = () => {
         setError(t("auth:auth.login_alert_error"));
       }
       
-      // Анімація помилки і очищення
       setTimeout(() => {
         setPin("");
         setError("");
@@ -115,7 +117,7 @@ const PinLogin = () => {
     } finally {
       setLoading(false);
     }
-  }, [t, navigate, unlock]);
+  }, [t, navigate, unlock, queryClient]);
 
   useEffect(() => {
     if (pin.length === 4) {
@@ -123,15 +125,14 @@ const PinLogin = () => {
     }
   }, [pin, handlePinSubmit]);
 
-  // Спроба авто-входу через біометрію при завантаженні
   useEffect(() => {
     const triggerPasskey = async () => {
       if (isSupported && !passkeyTriggered.current) {
         passkeyTriggered.current = true;
         const success = await loginWithPasskey();
         if (success) {
-          unlock(); // 🔥 РОЗБЛОКОВУЄМО СЕСІЮ
-          navigate("/dashboard", { replace: true });
+          unlock();
+          navigate("/dashboard", { replace: true, state: { unlocked: true } });
         }
       }
     };
@@ -160,7 +161,7 @@ const PinLogin = () => {
               const success = await loginWithPasskey();
               if (success) {
                 unlock();
-                navigate("/dashboard", { replace: true });
+                navigate("/dashboard", { replace: true, state: { unlocked: true } });
               }
             }} 
             disabled={loading || passkeyLoading}
