@@ -42,10 +42,6 @@ export const ButtonGroup = styled.div`
   flex-direction: row;
   gap: 0.8rem;
   width: 100%;
-
-  @media (max-width: 480px) {
-    gap: 0.5rem;
-  }
 `;
 
 // Ми розширюємо існуючий компонент Button
@@ -55,12 +51,6 @@ export const DeleteButton = styled(Button)`
   background-color: var(--color-red-600);
   border: 1px solid var(--color-red-600);
   color: white;
-
-  @media (max-width: 480px) {
-    font-size: 0.8rem;
-    padding: 0 0.4rem;
-    height: 42px;
-  }
 
   /* && використовується для підвищення специфічності селектора, 
      щоб перебити дефолтні стилі Button */
@@ -83,12 +73,6 @@ export const DeleteAllButton = styled(Button)`
   border: 1px solid var(--color-red-200);
   color: var(--color-red-700);
 
-  @media (max-width: 480px) {
-    font-size: 0.8rem;
-    padding: 0 0.4rem;
-    height: 42px;
-  }
-
   &&:hover:not(:disabled) {
     background-color: var(--color-red-50);
     border-color: var(--color-red-300);
@@ -103,12 +87,6 @@ export const CancelButton = styled(Button)`
   background-color: var(--color-bg-page);
   color: var(--color-text-main);
   border: 1px solid transparent;
-
-  @media (max-width: 480px) {
-    font-size: 0.8rem;
-    padding: 0 0.4rem;
-    height: 42px;
-  }
 
   &&:hover:not(:disabled) {
     background-color: var(--color-border);

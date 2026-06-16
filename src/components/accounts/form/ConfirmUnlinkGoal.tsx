@@ -17,21 +17,12 @@ const StyledConfirm = styled.div`
     display: flex;
     align-items: center;
     gap: 12px;
-    line-height: 1.2;
-
-    @media (max-width: 480px) {
-      font-size: 1.25rem;
-    }
   }
 
   & p {
     color: var(--color-text-secondary);
     line-height: 1.6;
-    font-size: 1rem;
-
-    @media (max-width: 480px) {
-      font-size: 0.95rem;
-    }
+    font-size: 0.95rem;
   }
 `;
 
@@ -40,12 +31,7 @@ const ActionButtons = styled.div`
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 0.5rem;
-
-  @media (max-width: 480px) {
-    gap: 0.5rem;
-  }
 `;
-
 const WarningButton = styled(Button)`
   && {
     background-color: var(--color-warning);
@@ -53,13 +39,6 @@ const WarningButton = styled(Button)`
     border: 1px solid var(--color-warning);
     width: auto;
     font-weight: 600;
-
-    @media (max-width: 480px) {
-      flex: 1;
-      height: 42px;
-      font-size: 0.85rem;
-      padding: 0 0.5rem;
-    }
   }
 
   /* 🔥 Виправляємо ховер, щоб не було зеленого */
@@ -72,15 +51,6 @@ const WarningButton = styled(Button)`
 
   &&:active:not(:disabled) {
     filter: brightness(0.9); /* Трохи темнішим при кліку */
-  }
-`;
-
-const CancelButton = styled(Button)`
-  @media (max-width: 480px) {
-    flex: 1;
-    height: 42px;
-    font-size: 0.85rem;
-    padding: 0 0.5rem;
   }
 `;
 
@@ -114,9 +84,9 @@ function ConfirmUnlinkGoal({
       </p>
 
       <ActionButtons>
-        <CancelButton variation="secondary" onClick={onCloseModal} type="button">
+        <Button variation="secondary" onClick={onCloseModal} type="button">
           {t("common:common.cancel", "Скасувати")}
-        </CancelButton>
+        </Button>
         <WarningButton
           type="button"
           onClick={() => {
