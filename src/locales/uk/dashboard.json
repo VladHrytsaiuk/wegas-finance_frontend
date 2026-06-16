@@ -34,5 +34,24 @@
       "expense_label": "Витрати",
       "income_label": "Доходи"
     }
+  },
+  "mobile": {
+    "personal_balance": "Мій баланс",
+    "family_balance": "Сімейний баланс",
+    "income": "Доходи",
+    "expense": "Витрати",
+    "shopping": "Покупки",
+    "goals": "Цілі",
+    "wishlist": "Бажання",
+    "utility": "Комуналка",
+    "assets": "Активи",
+    "recent_operations": "Останні операції",
+    "view_more": "Більше",
+    "no_operations": "Операцій не знайдено",
+    "expense_dynamics": "Динаміка витрат",
+    "top_categories": "Топ категорій",
+    "expense_distribution": "Розподіл витрат",
+    "personal": "Особисті",
+    "family": "Сім'я"
   }
 }

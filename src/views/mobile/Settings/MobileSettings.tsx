@@ -158,7 +158,7 @@ function MobileSettings() {
 
         <Content>
           <Section>
-            <SectionTitle>Обліковий запис</SectionTitle>
+            <SectionTitle>{t("settings:settingsLayout.group_account")}</SectionTitle>
             <ListGroup>
               <ListItem to="/settings/profile" $isLast>
                 <LeftSide>
@@ -175,7 +175,7 @@ function MobileSettings() {
           </Section>
 
           <Section>
-            <SectionTitle>Структура фінансів</SectionTitle>
+            <SectionTitle>{t("settings:settingsLayout.group_structure")}</SectionTitle>
             <ListGroup>
               <ListItem to="/settings/categories">
                 <LeftSide>
@@ -216,7 +216,7 @@ function MobileSettings() {
           </Section>
 
           <Section>
-            <SectionTitle>Система</SectionTitle>
+            <SectionTitle>{t("settings:settingsLayout.group_system")}</SectionTitle>
             <ListGroup>
               <ListItem to="/settings/general">
                 <LeftSide>

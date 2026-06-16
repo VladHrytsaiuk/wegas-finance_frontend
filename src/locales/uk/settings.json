@@ -45,7 +45,10 @@
     "menu_counterparties": "Контрагенти",
     "menu_tags": "Теги",
     "menu_export": "Експорт",
-    "menu_logout": "Вихід"
+    "menu_logout": "Вихід",
+    "group_account": "Обліковий запис",
+    "group_structure": "Структура фінансів",
+    "group_system": "Система"
   },
   "tagsPage": {
     "title": "Теги (Мітки)",

@@ -85,7 +85,7 @@ function MobileTransactionHistory() {
         <BackButton onClick={() => navigate(-1)}>
           <HiArrowLeft size={24} />
         </BackButton>
-        <Title>Історія операцій</Title>
+        <Title>{t("dashboard:mobile.recent_operations")}</Title>
       </Header>
 
       <List>

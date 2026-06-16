@@ -45,7 +45,10 @@
     "menu_counterparties": "Counterparties",
     "menu_tags": "Tags",
     "menu_export": "Export",
-    "menu_logout": "Logout"
+    "menu_logout": "Logout",
+    "group_account": "Account",
+    "group_structure": "Financial Structure",
+    "group_system": "System"
   },
   "tagsPage": {
     "title": "Tags (Labels)",

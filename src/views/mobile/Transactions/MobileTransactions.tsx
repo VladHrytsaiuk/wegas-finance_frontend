@@ -61,10 +61,10 @@ function MobileTransactions() {
 
   return (
     <StyledMobileStats>
-      <Title>Аналітика</Title>
+      <Title>{t("navigation:navGroups.analytics")}</Title>
       
       <Section>
-        <SectionTitle>Розподіл витрат</SectionTitle>
+        <SectionTitle>{t("dashboard:mobile.expense_distribution")}</SectionTitle>
         <WidgetWrapper>
           <ExpensesPieWidget 
             globalFilter={globalFilter}
@@ -74,7 +74,7 @@ function MobileTransactions() {
       </Section>
 
       <Section>
-        <SectionTitle>Топ категорій</SectionTitle>
+        <SectionTitle>{t("dashboard:mobile.top_categories")}</SectionTitle>
         <WidgetWrapper>
           <TopListWidget 
             type="expense"
@@ -86,7 +86,7 @@ function MobileTransactions() {
       </Section>
 
       <Section>
-        <SectionTitle>Топ магазинів</SectionTitle>
+        <SectionTitle>{t("dashboard:dashboardPage.widget_top_shops")}</SectionTitle>
         <WidgetWrapper>
           <TopListWidget 
             type="expense"

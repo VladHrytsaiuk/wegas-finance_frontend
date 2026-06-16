@@ -34,5 +34,24 @@
       "expense_label": "Expense",
       "income_label": "Income"
     }
+  },
+  "mobile": {
+    "personal_balance": "My Balance",
+    "family_balance": "Family Balance",
+    "income": "Income",
+    "expense": "Expense",
+    "shopping": "Shopping",
+    "goals": "Goals",
+    "wishlist": "Wishlist",
+    "utility": "Utility",
+    "assets": "Assets",
+    "recent_operations": "Recent Operations",
+    "view_more": "More",
+    "no_operations": "No operations found",
+    "expense_dynamics": "Expense Dynamics",
+    "top_categories": "Top Categories",
+    "expense_distribution": "Expense Distribution",
+    "personal": "Personal",
+    "family": "Family"
   }
 }

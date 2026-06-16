@@ -402,7 +402,7 @@ function MobileDashboard() {
       <StickyHeader>
         <HeaderTop>
           <BalanceInfo>
-            <Greeting>{viewScope === 'personal' ? 'Мій баланс' : 'Сімейний баланс'}</Greeting>
+            <Greeting>{viewScope === 'personal' ? t("dashboard:mobile.personal_balance") : t("dashboard:mobile.family_balance")}</Greeting>
             <TotalBalance>
               {isStatsLoading && balance === 0 ? '...' : formatMoney(balance, currency, language)}
             </TotalBalance>
@@ -412,14 +412,14 @@ function MobileDashboard() {
             <ToggleButton 
               $active={viewScope === 'personal'} 
               onClick={() => setViewScope('personal')}
-              title="Особисті"
+              title={t("dashboard:mobile.personal")}
             >
               <HiOutlineUser />
             </ToggleButton>
             <ToggleButton 
               $active={viewScope === 'family'} 
               onClick={() => setViewScope('family')}
-              title="Сім'я"
+              title={t("dashboard:mobile.family")}
             >
               <HiOutlineUsers />
             </ToggleButton>
@@ -431,14 +431,14 @@ function MobileDashboard() {
         <SummaryGrid>
           <SummaryCard $type="income" onClick={() => navigate('/transactions?type=income')}>
             <div className="icon-box"><HiOutlineArrowTrendingUp /></div>
-            <div className="label">Доходи</div>
+            <div className="label">{t("dashboard:mobile.income")}</div>
             <div className="value">
               {isStatsLoading && income === 0 ? '...' : formatMoney(income, currency, language)}
             </div>
           </SummaryCard>
           <SummaryCard $type="expense" onClick={() => navigate('/transactions?type=expense')}>
             <div className="icon-box"><HiOutlineArrowTrendingDown /></div>
-            <div className="label">Витрати</div>
+            <div className="label">{t("dashboard:mobile.expense")}</div>
             <div className="value">
               {isStatsLoading && expense === 0 ? '...' : formatMoney(expense, currency, language)}
             </div>
@@ -450,50 +450,50 @@ function MobileDashboard() {
             <div className="icon-box">
               <HiOutlineShoppingCart />
             </div>
-            <span className="label">Покупки</span>
+            <span className="label">{t("dashboard:mobile.shopping")}</span>
           </QuickLinkButton>
 
           <QuickLinkButton onClick={() => navigate('/goals')}>
             <div className="icon-box">
               <HiOutlineTrophy />
             </div>
-            <span className="label">Цілі</span>
+            <span className="label">{t("dashboard:mobile.goals")}</span>
           </QuickLinkButton>
 
           <QuickLinkButton onClick={() => navigate('/wishlist')}>
             <div className="icon-box">
               <HiOutlineGift />
             </div>
-            <span className="label">Бажання</span>
+            <span className="label">{t("dashboard:mobile.wishlist")}</span>
           </QuickLinkButton>
 
           <QuickLinkButton onClick={() => navigate('/utility')}>
             <div className="icon-box">
               <HiOutlineBolt />
             </div>
-            <span className="label">Комуналка</span>
+            <span className="label">{t("dashboard:mobile.utility")}</span>
           </QuickLinkButton>
 
           <QuickLinkButton onClick={() => navigate('/assets')}>
             <div className="icon-box">
               <HiOutlineComputerDesktop />
             </div>
-            <span className="label">Активи</span>
+            <span className="label">{t("dashboard:mobile.assets")}</span>
           </QuickLinkButton>
         </QuickLinks>
 
         <Section>
           <SectionHeader>
-            <SectionTitle>Останні операції</SectionTitle>
+            <SectionTitle>{t("dashboard:mobile.recent_operations")}</SectionTitle>
             <ViewAll onClick={() => navigate('/transactions')}>
-              Більше <HiOutlineArrowLongRight />
+              {t("dashboard:mobile.view_more")} <HiOutlineArrowLongRight />
             </ViewAll>
           </SectionHeader>
           <WidgetWrapper style={{ padding: 0 }}>
             <TransactionList>
               {recentItems.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px', color: 'var(--color-text-secondary)', fontSize: '14px' }}>
-                  Операцій не знайдено
+                  {t("dashboard:mobile.no_operations")}
                 </div>
               ) : (
                 recentItems.slice(0, 5).map(tx => (
@@ -515,7 +515,7 @@ function MobileDashboard() {
 
         <Section>
           <SectionHeader>
-            <SectionTitle>Динаміка витрат</SectionTitle>
+            <SectionTitle>{t("dashboard:mobile.expense_dynamics")}</SectionTitle>
           </SectionHeader>
           <AnalyticsWrapper>
             <TrendWidget 
@@ -529,7 +529,7 @@ function MobileDashboard() {
 
         <Section style={{ paddingBottom: '20px' }}>
           <SectionHeader>
-            <SectionTitle>Топ категорій</SectionTitle>
+            <SectionTitle>{t("dashboard:mobile.top_categories")}</SectionTitle>
           </SectionHeader>
           <TopListWrapper>
             <TopListWidget 
