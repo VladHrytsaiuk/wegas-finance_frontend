@@ -52,6 +52,8 @@
     "delete_success": "Transaction deleted successfully"
   },
   "filters": {
+    "title": "Filters",
+    "parameters_label": "Parameters",
     "period_label": "Period",
     "accounts_label": "Accounts",
     "all_accounts": "All accounts",

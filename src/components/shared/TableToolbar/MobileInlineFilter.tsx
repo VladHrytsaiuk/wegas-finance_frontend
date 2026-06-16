@@ -199,9 +199,9 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
       if (opt) return opt.label;
       const raw = config.rawData?.find((r: any) => String(r.id) === String(value[0]));
       if (raw) return raw.name || raw.label;
-      return `Обрано: 1`;
+      return t("common:ui.selected_count", { count: 1 });
     }
-    return `Обрано: ${value.length}`;
+    return t("common:ui.selected_count", { count: value.length });
   }, [value, config, t]);
 
   const toggleFlat = (val: string) => {

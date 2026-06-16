@@ -21,7 +21,10 @@
     "select_placeholder_default": "Select...",
     "search_placeholder_default": "Search...",
     "full_page_loading": "Loading finances...",
+    "loading_shopping": "Loading lists...",
+    "loading_goals": "Loading goals...",
     "status_not_found": "Nothing found",
+    "selected_count": "Selected: {{count}}",
     "error_action": "Action failed",
     "error_loading": "Loading failed"
   },

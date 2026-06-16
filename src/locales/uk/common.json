@@ -21,7 +21,10 @@
     "select_placeholder_default": "Оберіть...",
     "search_placeholder_default": "Пошук...",
     "full_page_loading": "Завантаження фінансів...",
+    "loading_shopping": "Завантаження списків...",
+    "loading_goals": "Завантаження цілей...",
     "status_not_found": "Нічого не знайдено",
+    "selected_count": "Обрано: {{count}}",
     "error_action": "Дія не вдалася",
     "error_loading": "Завантаження не вдалося"
   },

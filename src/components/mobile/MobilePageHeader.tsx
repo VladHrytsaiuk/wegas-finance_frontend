@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineChevronLeft } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 
 const StyledHeader = styled.header`
   position: sticky;
@@ -55,6 +56,7 @@ interface MobilePageHeaderProps {
 
 function MobilePageHeader({ title, onBack }: MobilePageHeaderProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleBack = () => {
     if (onBack) onBack();
@@ -63,7 +65,7 @@ function MobilePageHeader({ title, onBack }: MobilePageHeaderProps) {
 
   return (
     <StyledHeader>
-      <BackButton onClick={handleBack} aria-label="Назад">
+      <BackButton onClick={handleBack} aria-label={t("common:common.return")}>
         <HiOutlineChevronLeft strokeWidth={2.5} />
       </BackButton>
       <Title>{title}</Title>

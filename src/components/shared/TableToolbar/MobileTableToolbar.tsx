@@ -293,7 +293,7 @@ export const MobileTableToolbar = ({
         <Overlay onClick={() => setIsSortSheetOpen(false)}>
           <Sheet onClick={(e) => e.stopPropagation()}>
             <SheetHeader>
-              <SheetTitle>Сортування</SheetTitle>
+              <SheetTitle>{t("legacy:toolbar.sort_default")}</SheetTitle>
               <IconButton onClick={() => setIsSortSheetOpen(false)} style={{ border: 'none', background: 'none', boxShadow: 'none' }}>
                 <HiXMark size={24} />
               </IconButton>
@@ -322,7 +322,7 @@ export const MobileTableToolbar = ({
         <Overlay onClick={() => setIsFilterSheetOpen(false)}>
           <Sheet onClick={(e) => e.stopPropagation()}>
             <SheetHeader>
-              <SheetTitle>Фільтри</SheetTitle>
+              <SheetTitle>{t("legacy:filters.title")}</SheetTitle>
               <IconButton onClick={() => setIsFilterSheetOpen(false)} style={{ border: 'none', background: 'none', boxShadow: 'none' }}>
                 <HiXMark size={24} />
               </IconButton>
@@ -332,7 +332,7 @@ export const MobileTableToolbar = ({
               {/* Date Range Section */}
               {dateRange && onDateRangeChange && (
                 <FilterSection>
-                  <SectionLabel>Період</SectionLabel>
+                  <SectionLabel>{t("legacy:filters.period_label")}</SectionLabel>
                   <div style={{ background: 'var(--color-bg-surface)', borderRadius: '16px', padding: '12px', border: '1px solid var(--color-border)' }}>
                     <DateRangePicker 
                       dateFrom={dateRange.from} 
@@ -348,7 +348,7 @@ export const MobileTableToolbar = ({
               {/* Dynamic Filters Sections */}
               {filtersConfig.length > 0 && (
                 <FilterSection>
-                  <SectionLabel>Параметри</SectionLabel>
+                  <SectionLabel>{t("legacy:filters.parameters_label")}</SectionLabel>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {filtersConfig.map(config => (
                       <MobileInlineFilter 
@@ -369,14 +369,14 @@ export const MobileTableToolbar = ({
                 onClick={() => { onClearAll(); setIsFilterSheetOpen(false); }}
                 style={{ flex: 1 }}
               >
-                Скинути
+                {t("legacy:filters.reset")}
               </ButtonFull>
               <ButtonFull 
                 $variant="primary" 
                 onClick={handleApply}
                 style={{ flex: 2 }}
               >
-                Застосувати
+                {t("legacy:filters.apply")}
               </ButtonFull>
             </SheetFooter>
           </Sheet>

@@ -52,6 +52,8 @@
     "delete_success": "Транзакцію успішно видалено"
   },
   "filters": {
+    "title": "Фільтри",
+    "parameters_label": "Параметри",
     "period_label": "Період",
     "accounts_label": "Рахунки",
     "all_accounts": "Всі рахунки",
