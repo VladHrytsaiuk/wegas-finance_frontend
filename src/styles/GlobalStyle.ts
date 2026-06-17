@@ -12,6 +12,10 @@ export const GlobalStyle = createGlobalStyle`
 --color-text-light: #d1d5db;
 
 --color-green-600: #059669;
+--color-success: #059669;
+--color-success-50: #ecfdf5;
+--color-success-100: #d1fae5;
+--color-success-200: #a7f3d0;
 /* 🔥 ЧЕРВОНІ КОЛЬОРИ (Оновлено) */
 --color-red-50: #fef2f2; /* Додано */
 --color-red-100: #fee2e2; /* Додано */
@@ -63,6 +67,10 @@ export const GlobalStyle = createGlobalStyle`
 --color-brand-600: #10b981;
 
 --color-green-600: #34d399;
+--color-success: #34d399;
+--color-success-50: rgba(52, 211, 153, 0.1);
+--color-success-100: rgba(52, 211, 153, 0.2);
+--color-success-200: rgba(52, 211, 153, 0.3);
 
 --color-transfer-out: #3b82f6; /* Стандартний синій */
 --color-transfer-in:  #38bdf8; /* Яскраво-блакитний */

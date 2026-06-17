@@ -31,6 +31,7 @@ export const useLogin = ({ setToken }: UseLoginProps) => {
       localStorage.setItem("user_id", data.user.id);
       localStorage.setItem("user_email", data.user.email);
       localStorage.setItem("has_pin", String(!!data.user.has_pin)); // Зберігаємо хінт про ПІН
+      localStorage.setItem("has_passkeys", String(!!data.user.has_passkeys)); // Зберігаємо хінт про Passkeys
 
       // 2. Оновлюємо глобальний стейт авторизації
       setToken(data.token);

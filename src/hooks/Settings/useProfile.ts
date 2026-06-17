@@ -48,6 +48,35 @@ export const useProfileForm = () => {
     },
   });
 
+  const { mutate: removePin, isPending: isRemovingPin } = useMutation({
+    mutationFn: async () => {
+      const { removePinApi } = await import("../../services/apiUsers");
+      return removePinApi();
+    },
+    onSuccess: () => {
+      toast.success("ПІН-код успішно вимкнено");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      localStorage.removeItem("has_pin");
+    },
+    onError: () => {
+      toast.error("Не вдалося вимкнути ПІН-код");
+    },
+  });
+
+  const { mutate: removePasskeys, isPending: isRemovingPasskeys } = useMutation({
+    mutationFn: async () => {
+      const { removePasskeysApi } = await import("../../services/apiUsers");
+      return removePasskeysApi();
+    },
+    onSuccess: () => {
+      toast.success("Біометрію успішно вимкнено");
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+    onError: () => {
+      toast.error("Не вдалося вимкнути біометрію");
+    },
+  });
+
   const handleUpdateProfile = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email) return;
@@ -60,11 +89,16 @@ export const useProfileForm = () => {
       email,
       isLoading,
       isUpdating: isUpdatingProfile,
+      user,
+      isRemovingPin,
+      isRemovingPasskeys,
     },
     actions: {
       setName,
       setEmail,
       handleUpdateProfile,
+      removePin,
+      removePasskeys,
     },
     t,
   };

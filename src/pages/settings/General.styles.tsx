@@ -6,12 +6,12 @@ export const Container = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: var(--color-text-main);
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: 1rem;
+  padding-bottom: 0.75rem;
 
   @media (max-width: 1300px) {
     margin-bottom: 1rem;
@@ -20,13 +20,13 @@ export const SectionTitle = styled.h2`
 `;
 
 export const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
   label {
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 0.9rem;
     color: var(--color-text-main);
   }
 `;
@@ -114,9 +114,10 @@ export const OptionItem = styled.div<{ $isActive: boolean }>`
 
   /* Активний стан (обраний) */
   background-color: ${(p) =>
-    p.$isActive ? "var(--color-brand-50)" : "transparent"};
+    p.$isActive ? "var(--color-success-50)" : "transparent"};
   color: ${(p) =>
-    p.$isActive ? "var(--color-brand-700)" : "var(--color-text-main)"};
+    p.$isActive ? "var(--color-success)" : "var(--color-text-main)"};
+  font-weight: ${(p) => (p.$isActive ? "600" : "400")};
 
   /* Ховер та фокус */
   &:hover,

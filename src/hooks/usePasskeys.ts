@@ -18,16 +18,23 @@ export const usePasskeys = () => {
     setLoading(true);
     try {
       const response = await api.post("/webauthn/register/options");
-      const options = response.data;
-      const credential = await create({ publicKey: options });
-      await api.post("/webauthn/register/verify", credential);
+      const { options, session_id } = response.data;
+      
+      // options вже містить поле publicKey, тому передаємо його прямо в create
+      const credential = await create(options);
+      
+      await api.post("/webauthn/register/verify", {
+        session_id,
+        response: credential
+      });
 
+      localStorage.setItem("has_passkeys", "true");
       toast.success("Passkey registered successfully!");
     } catch (err: unknown) {
       console.error("Passkey registration failed:", err);
       if (err instanceof Error && err.name !== "NotAllowedError") {
         if (axios.isAxiosError(err)) {
-          toast.error(err.response?.data?.message || "Passkey registration failed");
+          toast.error(err.response?.data?.message || err.response?.data?.error || "Passkey registration failed");
         } else {
           toast.error("Passkey registration failed");
         }
@@ -47,10 +54,15 @@ export const usePasskeys = () => {
     setLoading(true);
     try {
       const response = await api.post("/webauthn/login/options", { email: storedEmail });
-      const options = response.data;
+      const { options, session_id } = response.data;
 
-      const assertion = await get({ publicKey: options });
-      const verifyResponse = await api.post("/webauthn/login/verify", assertion);
+      // options вже містить поле publicKey, тому передаємо його прямо в get
+      const assertion = await get(options);
+      
+      const verifyResponse = await api.post("/webauthn/login/verify", {
+        session_id,
+        response: assertion
+      });
       const { access_token, user } = verifyResponse.data;
 
       localStorage.setItem("token", access_token);

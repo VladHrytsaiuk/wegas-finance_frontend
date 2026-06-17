@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { 
   HiOutlineUser, 
   HiOutlineGlobeAlt, 
@@ -10,7 +9,8 @@ import {
   HiOutlineUserGroup,
   HiOutlineDocumentArrowDown,
   HiOutlineChevronRight,
-  HiOutlineUsers
+  HiOutlineUsers,
+  HiOutlineShieldCheck
 } from "react-icons/hi2";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useSettingsLayout } from "../../../hooks/Settings/useSettingsLayout";
@@ -224,6 +224,18 @@ function MobileSettings() {
                     <HiOutlineGlobeAlt />
                   </IconBox>
                   <Label>{t("settings:settingsLayout.menu_general")}</Label>
+                </LeftSide>
+                <RightSide>
+                  <HiOutlineChevronRight />
+                </RightSide>
+              </ListItem>
+
+              <ListItem to="/settings/security">
+                <LeftSide>
+                  <IconBox $bg="#10b981">
+                    <HiOutlineShieldCheck />
+                  </IconBox>
+                  <Label>{t("settings:settingsLayout.menu_security", "Безпека")}</Label>
                 </LeftSide>
                 <RightSide>
                   <HiOutlineChevronRight />

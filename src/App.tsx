@@ -20,7 +20,6 @@ import { SyncProvider } from "./context/SyncContext";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/ui/AppLayout";
-import Spinner from "./components/ui/Spinner";
 import { CenteredSpinner } from "./components/ui/CenteredSpinner";
 
 // --- LAZY LOADED PAGES ---
@@ -34,6 +33,7 @@ const TransactionPage = lazy(() => import("./pages/transactions/TransactionPage"
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
 const General = lazy(() => import("./pages/settings/General"));
 const Profile = lazy(() => import("./pages/settings/Profile"));
+const Security = lazy(() => import("./pages/settings/Security"));
 const Categories = lazy(() => import("./pages/settings/Categories"));
 const Tags = lazy(() => import("./pages/settings/Tags"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
@@ -155,6 +155,7 @@ function AppRoutes() {
             <Route index element={<Navigate replace to="general" />} />
             <Route path="general" element={<General />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="security" element={<Security />} />
             <Route path="users" element={<TeamSettings />} />
             <Route path="categories" element={<Categories />} />
             <Route path="tags" element={<Tags />} />

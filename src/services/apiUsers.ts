@@ -43,6 +43,18 @@ export const changePasswordApi = async (data: {
   return response.data;
 };
 
+// Видалити ПІН-код
+export const removePinApi = async (): Promise<{ status: string }> => {
+  const response = await api.delete<{ status: string }>("/users/pin");
+  return response.data;
+};
+
+// Видалити всі Passkeys
+export const removePasskeysApi = async (): Promise<{ status: string }> => {
+  const response = await api.delete<{ status: string }>("/users/passkeys");
+  return response.data;
+};
+
 // --- УПРАВЛІННЯ КОМАНДОЮ (СІМ'ЄЮ) ---
 
 // Отримати список всіх членів сім'ї

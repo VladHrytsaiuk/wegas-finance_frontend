@@ -7,6 +7,7 @@ import {
   HiOutlineUserGroup,
   HiArrowRightOnRectangle,
   HiOutlineDocumentArrowDown,
+  HiOutlineShieldCheck,
 } from "react-icons/hi2";
 
 import Modal from "../../components/ui/Modal";
@@ -31,6 +32,10 @@ function SettingsLayout() {
 
             <S.SidebarItem to="profile">
               <HiOutlineUser /> {t("settings:settingsLayout.menu_profile")}
+            </S.SidebarItem>
+
+            <S.SidebarItem to="security">
+              <HiOutlineShieldCheck /> {t("settings:settingsLayout.menu_security", "Безпека")}
             </S.SidebarItem>
 
             <S.SidebarItem to="users">

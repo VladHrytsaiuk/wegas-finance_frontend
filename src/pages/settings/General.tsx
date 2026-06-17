@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../../components/ui/Button";
 import { BaseSelect } from "../../components/ui/Select/BaseSelect";
 
+import { HiCheck } from "react-icons/hi2";
 import { useGeneralSettings } from "../../hooks/Settings/useGeneralSettings";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
@@ -89,6 +90,7 @@ function General() {
                   if (e.key === "Enter") actions.setLocalLanguage(opt.value);
                 }}
               >
+                {opt.value === localLanguage && <HiCheck size={16} style={{ marginRight: '4px' }} />}
                 {opt.icon}
                 {opt.label}
               </S.OptionItem>
@@ -116,6 +118,7 @@ function General() {
                   if (e.key === "Enter") actions.setLocalCurrency(opt.value);
                 }}
               >
+                {opt.value === localCurrency && <HiCheck size={16} style={{ marginRight: '4px' }} />}
                 {opt.icon}
                 {opt.label}
               </S.OptionItem>

@@ -8,9 +8,9 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { ModernPinInput } from "../../components/auth/ModernPinInput";
 import { AuthLayout } from "../../components/auth/AuthLayout";
+import { Button } from "../../components/ui/Button";
 import { usePasskeys } from "../../hooks/usePasskeys";
 import api from "../../services/Axios";
-import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 
 const ErrorMessage = styled.p`
@@ -19,35 +19,6 @@ const ErrorMessage = styled.p`
   margin-top: 1rem;
   min-height: 1.2rem;
   text-align: center;
-`;
-
-const PasskeyButton = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  background: none;
-  border: none;
-  color: var(--color-brand-600);
-  cursor: pointer;
-  margin-top: 2.5rem;
-  transition: all 0.2s;
-  padding: 1rem;
-  border-radius: 12px;
-
-  &:hover {
-    background-color: var(--color-brand-50);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  span {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
 `;
 
 const PinLogin = () => {
@@ -60,6 +31,8 @@ const PinLogin = () => {
   const [error, setError] = useState("");
   const { loginWithPasskey, isSupported, loading: passkeyLoading } = usePasskeys();
   const passkeyTriggered = useRef(false);
+
+  const hasPasskeys = localStorage.getItem("has_passkeys") === "true";
 
   const handlePinSubmit = useCallback(async (finalPin: string) => {
     setLoading(true);
@@ -92,6 +65,7 @@ const PinLogin = () => {
         if (user.id) localStorage.setItem("user_id", user.id);
         if (user.email) localStorage.setItem("user_email", user.email);
         localStorage.setItem("has_pin", "true");
+        localStorage.setItem("has_passkeys", String(!!user.has_passkeys));
       }
 
       unlock(); 
@@ -100,15 +74,7 @@ const PinLogin = () => {
       navigate("/dashboard", { replace: true, state: { unlocked: true } });
     } catch (err: unknown) {
       console.error("PIN login ERROR detail:", err);
-      if (axios.isAxiosError(err)) {
-        console.error("Axios Error Response:", err.response?.data);
-        setError(err.response?.data?.message || t("auth:auth.login_alert_error"));
-        if (err.response?.status === 429) {
-          toast.error("Too many attempts. Please try again later.");
-        }
-      } else {
-        setError(t("auth:auth.login_alert_error"));
-      }
+      setError(t("auth:auth.login_alert_error"));
       
       setTimeout(() => {
         setPin("");
@@ -127,7 +93,7 @@ const PinLogin = () => {
 
   useEffect(() => {
     const triggerPasskey = async () => {
-      if (isSupported && !passkeyTriggered.current) {
+      if (isSupported && hasPasskeys && !passkeyTriggered.current) {
         passkeyTriggered.current = true;
         const success = await loginWithPasskey();
         if (success) {
@@ -137,7 +103,7 @@ const PinLogin = () => {
       }
     };
     triggerPasskey();
-  }, [isSupported, loginWithPasskey, unlock, navigate]);
+  }, [isSupported, hasPasskeys, loginWithPasskey, unlock, navigate]);
 
   return (
     <AuthLayout
@@ -154,9 +120,11 @@ const PinLogin = () => {
         
         <ErrorMessage>{error}</ErrorMessage>
 
-        {isSupported && (
-          <PasskeyButton 
+        {isSupported && hasPasskeys && (
+          <Button 
             type="button" 
+            variation="primary"
+            size="large"
             onClick={async () => {
               const success = await loginWithPasskey();
               if (success) {
@@ -165,26 +133,34 @@ const PinLogin = () => {
               }
             }} 
             disabled={loading || passkeyLoading}
+            icon={<HiFingerPrint size={24} />}
+            style={{ 
+              marginTop: '2rem', 
+              width: '100%',
+              height: '56px',
+              fontSize: '1rem',
+              borderRadius: '16px'
+            }}
           >
-            <HiFingerPrint size={48} />
-            <span>{t("auth:auth.login_with_biometrics", "Увійти за допомогою біометрії")}</span>
-          </PasskeyButton>
+            {t("auth:auth.login_with_biometrics", "Увійти за допомогою біометрії")}
+          </Button>
         )}
 
-        <button 
+        <Button 
           type="button" 
+          variation="secondary"
+          size="large"
           onClick={() => navigate("/login")}
           style={{ 
-            marginTop: '2rem', 
-            background: 'none', 
-            border: 'none', 
-            color: 'var(--color-grey-500)',
-            textDecoration: 'underline',
-            cursor: 'pointer'
+            marginTop: '2.5rem', 
+            width: '100%',
+            height: '54px',
+            fontSize: '1.1rem',
+            borderRadius: '14px'
           }}
         >
           {t("auth:auth.use_password_instead", "Використати пароль")}
-        </button>
+        </Button>
       </div>
     </AuthLayout>
   );

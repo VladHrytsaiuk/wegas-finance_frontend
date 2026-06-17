@@ -1,12 +1,28 @@
 import axios from "axios";
 
-const isLocalhost =
-  typeof window !== "undefined" &&
-  (window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1");
+const getApiUrl = () => {
+  if (typeof window === "undefined") return "/api";
+  
+  const hostname = window.location.hostname;
+  
+  // Якщо ми на localhost, 127.0.0.1 або в локальній мережі (IP починається на 192.168. або 10.)
+  if (
+    hostname === "localhost" || 
+    hostname === "127.0.0.1" || 
+    hostname.startsWith("192.168.") || 
+    hostname.startsWith("10.") ||
+    hostname.endsWith(".local") // Для mDNS адрес типу MacBook-Pro.local
+  ) {
+    // Підставляємо той самий хост, але порт бекенда 8080
+    return `http://${hostname}:8080/api`;
+  }
+  
+  // Для продакшену (Vercel)
+  return "/api";
+};
 
-// Якщо локально — localhost, якщо на Vercel (сервер) — відносний шлях
-const API_URL = isLocalhost ? "http://localhost:8080/api" : "/api";
+const API_URL = getApiUrl();
+console.log("🔗 API URL initialized as:", API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
@@ -50,7 +66,6 @@ api.interceptors.response.use(
 
     // Якщо помилка 401 і ми ще не пробували повторити цей запит
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Додаємо перевірку: якщо ми на сторінках авторизації — нікуди не перекидаємо
       const isAuthPage =
         window.location.pathname === "/login" ||
         window.location.pathname === "/register" ||
@@ -60,7 +75,6 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      // Якщо вже йде процес оновлення, додаємо запит у чергу
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
@@ -78,7 +92,6 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Викликаємо /refresh для отримання нового Access Token через HttpOnly Refresh Cookie
         const response = await axios.post(
           `${API_URL}/refresh`,
           {},
@@ -87,10 +100,7 @@ api.interceptors.response.use(
         const { access_token } = response.data;
 
         localStorage.setItem("token", access_token);
-        
-        // Оновлюємо заголовок за замовчуванням
         api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
-        // Оновлюємо заголовок для поточного запиту
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
 
         processQueue(null, access_token);
@@ -98,7 +108,6 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         
-        // Якщо refresh теж не вдався (наприклад, Refresh Token протух), розлогінюємо
         localStorage.removeItem("token");
         localStorage.removeItem("user_name");
 
