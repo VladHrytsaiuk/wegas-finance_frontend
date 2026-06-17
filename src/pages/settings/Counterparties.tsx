@@ -2,7 +2,7 @@ import { HiPlus, HiFolderPlus, HiOutlineUserGroup } from "react-icons/hi2";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
-import Modal from "../../components/ui/Modal";
+import Modal, { useModal } from "../../components/ui/Modal";
 import { CounterpartyTree } from "../../components/counterparties/CounterpartyTree";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CounterpartyModals } from "../../components/counterparties/CounterpartyModals";
