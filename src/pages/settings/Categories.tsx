@@ -2,13 +2,14 @@ import { HiPlus, HiTag } from "react-icons/hi2";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
-import Modal from "../../components/ui/Modal";
+import Modal, { useModal } from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { CategoryTree } from "../../components/categories/CategoryTree";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CategoryForm } from "../../components/categories/CategoryForm";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { FAB } from "../../components/ui/FAB";
 
 // Styles & Logic
 import * as S from "./Categories.styles";
@@ -47,6 +48,7 @@ function Categories() {
   } = useCategoriesPage();
 
   const isMobile = useIsMobile();
+  const { open } = useModal();
 
   return (
     <Modal>
@@ -113,17 +115,12 @@ function Categories() {
         </S.TreeContainer>
 
         {isMobile && canManageStructure && (
-          <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100 }}>
-            <Modal.Open opens="create-category">
-              <Button
-                icon={<HiPlus />}
-                size="large"
-                shape="circle"
-                onClick={handleCreateClick}
-                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
-              />
-            </Modal.Open>
-          </div>
+          <FAB 
+            onClick={() => {
+              handleCreateClick();
+              open("create-category");
+            }} 
+          />
         )}
       </S.PageWrapper>
 

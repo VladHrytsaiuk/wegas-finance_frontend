@@ -35,6 +35,9 @@ import AssetForm from "./AssetForm";
 
 import { useAssetDetails } from "../../hooks/Assets/useAssetDetails";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
 import * as S from "./AssetDetails.styles";
 
 import { getUploadedFileUrl } from "../../utils/helpers"; // Не забудь додати імпорт
@@ -76,6 +79,7 @@ export default function AssetDetails() {
     mainPhotoUrl,
   } = state;
 
+  const isMobile = useIsMobile();
   usePageTitle(asset?.name);
 
   if (isLoading)
@@ -111,35 +115,52 @@ export default function AssetDetails() {
   const hasDocuments = asset.documents && asset.documents.length > 0;
 
   return (
-    <S.PageContainer>
+    <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
       <Modal>
-        <S.HeaderSection>
-          <S.HeaderLeft>
-            <S.BackButton onClick={() => actions.navigate("/assets")}>
-              <HiArrowLeft size={18} />
-              <span>{t("assets:assetDetails.back_to_list")}</span>
-            </S.BackButton>
-            <S.AssetTitleBlock>
-              <h1>{asset.name}</h1>
-              <S.AssetTypeBadge>
-                {t(`assetForm.type_${asset.type}`, asset.type)}
-              </S.AssetTypeBadge>
-            </S.AssetTitleBlock>
-          </S.HeaderLeft>
+        {/* ХЕДЕР */}
+        {isMobile && asset ? (
+          <MobilePageHeader 
+            title={asset.name} 
+            rightAction={
+              <Button
+                variation="secondary"
+                size="small"
+                onClick={() => actions.navigate(`/assets`)}
+                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+              >
+                <HiOutlineCube size={24} style={{ color: 'var(--color-brand-600)' }} />
+              </Button>
+            }
+          />
+        ) : (
+          <S.HeaderSection>
+            <S.HeaderLeft>
+              <S.BackButton onClick={() => actions.navigate("/assets")}>
+                <HiArrowLeft size={18} />
+                <span>{t("assets:assetDetails.back_to_list")}</span>
+              </S.BackButton>
+              <S.AssetTitleBlock>
+                <h1>{asset.name}</h1>
+                <S.AssetTypeBadge>
+                  {t(`assetForm.type_${asset.type}`, asset.type)}
+                </S.AssetTypeBadge>
+              </S.AssetTitleBlock>
+            </S.HeaderLeft>
 
-          <S.HeaderActions>
-            <Modal.Open opens="edit-asset">
-              <Button variation="secondary">
-                <HiPencil /> {t("assets:assetDetails.edit_asset")}
-              </Button>
-            </Modal.Open>
-            <Modal.Open opens="delete-asset">
-              <Button variation="danger">
-                <HiTrash /> {t("assets:assetDetails.delete_asset")}
-              </Button>
-            </Modal.Open>
-          </S.HeaderActions>
-        </S.HeaderSection>
+            <S.HeaderActions>
+              <Modal.Open opens="edit-asset">
+                <Button variation="secondary">
+                  <HiPencil /> {t("assets:assetDetails.edit_asset")}
+                </Button>
+              </Modal.Open>
+              <Modal.Open opens="delete-asset">
+                <Button variation="danger">
+                  <HiTrash /> {t("assets:assetDetails.delete_asset")}
+                </Button>
+              </Modal.Open>
+            </S.HeaderActions>
+          </S.HeaderSection>
+        )}
 
         <S.TopGrid>
           {/* --- ФІНАНСОВА КАРТКА --- */}
@@ -494,6 +515,12 @@ export default function AssetDetails() {
           <ReceiptViewerWrapper imageUrls={images} />
         </Modal.Window>
       </Modal>
+
+      {isMobile && (
+        <Modal.Open opens="edit-asset">
+          <FAB onClick={() => {}} icon={<HiPencil />} />
+        </Modal.Open>
+      )}
     </S.PageContainer>
   );
 }

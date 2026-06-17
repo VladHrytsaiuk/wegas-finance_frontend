@@ -41,6 +41,7 @@ export const GlobalStyle = createGlobalStyle`
 --color-transfer-in:  #0ea5e9; /* Світло-блакитний (Sky Blue) */
 
 --color-border: #e5e7eb;
+--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 

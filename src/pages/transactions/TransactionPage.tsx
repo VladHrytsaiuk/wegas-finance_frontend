@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HiArrowLeft, HiPencil, HiTrash } from "react-icons/hi2";
 
 // Components
@@ -7,6 +7,9 @@ import Spinner from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
 
 // Hook & Styles
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
@@ -36,6 +39,8 @@ function TransactionPage() {
     location,
   } = useTransactionPage();
 
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.transactions", "Транзакція"));
 
   if (isLoading) {
@@ -65,57 +70,76 @@ function TransactionPage() {
 
   return (
     <Modal>
-      <S.PageContainer>
-        <S.Header>
-          <S.BackButton onClick={handleBack}>
-            <HiArrowLeft />
-            {t("legacy:transactionPage.back_to_list")}
-          </S.BackButton>
+      <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
+        {isMobile ? (
+          <MobilePageHeader 
+            title={t("common:common.transaction")} 
+            rightAction={
+              <Modal.Open opens={isBankTx ? "" : "delete-transaction"}>
+                <Button
+                  size="small"
+                  variation="danger"
+                  disabled={isBankTx}
+                  title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted") : undefined}
+                  style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+                >
+                  <HiTrash size={24} style={{ color: isBankTx ? 'var(--color-text-secondary)' : 'var(--color-red-600)' }} />
+                </Button>
+              </Modal.Open>
+            }
+          />
+        ) : (
+          <S.Header>
+            <S.BackButton onClick={handleBack}>
+              <HiArrowLeft />
+              {t("legacy:transactionPage.back_to_list")}
+            </S.BackButton>
 
-          <S.ButtonGroup>
-            <Button
-              as={isBankTx ? "button" : Link}
-              to={isBankTx ? undefined : "edit"}
-              state={{ background: location }}
-              size="small"
-              variation="secondary"
-              disabled={isBankTx}
-              title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
-              style={{
-                width: "auto",
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <HiPencil style={{ marginRight: "6px" }} />
-              {t("legacy:transactionPage.edit_button")}
-            </Button>
-
-            <Modal.Open opens={isBankTx ? "" : "delete-transaction"}>
+            <S.ButtonGroup>
               <Button
+                as={isBankTx ? "button" : Link}
+                to={isBankTx ? undefined : "edit"}
+                state={{ background: location }}
                 size="small"
-                variation="danger"
+                variation="secondary"
                 disabled={isBankTx}
-                title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted") : undefined}
-                style={{ width: "auto", display: "flex", alignItems: "center" }}
+                title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
+                style={{
+                  width: "auto",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                }}
               >
-                <HiTrash style={{ marginRight: "6px" }} />
-                {t("common:common.delete")}
+                <HiPencil style={{ marginRight: "6px" }} />
+                {t("legacy:transactionPage.edit_button")}
               </Button>
-            </Modal.Open>
-          </S.ButtonGroup>
 
-          <Modal.Window name="delete-transaction">
-            <ConfirmDelete
-              resourceName={t("common:common.transaction")}
-              onConfirm={() => deleteTx(transactionId!)}
-              disabled={isDeleting}
-            />
-          </Modal.Window>
-        </S.Header>
+              <Modal.Open opens={isBankTx ? "" : "delete-transaction"}>
+                <Button
+                  size="small"
+                  variation="danger"
+                  disabled={isBankTx}
+                  title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted") : undefined}
+                  style={{ width: "auto", display: "flex", alignItems: "center" }}
+                >
+                  <HiTrash style={{ marginRight: "6px" }} />
+                  {t("common:common.delete")}
+                </Button>
+              </Modal.Open>
+            </S.ButtonGroup>
+          </S.Header>
+        )}
 
-        <S.Card>
+        <Modal.Window name="delete-transaction">
+          <ConfirmDelete
+            resourceName={t("common:common.transaction")}
+            onConfirm={() => deleteTx(transactionId!)}
+            disabled={isDeleting}
+          />
+        </Modal.Window>
+
+        <S.Card style={{ padding: isMobile ? "20px 16px" : undefined }}>
           <TransactionDetails
             transaction={transaction}
             categories={categories}
@@ -124,6 +148,13 @@ function TransactionPage() {
           />
         </S.Card>
       </S.PageContainer>
+
+      {isMobile && !isBankTx && (
+        <FAB 
+          onClick={() => navigate("edit", { state: { background: location } })} 
+          icon={<HiPencil />} 
+        />
+      )}
     </Modal>
   );
 }

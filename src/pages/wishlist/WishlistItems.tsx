@@ -4,10 +4,11 @@ import { HiPlus, HiArrowLeft, HiGift } from "react-icons/hi2";
 import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "../../components/ui/Button";
-import Modal from "../../components/ui/Modal";
+import Modal, { useModal } from "../../components/ui/Modal";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { FAB } from "../../components/ui/FAB";
 
 import CreateWishModal from "../../components/wishlist/CreateWishModal";
 import WishItemCard from "../../components/wishlist/WishItemCard";
@@ -20,9 +21,18 @@ import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Wishlist.styles";
 
 export default function WishlistItems() {
+  return (
+    <Modal>
+      <WishlistItemsContent />
+    </Modal>
+  );
+}
+
+function WishlistItemsContent() {
   const { groupId } = useParams();
   const navigate = useNavigate();
   const { items, groups, isLoading, handlers, t } = useWishlist();
+  const { open } = useModal();
   const { setPageTitle, resetPageTitle } = useHeader();
   const isMobile = useIsMobile();
 
@@ -98,24 +108,13 @@ export default function WishlistItems() {
         onSortChange={setSortBy}
         onClearAll={handleClearAll}
       >
-        <Modal>
+        {!isMobile && (
           <Modal.Open opens="create-wish">
             <Button variation="primary" icon={<HiPlus />}>
               {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
             </Button>
           </Modal.Open>
-          <Modal.Window name="create-wish" padding="0">
-            <CreateWishModal
-              groups={groups}
-              onCreate={handlers.createItem}
-              defaultGroupId={
-                groupId !== "virtual-my" && groupId !== "virtual-shared"
-                  ? groupId
-                  : undefined
-              }
-            />
-          </Modal.Window>
-        </Modal>
+        )}
       </TableToolbar>
 
       {filteredItems.length > 0 ? (
@@ -146,27 +145,42 @@ export default function WishlistItems() {
           }
           action={
             !searchQuery && (
-              <Modal>
-                <Modal.Open opens="create-wish-empty">
-                  <Button variation="primary" icon={<HiPlus />}>
-                    {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
-                  </Button>
-                </Modal.Open>
-                <Modal.Window name="create-wish-empty" padding="0">
-                  <CreateWishModal
-                    groups={groups}
-                    onCreate={handlers.createItem}
-                    defaultGroupId={
-                      groupId !== "virtual-my" && groupId !== "virtual-shared"
-                        ? groupId
-                        : undefined
-                    }
-                  />
-                </Modal.Window>
-              </Modal>
+              <Modal.Open opens="create-wish-empty">
+                <Button variation="primary" icon={<HiPlus />}>
+                  {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
+                </Button>
+              </Modal.Open>
             )
           }
         />
+      )}
+
+      {/* MODAL WINDOWS */}
+      <Modal.Window name="create-wish" padding="0">
+        <CreateWishModal
+          groups={groups}
+          onCreate={handlers.createItem}
+          defaultGroupId={
+            groupId !== "virtual-my" && groupId !== "virtual-shared"
+              ? groupId
+              : undefined
+          }
+        />
+      </Modal.Window>
+      <Modal.Window name="create-wish-empty" padding="0">
+        <CreateWishModal
+          groups={groups}
+          onCreate={handlers.createItem}
+          defaultGroupId={
+            groupId !== "virtual-my" && groupId !== "virtual-shared"
+              ? groupId
+              : undefined
+          }
+        />
+      </Modal.Window>
+
+      {isMobile && (
+        <FAB onClick={() => open("create-wish")} />
       )}
     </S.PageContainer>
   </>

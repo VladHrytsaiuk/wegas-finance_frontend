@@ -25,20 +25,20 @@ export const Header = styled.div`
 
 export const CreateNoteCard = styled.form`
   background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
-  border: 1px solid var(--color-border);
+  border: none; /* Видалено обводку */
   border-radius: 12px;
   padding: 0.6rem 1rem;
   max-width: 500px;
   margin: 0 auto;
   width: 100%;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* М'яка тінь */
   display: flex;
   gap: 12px;
   transition: all 0.2s;
 
   &:focus-within {
-    border-color: var(--color-brand-500);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+    transform: translateY(-1px);
   }
 
   input {

@@ -17,16 +17,14 @@ import {
   HiOutlineArrowLongRight,
   HiOutlineUser,
   HiOutlineUsers,
-  HiPlus,
   HiOutlineShoppingCart,
   HiOutlineTrophy,
   HiOutlineGift,
   HiOutlineBolt,
   HiOutlineComputerDesktop,
-} from "react-icons/hi2";
-import { useUserRole } from "../../../hooks/useUserRole";
-import { useNavigate } from "react-router-dom";
-
+  } from "react-icons/hi2";
+  import { useUserRole } from "../../../hooks/useUserRole";
+  import { useNavigate, useLocation } from "react-router-dom";
 const StyledMobileDashboard = styled.div`
   display: flex;
   flex-direction: column;
@@ -333,36 +331,10 @@ const TransactionList = styled.div`
   }
 `;
 
-const FAB = styled.button`
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background-color: var(--color-brand-600);
-  color: white;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  cursor: pointer;
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
 function MobileDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isLoading: isUserLoading } = useUserRole();
   const [viewScope, setViewScope] = useState<'personal' | 'family'>('personal');
   
@@ -541,10 +513,6 @@ function MobileDashboard() {
           </TopListWrapper>
         </Section>
       </Content>
-
-      <FAB onClick={() => navigate('/transactions/new')}>
-        <HiPlus />
-      </FAB>
     </StyledMobileDashboard>
   );
 }

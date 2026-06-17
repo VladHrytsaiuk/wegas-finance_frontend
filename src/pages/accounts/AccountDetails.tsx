@@ -12,6 +12,7 @@ import {
   HiCheckBadge,
   HiExclamationCircle,
   HiChevronLeft,
+  HiPlus,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -33,6 +34,10 @@ import { useHeader } from "../../context/HeaderContext";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./AccountDetails.styles";
 import { Button } from "../../components/ui/Button";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
+import { HiMinus, HiArrowsRightLeft } from "react-icons/hi2";
 
 function AccountDetails() {
   const { t } = useTranslation();
@@ -55,6 +60,7 @@ function AccountDetails() {
     navigate,
   } = useAccountDetails();
 
+  const isMobile = useIsMobile();
   usePageTitle(account?.name);
 
   useEffect(() => {
@@ -134,37 +140,41 @@ function AccountDetails() {
 
   return (
     <Modal>
-      <S.PageContainer>
-        <S.TopNav>
-          <S.BackButton onClick={() => navigate(-1)}>
-            <HiArrowLeft size={20} />
-          </S.BackButton>
-          <div style={{ flex: 1 }} />
+      <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
+        {isMobile && account ? (
+          <MobilePageHeader title={account.name} />
+        ) : (
+          <S.TopNav>
+            <S.BackButton onClick={() => navigate(-1)}>
+              <HiArrowLeft size={20} />
+            </S.BackButton>
+            <div style={{ flex: 1 }} />
 
-          <Modal.Open opens="export-account">
-            <S.ActionButton title={t("export_import:exportPage.title")}>
-              <HiArrowDownTray size={18} />{" "}
-              <span>{t("export_import:exportPage.title")}</span>
-            </S.ActionButton>
-          </Modal.Open>
+            <Modal.Open opens="export-account">
+              <S.ActionButton title={t("export_import:exportPage.title")}>
+                <HiArrowDownTray size={18} />{" "}
+                <span>{t("export_import:exportPage.title")}</span>
+              </S.ActionButton>
+            </Modal.Open>
 
-          <Link
-            to={`/accounts/${accountId}/edit`}
-            state={{ background: location }}
-            style={{ textDecoration: "none" }}
-          >
-            <S.ActionButton title={t("accounts:accountDetailsPage.edit_button")}>
-              <HiOutlinePencil />{" "}
-              <span>{t("accounts:accountDetailsPage.edit_button")}</span>
-            </S.ActionButton>
-          </Link>
+            <Link
+              to={`/accounts/${accountId}/edit`}
+              state={{ background: location }}
+              style={{ textDecoration: "none" }}
+            >
+              <S.ActionButton title={t("accounts:accountDetailsPage.edit_button")}>
+                <HiOutlinePencil />{" "}
+                <span>{t("accounts:accountDetailsPage.edit_button")}</span>
+              </S.ActionButton>
+            </Link>
 
-          <Modal.Open opens="delete-account">
-            <S.ActionButton $variant="danger" title={t("common:common.delete")}>
-              <HiTrash size={18} /> <span>{t("common:common.delete")}</span>
-            </S.ActionButton>
-          </Modal.Open>
-        </S.TopNav>
+            <Modal.Open opens="delete-account">
+              <S.ActionButton $variant="danger" title={t("common:common.delete")}>
+                <HiTrash size={18} /> <span>{t("common:common.delete")}</span>
+              </S.ActionButton>
+            </Modal.Open>
+          </S.TopNav>
+        )}
 
         <S.ContentGrid>
           {/* 🔥 НОВЕ: Статистика тепер має власну Grid Area */}
@@ -235,10 +245,12 @@ function AccountDetails() {
               )
             )}
 
-            <AccountActions
-              onAction={handleOpenTransaction}
-              account={account}
-            />
+            {!isMobile && (
+              <AccountActions
+                onAction={handleOpenTransaction}
+                account={account}
+              />
+            )}
           </S.LeftColumn>
 
           <S.RightColumn>
@@ -292,6 +304,28 @@ function AccountDetails() {
           />
         </Modal.Window>
       </S.PageContainer>
+
+      {isMobile && (
+        <FAB 
+          actions={[
+            {
+              icon: <HiPlus />,
+              label: t("transactions:transactions.income"),
+              onClick: () => handleOpenTransaction("income")
+            },
+            {
+              icon: <HiMinus />,
+              label: t("transactions:transactions.expense"),
+              onClick: () => handleOpenTransaction("expense")
+            },
+            {
+              icon: <HiArrowsRightLeft />,
+              label: t("transactions:transactions.transfer"),
+              onClick: () => handleOpenTransaction("transfer")
+            }
+          ]}
+        />
+      )}
     </Modal>
   );
 }

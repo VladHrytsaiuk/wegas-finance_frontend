@@ -33,6 +33,9 @@ import { formatMoney } from "../../utils/helpers";
 import * as S from "./UtilityDetails.styles";
 import { patchUtilityReading } from "../../services/apiUtility";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
 
 export default function UtilityDetails() {
   return (
@@ -49,6 +52,7 @@ function UtilityDetailsContent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const { remove } = useUtilityMeters();
 
   const [activeReading, setActiveReading] = useState<any>(null);
@@ -107,76 +111,45 @@ function UtilityDetailsContent() {
 
   return (
     <>
-      <S.PageContainer>
-        <S.BackButton onClick={actions.handleBack}>
-          <HiArrowLeft />
-          {t("stats_utility:utility.back_to_list")}
-        </S.BackButton>
-
-        <S.Header>
-          <S.TitleBlock>
-            <h1>{meter.name}</h1>
-            <S.SubTitle>
-              <span>
-                {meter.type} •{" "}
-                {meter.asset?.name || t("stats_utility:utility.no_asset")}
-                {meter.counterparty ? ` • ${meter.counterparty.name}` : ""}
-              </span>
-              {meter.personal_account && (
-                <span className="account">
-                  {t("stats_utility:utility.personal_account_label")}:{" "}
-                  {meter.personal_account}
-                </span>
-              )}
-            </S.SubTitle>
-          </S.TitleBlock>
-
-          <S.ActionsColumn>
-            <S.ActionRow>
-              <S.IconButton
+      {isMobile ? (
+        <MobilePageHeader 
+          title={meter.name} 
+          rightAction={
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button 
+                variation="secondary" 
+                size="small" 
                 onClick={() => navigate("analytics")}
-                title={t("stats_utility:utility.tooltip_analytics")}
+                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
               >
-                <HiChartBar />
-              </S.IconButton>
-              <S.IconButton
-                onClick={() => open("edit-meter")}
-                title={t("stats_utility:utility.tooltip_edit")}
-              >
-                <HiPencil />
-              </S.IconButton>
-              <S.IconButton
-                className="danger"
-                onClick={() => open("delete-meter")}
-                title={t("stats_utility:utility.tooltip_delete")}
-              >
-                <HiTrash />
-              </S.IconButton>
-            </S.ActionRow>
-
-            <S.ActionRow>
-              {totalDebt > 0 && (
-                <Button
-                  variation="danger"
-                  icon={<HiBanknotes />}
-                  onClick={() => open("pay-all")}
-                >
-                  {t("stats_utility:utility.btn_pay_debt", {
-                    amount: formatMoney(totalDebt, meter.currency),
-                  })}
-                </Button>
-              )}
-
-              <Button
-                variation="primary"
-                icon={<HiCalendar />}
-                onClick={() => open("add-reading")}
-              >
-                {t("stats_utility:utility.btn_add_reading")}
+                <HiChartBar size={24} style={{ color: 'var(--color-brand-600)' }} />
               </Button>
-            </S.ActionRow>
-          </S.ActionsColumn>
-        </S.Header>
+              <Button 
+                variation="secondary" 
+                size="small" 
+                onClick={() => open("edit-meter")}
+                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+              >
+                <HiPencil size={24} style={{ color: 'var(--color-brand-600)' }} />
+              </Button>
+            </div>
+          }
+        />
+      ) : (
+        <S.PageContainer>
+          <S.BackButton onClick={actions.handleBack}>
+            <HiArrowLeft />
+            {t("stats_utility:utility.back_to_list")}
+          </S.BackButton>
+        </S.PageContainer>
+      )}
+
+      <S.PageContainer style={{ padding: isMobile ? "20px 16px 80px 16px" : undefined }}>
+        {!isMobile && (
+          <S.Header>
+...
+          </S.Header>
+        )}
 
         <S.StatsGrid>
           <S.StatCard>
@@ -420,21 +393,25 @@ function UtilityDetailsContent() {
       )}
 
       {openName === "pay-all" && (
-        <CreateTransactionModal
-          key={`pay-all-${meter.id}`}
-          isOpen={true}
-          onClose={close}
-          initialData={{
-            type: "debt_repay",
-            counterparty_id: meter.counterparty_id,
-            amount: totalDebt,
-            note: t("stats_utility:utility.payment_full_note", {
-              name: meter.name,
-            }),
-          }}
-          onSuccess={handlePayAllSuccess}
-        />
+      <CreateTransactionModal
+      key={`pay-all-${meter.id}`}
+      isOpen={true}
+      onClose={close}
+      initialData={{
+        type: "debt_repay",
+        counterparty_id: meter.counterparty_id,
+        amount: totalDebt,
+        note: t("stats_utility:utility.payment_full_note", {
+          name: meter.name,
+        }),
+      }}
+      onSuccess={handlePayAllSuccess}
+      />
       )}
-    </>
-  );
-}
+
+      {isMobile && (
+      <FAB onClick={() => open("add-reading")} icon={<HiCalendar />} />
+      )}
+      </>
+      );
+      }

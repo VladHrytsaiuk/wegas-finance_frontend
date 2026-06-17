@@ -4,9 +4,6 @@ import {
   HiLinkSlash,
   HiCheck,
   HiArrowPath,
-  HiFingerPrint,
-  HiKey,
-  HiTrash,
 } from "react-icons/hi2";
 import axios from "axios";
 
@@ -53,7 +50,6 @@ const DisconnectModalAdapter = ({
 
 function Profile() {
   const { state, actions, t } = useProfileForm();
-  const { user, isRemovingPin, isRemovingPasskeys } = state;
   const isMobile = useIsMobile();
   const { name, email, isLoading, isUpdating } = state;
 
@@ -167,23 +163,7 @@ function Profile() {
             />
           </S.FormGroup>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', alignItems: 'center', marginTop: '1.5rem' }}>
-            {/* Показ статусів на комп'ютері поруч з кнопками */}
-            {!isMobile && (
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {user?.has_pin && (
-                  <S.StatusBadge $active={true} title={t("settings:profilePage.pin_desc")}>
-                    PIN
-                  </S.StatusBadge>
-                )}
-                {user?.has_passkeys && (
-                  <S.StatusBadge $active={true} title={t("settings:profilePage.passkey_desc")}>
-                    Passkey
-                  </S.StatusBadge>
-                )}
-              </div>
-            )}
-            
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
             <Button
               type="submit"
               style={{ width: isMobile ? "100%" : "auto" }}
@@ -277,101 +257,6 @@ function Profile() {
             </S.ActionsRight>
           </S.IntegrationCard>
         </S.IntegrationsSection>
-
-        {/* Секція керування безпекою (ПІН/Passkeys) */}
-        <S.SecuritySection>
-          {!isMobile && (
-            <S.SectionTitle style={{ fontSize: "1.2rem", fontWeight: 700 }}>
-              {t("settings:profilePage.title_security", "Безпека")}
-            </S.SectionTitle>
-          )}
-
-          {/* ПІН-код */}
-          <S.SecurityCard>
-            <S.IntegrationLeft>
-              <S.IconWrapper style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-grey-50)' }}>
-                <HiKey size={24} color="var(--color-grey-600)" />
-              </S.IconWrapper>
-              <S.TextInfo>
-                <S.BankTitleRow>
-                  <S.BankTitle>{t("settings:profilePage.label_pin_code", "ПІН-код")}</S.BankTitle>
-                  {isMobile && (
-                    <S.StatusBadge $active={!!user?.has_pin}>
-                      {user?.has_pin ? t("common:status_active", "Активно") : t("common:status_inactive", "Не налаштовано")}
-                    </S.StatusBadge>
-                  )}
-                </S.BankTitleRow>
-                <S.BankDescription>
-                  {t("settings:profilePage.pin_desc", "Швидкий вхід за 4-значним кодом")}
-                </S.BankDescription>
-              </S.TextInfo>
-            </S.IntegrationLeft>
-            <S.ActionsRight>
-              {user?.has_pin ? (
-                <Button
-                  $variation="danger"
-                  size="sm"
-                  onClick={() => {
-                    if (window.confirm(t("settings:profilePage.confirm_remove_pin", "Ви впевнені, що хочете вимкнути ПІН-код?"))) {
-                      actions.removePin();
-                    }
-                  }}
-                  disabled={isRemovingPin}
-                >
-                  <HiTrash size={16} style={{ marginRight: isMobile ? '0' : '4px' }} />
-                  {!isMobile && t("common:btn_disable", "Вимкнути")}
-                </Button>
-              ) : (
-                <S.StatusBadge $active={false}>
-                  {t("common:status_inactive", "Не налаштовано")}
-                </S.StatusBadge>
-              )}
-            </S.ActionsRight>
-          </S.SecurityCard>
-
-          {/* Passkeys (Біометрія) */}
-          <S.SecurityCard>
-            <S.IntegrationLeft>
-              <S.IconWrapper style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-grey-50)' }}>
-                <HiFingerPrint size={24} color="var(--color-grey-600)" />
-              </S.IconWrapper>
-              <S.TextInfo>
-                <S.BankTitleRow>
-                  <S.BankTitle>{t("settings:profilePage.label_biometrics", "Біометрія (Passkeys)")}</S.BankTitle>
-                  {isMobile && (
-                    <S.StatusBadge $active={!!user?.has_passkeys}>
-                      {user?.has_passkeys ? t("common:status_active", "Активно") : t("common:status_inactive", "Не налаштовано")}
-                    </S.StatusBadge>
-                  )}
-                </S.BankTitleRow>
-                <S.BankDescription>
-                  {t("settings:profilePage.passkey_desc", "Вхід за допомогою FaceID / TouchID")}
-                </S.BankDescription>
-              </S.TextInfo>
-            </S.IntegrationLeft>
-            <S.ActionsRight>
-              {user?.has_passkeys ? (
-                <Button
-                  $variation="danger"
-                  size="sm"
-                  onClick={() => {
-                    if (window.confirm(t("settings:profilePage.confirm_remove_passkeys", "Ви впевнені, що хочете вимкнути біометричний вхід? Усі зареєстровані Passkeys будуть видалені."))) {
-                      actions.removePasskeys();
-                    }
-                  }}
-                  disabled={isRemovingPasskeys}
-                >
-                  <HiTrash size={16} style={{ marginRight: isMobile ? '0' : '4px' }} />
-                  {!isMobile && t("common:btn_disable", "Вимкнути")}
-                </Button>
-              ) : (
-                <S.StatusBadge $active={false}>
-                  {t("common:status_inactive", "Не налаштовано")}
-                </S.StatusBadge>
-              )}
-            </S.ActionsRight>
-          </S.SecurityCard>
-        </S.SecuritySection>
       </div>
 
       {/* --- MODALS --- */}

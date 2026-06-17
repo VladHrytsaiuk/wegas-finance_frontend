@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { usePageTitle } from "../../hooks/usePageTitle";
-import { HiPlus } from "react-icons/hi2";
+import { HiPlus, HiPlusCircle } from "react-icons/hi2";
 
 import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
@@ -19,9 +19,21 @@ import { useHeader } from "../../context/HeaderContext"; // Імпорт кон�
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Shopping.styles";
+import Modal, { useModal } from "../../components/ui/Modal";
+import { FAB } from "../../components/ui/FAB";
+import { CreateShoppingListModal } from "../../components/shopping/CreateShoppingListModal";
 
 function Shopping() {
+  return (
+    <Modal>
+      <ShoppingContent />
+    </Modal>
+  );
+}
+
+function ShoppingContent() {
   const { lists, isLoading, handlers, t } = useShopping();
+  const { open, close } = useModal();
   const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.shoppingList", "Покупки"));
   const { setPageTitle, resetPageTitle } = useHeader();
@@ -100,43 +112,44 @@ function Shopping() {
         onSortChange={setSortValue}
       />
 
-      <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            gap: "12px",
-          }}
-        >
-          <input
-            type="text"
-            placeholder={t("shopping_wishlist:shopping.new_list", "Створити новий список...")}
-            value={newListTitle}
-            onChange={(e) => setNewListTitle(e.target.value)}
-          />
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <NoteOptions
-              color={newListColor}
-              visibility={newListVisibility}
-              hiddenFrom={newListHiddenFrom}
-              onChangeColor={setNewListColor}
-              onChangeVisibility={(vis, hidden) => {
-                setNewListVisibility(vis);
-                setNewListHiddenFrom(hidden);
-              }}
+      {!isMobile && (
+        <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
+            <input
+              type="text"
+              placeholder={t("shopping_wishlist:shopping.new_list", "Створити новий список...")}
+              value={newListTitle}
+              onChange={(e) => setNewListTitle(e.target.value)}
             />
-            <Button
-              variation="primary"
-              type="submit"
-              disabled={!newListTitle.trim()}
-              size="small"
-            >
-              <HiPlus />
-            </Button>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <NoteOptions
+                color={newListColor}
+                visibility={newListVisibility}
+                hiddenFrom={newListHiddenFrom}
+                onChangeColor={setNewListColor}
+                onChangeVisibility={(vis, hidden) => {
+                  setNewListVisibility(vis);
+                  setNewListHiddenFrom(hidden);
+                }}
+              />
+              <Button
+                variation="soft"
+                type="submit"
+                disabled={!newListTitle.trim()}
+                size="small"
+                icon={<HiPlusCircle size={18} />}
+              />
+            </div>
           </div>
-        </div>
-      </S.CreateNoteCard>
+        </S.CreateNoteCard>
+      )}
 
       {paginatedLists.length === 0 ? (
         <EmptyState
@@ -173,6 +186,17 @@ function Shopping() {
           onPageChange={setPage}
         />
       </S.PaginationWrapper>
+
+      {isMobile && (
+        <FAB onClick={() => open("create-shopping-list")} />
+      )}
+
+      <Modal.Window name="create-shopping-list" padding="0">
+        <CreateShoppingListModal 
+          onCreate={handlers.createList}
+          onClose={close}
+        />
+      </Modal.Window>
     </S.PageContainer>
   </>
   );

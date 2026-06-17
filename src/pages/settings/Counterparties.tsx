@@ -14,6 +14,7 @@ import * as S from "./Counterparties.styles";
 import { useCounterpartiesPage } from "../../hooks/Counterparties/useCounterpartiesPage";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
 
 function Counterparties() {
   const {
@@ -43,6 +44,7 @@ function Counterparties() {
   } = useCounterpartiesPage();
 
   const isMobile = useIsMobile();
+  const { open } = useModal();
 
   return (
     <Modal>
@@ -119,25 +121,20 @@ function Counterparties() {
         </S.TreeContainer>
 
         {isMobile && canManageStructure && (
-          <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-             <Modal.Open opens="create-cat">
-              <Button
-                icon={<HiFolderPlus />}
-                variation="secondary"
-                size="large"
-                shape="circle"
-                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)', backgroundColor: 'var(--color-bg-surface)' }}
-              />
-            </Modal.Open>
-            <Modal.Open opens="create-cp">
-              <Button
-                icon={<HiPlus />}
-                size="large"
-                shape="circle"
-                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
-              />
-            </Modal.Open>
-          </div>
+          <FAB 
+            actions={[
+              {
+                icon: <HiFolderPlus />,
+                label: t("counterparties:counterpartiesPage.add_category_button"),
+                onClick: () => open("create-cat")
+              },
+              {
+                icon: <HiPlus />,
+                label: t("counterparties:counterpartiesPage.add_counterparty_button"),
+                onClick: () => open("create-cp")
+              }
+            ]}
+          />
         )}
 
         {/* --- Hidden Triggers for programmatic modals --- */}

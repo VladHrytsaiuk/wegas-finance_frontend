@@ -4,44 +4,19 @@ import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useTransactionsPage } from "../../../hooks/Transactions/useTransactionsPage";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
 import { CenteredSpinner } from "../../../components/ui/CenteredSpinner";
-import { HiArrowLeft } from "react-icons/hi2";
+import { HiArrowLeft, HiPlus, HiArrowDownTray } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
+import { FAB } from "../../../components/ui/FAB";
+import Modal, { useModal } from "../../../components/ui/Modal";
+import ExportModal from "../../../pages/settings/ExportPage";
 
 const StyledHistory = styled.div`
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-page);
-  min-height: 100%;
-`;
-
-const Header = styled.header`
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  position: sticky;
-  top: 0;
-  background-color: var(--color-bg-page);
-  z-index: 10;
-  border-bottom: 1px solid var(--color-border);
-`;
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-  color: var(--color-text-main);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 4px;
-`;
-
-const Title = styled.h1`
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-text-main);
+  min-height: 100vh;
+  padding-bottom: 80px;
 `;
 
 const List = styled.div`
@@ -51,9 +26,18 @@ const List = styled.div`
 `;
 
 function MobileTransactionHistory() {
+  return (
+    <Modal>
+      <MobileTransactionHistoryContent />
+    </Modal>
+  );
+}
+
+function MobileTransactionHistoryContent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { open } = useModal();
   const accountId = searchParams.get("account");
 
   const {
@@ -63,7 +47,8 @@ function MobileTransactionHistory() {
     accounts,
     handleRowClick,
     handleFilterChange,
-    handleClearAll
+    handleClearAll,
+    location
   } = useTransactionsPage();
 
   usePageTitle("Історія операцій");
@@ -81,12 +66,19 @@ function MobileTransactionHistory() {
 
   return (
     <StyledHistory>
-      <Header>
-        <BackButton onClick={() => navigate(-1)}>
-          <HiArrowLeft size={24} />
-        </BackButton>
-        <Title>{t("dashboard:mobile.recent_operations")}</Title>
-      </Header>
+      <MobilePageHeader 
+        title={t("dashboard:mobile.recent_operations")} 
+        rightAction={
+          <Button 
+            variation="secondary" 
+            size="small" 
+            onClick={() => open("export-all")}
+            style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+          >
+            <HiArrowDownTray size={24} style={{ color: 'var(--color-brand-600)' }} />
+          </Button>
+        }
+      />
 
       <List>
         {transactions.map((tx) => (
@@ -102,6 +94,14 @@ function MobileTransactionHistory() {
           />
         ))}
       </List>
+
+      <FAB 
+        onClick={() => navigate("/transactions/new", { state: { background: location } })}
+      />
+
+      <Modal.Window name="export-all">
+        <ExportModal />
+      </Modal.Window>
     </StyledHistory>
   );
 }

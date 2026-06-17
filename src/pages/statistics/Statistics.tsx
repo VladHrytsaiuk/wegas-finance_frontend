@@ -10,6 +10,8 @@ import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { FAB } from "../../components/ui/FAB";
 
 import { useStatistics } from "../../hooks/Stats/useStatistics";
 import * as S from "./Statistics.styles";
@@ -17,6 +19,7 @@ import * as S from "./Statistics.styles";
 export const Statistics = () => {
   const { state, actions, t } = useStatistics();
   usePageTitle(t("navigation:general.statistics", "Статистика"));
+  const isMobile = useIsMobile();
   const {
     filter,
     isExportModalOpen,
@@ -30,7 +33,7 @@ export const Statistics = () => {
 
   return (
     <Modal>
-      <S.PageContainer>
+      <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
         <S.Header>
           <S.ControlsGroup>
             <S.TypeToggle>
@@ -61,13 +64,15 @@ export const Statistics = () => {
               currentTo={filter.to}
             />
 
-            <Button
-              variation="secondary"
-              icon={<HiArrowDownTray size={18} />}
-              onClick={() => actions.setIsExportModalOpen(true)}
-            >
-              {t("export_import:exportPage.title")}
-            </Button>
+            {!isMobile && (
+              <Button
+                variation="secondary"
+                icon={<HiArrowDownTray size={18} />}
+                onClick={() => actions.setIsExportModalOpen(true)}
+              >
+                {t("export_import:exportPage.title")}
+              </Button>
+            )}
           </S.ControlsGroup>
         </S.Header>
 
@@ -149,6 +154,13 @@ export const Statistics = () => {
           />
         )}
       </S.PageContainer>
+
+      {isMobile && (
+        <FAB 
+          onClick={() => actions.setIsExportModalOpen(true)} 
+          icon={<HiArrowDownTray />} 
+        />
+      )}
     </Modal>
   );
 };

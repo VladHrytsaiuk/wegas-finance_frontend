@@ -19,6 +19,7 @@ import { useHeader } from "../../context/HeaderContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Utility.styles";
+import { FAB } from "../../components/ui/FAB";
 
 import CreateMeterForm from "../../components/utility/CreateMeterModal";
 import AddReadingForm from "../../components/utility/AddReadingModal";
@@ -123,7 +124,21 @@ function UtilityContent() {
 
   return (
     <>
-      {isMobile && <MobilePageHeader title={t("stats_utility:utilityPage.title")} />}
+      {isMobile ? (
+        <MobilePageHeader 
+          title={t("stats_utility:utilityPage.title")} 
+          rightAction={
+            <Button 
+              variation="secondary" 
+              size="small" 
+              onClick={() => navigate("analytics")}
+              style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+            >
+              <HiChartBar size={24} style={{ color: 'var(--color-brand-600)' }} />
+            </Button>
+          }
+        />
+      ) : null}
       <S.PageContainer>
         <TableToolbar
           searchQuery={searchQuery}
@@ -137,24 +152,28 @@ function UtilityContent() {
           onSortChange={handleSortChange}
           onClearAll={handleClearAll}
         >
-          <Button
-            variation="secondary"
-            icon={<HiChartBar />}
-            onClick={() => navigate("analytics")}
-          >
-            {t("stats_utility:utilityPage.analytics_btn")}
-          </Button>
-          <Button
-            variation="primary"
-            size="medium"
-            icon={<HiPlus />}
-            onClick={() => {
-              setActiveMeter(null);
-              open("create-meter");
-            }}
-          >
-            {t("stats_utility:utilityPage.add_btn")}
-          </Button>
+          {!isMobile && (
+            <>
+              <Button
+                variation="secondary"
+                icon={<HiChartBar />}
+                onClick={() => navigate("analytics")}
+              >
+                {t("stats_utility:utilityPage.analytics_btn")}
+              </Button>
+              <Button
+                variation="primary"
+                size="medium"
+                icon={<HiPlus />}
+                onClick={() => {
+                  setActiveMeter(null);
+                  open("create-meter");
+                }}
+              >
+                {t("stats_utility:utilityPage.add_btn")}
+              </Button>
+            </>
+          )}
         </TableToolbar>
 
         {Object.keys(groupedMeters).length > 0 &&
@@ -226,6 +245,15 @@ function UtilityContent() {
             />
           )}
         </S.ModalWrapper>
+
+        {isMobile && (
+          <FAB 
+            onClick={() => {
+              setActiveMeter(null);
+              open("create-meter");
+            }}
+          />
+        )}
       </S.PageContainer>
     </>
   );

@@ -209,14 +209,14 @@ export const FilterButton = styled.button<{
   gap: 8px;
   padding: 0 12px;
   height: 38px;
-  border: 1px solid transparent;
+  border: none; /* Видалено обводку */
   background: ${(p) => (p.$isOpen ? "var(--color-bg-hover)" : "transparent")};
   color: var(--color-text-main);
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: all 0.2s;
 
   @media (max-width: 1300px) {
     font-size: 0.7rem;
@@ -226,6 +226,7 @@ export const FilterButton = styled.button<{
 
   &:hover {
     background: var(--color-bg-hover);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
   & > svg:first-child {
     width: 18px;
@@ -314,12 +315,12 @@ export const DateIconButton = styled.button<{ $active?: boolean }>`
   }
 
   border-radius: 8px;
-  border: 1px solid
-    ${(p) => (p.$active ? "var(--color-brand-200)" : "var(--color-border)")};
+  border: none; /* Видалено обводку */
   background: ${(p) =>
     p.$active ? "var(--color-brand-50)" : "var(--color-bg-surface)"};
   color: ${(p) =>
     p.$active ? "var(--color-brand-600)" : "var(--color-text-secondary)"};
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: all 0.2s;
   &:hover {
@@ -327,8 +328,7 @@ export const DateIconButton = styled.button<{ $active?: boolean }>`
       p.$active ? "var(--color-brand-100)" : "var(--color-bg-hover)"};
     color: ${(p) =>
       p.$active ? "var(--color-brand-700)" : "var(--color-text-main)"};
-    border-color: ${(p) =>
-      p.$active ? "var(--color-brand-300)" : "var(--color-text-secondary)"};
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   svg {
     width: 20px;

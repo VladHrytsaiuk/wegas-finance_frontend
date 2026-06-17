@@ -22,6 +22,9 @@ import * as S from "./DebtorDetails.styles";
 import { useDebtorDetails } from "../../hooks/Debts/useDebtorDetails";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
 
 function DebtorDetails() {
   const {
@@ -52,6 +55,7 @@ function DebtorDetails() {
     t,
   } = useDebtorDetails();
 
+  const isMobile = useIsMobile();
   usePageTitle(counterparty?.name);
 
   // 🔥 1. Локальний стейт для суми та примітки
@@ -122,13 +126,17 @@ function DebtorDetails() {
 
   return (
     <S.PageWrapper>
-      <S.TopNav>
-        <S.BackLink to="/debts">
-          <HiArrowLeft /> {t("common:common.return")}
-        </S.BackLink>
-      </S.TopNav>
+      {isMobile ? (
+        <MobilePageHeader title={counterparty.name} />
+      ) : (
+        <S.TopNav>
+          <S.BackLink to="/debts">
+            <HiArrowLeft /> {t("common:common.return")}
+          </S.BackLink>
+        </S.TopNav>
+      )}
 
-      <S.ProfileHeader>
+      <S.ProfileHeader style={{ padding: isMobile ? "20px 16px" : undefined }}>
         <S.ProfileInfo>
           <S.LargeAvatar $color={profileColor}>
             {counterparty.logo ? (
@@ -271,19 +279,21 @@ function DebtorDetails() {
       )}
 
       {/* HISTORY */}
-      <S.HistoryContainer>
+      <S.HistoryContainer style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
         <S.SectionHeader>
           <S.SectionTitle>
             {t("accounts:accountDetailsPage.history_section_title")}
           </S.SectionTitle>
-          <Button
-            size="small"
-            variation="secondary"
-            onClick={() => handleOpenTx("loan_give")}
-            icon={<HiPlus />}
-          >
-            {t("transactions:transactionsPage.button_add")}
-          </Button>
+          {!isMobile && (
+            <Button
+              size="small"
+              variation="secondary"
+              onClick={() => handleOpenTx("loan_give")}
+              icon={<HiPlus />}
+            >
+              {t("transactions:transactionsPage.button_add")}
+            </Button>
+          )}
         </S.SectionHeader>
 
         <div style={{ marginTop: "1rem" }}>
@@ -311,6 +321,26 @@ function DebtorDetails() {
             amount: initialAmount, // 🔥 Передаємо суму
             note: initialNote, // 🔥 Передаємо примітку
           }}
+        />
+      )}
+
+      {isMobile && (
+        <FAB 
+          actions={[
+            {
+              icon: <HiArrowUpRight />,
+              label: t("goals_debts:debtsPage.btn_lend"),
+              onClick: () => handleOpenTx("loan_give")
+            },
+            {
+              icon: <HiArrowDownLeft />,
+              label: t("goals_debts:debtsPage.btn_repay_to_me"),
+              onClick: () => {
+                const balance = counterparty.balances.find((b: any) => b.balance > 0)?.balance;
+                handleOpenTx("loan_repay", balance, counterparty.balances.find((b: any) => b.balance > 0)?.currency);
+              }
+            }
+          ]}
         />
       )}
     </S.PageWrapper>

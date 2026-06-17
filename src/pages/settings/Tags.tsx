@@ -1,12 +1,13 @@
 import { HiPlus, HiTag } from "react-icons/hi2";
 
-import Modal from "../../components/ui/Modal";
+import Modal, { useModal } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { TagForm } from "../../components/tags/TagForm";
 import { TagItem } from "../../components/tags/TagItem";
+import { FAB } from "../../components/ui/FAB";
 
 import { useTags } from "../../hooks/Settings/useTags";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -18,6 +19,7 @@ function Tags() {
   const { tags, isLoading, isCreating, isDeleting, searchQuery, sortBy } =
     state;
   const isMobile = useIsMobile();
+  const { open } = useModal();
 
   return (
     <Modal>
@@ -79,16 +81,7 @@ function Tags() {
         </div>
 
         {isMobile && (
-          <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100 }}>
-            <Modal.Open opens="create-tag">
-              <Button
-                icon={<HiPlus />}
-                size="large"
-                shape="circle"
-                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
-              />
-            </Modal.Open>
-          </div>
+          <FAB onClick={() => open("create-tag")} />
         )}
       </div>
 

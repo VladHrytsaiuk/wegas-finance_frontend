@@ -169,43 +169,6 @@ export const SyncButton = styled(Button)<{ $isSpinning?: boolean }>`
   }
 `;
 
-export const SecuritySection = styled.div`
-  margin-top: 2.5rem;
-  border-top: 1px solid var(--color-border);
-  padding-top: 1.5rem;
-`;
-
-export const SecurityCard = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background-color: var(--color-bg-surface);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 0.75rem;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-`;
-
-export const StatusBadge = styled.div<{ $active: boolean }>`
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 100px;
-  background-color: ${props => props.$active ? 'var(--color-success-50)' : 'var(--color-grey-100)'};
-  color: ${props => props.$active ? 'var(--color-success-700)' : 'var(--color-grey-500)'};
-  border: 1px solid ${props => props.$active ? 'var(--color-success-200)' : 'var(--color-grey-200)'};
-  width: fit-content;
-  white-space: nowrap;
-  align-self: center;
-`;
-
 export const IconButton = styled(Button)`
   width: 34px;
   height: 34px;

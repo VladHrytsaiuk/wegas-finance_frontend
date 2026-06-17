@@ -12,6 +12,7 @@ import { Trans } from "react-i18next";
 import { DateRangePicker } from "../../components/ui/DateRangePicker";
 import { MultiSelectFilter } from "../../components/shared/TableToolbar/MultiSelectFilter";
 import { Button } from "../../components/ui/Button";
+import Spinner from "../../components/ui/Spinner";
 
 import { useExportPage } from "../../hooks/Settings/useExportPage";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -35,7 +36,20 @@ export default function ExportPage() {
   return (
     <S.PageContainer style={{ padding: isMobile ? "0" : undefined }}>
       {isMobile ? (
-        <MobilePageHeader title={t("export_import:exportPage.title")} />
+        <MobilePageHeader 
+          title={t("export_import:exportPage.title")} 
+          rightAction={
+            <Button 
+              variation="secondary" 
+              size="small" 
+              onClick={actions.handleExport}
+              disabled={loading}
+              style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+            >
+              {loading ? <Spinner /> : <HiArrowDownTray size={24} style={{ color: 'var(--color-brand-600)' }} />}
+            </Button>
+          }
+        />
       ) : (
         <S.Header>
           <S.HeaderTitle>
@@ -55,21 +69,7 @@ export default function ExportPage() {
         </S.Header>
       )}
 
-      <div style={{ padding: isMobile ? "16px" : undefined }}>
-        {isMobile && (
-           <Button
-            size="large"
-            onClick={actions.handleExport}
-            disabled={loading}
-            icon={<HiArrowDownTray />}
-            style={{ width: '100%', marginBottom: '20px' }}
-          >
-            {loading
-              ? t("export_import:exportPage.button_processing")
-              : t("export_import:exportPage.button_download")}
-          </Button>
-        )}
-
+      <div style={{ padding: isMobile ? "16px 16px 80px 16px" : undefined }}>
         <S.TabsContainer>
           <S.TabButton
             $active={activeTab === "transactions"}

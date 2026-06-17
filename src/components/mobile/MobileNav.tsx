@@ -64,16 +64,21 @@ const ActionButtonWrapper = styled.div`
 const ActionButton = styled.button`
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  background-color: var(--color-brand-600);
+  border-radius: 12px; /* Змінено з 50% на заокруглений квадрат */
+  background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
   color: white;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: -35px; /* Adjusted from -30px to stay proportional to new height */
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4); /* Більш насичена тінь */
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active {
+    transform: scale(0.85);
+  }
 
   & svg {
     width: 28px;

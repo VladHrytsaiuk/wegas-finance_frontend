@@ -67,11 +67,12 @@ export const ItemsTable = ({
 
         <Button
           size="small"
-          variation="primary"
+          variation="soft"
           type="button"
           onClick={actions.addItem}
+          icon={<HiPlusCircle size={16} />}
         >
-          <HiPlus /> {t("transactions:itemsTable.button_add")}
+          {t("transactions:itemsTable.button_add")}
         </Button>
       </S.ItemsHeader>
 

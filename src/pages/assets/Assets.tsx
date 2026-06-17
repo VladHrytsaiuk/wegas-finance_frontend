@@ -17,9 +17,12 @@ import { useAssetsFilter } from "../../hooks/Assets/useAssetsFilter";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Assets.styles";
+import { FAB } from "../../components/ui/FAB";
+import { useModal } from "../../components/ui/Modal";
 
 export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
+  const { open } = useModal();
   const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.assets", "Майно"));
   const { assets, isLoading, isDeleting } = state;
@@ -60,11 +63,13 @@ export default function Assets() {
           onSortChange={setSortBy}
           onClearAll={handleClearAll}
         >
-          <Modal.Open opens="create-asset">
-            <Button variation="primary" size="medium" icon={<HiPlus />}>
-              {t("assets:assetsPage.button_add")}
-            </Button>
-          </Modal.Open>
+          {!isMobile && (
+            <Modal.Open opens="create-asset">
+              <Button variation="primary" size="medium" icon={<HiPlus />}>
+                {t("assets:assetsPage.button_add")}
+              </Button>
+            </Modal.Open>
+          )}
         </TableToolbar>
 
         {/* Винесена таблиця */}
@@ -119,6 +124,10 @@ export default function Assets() {
           );
         })}
       </Modal>
+
+      {isMobile && (
+        <FAB onClick={() => open("create-asset")} />
+      )}
     </S.PageContainer>
   </>
   );

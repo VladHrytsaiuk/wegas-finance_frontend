@@ -1,23 +1,21 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { usePageTitle } from "../../hooks/usePageTitle";
-import { HiPlus } from "react-icons/hi2";
+import { HiPlus, HiOutlineFlag } from "react-icons/hi2";
 
 // Components
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { HiOutlineFlag } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import CreateGoalModal from "../../components/goals/CreateGoalModal";
 import ExtendGoalModal from "../../components/goals/ExtendGoalModal";
 import GoalCard from "../../components/goals/GoalCard";
-import { SmartIcon } from "../../utils/IconMap";
+import { FAB } from "../../components/ui/FAB";
 
 // Logic & Styles
 import { useGoalsPage } from "../../hooks/Goals/useGoalsPage";
 import { useGoalsFilter } from "../../hooks/Goals/useGoalsFilter";
-import { useHeader } from "../../context/HeaderContext"; // Імпорт хедера
+import { useHeader } from "../../context/HeaderContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Goals.styles";
@@ -127,14 +125,16 @@ function Goals() {
         onSortChange={setSortBy}
         onClearAll={handleClearAll}
       >
-        <Button
-          variation="primary"
-          size="medium"
-          onClick={handleCreate}
-          icon={<HiPlus />}
-        >
-          {t("goals_debts:goals.button_add")}
-        </Button>
+        {!isMobile && (
+          <Button
+            variation="primary"
+            size="medium"
+            onClick={handleCreate}
+            icon={<HiPlus />}
+          >
+            {t("goals_debts:goals.button_add")}
+          </Button>
+        )}
       </TableToolbar>
 
       {filteredGoals.length > 0 ? (
@@ -156,7 +156,7 @@ function Goals() {
               searchQuery
                 ? t(
                     "common:common.try_adjusting_search",
-                    "Спробуйте змінити запит",
+                    "Спробуйте змінит запит",
                   )
                 : t(
                     "goals_debts:goals.empty_desc",
@@ -197,6 +197,10 @@ function Goals() {
           }
         }}
       />
+
+      {isMobile && (
+        <FAB onClick={handleCreate} />
+      )}
     </S.PageContainer>
   </>
 );

@@ -47,14 +47,22 @@ const Title = styled.h1`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+`;
+
+const RightAction = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 interface MobilePageHeaderProps {
   title: string;
   onBack?: () => void;
+  rightAction?: React.ReactNode;
 }
 
-function MobilePageHeader({ title, onBack }: MobilePageHeaderProps) {
+function MobilePageHeader({ title, onBack, rightAction }: MobilePageHeaderProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -69,6 +77,7 @@ function MobilePageHeader({ title, onBack }: MobilePageHeaderProps) {
         <HiOutlineChevronLeft strokeWidth={2.5} />
       </BackButton>
       <Title>{title}</Title>
+      {rightAction && <RightAction>{rightAction}</RightAction>}
     </StyledHeader>
   );
 }

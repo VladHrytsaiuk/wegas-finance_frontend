@@ -28,12 +28,16 @@ import { EmptyState } from "../../components/ui/EmptyState";
 import { useGoalDetails } from "../../hooks/Goals/useGoalDetails";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import { FAB } from "../../components/ui/FAB";
 import * as S from "./GoalDetails.styles";
 
 function GoalDetails() {
   const { state, actions, t, i18n } = useGoalDetails();
   const { goal, stats, isLoading, isEditModalOpen, isToggling } = state;
 
+  const isMobile = useIsMobile();
   usePageTitle(goal?.name);
 
   const currentLocale = i18n.language === "uk" ? uk : enUS;
@@ -64,57 +68,78 @@ function GoalDetails() {
   } = stats;
 
   return (
-    <S.PageContainer>
+    <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
       <Modal>
         {/* ХЕДЕР */}
-        <S.HeaderSection>
-          <S.HeaderLeft>
-            <S.BackButton onClick={actions.handleBack}>
-              <HiArrowLeft size={18} /> {t("common:common.return")}
-            </S.BackButton>
-            <S.GoalTitleBlock>
-              <S.IconBox $color={goal.color || "var(--color-brand-600)"}>
-                <SmartIcon iconName={goal.icon || "HiFlag"} />
-              </S.IconBox>
-              <div className="title-group">
-                <S.StatusBadge $status={goal.status}>
-                  {t(`goals_debts:goals.status_${goal.status}`)}
-                </S.StatusBadge>
-                <h1>{goal.name}</h1>
-              </div>
-            </S.GoalTitleBlock>
-          </S.HeaderLeft>
-
-          <S.HeaderActions>
-            <Button
-              variation="secondary"
-              onClick={actions.handleToggleStatus}
-              disabled={isToggling}
-            >
-              {goal.status === "paused" ? (
-                <>
-                  <HiChartBar /> {t("goals_debts:goalDetails.btn_resume")}
-                </>
-              ) : (
-                <>
-                  <HiChartBar /> {t("goals_debts:goalDetails.btn_pause")}
-                </>
-              )}
-            </Button>
-
-            <Modal.Open opens="edit-goal">
-              <Button variation="secondary">
-                <HiPencil /> {t("common:common.edit")}
+        {isMobile && goal ? (
+          <MobilePageHeader 
+            title={goal.name} 
+            rightAction={
+              <Button
+                variation="secondary"
+                size="small"
+                onClick={actions.handleToggleStatus}
+                disabled={isToggling}
+                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+              >
+                {goal.status === "paused" ? (
+                  <HiChartBar size={24} style={{ color: 'var(--color-brand-600)' }} />
+                ) : (
+                  <HiChartBar size={24} style={{ color: 'var(--color-text-secondary)' }} />
+                )}
               </Button>
-            </Modal.Open>
+            }
+          />
+        ) : (
+          <S.HeaderSection>
+            <S.HeaderLeft>
+              <S.BackButton onClick={actions.handleBack}>
+                <HiArrowLeft size={18} /> {t("common:common.return")}
+              </S.BackButton>
+              <S.GoalTitleBlock>
+                <S.IconBox $color={goal.color || "var(--color-brand-600)"}>
+                  <SmartIcon iconName={goal.icon || "HiFlag"} />
+                </S.IconBox>
+                <div className="title-group">
+                  <S.StatusBadge $status={goal.status}>
+                    {t(`goals_debts:goals.status_${goal.status}`)}
+                  </S.StatusBadge>
+                  <h1>{goal.name}</h1>
+                </div>
+              </S.GoalTitleBlock>
+            </S.HeaderLeft>
 
-            <Modal.Open opens="delete-goal">
-              <Button variation="danger">
-                <HiTrash /> {t("common:common.delete")}
+            <S.HeaderActions>
+              <Button
+                variation="secondary"
+                onClick={actions.handleToggleStatus}
+                disabled={isToggling}
+              >
+                {goal.status === "paused" ? (
+                  <>
+                    <HiChartBar /> {t("goals_debts:goalDetails.btn_resume")}
+                  </>
+                ) : (
+                  <>
+                    <HiChartBar /> {t("goals_debts:goalDetails.btn_pause")}
+                  </>
+                )}
               </Button>
-            </Modal.Open>
-          </S.HeaderActions>
-        </S.HeaderSection>
+
+              <Modal.Open opens="edit-goal">
+                <Button variation="secondary">
+                  <HiPencil /> {t("common:common.edit")}
+                </Button>
+              </Modal.Open>
+
+              <Modal.Open opens="delete-goal">
+                <Button variation="danger">
+                  <HiTrash /> {t("common:common.delete")}
+                </Button>
+              </Modal.Open>
+            </S.HeaderActions>
+          </S.HeaderSection>
+        )}
 
         {/* ОСНОВНА СІТКА */}
         <S.TopGrid>
@@ -294,6 +319,12 @@ function GoalDetails() {
           />
         </Modal.Window>
       </Modal>
+
+      {isMobile && (
+        <Modal.Open opens="edit-goal">
+          <FAB onClick={() => {}} icon={<HiPencil />} />
+        </Modal.Open>
+      )}
     </S.PageContainer>
   );
 }

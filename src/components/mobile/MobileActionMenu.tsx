@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router-dom";
 import { HiPlus, HiCamera, HiOutlineDocumentText } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
@@ -93,13 +94,20 @@ interface MobileActionMenuProps {
 
 function MobileActionMenu({ onClose }: MobileActionMenuProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleAction = (path: string) => {
+    navigate(path, { state: { background: location } });
+    onClose();
+  };
 
   return (
     <Overlay onClick={onClose}>
       <MenuContainer onClick={(e) => e.stopPropagation()}>
         <MenuHeader>Швидкі дії</MenuHeader>
         
-        <ActionItem onClick={onClose}>
+        <ActionItem onClick={() => handleAction("/transactions/new")}>
           <IconBox><HiPlus /></IconBox>
           <ActionLabel>
             <ActionTitle>{t("transactions:transactionsPage.button_add")}</ActionTitle>
@@ -115,7 +123,7 @@ function MobileActionMenu({ onClose }: MobileActionMenuProps) {
           </ActionLabel>
         </ActionItem>
 
-        <ActionItem onClick={onClose}>
+        <ActionItem onClick={() => handleAction("/settings/export")}>
           <IconBox><HiOutlineDocumentText /></IconBox>
           <ActionLabel>
             <ActionTitle>Імпортувати</ActionTitle>

@@ -26,9 +26,12 @@ import { SmartIcon } from "../../utils/IconMap";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./Debts.styles";
 import { useDebtsPage, type DebtTotals } from "../../hooks/Debts/useDebtsPage";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { FAB } from "../../components/ui/FAB";
 
 function Debts() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const {
     state: {
@@ -204,15 +207,17 @@ function Debts() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <ViewToggle view={viewMode} onChange={setViewMode} />
-          <Button
-            variation="primary"
-            size="medium"
-            onClick={handleGlobalCreate}
-            icon={<HiPlus />}
-            style={{ whiteSpace: "nowrap" }}
-          >
-            {t("transactions:transactionsPage.button_add")}
-          </Button>
+          {!isMobile && (
+            <Button
+              variation="primary"
+              size="medium"
+              onClick={handleGlobalCreate}
+              icon={<HiPlus />}
+              style={{ whiteSpace: "nowrap" }}
+            >
+              {t("transactions:transactionsPage.button_add")}
+            </Button>
+          )}
         </div>
       </TableToolbar>
 
@@ -532,6 +537,10 @@ function Debts() {
             amount: selectedAmount, // 🔥 4. Передаємо суму в initialData
           }}
         />
+      )}
+
+      {isMobile && (
+        <FAB onClick={handleGlobalCreate} />
       )}
     </S.PageContainer>
   );

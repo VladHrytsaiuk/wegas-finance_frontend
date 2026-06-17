@@ -4,21 +4,33 @@ import styled, { css } from "styled-components";
 // 1. Описуємо варіанти стилів (кольори)
 const variations = {
   primary: css`
-    background-color: var(--color-brand-600);
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
     color: white;
 
     &:hover:not(:disabled) {
-      background-color: var(--color-brand-700);
+      background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-700));
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
     }
   `,
   secondary: css`
     background-color: var(--color-bg-surface);
     color: var(--color-text-main);
-    border: 1px solid var(--color-border);
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
     &:hover:not(:disabled) {
       background-color: var(--color-bg-page);
-      border-color: var(--color-text-secondary);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+  `,
+  soft: css`
+    background-color: var(--color-brand-50);
+    color: var(--color-brand-600);
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-brand-100);
+      color: var(--color-brand-700);
     }
   `,
   danger: css`

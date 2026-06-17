@@ -4,10 +4,11 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus, HiFolderPlus } from "react-icons/hi2";
 
 import { Button } from "../../components/ui/Button";
-import Modal from "../../components/ui/Modal";
+import Modal, { useModal } from "../../components/ui/Modal";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { FAB } from "../../components/ui/FAB";
 
 import CreateGroupModal from "../../components/wishlist/CreateGroupModal";
 import CreateWishModal from "../../components/wishlist/CreateWishModal";
@@ -22,8 +23,17 @@ import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Wishlist.styles";
 
 export default function WishlistGroups() {
+  return (
+    <Modal>
+      <WishlistGroupsContent />
+    </Modal>
+  );
+}
+
+function WishlistGroupsContent() {
   const navigate = useNavigate();
   const { items, groups, isLoading, handlers, t } = useWishlist();
+  const { open } = useModal();
   const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.wishlist", "Бажання"));
   const { setPageTitle, resetPageTitle } = useHeader();
@@ -75,39 +85,21 @@ export default function WishlistGroups() {
         onSortChange={setSortBy}
         onClearAll={handleClearAll}
       >
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Modal>
+        {!isMobile && (
+          <div style={{ display: "flex", gap: "10px" }}>
             <Modal.Open opens="create-group">
               <Button variation="secondary" icon={<HiFolderPlus />}>
                 {t("shopping_wishlist:wishlist.btn_add_group", "Група")}
               </Button>
             </Modal.Open>
-            <Modal.Window name="create-group" padding="0">
-              <CreateGroupModal
-                onCreate={(name, color, icon, visibility, hiddenFrom) =>
-                  handlers.createGroup(
-                    name,
-                    color,
-                    icon || "HiFolder",
-                    visibility as any,
-                    hiddenFrom,
-                  )
-                }
-              />
-            </Modal.Window>
-          </Modal>
 
-          <Modal>
             <Modal.Open opens="create-wish">
               <Button variation="primary" icon={<HiPlus />}>
                 {t("shopping_wishlist:wishlist.btn_add_item", "Додати")}
               </Button>
             </Modal.Open>
-            <Modal.Window name="create-wish" padding="0">
-              <CreateWishModal groups={groups} onCreate={handlers.createItem} />
-            </Modal.Window>
-          </Modal>
-        </div>
+          </div>
+        )}
       </TableToolbar>
 
       <S.Grid>
@@ -171,31 +163,65 @@ export default function WishlistGroups() {
             !searchQuery &&
             filters.author.length === 0 &&
             filters.visibility.length === 0 && (
-              <Modal>
-                <Modal.Open opens="create-group-empty">
-                  <Button variation="secondary" icon={<HiFolderPlus />}>
-                    {t(
-                      "shopping_wishlist:wishlist.btn_add_group",
-                      "Створити групу",
-                    )}
-                  </Button>
-                </Modal.Open>
-                <Modal.Window name="create-group-empty" padding="0">
-                  <CreateGroupModal
-                    onCreate={(name, color, icon, visibility, hiddenFrom) =>
-                      handlers.createGroup(
-                        name,
-                        color,
-                        icon || "HiFolder",
-                        visibility as any,
-                        hiddenFrom,
-                      )
-                    }
-                  />
-                </Modal.Window>
-              </Modal>
+              <Modal.Open opens="create-group-empty">
+                <Button variation="secondary" icon={<HiFolderPlus />}>
+                  {t(
+                    "shopping_wishlist:wishlist.btn_add_group",
+                    "Створити групу",
+                  )}
+                </Button>
+              </Modal.Open>
             )
           }
+        />
+      )}
+
+      {/* MODAL WINDOWS */}
+      <Modal.Window name="create-group" padding="0">
+        <CreateGroupModal
+          onCreate={(name, color, icon, visibility, hiddenFrom) =>
+            handlers.createGroup(
+              name,
+              color,
+              icon || "HiFolder",
+              visibility as any,
+              hiddenFrom,
+            )
+          }
+        />
+      </Modal.Window>
+      <Modal.Window name="create-group-empty" padding="0">
+        <CreateGroupModal
+          onCreate={(name, color, icon, visibility, hiddenFrom) =>
+            handlers.createGroup(
+              name,
+              color,
+              icon || "HiFolder",
+              visibility as any,
+              hiddenFrom,
+            )
+          }
+        />
+      </Modal.Window>
+      <Modal.Window name="create-wish" padding="0">
+        <CreateWishModal groups={groups} onCreate={handlers.createItem} />
+      </Modal.Window>
+
+      {/* MOBILE FAB */}
+      {isMobile && (
+        <FAB 
+          actions={[
+            {
+              icon: <HiFolderPlus />,
+              label: t("shopping_wishlist:wishlist.btn_add_group", "Група"),
+              onClick: () => open("create-group")
+            },
+            {
+              icon: <HiPlus />,
+              label: t("shopping_wishlist:wishlist.btn_add_item", "Бажання"),
+              onClick: () => open("create-wish")
+            }
+          ]}
         />
       )}
     </S.PageContainer>

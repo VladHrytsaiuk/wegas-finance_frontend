@@ -89,16 +89,22 @@ const AnimatedButton = styled(Link)<{ $collapsed: boolean }>`
   justify-content: flex-start;
   width: ${(p) => (p.$collapsed ? "38px" : "100%")};
   height: 38px;
-  border-radius: 10px;
-  background-color: var(--color-brand-600);
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
   color: white;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
 
   &:hover {
-    background-color: var(--color-brand-700);
+    background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-700));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 

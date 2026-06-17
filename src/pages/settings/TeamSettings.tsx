@@ -18,6 +18,7 @@ import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { GenerateInviteCodeSection } from "./GenerateInviteCodeSection";
 import { JoinFamilySection } from "./JoinFamilySection";
 import { AddMemberChoiceModal } from "./AddMemberChoiceModal";
+import { FAB } from "../../components/ui/FAB";
 
 import * as S from "./TeamSettings.styles";
 
@@ -70,9 +71,22 @@ function TeamSettings() {
 
   return (
     <Modal>
-      {isMobile && <MobilePageHeader title={t("settings:usersPage.team_list_title")} />}
-      <S.TeamContainer style={{ padding: isMobile ? "0" : undefined }}>
-        {!isMobile && (
+      {isMobile ? (
+        <MobilePageHeader 
+          title={t("settings:usersPage.team_list_title")} 
+          rightAction={
+            <Button 
+              variation="secondary" 
+              size="small" 
+              onClick={() => setIsJoinOpen(true)}
+              style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+            >
+              <HiOutlineLink size={24} style={{ color: 'var(--color-brand-600)' }} />
+            </Button>
+          }
+        />
+      ) : (
+        <S.TeamContainer style={{ paddingBottom: 0 }}>
           <S.HeaderRow style={{ borderBottom: "none", marginBottom: 0 }}>
             <S.SectionTitle>{t("settings:usersPage.team_list_title", "Склад команди")}</S.SectionTitle>
             
@@ -84,20 +98,12 @@ function TeamSettings() {
               {t("settings:usersPage.btn_join", "Приєднатися до сім'ї")}
             </Button>
           </S.HeaderRow>
-        )}
+        </S.TeamContainer>
+      )}
+
+      <S.TeamContainer style={{ padding: isMobile ? "0" : undefined }}>
 
         <section style={{ padding: isMobile ? "16px" : undefined }}>
-          {isMobile && (
-             <Button 
-              variation="secondary" 
-              icon={<HiOutlineLink size="medium" />}
-              onClick={() => setIsJoinOpen(true)}
-              style={{ width: '100%', marginBottom: '20px' }}
-            >
-              {t("settings:usersPage.btn_join", "Приєднатися до сім'ї")}
-            </Button>
-          )}
-
           {isLoading && <CenteredSpinner />}
 
           {!isLoading && users.length === 0 && (
@@ -144,15 +150,7 @@ function TeamSettings() {
           </S.UserGrid>
 
           {isMobile && canManageTeam && (
-            <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: 100 }}>
-              <Button
-                icon={<HiOutlineUserPlus />}
-                size="large"
-                shape="circle"
-                onClick={() => setIsChoiceOpen(true)}
-                style={{ width: '56px', height: '56px', borderRadius: '28px', boxShadow: 'var(--shadow-lg)' }}
-              />
-            </div>
+            <FAB onClick={() => setIsChoiceOpen(true)} icon={<HiOutlineUserPlus />} />
           )}
         </section>
 
