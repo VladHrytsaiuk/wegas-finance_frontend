@@ -35,10 +35,7 @@ const StyledConfirmDelete = styled.div`
 `;
 
 // Червона кнопка
-const DangerButton = styled(Button)`
-  background-color: var(--color-red-700);
-  color: white;
-  border: 1px solid var(--color-red-700);
+const DangerButton = styled(Button).attrs({ variation: "danger" })`
   width: auto;
 
   @media (max-width: 480px) {
@@ -46,33 +43,11 @@ const DangerButton = styled(Button)`
     height: 42px;
     font-size: 0.85rem;
     padding: 0 0.5rem;
-  }
-
-  /* Використовуємо && щоб підвищити пріоритет (CSS specificity) */
-  &&:hover:not(:disabled) {
-    background-color: var(--color-red-800);
-    border-color: var(--color-red-800);
-    box-shadow: var(--shadow-md);
-  }
-
-  /* Також фіксимо активний стан, щоб не ставав зеленим при кліку */
-  &&:active:not(:disabled) {
-    background-color: var(--color-red-800);
-  }
-
-  &:disabled {
-    background-color: var(--color-text-light);
-    border-color: transparent;
-    cursor: not-allowed;
   }
 `;
 
 // Сіра кнопка скасування
-const CancelButton = styled(Button)`
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-main);
-  box-shadow: none;
+const CancelButton = styled(Button).attrs({ variation: "secondary" })`
   width: auto;
 
   @media (max-width: 480px) {
@@ -80,21 +55,6 @@ const CancelButton = styled(Button)`
     height: 42px;
     font-size: 0.85rem;
     padding: 0 0.5rem;
-  }
-
-  /* Використовуємо && для перебивання стилів базової кнопки */
-  &&:hover:not(:disabled) {
-    background-color: var(--color-bg-page);
-    border-color: var(--color-text-secondary);
-    color: var(
-      --color-text-main
-    ); /* Щоб текст не ставав білим, якщо у Button це прописано */
-  }
-
-  &:disabled {
-    color: var(--color-text-tertiary);
-    border-color: var(--color-border);
-    cursor: not-allowed;
   }
 `;
 

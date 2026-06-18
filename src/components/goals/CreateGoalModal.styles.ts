@@ -357,6 +357,14 @@ export const Footer = styled.div<{ $isMobile?: boolean }>`
   justify-content: flex-end;
   gap: 0.75rem;
   flex-shrink: 0;
+
+  ${(props) => props.$isMobile && `
+    button {
+      height: 38px;
+      font-size: 0.9rem;
+      padding: 0 1rem;
+    }
+  `}
 `;
 
 // --- WIZARD ---

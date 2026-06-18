@@ -534,7 +534,7 @@ function CreateGoalFormContent({
               type="button"
               onClick={w.handleCloseAttempt}
               disabled={d.isLoading}
-              size="small"
+              size="medium"
             >
               {t("common:common.close")}
             </Button>
@@ -545,7 +545,7 @@ function CreateGoalFormContent({
                 type="button"
                 onClick={w.prevStep}
                 disabled={d.isLoading}
-                size="small"
+                size="medium"
               >
                 {t("common:common.return")}
               </Button>
@@ -557,7 +557,7 @@ function CreateGoalFormContent({
                 type="button"
                 onClick={w.nextStep}
                 disabled={d.isLoading}
-                size="small"
+                size="medium"
               >
                 {t("common:common.next")}
               </Button>
@@ -567,7 +567,7 @@ function CreateGoalFormContent({
                 type="submit"
                 form="goal-form"
                 disabled={d.isLoading}
-                size="small"
+                size="medium"
               >
                 {d.isLoading ? (
                   <Spinner size="small" />
