@@ -215,7 +215,24 @@ function ShoppingContent() {
 
       <Modal.Window name="create-shopping-list" padding="0">
         <CreateShoppingListModal 
-          onCreate={handlers.createList}
+          onCreate={async (title, color, visibility, hiddenFrom) => {
+            try {
+              const newList = await handlers.createList(
+                title,
+                color,
+                visibility,
+                hiddenFrom
+              );
+              if (newList?.id && isMobile) {
+                open(`edit-list-${newList.id}`);
+                return true;
+              }
+              return false;
+            } catch (err) {
+              console.error("Failed to create list: ", err);
+              return false;
+            }
+          }}
           onClose={close}
         />
       </Modal.Window>

@@ -28,7 +28,12 @@ export const useShopping = () => {
   // --- LISTS MUTATIONS ---
   const createList = useMutation({
     mutationFn: createShoppingListApi,
-    onSuccess: () => {
+    onSuccess: (newList) => {
+      queryClient.setQueryData<ShoppingList[]>(["shopping-lists"], (oldLists) => {
+        const formattedNew = { ...newList, items: newList.items || [] };
+        if (!oldLists) return [formattedNew];
+        return [formattedNew, ...oldLists];
+      });
       queryClient.invalidateQueries({ queryKey: ["shopping-lists"] });
     },
     onError: () => toast.error(t("common:common.error_occurred", "Помилка створення")),
@@ -92,7 +97,7 @@ export const useShopping = () => {
         visibility: string,
         hiddenFrom: string,
       ) =>
-        createList.mutate({
+        createList.mutateAsync({
           title,
           color,
           visibility,

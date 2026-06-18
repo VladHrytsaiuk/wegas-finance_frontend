@@ -51,7 +51,7 @@ const Footer = styled.div`
 `;
 
 interface CreateShoppingListModalProps {
-  onCreate: (title: string, color: string, visibility: string, hiddenFrom: string) => void;
+  onCreate: (title: string, color: string, visibility: string, hiddenFrom: string) => void | Promise<unknown>;
   onClose: () => void;
 }
 
@@ -61,12 +61,20 @@ export const CreateShoppingListModal = ({ onCreate, onClose }: CreateShoppingLis
   const [color, setColor] = useState(DEFAULT_NOTE_COLOR);
   const [visibility, setVisibility] = useState<"public" | "private" | "hidden">("public");
   const [hiddenFrom, setHiddenFrom] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (title.trim()) {
-      onCreate(title.trim(), color, visibility, hiddenFrom);
-      onClose();
+    if (title.trim() && !isCreating) {
+      setIsCreating(true);
+      try {
+        const openedNew = await onCreate(title.trim(), color, visibility, hiddenFrom);
+        if (!openedNew) {
+          onClose();
+        }
+      } catch (err) {
+        setIsCreating(false);
+      }
     }
   };
 
@@ -78,6 +86,7 @@ export const CreateShoppingListModal = ({ onCreate, onClose }: CreateShoppingLis
 
       <Input 
         autoFocus
+        disabled={isCreating}
         placeholder={t("shopping_wishlist:shopping.new_list_placeholder", "Назва списку...")}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -95,9 +104,9 @@ export const CreateShoppingListModal = ({ onCreate, onClose }: CreateShoppingLis
           }}
         />
         <div style={{ display: 'flex', gap: '10px' }}>
-          <Button variation="secondary" onClick={onClose}>{t("common:common.cancel")}</Button>
-          <Button variation="primary" onClick={handleSubmit} disabled={!title.trim()}>
-            {t("common:common.create")}
+          <Button variation="secondary" onClick={onClose} disabled={isCreating}>{t("common:common.cancel")}</Button>
+          <Button variation="primary" onClick={handleSubmit} disabled={!title.trim() || isCreating}>
+            {isCreating ? t("common:common.creating", "Створення...") : t("common:common.create")}
           </Button>
         </div>
       </Footer>
