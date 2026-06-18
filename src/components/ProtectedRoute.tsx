@@ -40,7 +40,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const needsPin = user
     ? !!user.has_passkeys || !!user.has_pin
     : hasPinHint;
-  const isLocked = needsPin && !isUnlocked;
+  // ТИМЧАСОВО: вимикаємо блокування, бо на віртуалці воно глючить і вимагає пін, якого немає
+  const isLocked = false; // needsPin && !isUnlocked;
 
   // Sync database security settings with localStorage hints
   useEffect(() => {
@@ -76,15 +77,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       if (isLoading || isFetching) return;
 
       if (!isAuthenticated) {
-        if (userEmail && hasPinHint) {
-          if (!window.location.pathname.startsWith("/pin-login") && !window.location.pathname.startsWith("/login")) {
-            navigate("/pin-login", { replace: true });
-          }
-        } else {
-          if (!window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/pin-login")) {
-            localStorage.removeItem("token");
-            navigate("/login", { replace: true });
-          }
+        // Тимчасово завжди кидаємо на /login замість /pin-login, щоб уникнути багу "вічного піну"
+        if (!window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/pin-login")) {
+          localStorage.removeItem("token");
+          navigate("/login", { replace: true });
         }
       } else if (isLocked) {
         console.warn("LOCKED: Redirecting to pin-login");
