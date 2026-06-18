@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HiOutlineQrCode, HiOutlineClock, HiOutlineShieldCheck, HiOutlineUser, HiOutlineFaceSmile } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
-import * as S from "./TeamSettings.styles";
+import * as S from "./FamilySettings.styles";
 
 interface GenerateInviteCodeSectionProps {
   inviteCode: string | null;

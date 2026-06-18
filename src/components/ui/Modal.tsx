@@ -132,7 +132,14 @@ function Open({
   if (!context) return cloneElement(children, { onClick: () => {} });
 
   const { open } = context;
-  return cloneElement(children, { onClick: () => open(opensWindowName) });
+  return cloneElement(children, {
+    onClick: (e: React.MouseEvent) => {
+      // Викликаємо оригінальний onClick, якщо він є
+      if (children.props.onClick) children.props.onClick(e);
+      // Відкриваємо модальне вікно
+      open(opensWindowName);
+    },
+  });
 }
 
 function Window({

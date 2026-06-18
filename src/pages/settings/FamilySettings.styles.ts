@@ -5,7 +5,7 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
-export const TeamContainer = styled.div`
+export const FamilyContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;

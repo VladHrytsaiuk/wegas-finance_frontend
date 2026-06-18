@@ -12,7 +12,7 @@ import { UserCard } from "../../components/users/UserCard";
 import { UserForm } from "../../components/users/UserForms";
 
 import { useUsers } from "../../hooks/Settings/useUsers";
-import { useTeamSettings } from "../../hooks/Settings/useTeamSettings";
+import { useFamilySettings } from "../../hooks/Settings/useFamilySettings";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { GenerateInviteCodeSection } from "./GenerateInviteCodeSection";
@@ -20,7 +20,7 @@ import { JoinFamilySection } from "./JoinFamilySection";
 import { AddMemberChoiceModal } from "./AddMemberChoiceModal";
 import { FAB } from "../../components/ui/FAB";
 
-import * as S from "./TeamSettings.styles";
+import * as S from "./FamilySettings.styles";
 
 // Helper component for local modals to ensure visual consistency
 const LocalModal: React.FC<{
@@ -44,7 +44,7 @@ const LocalModal: React.FC<{
   );
 };
 
-function TeamSettings() {
+function FamilySettings() {
   // Explicit boolean states for addition-related modals
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -52,7 +52,7 @@ function TeamSettings() {
   const [isManualAddOpen, setIsManualAddOpen] = useState(false);
 
   const { state: usersState, actions: usersActions, t } = useUsers();
-  const { state: teamState, actions: teamActions } = useTeamSettings({
+  const { state: teamState, actions: teamActions } = useFamilySettings({
     onMemberJoined: () => setIsInviteOpen(false),
   });
 
@@ -73,7 +73,7 @@ function TeamSettings() {
     <Modal>
       {isMobile ? (
         <MobilePageHeader 
-          title={t("settings:usersPage.team_list_title")} 
+          title={t("settings:usersPage.team_list_title", "Учасники родини")} 
           rightAction={
             <Button 
               variation="secondary" 
@@ -86,22 +86,22 @@ function TeamSettings() {
           }
         />
       ) : (
-        <S.TeamContainer style={{ paddingBottom: 0 }}>
+        <S.FamilyContainer style={{ paddingBottom: 0 }}>
           <S.HeaderRow style={{ borderBottom: "none", marginBottom: 0 }}>
-            <S.SectionTitle>{t("settings:usersPage.team_list_title", "Склад команди")}</S.SectionTitle>
+            <S.SectionTitle>{t("settings:usersPage.team_list_title", "Учасники родини")}</S.SectionTitle>
             
             <Button 
               variation="secondary" 
               icon={<HiOutlineLink size="medium" />}
               onClick={() => setIsJoinOpen(true)}
             >
-              {t("settings:usersPage.btn_join", "Приєднатися до сім'ї")}
+              {t("settings:usersPage.btn_join", "Приєднатися до родини")}
             </Button>
           </S.HeaderRow>
-        </S.TeamContainer>
+        </S.FamilyContainer>
       )}
 
-      <S.TeamContainer style={{ padding: isMobile ? "0" : undefined }}>
+      <S.FamilyContainer style={{ padding: isMobile ? "0" : undefined }}>
 
         <section style={{ padding: isMobile ? "16px" : undefined }}>
           {isLoading && <CenteredSpinner />}
@@ -110,7 +110,7 @@ function TeamSettings() {
             <EmptyState
               isFullPage={false}
               icon={<HiOutlineUserGroup />}
-              title={t("settings:usersPage.status_empty", "Команда порожня")}
+              title={t("settings:usersPage.status_empty", "Родина порожня")}
             />
           )}
 
@@ -211,10 +211,11 @@ function TeamSettings() {
           </S.ModalContent>
         </LocalModal>
 
-      </S.TeamContainer>
+      </S.FamilyContainer>
     </Modal>
   );
 }
 
 
-export default TeamSettings;
+export default FamilySettings;
+;

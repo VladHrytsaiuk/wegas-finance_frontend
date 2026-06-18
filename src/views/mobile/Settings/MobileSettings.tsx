@@ -160,12 +160,24 @@ function MobileSettings() {
           <Section>
             <SectionTitle>{t("settings:settingsLayout.group_account")}</SectionTitle>
             <ListGroup>
-              <ListItem to="/settings/profile" $isLast>
+              <ListItem to="/settings/profile">
                 <LeftSide>
                   <IconBox $bg="#8b5cf6">
                     <HiOutlineUser />
                   </IconBox>
                   <Label>{t("settings:settingsLayout.menu_profile")}</Label>
+                </LeftSide>
+                <RightSide>
+                  <HiOutlineChevronRight />
+                </RightSide>
+              </ListItem>
+
+              <ListItem to="/settings/users" $isLast>
+                <LeftSide>
+                  <IconBox $bg="#6366f1">
+                    <HiOutlineUserGroup />
+                  </IconBox>
+                  <Label>{t("settings:settingsLayout.menu_users")}</Label>
                 </LeftSide>
                 <RightSide>
                   <HiOutlineChevronRight />
@@ -201,12 +213,24 @@ function MobileSettings() {
                 </RightSide>
               </ListItem>
 
-              <ListItem to="/settings/counterparties" $isLast>
+              <ListItem to="/settings/counterparties">
                 <LeftSide>
                   <IconBox $bg="#10b981">
                     <HiOutlineUsers />
                   </IconBox>
                   <Label>{t("settings:settingsLayout.menu_counterparties")}</Label>
+                </LeftSide>
+                <RightSide>
+                  <HiOutlineChevronRight />
+                </RightSide>
+              </ListItem>
+
+              <ListItem to="/settings/export" $isLast>
+                <LeftSide>
+                  <IconBox $bg="#06b6d4">
+                    <HiOutlineDocumentArrowDown />
+                  </IconBox>
+                  <Label>{t("settings:settingsLayout.menu_export")}</Label>
                 </LeftSide>
                 <RightSide>
                   <HiOutlineChevronRight />
@@ -230,36 +254,12 @@ function MobileSettings() {
                 </RightSide>
               </ListItem>
 
-              <ListItem to="/settings/security">
+              <ListItem to="/settings/security" $isLast>
                 <LeftSide>
                   <IconBox $bg="#10b981">
                     <HiOutlineShieldCheck />
                   </IconBox>
                   <Label>{t("settings:settingsLayout.menu_security", "Безпека")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/users">
-                <LeftSide>
-                  <IconBox $bg="#6366f1">
-                    <HiOutlineUserGroup />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_users")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/export" $isLast>
-                <LeftSide>
-                  <IconBox $bg="#06b6d4">
-                    <HiOutlineDocumentArrowDown />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_export")}</Label>
                 </LeftSide>
                 <RightSide>
                   <HiOutlineChevronRight />

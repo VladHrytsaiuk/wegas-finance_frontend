@@ -42,7 +42,7 @@
     "header": "Налаштування",
     "menu_general": "Загальні",
     "menu_profile": "Профіль",
-    "menu_users": "Команда",
+    "menu_users": "Родина",
     "menu_categories": "Категорії",
     "menu_counterparties": "Контрагенти",
     "menu_tags": "Теги",
@@ -68,7 +68,7 @@
     "alert_delete_error": "Помилка видалення"
   },
   "usersPage": {
-    "title": "Команда Сім'ї",
+    "title": "Родина",
     "btn_add_user": "Додати учасника",
     "modal_add_title": "Новий учасник",
     "modal_edit_title": "Редагувати учасника",
@@ -94,7 +94,7 @@
     "alert_join_success": "Ви успішно приєдналися до сім'ї!",
     "error_joining_family": "Помилка приєднання",
     "error_invalid_code_format": "Код має містити 6 цифр",
-    "team_list_title": "Склад команди",
+    "team_list_title": "Учасники родини",
     "choice_invite_title": "Запросити через код",
     "choice_invite_desc": "Згенеруйте 6-значний код для швидкого приєднання.",
     "choice_manual_title": "Створити вручну",

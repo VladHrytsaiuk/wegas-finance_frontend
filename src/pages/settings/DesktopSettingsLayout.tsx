@@ -26,16 +26,8 @@ function SettingsLayout() {
       <S.PageContainer>
         <S.LayoutGrid>
           <S.Sidebar>
-            <S.SidebarItem to="general">
-              <HiOutlineGlobeAlt /> {t("settings:settingsLayout.menu_general")}
-            </S.SidebarItem>
-
             <S.SidebarItem to="profile">
               <HiOutlineUser /> {t("settings:settingsLayout.menu_profile")}
-            </S.SidebarItem>
-
-            <S.SidebarItem to="security">
-              <HiOutlineShieldCheck /> {t("settings:settingsLayout.menu_security", "Безпека")}
             </S.SidebarItem>
 
             <S.SidebarItem to="users">
@@ -57,6 +49,14 @@ function SettingsLayout() {
 
             <S.SidebarItem to="export">
               <HiOutlineDocumentArrowDown /> {t("settings:settingsLayout.menu_export")}
+            </S.SidebarItem>
+
+            <S.SidebarItem to="general">
+              <HiOutlineGlobeAlt /> {t("settings:settingsLayout.menu_general")}
+            </S.SidebarItem>
+
+            <S.SidebarItem to="security">
+              <HiOutlineShieldCheck /> {t("settings:settingsLayout.menu_security", "Безпека")}
             </S.SidebarItem>
 
             <Modal.Open opens="logout">

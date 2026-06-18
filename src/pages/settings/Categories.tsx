@@ -18,6 +18,14 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 
 function Categories() {
+  return (
+    <Modal>
+      <CategoriesContent />
+    </Modal>
+  );
+}
+
+function CategoriesContent() {
   const {
     state: {
       isLoading,
@@ -51,7 +59,7 @@ function Categories() {
   const { open } = useModal();
 
   return (
-    <Modal>
+    <>
       {isMobile && <MobilePageHeader title={t("categories:categoriesPage.title")} />}
       <S.PageWrapper style={{ padding: isMobile ? "0" : undefined }}>
         {/* HEADER */}
@@ -173,7 +181,7 @@ function Categories() {
           disabled={isDeleteLoading}
         />
       </Modal.Window>
-    </Modal>
+    </>
   );
 }
 

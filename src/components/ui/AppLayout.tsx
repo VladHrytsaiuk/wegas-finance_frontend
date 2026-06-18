@@ -46,7 +46,7 @@ function AppLayout() {
         navigate("/dashboard");
         setTimeout(() => window.location.reload(), 500);
       } else {
-        // Someone else was removed, just refresh the team list
+        // Someone else was removed, just refresh the family member list
         queryClient.invalidateQueries({ queryKey: ["users"] });
       }
     }

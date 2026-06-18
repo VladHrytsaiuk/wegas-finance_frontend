@@ -42,7 +42,7 @@
     "header": "Settings",
     "menu_general": "General",
     "menu_profile": "Profile",
-    "menu_users": "Team",
+    "menu_users": "Family",
     "menu_categories": "Categories",
     "menu_counterparties": "Counterparties",
     "menu_tags": "Tags",
@@ -68,7 +68,7 @@
     "alert_delete_error": "Deletion error"
   },
   "usersPage": {
-    "title": "Family Team",
+    "title": "Family",
     "btn_add_user": "Add Member",
     "modal_add_title": "New Member",
     "modal_edit_title": "Edit Member",
@@ -94,7 +94,7 @@
     "alert_join_success": "Successfully joined the family!",
     "error_joining_family": "Join error",
     "error_invalid_code_format": "Code must contain 6 digits",
-    "team_list_title": "Team Members",
+    "team_list_title": "Family Members",
     "choice_invite_title": "Invite via Code",
     "choice_invite_desc": "Generate a 6-digit code for quick joining.",
     "choice_manual_title": "Create Manually",

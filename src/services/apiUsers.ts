@@ -55,7 +55,7 @@ export const removePasskeysApi = async (): Promise<{ status: string }> => {
   return response.data;
 };
 
-// --- УПРАВЛІННЯ КОМАНДОЮ (СІМ'ЄЮ) ---
+// --- УПРАВЛІННЯ РОДИНОЮ (СІМ'ЄЮ) ---
 
 // Отримати список всіх членів сім'ї
 export const getUsersApi = async (): Promise<UserProfile[]> => {

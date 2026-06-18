@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { HiOutlineUserPlus } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import { useOtpInput } from "../../hooks/useOtpInput";
-import * as S from "./TeamSettings.styles";
+import * as S from "./FamilySettings.styles";
 
 interface JoinFamilySectionProps {
   isJoining: boolean;

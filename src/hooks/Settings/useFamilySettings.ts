@@ -7,7 +7,7 @@ import { useUserRole } from "../useUserRole";
 import { useWebSocketAuth } from "../useWebSocketAuth";
 import { getMeApi } from "../../services/apiUsers";
 
-export function useTeamSettings(options?: { onMemberJoined?: () => void }) {
+export function useFamilySettings(options?: { onMemberJoined?: () => void }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { canManageTeam, user } = useUserRole();

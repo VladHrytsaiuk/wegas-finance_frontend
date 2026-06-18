@@ -37,7 +37,7 @@ const Security = lazy(() => import("./pages/settings/Security"));
 const Categories = lazy(() => import("./pages/settings/Categories"));
 const Tags = lazy(() => import("./pages/settings/Tags"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
-const TeamSettings = lazy(() => import("./pages/settings/TeamSettings"));
+const FamilySettings = lazy(() => import("./pages/settings/FamilySettings"));
 const AccountDetails = lazy(() => import("./pages/accounts/AccountDetails"));
 const Export = lazy(() => import("./pages/settings/ExportPage"));
 const Counterparties = lazy(() => import("./pages/settings/Counterparties"));
@@ -156,7 +156,7 @@ function AppRoutes() {
             <Route path="general" element={<General />} />
             <Route path="profile" element={<Profile />} />
             <Route path="security" element={<Security />} />
-            <Route path="users" element={<TeamSettings />} />
+            <Route path="users" element={<FamilySettings />} />
             <Route path="categories" element={<Categories />} />
             <Route path="tags" element={<Tags />} />
             <Route path="counterparties" element={<Counterparties />} />
@@ -223,3 +223,4 @@ function App() {
 }
 
 export default App;
+;

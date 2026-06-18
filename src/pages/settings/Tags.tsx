@@ -15,6 +15,14 @@ import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Tags.styles";
 
 function Tags() {
+  return (
+    <Modal>
+      <TagsContent />
+    </Modal>
+  );
+}
+
+function TagsContent() {
   const { state, actions, config, t } = useTags();
   const { tags, isLoading, isCreating, isDeleting, searchQuery, sortBy } =
     state;
@@ -22,7 +30,7 @@ function Tags() {
   const { open } = useModal();
 
   return (
-    <Modal>
+    <>
       {isMobile && <MobilePageHeader title={t("settings:tagsPage.title")} />}
       <div style={{ padding: isMobile ? "0" : undefined }}>
         {/* HEADER */}
@@ -92,7 +100,7 @@ function Tags() {
           <TagForm onSubmit={actions.create} isLoading={isCreating} />
         </S.ModalContent>
       </Modal.Window>
-    </Modal>
+    </>
   );
 }
 

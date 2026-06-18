@@ -17,6 +17,14 @@ import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 
 function Counterparties() {
+  return (
+    <Modal>
+      <CounterpartiesContent />
+    </Modal>
+  );
+}
+
+function CounterpartiesContent() {
   const {
     state: {
       treeRoots,
@@ -47,7 +55,7 @@ function Counterparties() {
   const { open } = useModal();
 
   return (
-    <Modal>
+    <>
       {isMobile && <MobilePageHeader title={t("counterparties:counterpartiesPage.title")} />}
       <S.PageWrapper style={{ padding: isMobile ? "0" : undefined }}>
         {/* --- Header --- */}
@@ -159,7 +167,7 @@ function Counterparties() {
           onCloseSelection={handleCloseSelection}
         />
       </S.PageWrapper>
-    </Modal>
+    </>
   );
 }
 
