@@ -1,8 +1,12 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const Container = styled.div<{ $square?: boolean }>`
   display: flex;
-  width: 100%;
+  width: ${(props) => (props.$square ? "auto" : "100%")};
+
+  @media (max-width: 768px) {
+    width: ${(props) => (props.$square ? "auto" : "100%")} !important;
+  }
 `;
 
 export const PickerTrigger = styled.button<{ $square?: boolean }>`
@@ -20,6 +24,12 @@ export const PickerTrigger = styled.button<{ $square?: boolean }>`
   transition: all 0.2s;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: ${(props) => (props.$square ? "38px" : "100%")} !important;
+    justify-content: ${(props) => (props.$square ? "center" : "center")};
+    padding: ${(props) => (props.$square ? "0" : "0 0.85rem")};
+  }
 
   &:hover {
     border-color: var(--color-brand-400);

@@ -218,6 +218,16 @@ export function useCounterpartyTree({
 
     // 6. Sorting Logic
     const sortNodes = (nodes: CounterpartyTreeNode[]) => {
+      if (sortValue === "default") {
+        return nodes.sort((a, b) => {
+          const aIsGroup = a.type === "group" || a.type === "subgroup";
+          const bIsGroup = b.type === "group" || b.type === "subgroup";
+          if (aIsGroup && !bIsGroup) return -1;
+          if (!aIsGroup && bIsGroup) return 1;
+          return 0; // retain database order
+        });
+      }
+
       return nodes.sort((a, b) => {
         // Groups always on top
         const aIsGroup = a.type === "group" || a.type === "subgroup";

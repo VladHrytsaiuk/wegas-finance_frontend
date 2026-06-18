@@ -14,12 +14,14 @@ interface UseTreeProps {
   categories: any[];
   searchQuery?: string;
   filters?: { type: string[] };
+  sortValue?: string;
 }
 
 export function useCategoryTree({
   categories,
   searchQuery = "",
   filters = { type: [] },
+  sortValue = "default",
 }: UseTreeProps) {
   const treeRoots = useMemo(() => {
     // Якщо даних немає
@@ -81,12 +83,25 @@ export function useCategoryTree({
       }
     });
 
-    // ТУТ БУЛО СОРТУВАННЯ - МИ ЙОГО ВИДАЛИЛИ ПОВНІСТЮ.
-    // Тепер порядок root-елементів та children залежить виключно від того,
-    // в якому порядку прийшли дані з пропса `categories`.
+    // 5. Сортування (рекурсивно)
+    const sortNodes = (nodes: any[]) => {
+      if (sortValue === "name-asc") {
+        nodes.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+      } else if (sortValue === "name-desc") {
+        nodes.sort((a, b) => b.name.localeCompare(a.name, undefined, { sensitivity: "base" }));
+      }
+
+      nodes.forEach((node) => {
+        if (node.children && node.children.length > 0) {
+          sortNodes(node.children);
+        }
+      });
+    };
+
+    sortNodes(roots);
 
     return roots;
-  }, [categories, searchQuery, filters]);
+  }, [categories, searchQuery, filters, sortValue]);
 
   return treeRoots;
 }

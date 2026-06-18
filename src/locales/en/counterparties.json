@@ -8,6 +8,7 @@
     "filter_shop": "Shops",
     "filter_person": "People",
     "filter_other": "Other",
+    "sort_default": "Default",
     "sort_name_asc": "Name (A-Z)",
     "sort_name_desc": "Name (Z-A)",
     "status_loading": "Loading...",

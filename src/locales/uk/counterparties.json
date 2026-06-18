@@ -8,6 +8,7 @@
     "filter_shop": "Магазини",
     "filter_person": "Люди",
     "filter_other": "Інше",
+    "sort_default": "За замовчуванням",
     "sort_name_asc": "Назва (А-Я)",
     "sort_name_desc": "Назва (Я-А)",
     "status_loading": "Завантаження...",

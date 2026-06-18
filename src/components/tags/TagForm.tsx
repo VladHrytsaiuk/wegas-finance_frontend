@@ -37,6 +37,11 @@ export function TagForm({ onSubmit, isLoading }: TagFormProps) {
   return (
     <S.Form onSubmit={handleSubmit}>
       <S.CompactRow>
+        <S.FieldGroup style={{ flex: "0 0 auto" }}>
+          <S.Label>{t("settings:tagForm.label_color")}</S.Label>
+          <ColorPicker color={color} onColorChange={setColor} square />
+        </S.FieldGroup>
+
         <S.FieldGroup style={{ flex: 1 }}>
           <S.Label>{t("settings:tagForm.label_name")}</S.Label>
           <Input
@@ -46,11 +51,6 @@ export function TagForm({ onSubmit, isLoading }: TagFormProps) {
             autoFocus
             required
           />
-        </S.FieldGroup>
-
-        <S.FieldGroup style={{ flex: "0 0 auto" }}>
-          <S.Label>{t("settings:tagForm.label_color")}</S.Label>
-          <ColorPicker color={color} onColorChange={setColor} square />
         </S.FieldGroup>
       </S.CompactRow>
 

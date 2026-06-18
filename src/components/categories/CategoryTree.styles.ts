@@ -162,6 +162,11 @@ export const Actions = styled.div`
   ${TreeItem}:hover & {
     opacity: 1;
   }
+
+  @media (max-width: 768px) {
+    opacity: 1;
+    gap: 8px;
+  }
 `;
 
 export const ActionBtn = styled.button`
@@ -189,6 +194,15 @@ export const ActionBtn = styled.button`
   svg {
     width: 14px;
     height: 14px;
+
+    @media (max-width: 768px) {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
   }
 `;
 
@@ -220,4 +234,62 @@ export const PartialDash = styled.div`
   height: 2px;
   background: white;
   border-radius: 1px;
+`;
+
+export const DesktopActions = styled.div`
+  display: flex;
+  gap: 2px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+export const MobileActions = styled.div`
+  display: none;
+  position: relative;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  border-radius: 8px;
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+`;
+
+export const DropdownItem = styled.button<{ $isDanger?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: ${(p) =>
+    p.$isDanger ? "var(--color-red-600)" : "var(--color-text-main)"};
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${(p) =>
+      p.$isDanger ? "var(--color-red-50)" : "var(--color-bg-hover)"};
+  }
 `;

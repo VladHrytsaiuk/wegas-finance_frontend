@@ -26,37 +26,32 @@ const StyledConfirm = styled.div`
     display: flex;
     justify-content: flex-end;
     gap: 0.8rem;
+
+    @media (max-width: 768px) {
+      gap: 0.5rem;
+    }
   }
 `;
 
-const LeaveButton = styled(Button)`
-  background-color: var(--color-red-700);
-  color: white;
-  border: 1px solid var(--color-red-700);
+const LeaveButton = styled(Button).attrs({ variation: "danger" })`
   width: auto;
 
-  &&:hover:not(:disabled) {
-    background-color: var(--color-red-800);
-    border-color: var(--color-red-800);
-    box-shadow: var(--shadow-md);
-  }
-
-  &&:active:not(:disabled) {
-    background-color: var(--color-red-800);
+  @media (max-width: 768px) {
+    flex: 1;
+    height: 42px;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
   }
 `;
 
-const StayButton = styled(Button)`
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-main);
-  box-shadow: none;
+const StayButton = styled(Button).attrs({ variation: "secondary" })`
   width: auto;
 
-  &&:hover:not(:disabled) {
-    background-color: var(--color-bg-page);
-    border-color: var(--color-text-secondary);
-    color: var(--color-text-main);
+  @media (max-width: 768px) {
+    flex: 1;
+    height: 42px;
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
   }
 `;
 

@@ -21,9 +21,7 @@ export const useCategoriesPage = () => {
     categories: flatCategories,
     searchQuery,
     filters,
-    // Якщо useCategoryTree не приймає sortValue, це поле буде проігнороване,
-    // але для сумісності з твоїм кодом я його залишаю
-    // sortValue,
+    sortValue,
   });
 
   // --- Handlers ---

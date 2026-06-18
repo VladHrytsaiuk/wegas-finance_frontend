@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { HiPencil, HiTrash, HiChevronDown, HiCheck } from "react-icons/hi2";
+import { HiPencil, HiTrash, HiChevronDown, HiCheck, HiEllipsisVertical } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { SmartIcon } from "../../utils/IconMap";
 
@@ -42,6 +42,69 @@ interface CounterpartyTreeProps {
   onDelete?: (id: string, isCat: boolean) => void;
   defaultExpandedIds?: string[];
   withCheckboxes?: boolean;
+}
+
+// --- Mobile actions dropdown component ---
+function MobileActionsMenu({
+  onEdit,
+  onDelete,
+  t,
+}: {
+  onEdit?: () => void;
+  onDelete?: () => void;
+  t: any;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <S.MobileActions ref={menuRef}>
+      <S.ActionBtn onClick={() => setIsOpen(!isOpen)} tabIndex={-1}>
+        <HiEllipsisVertical />
+      </S.ActionBtn>
+      {isOpen && (
+        <S.DropdownMenu>
+          {onEdit && (
+            <S.DropdownItem
+              onClick={() => {
+                setIsOpen(false);
+                onEdit();
+              }}
+            >
+              <HiPencil size={16} />
+              <span>{t("common:shared.edit", "Редагувати")}</span>
+            </S.DropdownItem>
+          )}
+          {onDelete && (
+            <S.DropdownItem
+              $isDanger
+              onClick={() => {
+                setIsOpen(false);
+                onDelete();
+              }}
+            >
+              <HiTrash size={16} />
+              <span>{t("common:shared.delete", "Видалити")}</span>
+            </S.DropdownItem>
+          )}
+        </S.DropdownMenu>
+      )}
+    </S.MobileActions>
+  );
 }
 
 // --- Recursive Node Component ---
@@ -183,25 +246,35 @@ const CPTreeNode: React.FC<{
 
           {(props.onEdit || props.onDelete) && (
             <S.Actions onClick={(e) => e.stopPropagation()}>
-              {props.onEdit && !node.id.startsWith("root_") && (
-                <S.ActionBtn
-                  onClick={() => props.onEdit!(node)}
-                  tabIndex={-1}
-                  title={t("legacy:treeActions.edit")}
-                >
-                  <HiPencil />
-                </S.ActionBtn>
-              )}
-              {props.onDelete && !node.id.startsWith("root_") && (
-                <S.ActionBtn
-                  className="delete"
-                  onClick={() => props.onDelete!(node.id, node.type !== "item")}
-                  tabIndex={-1}
-                  title={t("legacy:treeActions.delete")}
-                >
-                  <HiTrash />
-                </S.ActionBtn>
-              )}
+              <S.DesktopActions>
+                {props.onEdit && !node.id.startsWith("root_") && (
+                  <S.ActionBtn
+                    onClick={() => props.onEdit!(node)}
+                    tabIndex={-1}
+                    title={t("legacy:treeActions.edit")}
+                  >
+                    <HiPencil />
+                  </S.ActionBtn>
+                )}
+                {props.onDelete && !node.id.startsWith("root_") && (
+                  <S.ActionBtn
+                    className="delete"
+                    onClick={() => props.onDelete!(node.id, node.type !== "item")}
+                    tabIndex={-1}
+                    title={t("legacy:treeActions.delete")}
+                  >
+                    <HiTrash />
+                  </S.ActionBtn>
+                )}
+              </S.DesktopActions>
+
+              <S.MobileActions>
+                <MobileActionsMenu
+                  onEdit={props.onEdit && !node.id.startsWith("root_") ? () => props.onEdit!(node) : undefined}
+                  onDelete={props.onDelete && !node.id.startsWith("root_") ? () => props.onDelete!(node.id, node.type !== "item") : undefined}
+                  t={t}
+                />
+              </S.MobileActions>
             </S.Actions>
           )}
         </S.TreeItem>

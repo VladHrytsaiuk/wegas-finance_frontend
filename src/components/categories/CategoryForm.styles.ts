@@ -63,6 +63,26 @@ export const CompactInputRow = styled.div`
   align-items: flex-start;
   gap: 0.75rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 1rem 0.75rem;
+
+    /* First child (Name FormGroup) takes full width */
+    & > div:first-child {
+      flex: 0 0 100% !important;
+    }
+
+    /* Second & third children (Icon & Color FormGroups) take 50% each */
+    & > div:nth-child(2),
+    & > div:nth-child(3) {
+      flex: 1 1 calc(50% - 0.375rem) !important;
+      
+      button {
+        width: 100% !important;
+      }
+    }
+  }
 `;
 
 export const SearchWrapper = styled.div`
@@ -132,4 +152,13 @@ export const Footer = styled.div`
   margin-top: 1rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    button {
+      height: 38px;
+      font-size: 0.9rem;
+      padding: 0 1rem;
+      flex: 1;
+    }
+  }
 `;

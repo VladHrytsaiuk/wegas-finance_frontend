@@ -16,7 +16,7 @@ export const useCounterpartiesPage = () => {
   // Local State
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ type: [] as string[] });
-  const [sortValue, setSortValue] = useState("name-asc");
+  const [sortValue, setSortValue] = useState("default");
 
   const [selectedCp, setSelectedCp] = useState<any>(null);
   const [selectedCat, setSelectedCat] = useState<any>(null);
@@ -119,6 +119,10 @@ export const useCounterpartiesPage = () => {
 
   const sortOptions = useMemo(
     () => [
+      {
+        value: "default",
+        label: t("counterparties:counterpartiesPage.sort_default") || "Default",
+      },
       {
         value: "name-asc",
         label: t("counterparties:counterpartiesPage.sort_name_asc") || "Name (A-Z)",

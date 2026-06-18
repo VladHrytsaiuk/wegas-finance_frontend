@@ -135,7 +135,7 @@ function CategoriesContent() {
       {/* --- MODALS --- */}
 
       {/* 1. Create */}
-      <Modal.Window name="create-category">
+      <Modal.Window name="create-category" mobileBottomSheet>
         <S.ModalContent>
           <S.ModalTitle>{t("categories:categoriesPage.modal_create_title")}</S.ModalTitle>
           <CategoryForm
@@ -151,7 +151,7 @@ function CategoriesContent() {
       <Modal.Open opens="edit-category">
         <span id="trigger-edit-category" style={{ display: "none" }} />
       </Modal.Open>
-      <Modal.Window name="edit-category">
+      <Modal.Window name="edit-category" mobileBottomSheet>
         <S.ModalContent>
           {editingCategory && (
             <>

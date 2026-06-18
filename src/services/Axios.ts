@@ -111,12 +111,7 @@ api.interceptors.response.use(
         localStorage.removeItem("token");
         localStorage.removeItem("user_name");
 
-        const userEmail = localStorage.getItem("user_email");
-        if (userEmail) {
-          window.location.href = "/pin-login";
-        } else {
-          window.location.href = "/login";
-        }
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

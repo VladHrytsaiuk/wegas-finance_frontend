@@ -1,4 +1,5 @@
-import { HiChevronDown, HiCheck, HiPencil, HiTrash } from "react-icons/hi2";
+import { useState, useRef, useEffect } from "react";
+import { HiChevronDown, HiCheck, HiPencil, HiTrash, HiEllipsisVertical } from "react-icons/hi2";
 import { CategoryIcon } from "../../utils/IconMap"; // Використовуємо глобальний маппер
 
 // Logic & Styles
@@ -18,6 +19,69 @@ interface CategoryTreeProps {
   defaultExpandedIds?: string[];
   collapsible?: boolean;
   withCheckboxes?: boolean;
+}
+
+// --- Mobile actions dropdown component ---
+function MobileActionsMenu({
+  onEdit,
+  onDelete,
+  t,
+}: {
+  onEdit?: () => void;
+  onDelete?: () => void;
+  t: any;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <S.MobileActions ref={menuRef}>
+      <S.ActionBtn onClick={() => setIsOpen(!isOpen)} tabIndex={-1}>
+        <HiEllipsisVertical />
+      </S.ActionBtn>
+      {isOpen && (
+        <S.DropdownMenu>
+          {onEdit && (
+            <S.DropdownItem
+              onClick={() => {
+                setIsOpen(false);
+                onEdit();
+              }}
+            >
+              <HiPencil size={16} />
+              <span>{t("common:shared.edit", "Редагувати")}</span>
+            </S.DropdownItem>
+          )}
+          {onDelete && (
+            <S.DropdownItem
+              $isDanger
+              onClick={() => {
+                setIsOpen(false);
+                onDelete();
+              }}
+            >
+              <HiTrash size={16} />
+              <span>{t("common:shared.delete", "Видалити")}</span>
+            </S.DropdownItem>
+          )}
+        </S.DropdownMenu>
+      )}
+    </S.MobileActions>
+  );
 }
 
 // --- Recursive Node Component ---
@@ -61,7 +125,11 @@ const TreeNode = ({
     getSelectionState(node, currentSelectedIds);
 
   const handleSelect = () => {
-    if (onSelect) onSelect(node);
+    if (onSelect) {
+      onSelect(node);
+    } else if (hasChildren) {
+      toggle(node.id);
+    }
   };
 
   const handleExpandClick = (e: React.MouseEvent) => {
@@ -147,25 +215,35 @@ const TreeNode = ({
 
           {(onEdit || onDelete) && !node.id.startsWith("root_") && (
             <S.Actions onClick={(e) => e.stopPropagation()}>
-              {onEdit && (
-                <S.ActionBtn
-                  onClick={() => onEdit(node)}
-                  title={t("legacy:treeActions.edit")}
-                  tabIndex={-1}
-                >
-                  <HiPencil />
-                </S.ActionBtn>
-              )}
-              {onDelete && (
-                <S.ActionBtn
-                  className="delete"
-                  onClick={() => onDelete(node.id, true)}
-                  title={t("legacy:treeActions.delete")}
-                  tabIndex={-1}
-                >
-                  <HiTrash />
-                </S.ActionBtn>
-              )}
+              <S.DesktopActions>
+                {onEdit && (
+                  <S.ActionBtn
+                    onClick={() => onEdit(node)}
+                    title={t("legacy:treeActions.edit")}
+                    tabIndex={-1}
+                  >
+                    <HiPencil />
+                  </S.ActionBtn>
+                )}
+                {onDelete && (
+                  <S.ActionBtn
+                    className="delete"
+                    onClick={() => onDelete(node.id, true)}
+                    title={t("legacy:treeActions.delete")}
+                    tabIndex={-1}
+                  >
+                    <HiTrash />
+                  </S.ActionBtn>
+                )}
+              </S.DesktopActions>
+
+              <S.MobileActions>
+                <MobileActionsMenu
+                  onEdit={onEdit ? () => onEdit(node) : undefined}
+                  onDelete={onDelete ? () => onDelete(node.id, true) : undefined}
+                  t={t}
+                />
+              </S.MobileActions>
             </S.Actions>
           )}
         </S.TreeItem>

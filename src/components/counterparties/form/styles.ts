@@ -7,9 +7,9 @@ export const Form = styled.form`
   width: 550px;
   padding: 0.5rem;
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0; /* Remove double padding inside bottom sheets */
   }
 `;
 
@@ -25,6 +25,17 @@ export const CompactRow = styled.div`
   align-items: flex-end;
   gap: 0.75rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    
+    & > div {
+      flex: 1 1 auto !important;
+      width: 100%;
+    }
+  }
 `;
 
 export const FieldGroup = styled.div`
@@ -52,6 +63,15 @@ export const Footer = styled.div`
   margin-top: 0.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    button {
+      height: 38px;
+      font-size: 0.9rem;
+      padding: 0 1rem;
+      flex: 1;
+    }
+  }
 `;
 
 export const Title = styled.h3`
@@ -139,6 +159,35 @@ export const PickerContainer = styled.div`
   gap: 0.75rem;
   width: 100%;
   min-height: 44px;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    
+    /* Make ColorPicker & IconPicker take 50% each of the top line */
+    & > div:nth-child(1),
+    & > div:nth-child(2) {
+      flex: 1 1 calc(50% - 0.375rem) !important;
+      
+      button {
+        width: 100% !important;
+      }
+    }
+    
+    /* The DividerText "OR" */
+    & > span {
+      flex: 0 0 100% !important;
+      text-align: center;
+      margin: 4px 0;
+    }
+    
+    /* The Upload SVG Button */
+    & > button {
+      flex: 0 0 100% !important;
+      height: 38px !important;
+      justify-content: center;
+    }
+  }
 `;
 
 export const DividerText = styled.span`
@@ -154,6 +203,11 @@ export const TypeGrid = styled.div`
   display: flex;
   gap: 0.75rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 `;
 
 export const TypeCard = styled.button<{ $active: boolean }>`
@@ -176,6 +230,12 @@ export const TypeCard = styled.button<{ $active: boolean }>`
   font-size: inherit;
   outline: none;
 
+  @media (max-width: 768px) {
+    flex-direction: row;
+    padding: 0.75rem 1rem;
+    justify-content: flex-start;
+  }
+
   &:hover {
     border-color: var(--color-brand-500);
     background-color: var(--color-brand-50);
@@ -194,5 +254,9 @@ export const TypeCard = styled.button<{ $active: boolean }>`
     line-height: 1;
     color: ${(p) =>
       p.$active ? "var(--color-brand-700)" : "var(--color-text-main)"};
+
+    @media (max-width: 768px) {
+      font-size: 0.85rem !important;
+    }
   }
 `;

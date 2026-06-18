@@ -40,7 +40,7 @@ export function CounterpartyModals({
   return (
     <>
       {/* 1. Створення Категорії */}
-      <Modal.Window name="create-cat" padding="0">
+      <Modal.Window name="create-cat" padding="0" mobileBottomSheet>
         <CounterpartyCategoryForm
           onSubmit={(data) => actions.createCat.mutate(data)}
           isLoading={actions.createCat.isPending}
@@ -48,7 +48,7 @@ export function CounterpartyModals({
       </Modal.Window>
 
       {/* 2. Редагування Категорії */}
-      <Modal.Window name="edit-cat" padding="0">
+      <Modal.Window name="edit-cat" padding="0" mobileBottomSheet>
         <CounterpartyCategoryForm
           defaultValues={selectedCat}
           onSubmit={(data) =>
@@ -62,7 +62,7 @@ export function CounterpartyModals({
       </Modal.Window>
 
       {/* 3. Створення Контрагента */}
-      <Modal.Window name="create-cp" padding="2rem 2.5rem">
+      <Modal.Window name="create-cp" padding="2rem 2.5rem" mobileBottomSheet>
         <CounterpartyForm
           onSubmit={(data) => actions.createCp.mutate(data)}
           isLoading={actions.createCp.isPending}
@@ -70,7 +70,7 @@ export function CounterpartyModals({
       </Modal.Window>
 
       {/* 4. Редагування Контрагента */}
-      <Modal.Window name="edit-cp" padding="2rem 2.5rem">
+      <Modal.Window name="edit-cp" padding="2rem 2.5rem" mobileBottomSheet>
         <CounterpartyForm
           defaultValues={selectedCp}
           onSubmit={(data) =>

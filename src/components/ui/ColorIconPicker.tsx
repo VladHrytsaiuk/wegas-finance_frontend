@@ -67,7 +67,7 @@ export function ColorPicker({
   );
 
   return (
-    <S.Container style={{ width: square ? "auto" : "100%" }}>
+    <S.Container $square={square}>
       <S.PickerTrigger
         ref={triggerRef as any}
         type="button"
@@ -154,7 +154,7 @@ export function IconPicker({
   );
 
   return (
-    <S.Container style={{ width: square ? "auto" : "100%" }}>
+    <S.Container $square={square}>
       <S.PickerTrigger
         ref={triggerRef as any}
         type="button"

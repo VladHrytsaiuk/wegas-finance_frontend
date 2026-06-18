@@ -39,6 +39,11 @@ export const SpinnerContainer = styled.div`
 
 export const ModalContent = styled.div`
   width: 400px;
+  max-width: 100%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const ModalTitle = styled.h3`

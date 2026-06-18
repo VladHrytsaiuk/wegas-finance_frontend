@@ -77,19 +77,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       if (isLoading || isFetching) return;
 
       if (!isAuthenticated) {
-        // Тимчасово завжди кидаємо на /login замість /pin-login, щоб уникнути багу "вічного піну"
-        if (!window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/pin-login")) {
+        if (!window.location.pathname.startsWith("/login")) {
           localStorage.removeItem("token");
           navigate("/login", { replace: true });
         }
-      } else if (isLocked) {
-        console.warn("LOCKED: Redirecting to pin-login");
-        if (!window.location.pathname.startsWith("/pin-login")) {
-          navigate("/pin-login", { replace: true });
-        }
       }
     },
-    [isLoading, isFetching, isAuthenticated, isLocked, userEmail, hasPinHint, navigate],
+    [isLoading, isFetching, isAuthenticated, navigate],
   );
 
   if ((isLoading || (isFetching && !user)) && !!token) {

@@ -94,7 +94,7 @@ function TagsContent() {
       </div>
 
       {/* CREATE MODAL */}
-      <Modal.Window name="create-tag">
+      <Modal.Window name="create-tag" mobileBottomSheet>
         <S.ModalContent>
           <S.ModalTitle>{t("settings:tagsPage.modal_create_title")}</S.ModalTitle>
           <TagForm onSubmit={actions.create} isLoading={isCreating} />

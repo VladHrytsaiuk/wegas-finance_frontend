@@ -7,9 +7,9 @@ export const Form = styled.form`
   width: 500px;
   padding: 1.5rem 2rem; /* Balanced padding */
 
-  @media (max-width: 550px) {
+  @media (max-width: 768px) {
     width: 100%;
-    padding: 1.5rem;
+    padding: 0; /* Remove double padding inside bottom sheets */
   }
 `;
 
@@ -37,6 +37,27 @@ export const CompactInputRow = styled.div`
   align-items: flex-end;
   gap: 0.75rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 1rem 0.75rem;
+    align-items: stretch;
+
+    /* First child (Name FieldGroup) takes full width */
+    & > div:first-child {
+      flex: 0 0 100% !important;
+    }
+
+    /* Second & third children (Icon & Color FieldGroups) take 50% each */
+    & > div:nth-child(2),
+    & > div:nth-child(3) {
+      flex: 1 1 calc(50% - 0.375rem) !important;
+      
+      button {
+        width: 100% !important;
+      }
+    }
+  }
 `;
 
 export const FieldGroup = styled.div`
@@ -49,6 +70,11 @@ export const TypeGrid = styled.div`
   display: flex;
   gap: 0.75rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 `;
 
 export const TypeCard = styled.button<{ $active: boolean }>`
@@ -70,6 +96,12 @@ export const TypeCard = styled.button<{ $active: boolean }>`
   font-family: inherit;
   outline: none;
 
+  @media (max-width: 768px) {
+    flex-direction: row;
+    padding: 0.75rem 1rem;
+    justify-content: flex-start;
+  }
+
   &:hover {
     border-color: var(--color-brand-500);
     background-color: var(--color-brand-50);
@@ -88,6 +120,10 @@ export const TypeCard = styled.button<{ $active: boolean }>`
     line-height: 1;
     color: ${(p) =>
       p.$active ? "var(--color-brand-700)" : "var(--color-text-main)"};
+
+    @media (max-width: 768px) {
+      font-size: 0.85rem !important;
+    }
   }
 `;
 
@@ -98,4 +134,13 @@ export const Footer = styled.div`
   margin-top: 0.5rem;
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    button {
+      height: 38px;
+      font-size: 0.9rem;
+      padding: 0 1rem;
+      flex: 1;
+    }
+  }
 `;

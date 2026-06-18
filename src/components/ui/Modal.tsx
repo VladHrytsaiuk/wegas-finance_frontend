@@ -98,7 +98,7 @@ const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
   width: 100%;
   max-height: 92vh;
   max-height: 92dvh;
-  overflow-y: auto;
+  overflow-y: auto; /* Prevent flex collapse, container handles scrolling */
   animation: ${slideUp} 0.3s cubic-bezier(0.32, 0.72, 0, 1);
   display: flex;
   flex-direction: column;
@@ -165,9 +165,12 @@ const BottomSheetCloseButton = styled.button`
 
 const BottomSheetContent = styled.div<{ $padding?: string }>`
   flex: 1;
-  overflow-y: auto;
   padding: ${(props) => props.$padding || "0"};
-  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 768px) {
+    /* Limit horizontal padding to 1.25rem on mobile to keep form inputs wide enough */
+    padding: 1rem 1.25rem 2rem 1.25rem;
+  }
 `;
 
 export const ModalCloseButton = styled.button`
