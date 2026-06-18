@@ -513,12 +513,12 @@ function CreateGoalFormContent({
                     />
                   </S.FieldGroup>
 
-                  <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: "1rem", alignItems: isMobile ? "stretch" : "flex-end" }}>
-                    <S.FieldGroup style={{ flex: "0 0 auto" }}>
+                  <div style={{ display: "flex", flexDirection: "row", gap: "1rem", alignItems: "flex-end", width: "100%" }}>
+                    <S.FieldGroup style={{ flex: isMobile ? 1 : "0 0 auto", minWidth: 0 }}>
                       <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
                       <ColorPicker color={f.color} onColorChange={f.setColor} />
                     </S.FieldGroup>
-                    <S.FieldGroup style={{ flex: "0 0 auto" }}>
+                    <S.FieldGroup style={{ flex: isMobile ? 1 : "0 0 auto", minWidth: 0 }}>
                       <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
                       <IconPicker icon={f.icon} onIconChange={f.setIcon} color={f.color} />
                     </S.FieldGroup>
