@@ -36,6 +36,7 @@ export const StyledModal = styled.div<{ $padding?: string }>`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1001;
   border: 1px solid var(--color-border);
+  position: relative;
 
   max-height: 90vh;
   max-height: 90dvh;
@@ -66,7 +67,7 @@ export const ModalCloseButton = styled.button`
   position: absolute;
   top: 1.2rem;
   right: 1.2rem;
-  z-index: 10;
+  z-index: 110;
   padding: 0.4rem;
   border-radius: 50%;
   display: flex;
@@ -75,6 +76,11 @@ export const ModalCloseButton = styled.button`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   color: var(--color-text-secondary);
+
+  @media (max-width: 480px) {
+    top: 0.8rem;
+    right: 0.8rem;
+  }
 
   &:hover {
     background-color: var(--color-bg-hover);
