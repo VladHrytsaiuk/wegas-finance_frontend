@@ -37,8 +37,25 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   });
 
   const isAuthenticated = !!token && !isError && !!user;
-  const needsPin = !!user?.has_passkeys || !!user?.has_pin || hasPinHint;
+  const needsPin = user
+    ? !!user.has_passkeys || !!user.has_pin
+    : hasPinHint;
   const isLocked = needsPin && !isUnlocked;
+
+  // Sync database security settings with localStorage hints
+  useEffect(() => {
+    if (user) {
+      const dbHasPin = !!user.has_pin;
+      const dbHasPasskeys = !!user.has_passkeys;
+
+      if (localStorage.getItem("has_pin") !== String(dbHasPin)) {
+        localStorage.setItem("has_pin", String(dbHasPin));
+      }
+      if (localStorage.getItem("has_passkeys") !== String(dbHasPasskeys)) {
+        localStorage.setItem("has_passkeys", String(dbHasPasskeys));
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (token) {

@@ -254,7 +254,7 @@ function SecurityContent() {
           </S.SecurityItem>
 
           {/* PIN Code */}
-          <S.SecurityItem>
+          <S.SecurityItem $disabled={true}>
             <S.SecurityInfo>
               <S.IconBox $active={hasPin}>
                 <HiLockClosed />
@@ -268,13 +268,13 @@ function SecurityContent() {
               <S.SwitchButton 
                 $isActive={hasPin} 
                 onClick={handleTogglePin} 
-                disabled={isRemovingPin}
+                disabled={true}
               />
             </S.SecurityActions>
           </S.SecurityItem>
 
           {/* Passkey */}
-          <S.SecurityItem $disabled={!hasPin || !isSupported}>
+          <S.SecurityItem $disabled={true}>
             <S.SecurityInfo>
               <S.IconBox $active={hasPasskeys}>
                 <HiFingerPrint />
@@ -294,7 +294,7 @@ function SecurityContent() {
               <S.SwitchButton 
                 $isActive={hasPasskeys} 
                 onClick={handleTogglePasskey}
-                disabled={!isSupported || !hasPin || passkeyLoading || isRemovingPasskeys}
+                disabled={true}
               />
             </S.SecurityActions>
           </S.SecurityItem>
