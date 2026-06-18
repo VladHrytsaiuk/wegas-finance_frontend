@@ -6,7 +6,7 @@ export const StyledItem = styled.div<{
 }>`
   display: grid;
   align-items: center;
-  padding: 0.8rem ${(props) => (props.$isWidget ? "12px" : "1.25rem")};
+  padding: 0.8rem ${(props) => (props.$isWidget ? "16px" : "1.25rem")};
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
   background: var(--color-bg-surface);
@@ -14,7 +14,7 @@ export const StyledItem = styled.div<{
   gap: 0.75rem;
 
   @media (max-width: 768px) {
-    padding: 0.8rem ${(props) => (props.$isWidget ? "8px" : "1rem")};
+    padding: 0.8rem ${(props) => (props.$isWidget ? "16px" : "1rem")};
   }
 
   /* Десктоп */
