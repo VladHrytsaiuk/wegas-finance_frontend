@@ -13,12 +13,18 @@ interface ShoppingNoteCardProps {
   list: ShoppingList;
   handlers: any; // Або заміни на твій конкретний тип з useShopping
   t: any;
+  isMobileCompact?: boolean;
+  isModal?: boolean;
+  onClick?: React.MouseEventHandler;
 }
 
 export default function ShoppingNoteCard({
   list,
   handlers,
   t,
+  isMobileCompact = false,
+  isModal = false,
+  onClick,
 }: ShoppingNoteCardProps) {
   const [newItemName, setNewItemName] = useState("");
   const [title, setTitle] = useState(list.title);
@@ -56,9 +62,33 @@ export default function ShoppingNoteCard({
   const activeItems = list.items?.filter((i) => !i.is_bought) || [];
   const completedItems = list.items?.filter((i) => i.is_bought) || [];
 
+  if (isMobileCompact) {
+    const totalItems = list.items?.length || 0;
+    const activeItemsCount = activeItems.length;
+
+    return (
+      <S.CompactNoteCard $color={list.color} onClick={onClick}>
+        <S.CompactTitle>
+          {title.trim() || t("shopping_wishlist:shopping.no_title", "Без назви")}
+        </S.CompactTitle>
+        <S.CompactMeta>
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <span>{dateStr}</span>
+            <span className="author" style={{ fontWeight: 600, color: "var(--color-text-secondary)" }}>{author}</span>
+          </div>
+          {totalItems > 0 && (
+            <S.CompactBadge>
+              {activeItemsCount} / {totalItems}
+            </S.CompactBadge>
+          )}
+        </S.CompactMeta>
+      </S.CompactNoteCard>
+    );
+  }
+
   return (
-    <S.NoteCard $color={list.color}>
-      <S.NoteHeader>
+    <S.NoteCard $color={list.color} $isModal={isModal}>
+      <S.NoteHeader $isModal={isModal}>
         <S.TitleInput
           value={title}
           onChange={(e) => setTitle(e.target.value)}

@@ -66,18 +66,21 @@ export const MasonryGrid = styled.div`
   }
 `;
 
-export const NoteCard = styled.div`
+export const NoteCard = styled.div<{ $color?: string; $isModal?: boolean }>`
   break-inside: avoid;
-  margin-bottom: 1.5rem;
+  margin-bottom: ${(props) => (props.$isModal ? "0" : "1.5rem")};
   background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
-  border: 1px solid
-    ${(p) =>
-      p.$color && p.$color !== "#ffffff"
-        ? "transparent"
-        : "var(--color-border)"};
-  border-radius: 16px;
+  border: ${(props) =>
+    props.$isModal
+      ? "none"
+      : `1px solid ${
+          props.$color && props.$color !== "#ffffff"
+            ? "transparent"
+            : "var(--color-border)"
+        }`};
+  border-radius: ${(props) => (props.$isModal ? "inherit" : "16px")};
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: ${(props) => (props.$isModal ? "none" : "var(--shadow-md)")};
   transition:
     transform 0.2s,
     box-shadow 0.2s;
@@ -85,18 +88,89 @@ export const NoteCard = styled.div`
   flex-direction: column;
 
   &:hover {
-    box-shadow: var(--shadow-lg);
+    box-shadow: ${(props) => (props.$isModal ? "none" : "var(--shadow-lg)")};
     .note-footer {
       opacity: 1;
     }
   }
 `;
 
-export const NoteHeader = styled.div`
-  padding: 0.75rem 1rem 0.4rem 1rem;
+export const NoteHeader = styled.div<{ $isModal?: boolean }>`
+  padding: 0.75rem ${(props) => (props.$isModal ? "3.2rem" : "1rem")} 0.4rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+`;
+
+export const CompactNoteCard = styled.div<{ $color?: string }>`
+  background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
+  border: 1px solid
+    ${(p) =>
+      p.$color && p.$color !== "#ffffff"
+        ? "transparent"
+        : "var(--color-border)"};
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  &:hover, &:active {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: ${(p) =>
+      p.$color && p.$color !== "#ffffff"
+        ? "rgba(0,0,0,0.15)"
+        : "var(--color-brand-500)"};
+  }
+`;
+
+export const CompactTitle = styled.h4`
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin: 0;
+  word-break: break-word;
+  line-height: 1.3;
+  padding-left: 6px;
+`;
+
+export const CompactMeta = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+  padding-left: 6px;
+`;
+
+export const CompactBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--color-brand-600);
+  background-color: var(--color-brand-50);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--color-brand-100);
 `;
 
 // 🔥 ІНПУТ ДЛЯ РЕДАГУВАННЯ ЗАГОЛОВКА
