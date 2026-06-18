@@ -1,15 +1,68 @@
 import styled from "styled-components";
 
-// --- GLOBAL MODAL SETTINGS ---
-export const ModalContainerOverrides = {
-  maxWidth: "900px",
-  width: "95%",
-  padding: "0",
-  display: "flex",
-  flexDirection: "column" as const,
-  maxHeight: "90vh",
-  overflow: "hidden",
-};
+import { StyledModal } from "../ui/Modal";
+
+export const StyledGoalModal = styled(StyledModal)<{ $isMobile?: boolean }>`
+  max-width: 900px;
+  width: 95%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden !important;
+
+  ${(props) =>
+    props.$isMobile &&
+    `
+    width: 100% !important;
+    max-height: 94dvh !important;
+    height: 94dvh;
+    border-radius: 20px 20px 0 0 !important;
+    border-bottom: none;
+    animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
+    
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+  `}
+`;
+
+export const DragHandle = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px 0;
+  flex-shrink: 0;
+  background-color: var(--color-bg-surface);
+  border-radius: 20px 20px 0 0;
+
+  &::after {
+    content: "";
+    width: 36px;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+  }
+`;
+
+export const MobileCloseButton = styled.button`
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+
+  &:active {
+    background: rgba(0, 0, 0, 0.12);
+    transform: scale(0.92);
+  }
+`;
 
 export const ConfirmModalOverrides = {
   zIndex: 2001,
@@ -26,15 +79,15 @@ export const ConfirmOverlayStyles = {
 };
 
 // --- LAYOUT ---
-export const Container = styled.div`
+export const Container = styled.div<{ $isMobile?: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: 90vh;
+  ${(props) => !props.$isMobile && `max-height: 90vh;`}
 `;
 
-export const Header = styled.div`
-  padding: 1rem 1.5rem;
+export const Header = styled.div<{ $isMobile?: boolean }>`
+  padding: ${(props) => (props.$isMobile ? "0.5rem 1.5rem 1rem 1.5rem" : "1rem 1.5rem")};
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -50,8 +103,8 @@ export const Title = styled.h2`
   margin: 0;
 `;
 
-export const Content = styled.div`
-  padding: 1rem 1.5rem;
+export const Content = styled.div<{ $isMobile?: boolean }>`
+  padding: ${(props) => (props.$isMobile ? "1rem" : "1rem 1.5rem")};
   overflow-y: auto;
   flex: 1;
 
@@ -118,9 +171,9 @@ export const Label = styled.label`
   color: var(--color-text-secondary);
 `;
 
-export const AmountRow = styled.div`
+export const AmountRow = styled.div<{ $isMobile?: boolean }>`
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: ${(props) => (props.$isMobile ? "1fr" : "2fr 1fr")};
   gap: 0.75rem;
   align-items: start;
 `;
@@ -200,9 +253,9 @@ export const TextArea = styled.textarea`
 `;
 
 // --- FUNDING ---
-export const FundingContainer = styled.div`
+export const FundingContainer = styled.div<{ $isMobile?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: ${(props) => (props.$isMobile ? "1fr" : "repeat(3, 1fr)")};
   gap: 0.5rem;
 `;
 
@@ -296,8 +349,8 @@ export const SelectOption = styled.div<{ $isSelected?: boolean }>`
 `;
 
 // --- FOOTER ---
-export const Footer = styled.div`
-  padding: 1rem 1.5rem;
+export const Footer = styled.div<{ $isMobile?: boolean }>`
+  padding: ${(props) => (props.$isMobile ? "1rem" : "1rem 1.5rem")};
   border-top: 1px solid var(--color-border);
   background-color: var(--color-bg-surface);
   display: flex;
@@ -307,8 +360,8 @@ export const Footer = styled.div`
 `;
 
 // --- WIZARD ---
-export const ProgressWrapper = styled.div`
-  padding: 1rem 1.5rem 0;
+export const ProgressWrapper = styled.div<{ $isMobile?: boolean }>`
+  padding: ${(props) => (props.$isMobile ? "1rem 1rem 0" : "1rem 1.5rem 0")};
   background-color: var(--color-bg-surface);
 `;
 
@@ -366,9 +419,10 @@ export const StepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
         : "var(--color-border)"};
 `;
 
-export const StepLabel = styled.span<{ $active: boolean }>`
-  font-size: 0.65rem;
+export const StepLabel = styled.span<{ $active: boolean; $isMobile?: boolean }>`
+  font-size: ${(props) => (props.$isMobile ? "0.55rem" : "0.65rem")};
   font-weight: 700;
+  text-align: center;
   color: ${(props) =>
     props.$active ? "var(--color-text-main)" : "var(--color-text-tertiary)"};
   text-transform: uppercase;

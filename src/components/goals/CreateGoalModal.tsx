@@ -27,6 +27,7 @@ import Spinner from "../ui/Spinner";
 import ConfirmCloseModal from "../ui/ConfirmCloseModal";
 
 import { useCreateGoalForm } from "../../hooks/Goals/useCreateGoalForm";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 import * as S from "./CreateGoalModal.styles";
 import type { Goal } from "../../types";
@@ -64,6 +65,8 @@ function CreateGoalFormContent({
     editingGoal,
   );
 
+  const isMobile = useIsMobile();
+
   // 🔥 Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -93,25 +96,33 @@ function CreateGoalFormContent({
   }, [w]);
 
   const modalContent = (
-    <Overlay onClick={w.handleCloseAttempt}>
-      <StyledModal
+    <Overlay onClick={w.handleCloseAttempt} $isBottomSheet={isMobile}>
+      <S.StyledGoalModal
         onClick={(e) => e.stopPropagation()}
-        style={S.ModalContainerOverrides}
+        $isMobile={isMobile}
       >
-        <ModalCloseButton onClick={w.handleCloseAttempt}>
-          <HiXMark />
-        </ModalCloseButton>
+        {!isMobile && (
+          <ModalCloseButton onClick={w.handleCloseAttempt}>
+            <HiXMark />
+          </ModalCloseButton>
+        )}
 
-        <S.Container>
-          <S.Header>
+        <S.Container $isMobile={isMobile}>
+          {isMobile && <S.DragHandle />}
+          <S.Header $isMobile={isMobile}>
             <S.Title>
               {editingGoal
                 ? t("goals_debts:goals.edit_title")
                 : t("goals_debts:goals.create_title")}
             </S.Title>
+            {isMobile && (
+              <S.MobileCloseButton type="button" onClick={w.handleCloseAttempt}>
+                <HiXMark size={20} />
+              </S.MobileCloseButton>
+            )}
           </S.Header>
 
-          <S.ProgressWrapper>
+          <S.ProgressWrapper $isMobile={isMobile}>
             <S.StepIndicator>
               {[1, 2, 3].map((step) => (
                 <S.StepItem
@@ -125,7 +136,7 @@ function CreateGoalFormContent({
                   >
                     {w.currentStep > step ? <HiCheck /> : step}
                   </S.StepNumber>
-                  <S.StepLabel $active={w.currentStep === step}>
+                  <S.StepLabel $active={w.currentStep === step} $isMobile={isMobile}>
                     {step === 1 && t("goals_debts:goalDetails.title_section_info")}
                     {step === 2 && t("goals_debts:goalDetails.title_section_finance")}
                     {step === 3 && t("goals_debts:goalDetails.title_section_visual")}
@@ -135,7 +146,7 @@ function CreateGoalFormContent({
             </S.StepIndicator>
           </S.ProgressWrapper>
 
-          <S.Content>
+          <S.Content $isMobile={isMobile}>
             <S.Form id="goal-form" onSubmit={handleSubmit}>
               {w.currentStep === 1 && (
                 <S.Column>
@@ -159,7 +170,7 @@ function CreateGoalFormContent({
                     {w.errors.name && <S.ErrorText>{w.errors.name}</S.ErrorText>}
                   </S.FieldGroup>
 
-                  <S.AmountRow>
+                  <S.AmountRow $isMobile={isMobile}>
                     <S.FieldGroup>
                       <S.Label>{t("goals_debts:goals.label_amount")}</S.Label>
                       <AmountInput
@@ -235,7 +246,7 @@ function CreateGoalFormContent({
                         <HiCurrencyDollar /> {t("goals_debts:goals.section_link_account")}
                       </S.SectionTitle>
 
-                      <S.FundingContainer>
+                      <S.FundingContainer $isMobile={isMobile}>
                         <S.FundingCard
                           $isSelected={f.linkMode === "new"}
                           onClick={() => {
@@ -343,7 +354,7 @@ function CreateGoalFormContent({
                     <HiGlobeAlt /> {t("goals_debts:goals.label_visibility")}
                   </S.SectionTitle>
                   <S.FieldGroup>
-                    <div style={{ display: "flex", gap: "0.75rem" }}>
+                    <div style={{ display: "flex", gap: "0.75rem", flexDirection: isMobile ? "column" : "row" }}>
                       <S.FundingCard
                         $isSelected={f.visibility === "public"}
                         onClick={() => {
@@ -502,7 +513,7 @@ function CreateGoalFormContent({
                     />
                   </S.FieldGroup>
 
-                  <div style={{ display: "flex", flexDirection: "row", gap: "1rem", alignItems: "flex-end" }}>
+                  <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: "1rem", alignItems: isMobile ? "stretch" : "flex-end" }}>
                     <S.FieldGroup style={{ flex: "0 0 auto" }}>
                       <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
                       <ColorPicker color={f.color} onColorChange={f.setColor} />
@@ -517,7 +528,7 @@ function CreateGoalFormContent({
             </S.Form>
           </S.Content>
 
-          <S.Footer>
+          <S.Footer $isMobile={isMobile}>
             <Button
               variation="secondary"
               type="button"
@@ -569,7 +580,7 @@ function CreateGoalFormContent({
             )}
           </S.Footer>
         </S.Container>
-      </StyledModal>
+      </S.StyledGoalModal>
     </Overlay>
   );
 
