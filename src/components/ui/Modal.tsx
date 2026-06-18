@@ -8,11 +8,28 @@ import {
   type ReactElement,
 } from "react";
 import { createPortal } from "react-dom";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { HiXMark } from "react-icons/hi2";
 import ConfirmCloseModal from "./ConfirmCloseModal";
 
-export const Overlay = styled.div`
+// --- ANIMATIONS ---
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const slideUp = keyframes`
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+`;
+
+const scaleIn = keyframes`
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+`;
+
+// --- STYLED COMPONENTS ---
+export const Overlay = styled.div<{ $isBottomSheet?: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -22,10 +39,20 @@ export const Overlay = styled.div`
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   z-index: 1000;
-  transition: all 0.3s;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
+  animation: ${fadeIn} 0.2s ease-out;
+
+  ${(props) =>
+    props.$isBottomSheet
+      ? css`
+          display: flex;
+          align-items: flex-end;
+          padding: 0;
+        `
+      : css`
+          display: grid;
+          place-items: center;
+          padding: 1rem;
+        `}
 `;
 
 export const StyledModal = styled.div<{ $padding?: string }>`
@@ -33,10 +60,10 @@ export const StyledModal = styled.div<{ $padding?: string }>`
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
   padding: ${(props) => props.$padding || "3.2rem 4rem"};
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1001;
   border: 1px solid var(--color-border);
   position: relative;
+  animation: ${scaleIn} 0.2s ease-out;
 
   max-height: 90vh;
   max-height: 90dvh;
@@ -59,6 +86,88 @@ export const StyledModal = styled.div<{ $padding?: string }>`
     background-color: var(--color-border);
     border-radius: 20px;
   }
+`;
+
+// --- BOTTOM SHEET STYLED COMPONENTS ---
+const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
+  background-color: ${(props) => props.$bgColor || "var(--color-bg-surface)"};
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  position: relative;
+  width: 100%;
+  max-height: 92vh;
+  max-height: 92dvh;
+  overflow-y: auto;
+  animation: ${slideUp} 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+  }
+`;
+
+const DragHandle = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px 0;
+  flex-shrink: 0;
+
+  &::after {
+    content: "";
+    width: 36px;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+`;
+
+const BottomSheetHeader = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 12px 8px 16px;
+  flex-shrink: 0;
+`;
+
+const BottomSheetCloseButton = styled.button`
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+
+  &:active {
+    background: rgba(0, 0, 0, 0.12);
+    transform: scale(0.92);
+  }
+
+  & svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+`;
+
+const BottomSheetContent = styled.div<{ $padding?: string }>`
+  flex: 1;
+  overflow-y: auto;
+  padding: ${(props) => props.$padding || "0"};
+  -webkit-overflow-scrolling: touch;
 `;
 
 export const ModalCloseButton = styled.button`
@@ -93,6 +202,7 @@ export const ModalCloseButton = styled.button`
   }
 `;
 
+// --- CONTEXT ---
 interface ModalContextType {
   openName: string;
   close: () => void;
@@ -148,21 +258,40 @@ function Open({
   });
 }
 
+// --- HOOK: Detect mobile ---
+function useIsMobileModal(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= breakpoint : false,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= breakpoint);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 function Window({
   children,
   name,
   padding,
+  mobileBottomSheet = false,
 }: {
   children: ReactElement;
   name: string;
   padding?: string;
+  mobileBottomSheet?: boolean;
 }) {
   const context = useContext(ModalContext);
+  const isMobile = useIsMobileModal();
 
-  // Якщо контексту немає, вікно просто не рендериться (але не ламає додаток)
-  if (!context) return null;
+  // Витягуємо значення з контексту або заглушки (щоб хуки завжди викликались)
+  const openName = context?.openName ?? "";
+  const close = context?.close ?? (() => {});
+  const isDirty = context?.isDirty ?? false;
 
-  const { openName, close, isDirty } = context;
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleCloseAttempt = () => {
@@ -200,10 +329,49 @@ function Window({
       document.addEventListener("keydown", handleEsc);
     }
     return () => document.removeEventListener("keydown", handleEsc);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openName, name, isDirty, showConfirm]);
 
-  if (name !== openName) return null;
+  // Якщо контексту немає або модалка не відкрита — не рендеримо
+  if (!context || name !== openName) return null;
 
+  // --- BOTTOM SHEET RENDER (mobile only) ---
+  const useBottomSheet = mobileBottomSheet && isMobile;
+
+  if (useBottomSheet) {
+    return createPortal(
+      <Overlay $isBottomSheet onClick={handleCloseAttempt}>
+        <BottomSheetPanel onClick={(e) => e.stopPropagation()}>
+          <DragHandle />
+
+          {showConfirm ? (
+            <BottomSheetContent $padding="1.5rem">
+              <ConfirmCloseModal
+                onConfirm={close}
+                onCloseModal={() => setShowConfirm(false)}
+              />
+            </BottomSheetContent>
+          ) : (
+            <>
+              <BottomSheetHeader>
+                <BottomSheetCloseButton onClick={handleCloseAttempt}>
+                  <HiXMark />
+                </BottomSheetCloseButton>
+              </BottomSheetHeader>
+              <BottomSheetContent $padding={padding}>
+                {cloneElement(children, {
+                  onCloseModal: handleCloseAttempt,
+                } as Record<string, unknown>)}
+              </BottomSheetContent>
+            </>
+          )}
+        </BottomSheetPanel>
+      </Overlay>,
+      document.body,
+    );
+  }
+
+  // --- DEFAULT CENTERED MODAL RENDER ---
   return createPortal(
     <Overlay onClick={handleCloseAttempt}>
       <StyledModal
@@ -232,7 +400,9 @@ function Window({
             onCloseModal={() => setShowConfirm(false)}
           />
         ) : (
-          cloneElement(children, { onCloseModal: handleCloseAttempt } as any)
+          cloneElement(children, {
+            onCloseModal: handleCloseAttempt,
+          } as Record<string, unknown>)
         )}
       </StyledModal>
     </Overlay>,
