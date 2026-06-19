@@ -108,10 +108,22 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         
-        localStorage.removeItem("token");
-        localStorage.removeItem("user_name");
+        // Only log out if it is a definitive authentication failure (e.g. 401 or 403 status code).
+        // If there's no response (network error) or it's a server error (5xx), do not log out.
+        const isAuthError = axios.isAxiosError(refreshError) && 
+                            refreshError.response && 
+                            (refreshError.response.status === 401 || refreshError.response.status === 403);
 
-        window.location.href = "/login";
+        if (isAuthError) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_name");
+          localStorage.removeItem("user_id");
+          localStorage.removeItem("user_email");
+          localStorage.removeItem("has_pin");
+          localStorage.removeItem("has_passkeys");
+          window.location.href = "/login";
+        }
+        
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

@@ -26,17 +26,24 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const {
     isLoading,
     isError,
+    error,
     data: user,
     status,
     isFetching
   } = useQuery({
-    queryKey: ["me", token],
+    queryKey: ["me"],
     queryFn: getMeApi,
     retry: 1, 
     enabled: !!token, 
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const isAuthenticated = !!token && !isError && !!user;
+  // Only treat as unauthenticated if we have a definitive 401/403 from the server.
+  // Network errors or 5xx server issues should not clear the token and force logout.
+  const isAuthError = isError && 
+                      ((error as any)?.response?.status === 401 || (error as any)?.response?.status === 403);
+
+  const isAuthenticated = !!token && !isAuthError;
   const needsPin = user
     ? !!user.has_passkeys || !!user.has_pin
     : hasPinHint;
