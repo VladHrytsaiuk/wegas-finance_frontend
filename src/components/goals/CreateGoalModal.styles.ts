@@ -19,6 +19,8 @@ export const StyledGoalModal = styled(StyledModal)<{ $isMobile?: boolean }>`
     height: calc(100% - 24px);
     border-radius: 20px 20px 0 0 !important;
     border-bottom: none;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
     animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
     
     @keyframes slideUp {
@@ -84,6 +86,13 @@ export const Container = styled.div<{ $isMobile?: boolean }>`
   flex-direction: column;
   height: 100%;
   ${(props) => !props.$isMobile && `max-height: 90vh;`}
+
+  ${(props) =>
+    props.$isMobile &&
+    `
+    height: auto;
+    min-height: 100%;
+  `}
 `;
 
 export const Header = styled.div<{ $isMobile?: boolean }>`
@@ -107,6 +116,14 @@ export const Content = styled.div<{ $isMobile?: boolean }>`
   padding: ${(props) => (props.$isMobile ? "1rem" : "1rem 1.5rem")};
   overflow-y: auto;
   flex: 1;
+
+  ${(props) =>
+    props.$isMobile &&
+    `
+    overflow-y: visible !important;
+    flex: none;
+    height: auto;
+  `}
 
   &::-webkit-scrollbar {
     width: 6px;
