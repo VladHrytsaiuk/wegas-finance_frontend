@@ -19,6 +19,8 @@
     "empty_desc": "Create your first shopping list to keep track of your needs"
   },
   "wishlist": {
+    "step_details": "Details",
+    "step_photo": "Photo",
     "add_item": "Add Item",
     "appearance": "Appearance",
     "btn_add_group": "Add Group",

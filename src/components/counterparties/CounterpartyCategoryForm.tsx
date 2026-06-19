@@ -80,20 +80,20 @@ export function CounterpartyCategoryForm({
         </S.FieldGroup>
 
         <S.FieldGroup style={{ flex: "0 0 auto" }}>
-          <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
-          <IconPicker
-            icon={icon}
-            onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
+          <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
+          <ColorPicker
             color={color}
+            onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
             square
           />
         </S.FieldGroup>
 
         <S.FieldGroup style={{ flex: "0 0 auto" }}>
-          <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
-          <ColorPicker
+          <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
+          <IconPicker
+            icon={icon}
+            onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
             color={color}
-            onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
             square
           />
         </S.FieldGroup>

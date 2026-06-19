@@ -358,13 +358,16 @@ export const Footer = styled.div<{ $isMobile?: boolean }>`
   gap: 0.75rem;
   flex-shrink: 0;
 
-  ${(props) => props.$isMobile && `
-    button {
-      height: 38px;
-      font-size: 0.9rem;
-      padding: 0 1rem;
+  button {
+    height: 38px;
+    font-size: 0.95rem;
+    padding: 0 1rem;
+    min-width: 100px;
+    
+    @media (min-width: 768px) {
+      min-width: 120px;
     }
-  `}
+  }
 `;
 
 // --- WIZARD ---

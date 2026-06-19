@@ -117,12 +117,10 @@ const StyledButton = styled.button<StyleProps>`
   }
 
   &:disabled {
-    background-color: var(--color-text-light); // Або var(--color-bg-hover)
-    color: #9ca3af;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-    border-color: transparent;
   }
 
   /* Стиль для іконки всередині кнопки */

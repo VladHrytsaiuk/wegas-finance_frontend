@@ -177,7 +177,7 @@ function WishlistGroupsContent() {
       )}
 
       {/* MODAL WINDOWS */}
-      <Modal.Window name="create-group" padding="0">
+      <Modal.Window name="create-group" padding="0" mobileBottomSheet>
         <CreateGroupModal
           onCreate={(name, color, icon, visibility, hiddenFrom) =>
             handlers.createGroup(
@@ -190,7 +190,7 @@ function WishlistGroupsContent() {
           }
         />
       </Modal.Window>
-      <Modal.Window name="create-group-empty" padding="0">
+      <Modal.Window name="create-group-empty" padding="0" mobileBottomSheet>
         <CreateGroupModal
           onCreate={(name, color, icon, visibility, hiddenFrom) =>
             handlers.createGroup(
@@ -203,7 +203,7 @@ function WishlistGroupsContent() {
           }
         />
       </Modal.Window>
-      <Modal.Window name="create-wish" padding="0">
+      <Modal.Window name="create-wish" padding="0" mobileBottomSheet>
         <CreateWishModal groups={groups} onCreate={handlers.createItem} />
       </Modal.Window>
 

@@ -58,13 +58,28 @@ export const ScrollArea = styled.div`
 `;
 
 export const FormFooter = styled.div`
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   border-top: 1px solid var(--color-border);
   background-color: var(--color-bg-surface);
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
   flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    padding: 1rem 1.5rem;
+  }
+
+  button {
+    height: 38px;
+    font-size: 0.95rem;
+    padding: 0 1rem;
+    min-width: 100px;
+    
+    @media (min-width: 768px) {
+      min-width: 120px;
+    }
+  }
 `;
 
 // --- GRID SYSTEM ---

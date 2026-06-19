@@ -52,7 +52,7 @@ export default function WishGroupCard({
                   <Icons.HiPencil size={16} />
                 </S.FolderActionBtn>
               </Modal.Open>
-              <Modal.Window name={`edit-${group.id}`} padding="0">
+              <Modal.Window name={`edit-${group.id}`} padding="0" mobileBottomSheet>
                 <EditGroupModal
                   initialData={group as any}
                   onUpdate={(id, name, color, icon, visibility, hiddenFrom) =>

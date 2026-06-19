@@ -110,7 +110,7 @@ export default function WishItemCard({
                   </S.MenuItem>
                 </Modal.Open>
 
-                <Modal.Window name={`edit-${item.id}`} padding="0">
+                <Modal.Window name={`edit-${item.id}`} padding="0" mobileBottomSheet>
                   <EditWishModal
                     initialData={item}
                     groups={groups}

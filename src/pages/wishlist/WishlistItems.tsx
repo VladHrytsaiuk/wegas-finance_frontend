@@ -156,7 +156,7 @@ function WishlistItemsContent() {
       )}
 
       {/* MODAL WINDOWS */}
-      <Modal.Window name="create-wish" padding="0">
+      <Modal.Window name="create-wish" padding="0" mobileBottomSheet>
         <CreateWishModal
           groups={groups}
           onCreate={handlers.createItem}
@@ -167,7 +167,7 @@ function WishlistItemsContent() {
           }
         />
       </Modal.Window>
-      <Modal.Window name="create-wish-empty" padding="0">
+      <Modal.Window name="create-wish-empty" padding="0" mobileBottomSheet>
         <CreateWishModal
           groups={groups}
           onCreate={handlers.createItem}

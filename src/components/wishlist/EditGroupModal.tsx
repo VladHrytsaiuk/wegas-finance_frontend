@@ -81,24 +81,26 @@ export default function EditGroupModal({
               />
             </S.FieldGroup>
 
-            <S.FieldGroup $width="auto">
-              <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
-              <IconPicker
-                icon={state.icon}
-                onIconChange={actions.setIcon}
-                color={state.color}
-                square
-              />
-            </S.FieldGroup>
+            <S.PickersRow>
+              <S.FieldGroup $width="auto">
+                <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
+                <ColorPicker
+                  color={state.color}
+                  onColorChange={actions.setColor}
+                  square
+                />
+              </S.FieldGroup>
 
-            <S.FieldGroup $width="auto">
-              <S.Label>{t("goals_debts:goals.label_color")}</S.Label>
-              <ColorPicker
-                color={state.color}
-                onColorChange={actions.setColor}
-                square
-              />
-            </S.FieldGroup>
+              <S.FieldGroup $width="auto">
+                <S.Label>{t("goals_debts:goals.label_icon")}</S.Label>
+                <IconPicker
+                  icon={state.icon}
+                  onIconChange={actions.setIcon}
+                  color={state.color}
+                  square
+                />
+              </S.FieldGroup>
+            </S.PickersRow>
           </S.CompactInputRow>
 
           {/* ROW 2: Visibility Section */}

@@ -130,17 +130,19 @@ export const TypeCard = styled.button<{ $active: boolean }>`
 export const Footer = styled.div`
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  gap: 0.75rem;
+  margin-top: 1rem;
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-border);
 
-  @media (max-width: 768px) {
-    button {
-      height: 38px;
-      font-size: 0.9rem;
-      padding: 0 1rem;
-      flex: 1;
+  button {
+    height: 38px;
+    font-size: 0.95rem;
+    padding: 0 1rem;
+    min-width: 100px;
+    
+    @media (min-width: 768px) {
+      min-width: 120px;
     }
   }
 `;

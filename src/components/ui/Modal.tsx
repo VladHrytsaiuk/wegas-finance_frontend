@@ -4,6 +4,7 @@ import {
   useContext,
   useState,
   useEffect,
+  isValidElement,
   type ReactNode,
   type ReactElement,
 } from "react";
@@ -38,7 +39,7 @@ export const Overlay = styled.div<{ $isBottomSheet?: boolean }>`
   height: 100dvh;
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
-  z-index: 1000;
+  z-index: 10000;
   animation: ${fadeIn} 0.2s ease-out;
 
   ${(props) =>
@@ -60,7 +61,7 @@ export const StyledModal = styled.div<{ $padding?: string }>`
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
   padding: ${(props) => props.$padding || "3.2rem 4rem"};
-  z-index: 1001;
+  z-index: 10001;
   border: 1px solid var(--color-border);
   position: relative;
   animation: ${scaleIn} 0.2s ease-out;
@@ -93,7 +94,7 @@ const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
   background-color: ${(props) => props.$bgColor || "var(--color-bg-surface)"};
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.15);
-  z-index: 1001;
+  z-index: 10001;
   position: relative;
   width: 100%;
   max-height: 92vh;
@@ -131,37 +132,7 @@ const DragHandle = styled.div`
   }
 `;
 
-const BottomSheetHeader = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 12px 8px 16px;
-  flex-shrink: 0;
-`;
 
-const BottomSheetCloseButton = styled.button`
-  background: rgba(0, 0, 0, 0.06);
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: all 0.15s ease;
-
-  &:active {
-    background: rgba(0, 0, 0, 0.12);
-    transform: scale(0.92);
-  }
-
-  & svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-`;
 
 const BottomSheetContent = styled.div<{ $padding?: string }>`
   flex: 1;
@@ -169,7 +140,7 @@ const BottomSheetContent = styled.div<{ $padding?: string }>`
 
   @media (max-width: 768px) {
     /* Limit horizontal padding to 1.25rem on mobile to keep form inputs wide enough */
-    padding: 1rem 1.25rem 2rem 1.25rem;
+    padding: ${(props) => (props.$padding === "0" ? "0" : "1rem 1.25rem 2rem 1.25rem")};
   }
 `;
 
@@ -230,6 +201,18 @@ function Modal({ children }: { children: ReactNode }) {
     setIsDirty(false);
   };
 
+  // Centralized body scroll lock when modal is open
+  useEffect(() => {
+    if (openName) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [openName]);
+
   return (
     <ModalContext.Provider
       value={{ openName, close, open, isDirty, setIsDirty }}
@@ -247,19 +230,25 @@ function Open({
   opens: string;
 }) {
   const context = useContext(ModalContext);
+  
   // Якщо контексту немає, просто повертаємо кнопку, але вона не спрацює як модалка
-  if (!context) return cloneElement(children, { onClick: () => {} });
+  if (!context) {
+    return cloneElement(children, { onClick: () => {} });
+  }
 
   const { open } = context;
   return cloneElement(children, {
     onClick: (e: React.MouseEvent) => {
       // Викликаємо оригінальний onClick, якщо він є
-      if (children.props.onClick) children.props.onClick(e);
+      if (children.props.onClick) {
+        children.props.onClick(e);
+      }
       // Відкриваємо модальне вікно
       open(opensWindowName);
     },
   });
 }
+
 
 // --- HOOK: Detect mobile ---
 function useIsMobileModal(breakpoint = 768) {
@@ -309,18 +298,6 @@ function Window({
   }, [name, openName]);
 
   useEffect(() => {
-    if (name === openName) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [name, openName]);
-
-  useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (showConfirm) setShowConfirm(false);
@@ -338,6 +315,7 @@ function Window({
   // Якщо контексту немає або модалка не відкрита — не рендеримо
   if (!context || name !== openName) return null;
 
+
   // --- BOTTOM SHEET RENDER (mobile only) ---
   const useBottomSheet = mobileBottomSheet && isMobile;
 
@@ -347,6 +325,12 @@ function Window({
         <BottomSheetPanel onClick={(e) => e.stopPropagation()}>
           <DragHandle />
 
+          {!showConfirm && (
+            <ModalCloseButton onClick={handleCloseAttempt}>
+              <HiXMark />
+            </ModalCloseButton>
+          )}
+
           {showConfirm ? (
             <BottomSheetContent $padding="1.5rem">
               <ConfirmCloseModal
@@ -355,18 +339,15 @@ function Window({
               />
             </BottomSheetContent>
           ) : (
-            <>
-              <BottomSheetHeader>
-                <BottomSheetCloseButton onClick={handleCloseAttempt}>
-                  <HiXMark />
-                </BottomSheetCloseButton>
-              </BottomSheetHeader>
-              <BottomSheetContent $padding={padding}>
-                {cloneElement(children, {
+            <BottomSheetContent $padding={padding}>
+              {isValidElement(children) ? (
+                cloneElement(children, {
                   onCloseModal: handleCloseAttempt,
-                } as Record<string, unknown>)}
-              </BottomSheetContent>
-            </>
+                } as Record<string, unknown>)
+              ) : (
+                children
+              )}
+            </BottomSheetContent>
           )}
         </BottomSheetPanel>
       </Overlay>,
@@ -403,9 +384,13 @@ function Window({
             onCloseModal={() => setShowConfirm(false)}
           />
         ) : (
-          cloneElement(children, {
-            onCloseModal: handleCloseAttempt,
-          } as Record<string, unknown>)
+          isValidElement(children) ? (
+            cloneElement(children, {
+              onCloseModal: handleCloseAttempt,
+            } as Record<string, unknown>)
+          ) : (
+            children
+          )
         )}
       </StyledModal>
     </Overlay>,
