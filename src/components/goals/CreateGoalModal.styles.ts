@@ -16,7 +16,7 @@ export const StyledGoalModal = styled(StyledModal)<{ $isMobile?: boolean }>`
     `
     width: 100% !important;
     max-height: calc(100% - 24px) !important;
-    height: auto;
+    height: calc(100% - 24px);
     border-radius: 20px 20px 0 0 !important;
     border-bottom: none;
     animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
