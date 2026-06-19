@@ -4,7 +4,9 @@ import {
   useContext,
   useState,
   useEffect,
+  useRef,
   isValidElement,
+  forwardRef,
   type ReactNode,
   type ReactElement,
 } from "react";
@@ -30,7 +32,7 @@ const scaleIn = keyframes`
 `;
 
 // --- STYLED COMPONENTS ---
-export const Overlay = styled.div<{ $isBottomSheet?: boolean }>`
+const StyledOverlay = styled.div<{ $isBottomSheet?: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -56,6 +58,95 @@ export const Overlay = styled.div<{ $isBottomSheet?: boolean }>`
         `}
 `;
 
+export const Overlay = forwardRef<
+  HTMLDivElement,
+  {
+    children?: ReactNode;
+    $isBottomSheet?: boolean;
+    style?: React.CSSProperties;
+    [key: string]: any;
+  }
+>(({ children, $isBottomSheet, style, ...props }, ref) => {
+  const [viewportStyles, setViewportStyles] = useState<React.CSSProperties>({});
+  const localRef = useRef<HTMLDivElement | null>(null);
+
+  const setRefs = (node: HTMLDivElement | null) => {
+    localRef.current = node;
+    if (ref) {
+      if (typeof ref === "function") {
+        ref(node);
+      } else {
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) return;
+
+    const handleVisualViewportChange = () => {
+      const vv = window.visualViewport;
+      if (!vv) return;
+
+      setViewportStyles({
+        height: `${vv.height}px`,
+        width: `${vv.width}px`,
+        top: `${vv.offsetTop}px`,
+        left: `${vv.offsetLeft}px`,
+      });
+    };
+
+    window.visualViewport.addEventListener("resize", handleVisualViewportChange);
+    window.visualViewport.addEventListener("scroll", handleVisualViewportChange);
+
+    // Initial run
+    handleVisualViewportChange();
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleVisualViewportChange);
+      window.visualViewport?.removeEventListener("scroll", handleVisualViewportChange);
+    };
+  }, []);
+
+  // Smooth scroll input into view on mobile keyboard toggle
+  useEffect(() => {
+    const handleFocusIn = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (!localRef.current?.contains(target)) return;
+
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT")
+      ) {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 150);
+      }
+    };
+
+    document.addEventListener("focusin", handleFocusIn);
+    return () => {
+      document.removeEventListener("focusin", handleFocusIn);
+    };
+  }, []);
+
+  return (
+    <StyledOverlay
+      ref={setRefs}
+      $isBottomSheet={$isBottomSheet}
+      style={{ ...viewportStyles, ...style }}
+      {...props}
+    >
+      {children}
+    </StyledOverlay>
+  );
+});
+
+Overlay.displayName = "Overlay";
+
+
 export const StyledModal = styled.div<{ $padding?: string }>`
   background-color: var(--color-bg-surface);
   border-radius: 16px;
@@ -66,8 +157,7 @@ export const StyledModal = styled.div<{ $padding?: string }>`
   position: relative;
   animation: ${scaleIn} 0.2s ease-out;
 
-  max-height: 90vh;
-  max-height: 90dvh;
+  max-height: 90%;
   overflow-y: auto;
   width: auto;
 
@@ -97,8 +187,7 @@ const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
   z-index: 10001;
   position: relative;
   width: 100%;
-  max-height: 92vh;
-  max-height: 92dvh;
+  max-height: calc(100% - 24px);
   overflow-y: auto; /* Prevent flex collapse, container handles scrolling */
   animation: ${slideUp} 0.3s cubic-bezier(0.32, 0.72, 0, 1);
   display: flex;

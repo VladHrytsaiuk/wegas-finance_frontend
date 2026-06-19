@@ -15,20 +15,7 @@ const slideUp = keyframes`
 
 // --- LAYOUT ---
 
-export const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: ${fadeIn} 0.2s ease-out;
-`;
+
 
 export const ModalContainer = styled.div`
   width: 90%;
@@ -38,7 +25,8 @@ export const ModalContainer = styled.div`
   border: 1px solid var(--color-border);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 90%;
   display: flex;
   flex-direction: column;
   animation: ${slideUp} 0.3s cubic-bezier(0.16, 1, 0.3, 1);

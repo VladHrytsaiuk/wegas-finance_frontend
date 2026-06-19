@@ -1,15 +1,6 @@
 import styled from "styled-components";
 
-export const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(3px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-`;
+
 
 export const ModalContainer = styled.div`
   background: var(--color-bg-surface);
@@ -19,7 +10,7 @@ export const ModalContainer = styled.div`
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 90%;
   overflow-y: auto;
 `;
 

@@ -6,6 +6,7 @@ import { HiCalendar, HiXMark } from "react-icons/hi2";
 
 import { Button } from "../ui/Button";
 import { DateRangePicker } from "../ui/DateRangePicker";
+import { Overlay } from "../ui/Modal";
 import * as S from "./ExtendGoalModal.styles";
 
 interface ExtendGoalModalProps {
@@ -85,7 +86,7 @@ export default function ExtendGoalModal({
   };
 
   return createPortal(
-    <S.Overlay onClick={onClose}>
+    <Overlay onClick={onClose}>
       <S.ModalContent onClick={(e) => e.stopPropagation()}>
         <S.CloseBtn onClick={onClose}>
           <HiXMark size={24} />
@@ -144,7 +145,7 @@ export default function ExtendGoalModal({
           </S.Footer>
         </S.Form>
       </S.ModalContent>
-    </S.Overlay>,
+    </Overlay>,
     document.body,
   );
 }

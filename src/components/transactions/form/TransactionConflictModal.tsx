@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { HiExclamationTriangle, HiCalculator, HiPlus } from "react-icons/hi2";
 import { Button } from "../../ui/Button";
+import { Overlay } from "../../ui/Modal";
 import * as S from "./TransactionConflictModal.styles";
 
 // --- TYPES ---
@@ -34,7 +35,7 @@ export default function TransactionConflictModal({
   const formatPrice = (val: number) => (val / 100).toFixed(2);
 
   return (
-    <S.Overlay
+    <Overlay
       onClick={(e) => e.stopPropagation()}
       role="dialog"
       aria-modal="true"
@@ -121,6 +122,6 @@ export default function TransactionConflictModal({
           </S.SecondaryActions>
         </S.Actions>
       </S.ModalContainer>
-    </S.Overlay>
+    </Overlay>
   );
 }

@@ -13,6 +13,7 @@ import { Trans } from "react-i18next";
 import { DateRangePicker } from "../ui/DateRangePicker";
 import { MultiSelectFilter } from "../shared/TableToolbar/MultiSelectFilter";
 import { Button } from "../ui/Button";
+import { Overlay } from "../ui/Modal";
 
 import { useExportStatsModal } from "../../hooks/Stats/useExportStatsModal";
 import { useEscapeKey } from "../../hooks/useEscapeKey";
@@ -38,7 +39,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
   }, []);
 
   return createPortal(
-    <S.Overlay onClick={onClose}>
+    <Overlay onClick={onClose}>
       <S.ModalContainer
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -185,7 +186,7 @@ export default function ExportStatsModal(props: ExportStatsModalProps) {
           </Button>
         </S.Footer>
       </S.ModalContainer>
-    </S.Overlay>,
+    </Overlay>,
     document.body
   );
 }

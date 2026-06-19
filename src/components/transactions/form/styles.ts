@@ -24,7 +24,7 @@ export const ModalContainer = styled.div<{ $hasImage: boolean }>`
 
   @media (max-width: 768px) {
     width: 100vw;
-    height: 100dvh;
+    height: 100%;
     border-radius: 0;
   }
 `;
