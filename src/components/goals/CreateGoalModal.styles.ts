@@ -8,15 +8,15 @@ export const StyledGoalModal = styled(StyledModal)<{ $isMobile?: boolean }>`
   padding: 0;
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 90%;
   overflow: hidden !important;
 
   ${(props) =>
     props.$isMobile &&
     `
     width: 100% !important;
-    max-height: 94dvh !important;
-    height: 94dvh;
+    max-height: calc(100% - 24px) !important;
+    height: auto;
     border-radius: 20px 20px 0 0 !important;
     border-bottom: none;
     animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
@@ -123,7 +123,7 @@ export const Content = styled.div<{ $isMobile?: boolean }>`
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100%;
 `;
 
 export const Grid = styled.div`
