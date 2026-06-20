@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { HiOutlineUserPlus, HiOutlineUserGroup, HiOutlineLink, HiXMark } from "react-icons/hi2";
 
-import { Overlay, StyledModal, ModalCloseButton } from "../../components/ui/Modal";
-import Modal from "../../components/ui/Modal";
+import Modal, {
+  Overlay,
+  StyledModal,
+  ModalCloseButton,
+  BottomSheetPanel,
+  DragHandle,
+  BottomSheetContent,
+} from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
@@ -29,7 +35,25 @@ const LocalModal: React.FC<{
   children: React.ReactNode;
   padding?: string;
 }> = ({ isOpen, onClose, children, padding }) => {
+  const isMobile = useIsMobile();
   if (!isOpen) return null;
+
+  if (isMobile) {
+    return createPortal(
+      <Overlay $isBottomSheet onClick={onClose}>
+        <BottomSheetPanel onClick={(e) => e.stopPropagation()}>
+          <DragHandle />
+          <ModalCloseButton onClick={onClose}>
+            <HiXMark />
+          </ModalCloseButton>
+          <BottomSheetContent $padding={padding}>
+            {children}
+          </BottomSheetContent>
+        </BottomSheetPanel>
+      </Overlay>,
+      document.body
+    );
+  }
 
   return createPortal(
     <Overlay onClick={onClose}>
@@ -120,7 +144,7 @@ function FamilySettings() {
                 <UserCard user={user} canManage={canManageTeam} />
 
                 {/* Edit & Delete modals still use the string-based Modal system from parent/Layout */}
-                <Modal.Window name={`edit-user-${user.id}`}>
+                <Modal.Window name={`edit-user-${user.id}`} mobileBottomSheet>
                   <S.ModalContent style={{ width: isMobile ? "100%" : "900px" }}>
                     <S.ModalTitle>{t("settings:usersPage.modal_edit_title")}</S.ModalTitle>
                     <UserForm
@@ -131,7 +155,7 @@ function FamilySettings() {
                   </S.ModalContent>
                 </Modal.Window>
 
-                <Modal.Window name={`delete-user-${user.id}`}>
+                <Modal.Window name={`delete-user-${user.id}`} mobileBottomSheet>
                   <ConfirmDelete
                     resourceName={`${t("settings:usersPage.resource_user")} ${user.name}`}
                     onConfirm={() => usersActions.handleDelete(user.id)}

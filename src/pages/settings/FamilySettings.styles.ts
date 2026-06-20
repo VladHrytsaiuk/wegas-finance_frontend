@@ -85,15 +85,25 @@ export const TimerText = styled.span<{ $isUrgent: boolean }>`
 // --- OTP STYLES ---
 
 export const OtpContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
   margin: 1rem 0;
+  padding: 0 1rem;
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (min-width: 480px) {
+    gap: 0.75rem;
+    padding: 0 1.5rem;
+  }
 `;
 
 export const OtpBox = styled.input`
-  width: 3.5rem;
-  height: 4rem;
+  width: 100%;
+  aspect-ratio: 1 / 1.15; /* Keeps the slightly tall box shape */
   text-align: center;
   font-size: 1.75rem;
   font-weight: 700;
@@ -103,6 +113,11 @@ export const OtpBox = styled.input`
   background-color: var(--color-bg-surface);
   color: var(--color-text-main);
   transition: all 0.2s;
+  padding: 0;
+
+  @media (max-width: 360px) {
+    font-size: 1.4rem;
+  }
 
   &:focus {
     outline: none;

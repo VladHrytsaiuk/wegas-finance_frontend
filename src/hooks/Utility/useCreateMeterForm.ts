@@ -35,7 +35,7 @@ export const useCreateMeterForm = ({
     watch,
     trigger,
     reset,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, isSubmitted },
   } = useForm({
     defaultValues: {
       name: "",
@@ -165,6 +165,7 @@ export const useCreateMeterForm = ({
       watch,
       errors,
       isSubmitting,
+      isSubmitted,
       currentType,
       currentCP,
     },

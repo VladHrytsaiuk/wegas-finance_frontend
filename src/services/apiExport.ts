@@ -17,3 +17,10 @@ export const getExportData = async (params: ExportParams) => {
   const { data } = await api.get("/export/transactions", { params });
   return data;
 };
+
+export const getExportBackup = async (): Promise<Blob> => {
+	const response = await api.get("/export/backup", {
+		responseType: 'blob',
+	});
+	return response.data;
+};

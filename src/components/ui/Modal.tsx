@@ -180,7 +180,7 @@ export const StyledModal = styled.div<{ $padding?: string }>`
 `;
 
 // --- BOTTOM SHEET STYLED COMPONENTS ---
-const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
+export const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
   background-color: ${(props) => props.$bgColor || "var(--color-bg-surface)"};
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.15);
@@ -206,7 +206,7 @@ const BottomSheetPanel = styled.div<{ $padding?: string; $bgColor?: string }>`
   }
 `;
 
-const DragHandle = styled.div`
+export const DragHandle = styled.div`
   display: flex;
   justify-content: center;
   padding: 12px 0 4px 0;
@@ -223,7 +223,7 @@ const DragHandle = styled.div`
 
 
 
-const BottomSheetContent = styled.div<{ $padding?: string }>`
+export const BottomSheetContent = styled.div<{ $padding?: string }>`
   flex: 1;
   padding: ${(props) => props.$padding || "0"};
 

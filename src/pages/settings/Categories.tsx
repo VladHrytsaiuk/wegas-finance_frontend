@@ -174,7 +174,7 @@ function CategoriesContent() {
       <Modal.Open opens="delete-confirm">
         <span id="trigger-delete-confirm" style={{ display: "none" }} />
       </Modal.Open>
-      <Modal.Window name="delete-confirm">
+      <Modal.Window name="delete-confirm" mobileBottomSheet>
         <ConfirmDelete
           resourceName={editingCategory?.name}
           onConfirm={handleDeleteConfirm}

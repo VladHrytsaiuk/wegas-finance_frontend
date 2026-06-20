@@ -6,6 +6,7 @@ import {
   HiDocumentText,
   HiBuildingStorefront,
   HiTag,
+  HiArchiveBox,
 } from "react-icons/hi2";
 import { Trans } from "react-i18next";
 
@@ -31,6 +32,7 @@ export default function ExportPage() {
     statsAccountIds,
     statsOptions,
     filterConfigs,
+    isChild,
   } = state;
 
   return (
@@ -83,36 +85,46 @@ export default function ExportPage() {
           >
             <HiChartPie /> {t("export_import:exportPage.tab_stats")}
           </S.TabButton>
+          {!isChild && (
+            <S.TabButton
+              $active={activeTab === "backup"}
+              onClick={() => actions.setActiveTab("backup")}
+            >
+              <HiArchiveBox /> {t("export_import:exportPage.tab_backup")}
+            </S.TabButton>
+          )}
         </S.TabsContainer>
 
         <S.ControlPanel>
-          <div>
-            <S.Label>{t("export_import:exportPage.section_params")}</S.Label>
-            <S.ControlRow>
-              <S.DateRangeWrapper>
-                <DateRangePicker
-                  mode="range"
-                  dateFrom={dateRange.from}
-                  dateTo={dateRange.to}
-                  onChange={(from, to) => actions.setDateRange({ from, to })}
+          {activeTab !== "backup" && (
+            <div>
+              <S.Label>{t("export_import:exportPage.section_params")}</S.Label>
+              <S.ControlRow>
+                <S.DateRangeWrapper>
+                  <DateRangePicker
+                    mode="range"
+                    dateFrom={dateRange.from}
+                    dateTo={dateRange.to}
+                    onChange={(from, to) => actions.setDateRange({ from, to })}
+                  />
+                </S.DateRangeWrapper>
+                {!isMobile && <S.Divider />}
+                <MultiSelectFilter
+                  config={filterConfigs[1]}
+                  value={
+                    activeTab === "transactions"
+                      ? transFilters.accountIds
+                      : statsAccountIds
+                  }
+                  onChange={(val) =>
+                    activeTab === "transactions"
+                      ? actions.handleTransFilterChange("accountIds", val)
+                      : actions.setStatsAccountIds(val)
+                  }
                 />
-              </S.DateRangeWrapper>
-              {!isMobile && <S.Divider />}
-              <MultiSelectFilter
-                config={filterConfigs[1]}
-                value={
-                  activeTab === "transactions"
-                    ? transFilters.accountIds
-                    : statsAccountIds
-                }
-                onChange={(val) =>
-                  activeTab === "transactions"
-                    ? actions.handleTransFilterChange("accountIds", val)
-                    : actions.setStatsAccountIds(val)
-                }
-              />
-            </S.ControlRow>
-          </div>
+              </S.ControlRow>
+            </div>
+          )}
 
           {activeTab === "transactions" ? (
             <>
@@ -172,7 +184,7 @@ export default function ExportPage() {
                 </S.ControlRow>
               </S.FormatSection>
             </>
-          ) : (
+          ) : activeTab === "stats" ? (
             <>
               <div>
                 <S.Label>{t("export_import:exportPage.section_structure")}</S.Label>
@@ -248,6 +260,16 @@ export default function ExportPage() {
                 />
               </S.StatsInfo>
             </>
+          ) : (
+            <S.StatsInfo style={{ marginTop: 0 }}>
+              <HiArchiveBox size={32} style={{ color: 'var(--color-brand-600)', marginBottom: '16px' }} />
+              <p>
+                <strong>{t("export_import:exportPage.backup_title")}</strong>
+              </p>
+              <p style={{ marginTop: '8px' }}>
+                {t("export_import:exportPage.backup_description")}
+              </p>
+            </S.StatsInfo>
           )}
         </S.ControlPanel>
       </div>

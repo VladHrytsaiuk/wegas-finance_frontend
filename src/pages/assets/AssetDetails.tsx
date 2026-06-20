@@ -499,7 +499,7 @@ export default function AssetDetails() {
         </S.StyledCard>
 
         {/* --- MODALS --- */}
-        <Modal.Window name="edit-asset">
+        <Modal.Window name="edit-asset" padding="0" mobileBottomSheet>
           <AssetForm assetToEdit={asset} />
         </Modal.Window>
 

@@ -216,6 +216,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
     watch,
     errors,
     isSubmitting,
+    isSubmitted,
     currentType,
     currentCP,
   } = form;
@@ -257,17 +258,38 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
   const [sessionDate] = useState(() => Date.now());
 
   // Степінг-навігація на мобілці
-  const handleNextStep = async () => {
+  const handleNextStep = async (e?: React.MouseEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (currentStep === 1) {
       const isValid = await trigger(["name", "type", "unit"]);
-      if (isValid) setCurrentStep(2);
+      if (isValid) {
+        setTimeout(() => setCurrentStep(2), 0);
+      }
     } else if (currentStep === 2) {
       const isValid = await trigger(["tariff"]);
-      if (isValid) setCurrentStep(3);
+      if (isValid) {
+        setTimeout(() => setCurrentStep(3), 0);
+      }
     }
   };
 
-  const handlePrevStep = () => {
+  const handleFormKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (isMobile) {
+        handleNextStep(e);
+      }
+    }
+  };
+
+  const handlePrevStep = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setCurrentStep((prev) => Math.max(1, prev - 1));
   };
 
@@ -325,7 +347,14 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
             : t("stats_utility:createMeterModal.title_add")}
         </h2>
 
-        <Form onSubmit={handleSubmit(actions.onSubmit)}>
+        <Form
+          onSubmit={
+            isMobile && currentStep < 3
+              ? (e) => e.preventDefault()
+              : handleSubmit(actions.onSubmit)
+          }
+          onKeyDown={handleFormKeyDown}
+        >
           {isMobile && (
             <ProgressWrapper>
               <StepIndicator>
@@ -477,7 +506,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                   counterparties={data.utilityProviders}
                   value={currentCP}
                   onChange={(id) => setValue("counterparty_id", id)}
-                  hasError={!currentCP && isSubmitting}
+                  hasError={!currentCP && isSubmitted}
                   initialExpanded={data.expandedIds}
                   priorityCategoryId={data.priorityCategoryId}
                 />
@@ -496,6 +525,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
           >
             {isMobile && currentStep > 1 ? (
               <Button
+                key="btn-prev"
                 variation="secondary"
                 onClick={handlePrevStep}
                 type="button"
@@ -504,6 +534,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               </Button>
             ) : (
               <Button
+                key="btn-cancel"
                 variation="secondary"
                 onClick={handleCloseAttempt}
                 type="button"
@@ -514,6 +545,7 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
 
             {isMobile && currentStep < 3 ? (
               <Button
+                key="btn-next"
                 variation="primary"
                 onClick={handleNextStep}
                 type="button"
@@ -521,7 +553,12 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                 {t("common:common.next")}
               </Button>
             ) : (
-              <Button variation="primary" type="submit" disabled={isSubmitting}>
+              <Button
+                key="btn-submit"
+                variation="primary"
+                type="submit"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? t("common:shared.saving") : t("common:common.save")}
               </Button>
             )}

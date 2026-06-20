@@ -5,8 +5,9 @@ import { uk, enGB } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
+import { useAuth } from "../../context/AuthContext";
 import { useStatsExport } from "../Stats/useStatsExport";
-import { getExportData } from "../../services/apiExport";
+import { getExportData, getExportBackup } from "../../services/apiExport";
 import { getAccountsApi } from "../../services/apiAccounts";
 import { getCategoriesApi } from "../../services/apiCategories";
 import {
@@ -22,9 +23,11 @@ import {
 
 export const useExportPage = () => {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const isChild = user?.role_id === "child";
 
   // --- UI State ---
-  const [activeTab, setActiveTab] = useState<"transactions" | "stats">(
+  const [activeTab, setActiveTab] = useState<"transactions" | "stats" | "backup">(
     "transactions"
   );
   const [loading, setLoading] = useState(false);
@@ -208,8 +211,35 @@ export const useExportPage = () => {
     );
   };
 
+  // --- Action: Export Backup ---
+  const handleExportBackup = async () => {
+    setLoading(true);
+    const toastId = toast.loading(t("export_import:exportPage.status_generating_backup"));
+    try {
+      const blob = await getExportBackup();
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Backup_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      
+      toast.success(t("export_import:exportPage.status_backup_ready"), { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || t("export_import:exportPage.status_error"), { id: toastId });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleExport =
-    activeTab === "transactions" ? handleExportTransactions : handleExportStats;
+    activeTab === "transactions" 
+      ? handleExportTransactions 
+      : activeTab === "stats" 
+      ? handleExportStats
+      : handleExportBackup;
 
   return {
     state: {
@@ -221,6 +251,7 @@ export const useExportPage = () => {
       statsAccountIds,
       statsOptions,
       filterConfigs,
+      isChild,
     },
     actions: {
       setActiveTab,

@@ -18,11 +18,9 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Assets.styles";
 import { FAB } from "../../components/ui/FAB";
-import { useModal } from "../../components/ui/Modal";
 
 export default function Assets() {
   const { state, actions, helpers, t } = useAssets();
-  const { open } = useModal();
   const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.assets", "Майно"));
   const { assets, isLoading, isDeleting } = state;
@@ -93,7 +91,7 @@ export default function Assets() {
         )}
 
         {/* --- MODAL WINDOWS --- */}
-        <Modal.Window name="create-asset" padding="0">
+        <Modal.Window name="create-asset" padding="0" mobileBottomSheet>
           <AssetForm />
         </Modal.Window>
 
@@ -111,7 +109,7 @@ export default function Assets() {
                 />
               </Modal.Window>
 
-              <Modal.Window name={`edit-asset-${item.id}`} padding="0">
+              <Modal.Window name={`edit-asset-${item.id}`} padding="0" mobileBottomSheet>
                 <AssetForm assetToEdit={item} />
               </Modal.Window>
 
@@ -123,11 +121,13 @@ export default function Assets() {
             </div>
           );
         })}
-      </Modal>
 
-      {isMobile && (
-        <FAB onClick={() => open("create-asset")} />
-      )}
+        {isMobile && (
+          <Modal.Open opens="create-asset">
+            <FAB />
+          </Modal.Open>
+        )}
+      </Modal>
     </S.PageContainer>
   </>
   );

@@ -63,16 +63,16 @@ export default function WishItemCard({
 
   return (
     <S.WishCard $isBought={isBought}>
-      {/* MENU TRIGGER */}
-      {hasMenuActions && (
-        <S.MenuTriggerContainer onClick={(e) => e.stopPropagation()}>
-          <S.MenuButton onClick={onToggleMenu}>
-            <HiEllipsisHorizontal size={20} />
-          </S.MenuButton>
+      <Modal>
+        {/* MENU TRIGGER */}
+        {hasMenuActions && (
+          <S.MenuTriggerContainer onClick={(e) => e.stopPropagation()}>
+            <S.MenuButton onClick={onToggleMenu}>
+              <HiEllipsisHorizontal size={20} />
+            </S.MenuButton>
 
-          {isOpen && (
-            <S.DropdownMenu>
-              <Modal>
+            {isOpen && (
+              <S.DropdownMenu>
                 {/* 1. ПОЗНАЧИТИ КУПЛЕНИМ */}
                 <S.MenuItem
                   $variant="check"
@@ -109,25 +109,25 @@ export default function WishItemCard({
                     <HiTrash /> {t("common:common.delete", "Видалити")}
                   </S.MenuItem>
                 </Modal.Open>
+              </S.DropdownMenu>
+            )}
+          </S.MenuTriggerContainer>
+        )}
 
-                <Modal.Window name={`edit-${item.id}`} padding="0" mobileBottomSheet>
-                  <EditWishModal
-                    initialData={item}
-                    groups={groups}
-                    onSave={handlers.updateItem}
-                  />
-                </Modal.Window>
-                <Modal.Window name={`delete-${item.id}`}>
-                  <ConfirmDelete
-                    resourceName={item.name}
-                    onConfirm={() => handlers.deleteItem(item.id)}
-                  />
-                </Modal.Window>
-              </Modal>
-            </S.DropdownMenu>
-          )}
-        </S.MenuTriggerContainer>
-      )}
+        <Modal.Window name={`edit-${item.id}`} padding="0" mobileBottomSheet>
+          <EditWishModal
+            initialData={item}
+            groups={groups}
+            onSave={handlers.updateItem}
+          />
+        </Modal.Window>
+        <Modal.Window name={`delete-${item.id}`} mobileBottomSheet>
+          <ConfirmDelete
+            resourceName={item.name}
+            onConfirm={() => handlers.deleteItem(item.id)}
+          />
+        </Modal.Window>
+      </Modal>
 
       {/* IMAGE */}
       <S.CardImage $src={getUploadedFileUrl(item.photo_url)}>

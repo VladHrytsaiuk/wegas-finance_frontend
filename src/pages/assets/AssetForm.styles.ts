@@ -21,6 +21,13 @@ export const FormContainer = styled.div`
   max-height: 90vh;
   background-color: var(--color-bg-surface);
   position: relative;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: none;
+  }
 `;
 
 export const FormHeader = styled.div`

@@ -45,22 +45,29 @@ export const useBaseSelect = ({
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
     const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
 
-    // Exact matching requirements
     const calculatedWidth = rect.width;
     let left = rect.left + scrollX;
 
-    // Viewport overflow protection (Right edge)
-    // We assume the dropdown might be around 300px wide (max-content)
-    const viewportWidth = window.innerWidth;
-    const padding = 10;
-    const estimatedMaxContentWidth = 300; 
+    // Measure actual dropdown width if already rendered, otherwise use a safe estimate
+    let dropdownWidth = calculatedWidth;
+    if (dropdownRef.current) {
+      dropdownWidth = dropdownRef.current.getBoundingClientRect().width;
+    } else {
+      dropdownWidth = Math.max(calculatedWidth, 200); // conservative initial estimate
+    }
 
-    if (rect.left + estimatedMaxContentWidth > viewportWidth - padding) {
-      // If it overflows right, align the right edge of dropdown with right edge of trigger
-      left = rect.right + scrollX - estimatedMaxContentWidth;
+    const padding = 10;
+
+    // Viewport overflow protection (Right edge)
+    if (rect.left + dropdownWidth > viewportWidth - padding) {
+      // Align the right edge of dropdown with right edge of trigger
+      left = rect.right + scrollX - dropdownWidth;
       // But don't go past the left edge of the screen
-      if (left < scrollX + padding) left = scrollX + padding;
+      if (left < scrollX + padding) {
+        left = scrollX + padding;
+      }
     }
 
     const spaceBelow = viewportHeight - rect.bottom;
@@ -254,8 +261,12 @@ export const useBaseSelect = ({
   useEffect(() => {
     if (!isOpen) return;
 
+    // Measure the actual rendered dropdown width immediately after mounting
+    updateCoords();
+
     // Focus management on open
     const timer = setTimeout(() => {
+      updateCoords();
       if (onSearchChange && searchInputRef.current) {
         searchInputRef.current.focus();
       } else if (dropdownRef.current) {

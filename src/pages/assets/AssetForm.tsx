@@ -9,6 +9,7 @@ import {
   HiDocumentText,
   HiOutlineDocumentPlus,
   HiOutlinePhoto,
+  HiOutlineBanknotes,
 } from "react-icons/hi2";
 
 import { Button } from "../../components/ui/Button";
@@ -107,21 +108,40 @@ export default function AssetForm({
   const nextStep = async (e?: React.MouseEvent | React.FormEvent) => {
     e?.preventDefault();
     if (!trigger) {
-      setCurrentStep(2);
+      setTimeout(() => setCurrentStep(2), 0);
       return;
     }
-    const isValid = await trigger(["type", "name", "price", "currency", "purchase_date"]);
+    const isValid = await trigger(["type", "name"]);
     if (isValid) {
-      setCurrentStep(2);
+      setTimeout(() => setCurrentStep(2), 0);
     }
   };
 
-  const prevStep = () => setCurrentStep(1);
+  const nextStep2 = async (e?: React.MouseEvent | React.FormEvent) => {
+    e?.preventDefault();
+    if (!trigger) {
+      setTimeout(() => setCurrentStep(3), 0);
+      return;
+    }
+    const isValid = await trigger(["price", "purchase_date"]);
+    if (isValid) {
+      setTimeout(() => setCurrentStep(3), 0);
+    }
+  };
+
+  const prevStep = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    setCurrentStep((prev) => Math.max(1, prev - 1));
+  };
 
   const handleActualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep === 1) {
       nextStep(e);
+      return;
+    }
+    if (currentStep === 2) {
+      nextStep2(e);
       return;
     }
     handleSubmit(actions.onSubmit)(e);
@@ -171,7 +191,7 @@ export default function AssetForm({
 
         <S.ProgressWrapper>
           <S.StepIndicator>
-            {[1, 2].map((step) => (
+            {[1, 2, 3].map((step) => (
               <S.StepItem
                 key={step}
                 $active={currentStep === step}
@@ -184,8 +204,9 @@ export default function AssetForm({
                   {currentStep > step ? <HiCheck /> : step}
                 </S.StepNumber>
                 <S.StepLabel $active={currentStep === step}>
-                  {step === 1 && t("goals_debts:goalDetails.title_section_info")}
-                  {step === 2 && t("goals_debts:goalDetails.title_section_media", "Медіа та Примітки")}
+                  {step === 1 && t("goals_debts:goalDetails.title_section_info", "Параметри")}
+                  {step === 2 && t("assets:assetForm.section_finance", "Вартість")}
+                  {step === 3 && t("goals_debts:goalDetails.title_section_media", "Деталі")}
                 </S.StepLabel>
               </S.StepItem>
             ))}
@@ -249,6 +270,21 @@ export default function AssetForm({
                   </S.FormGroup>
                 </S.Grid>
 
+                <S.Grid columns="1fr">
+                  <S.FormGroup>
+                    <S.Label>{t("assets:assetForm.label_serial")}</S.Label>
+                    <Input {...register("serial_number")} placeholder="S/N" />
+                  </S.FormGroup>
+                </S.Grid>
+              </S.Column>
+            )}
+
+            {currentStep === 2 && (
+              <S.Column>
+                <S.SectionTitle>
+                  <HiOutlineBanknotes /> {t("assets:assetForm.section_finance", "Вартість та дата")}
+                </S.SectionTitle>
+
                 <S.Grid columns="1fr 0.8fr 1fr">
                   <S.FormGroup>
                     <S.Label>{t("assets:assetForm.label_price")}</S.Label>
@@ -297,11 +333,7 @@ export default function AssetForm({
                   </S.FormGroup>
                 </S.Grid>
 
-                <S.Grid columns="1fr 1fr">
-                  <S.FormGroup>
-                    <S.Label>{t("assets:assetForm.label_serial")}</S.Label>
-                    <Input {...register("serial_number")} placeholder="S/N" />
-                  </S.FormGroup>
+                <S.Grid columns="1fr">
                   <S.FormGroup>
                     <S.Label>{t("assets:assetForm.label_warranty")}</S.Label>
                     <Input type="date" {...register("warranty_end")} />
@@ -310,10 +342,10 @@ export default function AssetForm({
               </S.Column>
             )}
 
-            {currentStep === 2 && (
+            {currentStep === 3 && (
               <S.Column>
                 <S.SectionTitle>
-                  <HiDocumentText /> {t("assets:assetForm.section_finance", "Деталі")}
+                  <HiDocumentText /> {t("goals_debts:goalDetails.title_section_media", "Медіа та примітки")}
                 </S.SectionTitle>
 
                 <S.FormGroup>
@@ -448,12 +480,12 @@ export default function AssetForm({
                               display: "flex",
                               alignItems: "center",
                               gap: "5px",
-                            }}
-                          >
-                            <HiOutlineDocumentPlus />{" "}
-                            {t("assets:assetForm.button_add_doc", "Додати документ")}
-                          </Button>
-                        </label>
+                              }}
+                            >
+                              <HiOutlineDocumentPlus />{" "}
+                              {t("assets:assetForm.button_add_doc", "Додати документ")}
+                            </Button>
+                          </label>
                         <S.FileCount>{totalDocs} вибрано</S.FileCount>
                       </S.FileUploadControls>
 
@@ -499,25 +531,58 @@ export default function AssetForm({
         </S.ScrollArea>
 
         <S.FormFooter>
-          {currentStep === 1 ? (
+          {currentStep === 1 && (
             <>
               <Button
+                key="btn-cancel"
                 variation="secondary"
                 type="button"
                 onClick={handleCloseAttempt}
               >
                 {t("common:common.cancel")}
               </Button>
-              <Button type="button" onClick={nextStep}>
+              <Button
+                key="btn-next-1"
+                type="button"
+                onClick={nextStep}
+              >
                 {t("common:common.next")}
               </Button>
             </>
-          ) : (
+          )}
+
+          {currentStep === 2 && (
             <>
-              <Button variation="secondary" type="button" onClick={prevStep}>
+              <Button
+                key="btn-prev-2"
+                variation="secondary"
+                type="button"
+                onClick={prevStep}
+              >
                 {t("common:common.return")}
               </Button>
               <Button
+                key="btn-next-2"
+                type="button"
+                onClick={nextStep2}
+              >
+                {t("common:common.next")}
+              </Button>
+            </>
+          )}
+
+          {currentStep === 3 && (
+            <>
+              <Button
+                key="btn-prev-3"
+                variation="secondary"
+                type="button"
+                onClick={prevStep}
+              >
+                {t("common:common.return")}
+              </Button>
+              <Button
+                key="btn-submit"
                 type="submit"
                 form="asset-form"
                 disabled={isSubmitting || files?.isCompressing}

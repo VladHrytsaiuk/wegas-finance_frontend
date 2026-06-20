@@ -95,6 +95,11 @@ export const InputGroup = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 `;
 
 export const FieldGroup = styled.div<{ $width?: string }>`

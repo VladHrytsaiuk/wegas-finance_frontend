@@ -84,7 +84,7 @@ export function CounterpartyModals({
       </Modal.Window>
 
       {/* 5. Видалення */}
-      <Modal.Window name="delete-confirm">
+      <Modal.Window name="delete-confirm" mobileBottomSheet>
         {itemToDelete?.hasDebt ? (
           <div style={{
             width: "100%",
