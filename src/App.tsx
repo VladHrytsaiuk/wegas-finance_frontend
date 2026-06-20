@@ -73,7 +73,7 @@ const queryClient = new QueryClient({
 });
 
 // --- Memoized or Static Objects ---
-const TOASTER_CONTAINER_STYLE = { margin: "8px" };
+const TOASTER_CONTAINER_STYLE = { margin: "8px", zIndex: 999999 };
 const TOASTER_OPTIONS = {
   success: { duration: 3000 },
   error: { duration: 5000 },

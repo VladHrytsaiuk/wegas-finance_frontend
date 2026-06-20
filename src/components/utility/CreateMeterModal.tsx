@@ -22,19 +22,25 @@ import { BaseSelect } from "../ui/Select/BaseSelect";
 import ConfirmCloseModal from "../ui/ConfirmCloseModal";
 import { Overlay, StyledModal } from "../ui/Modal";
 import { useCreateMeterForm } from "../../hooks/Utility/useCreateMeterForm";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 500px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 500px;
 `;
 
 const FormRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 `;
 
 const SectionLabel = styled.label`
@@ -69,6 +75,78 @@ const SelectorWrapper = styled.div`
   z-index: 10;
 `;
 
+// --- STEPPER STYLED COMPONENTS ---
+const ProgressWrapper = styled.div`
+  background-color: var(--color-bg-surface);
+  padding: 0.5rem 0;
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+`;
+
+const StepIndicator = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-bottom: 0.5rem;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-border);
+    transform: translateY(-50%);
+    z-index: 0;
+  }
+`;
+
+const StepItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 1;
+  background-color: var(--color-bg-surface);
+  padding: 0 0.5rem;
+`;
+
+const StepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+
+  background-color: ${(props) =>
+    props.$active || props.$completed
+      ? "var(--color-brand-600)"
+      : "var(--color-bg-page)"};
+  color: ${(props) =>
+    props.$active || props.$completed ? "white" : "var(--color-text-tertiary)"};
+  border: 2px solid
+    ${(props) =>
+      props.$active || props.$completed
+        ? "var(--color-brand-600)"
+        : "var(--color-border)"};
+`;
+
+const StepLabel = styled.span<{ $active: boolean }>`
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  color: ${(props) =>
+    props.$active ? "var(--color-text-main)" : "var(--color-text-tertiary)"};
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+
 interface Props {
   onCloseModal?: () => void;
   meterToEdit?: any;
@@ -76,8 +154,11 @@ interface Props {
 
 export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
   const { t } = useTranslation();
-  // 🔥 Локальний стейт для підтвердження
+  const isMobile = useIsMobile();
+  
+  // 🔥 Локальний стейт для підтвердження та кроків на мобільці
   const [showConfirm, setShowConfirm] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const SERVICE_TYPES = useMemo(
     () => [
@@ -131,6 +212,9 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
     register,
     handleSubmit,
     setValue,
+    trigger,
+    watch,
+    errors,
     isSubmitting,
     currentType,
     currentCP,
@@ -172,6 +256,21 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
   // Use a stable date reference
   const [sessionDate] = useState(() => Date.now());
 
+  // Степінг-навігація на мобілці
+  const handleNextStep = async () => {
+    if (currentStep === 1) {
+      const isValid = await trigger(["name", "type", "unit"]);
+      if (isValid) setCurrentStep(2);
+    } else if (currentStep === 2) {
+      const isValid = await trigger(["tariff"]);
+      if (isValid) setCurrentStep(3);
+    }
+  };
+
+  const handlePrevStep = () => {
+    setCurrentStep((prev) => Math.max(1, prev - 1));
+  };
+
   return (
     <>
       {/* --- CONFIRMATION MODAL (PORTAL) --- */}
@@ -207,7 +306,11 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
 
       {/* --- FORM WRAPPER (для ширини) --- */}
       <div
-        style={{ minWidth: "500px" }}
+        style={{
+          width: "100%",
+          maxWidth: "500px",
+          minWidth: isMobile ? "auto" : "500px",
+        }}
         onClick={(e) => e.stopPropagation()} // Захист від закриття при кліку на форму
       >
         <h2
@@ -223,111 +326,166 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
         </h2>
 
         <Form onSubmit={handleSubmit(actions.onSubmit)}>
-          <div>
-            <SectionLabel>
-              {t("stats_utility:createMeterModal.name_label")}
-            </SectionLabel>
-            <Input
-              placeholder={t("stats_utility:createMeterModal.placeholder_name")}
-              {...register("name", { required: true })}
-              autoFocus
-            />
-          </div>
-
-          <FormRow>
-            <div>
-              <SectionLabel>
-                {t("stats_utility:createMeterModal.type_label")}
-              </SectionLabel>
-              <BaseSelect
-                triggerLabel={
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    {activeTypeConfig?.icon}{" "}
-                    {activeTypeConfig?.label ||
-                      t("stats_utility:createMeterModal.placeholder_type")}
-                  </div>
-                }
-              >
-                {SERVICE_TYPES.map((t) => (
-                  <TypeOption
-                    key={t.value}
-                    onClick={() => handleTypeChange(t.value)}
-                    $isActive={currentType === t.value}
-                  >
-                    {t.icon} <span style={{ flex: 1 }}>{t.label}</span>
-                    {currentType === t.value && (
-                      <HiCheck color="var(--color-brand-600)" />
-                    )}
-                  </TypeOption>
+          {isMobile && (
+            <ProgressWrapper>
+              <StepIndicator>
+                {[1, 2, 3].map((step) => (
+                  <StepItem key={step}>
+                    <StepNumber
+                      $active={currentStep === step}
+                      $completed={currentStep > step}
+                    >
+                      {currentStep > step ? <HiCheck /> : step}
+                    </StepNumber>
+                    <StepLabel $active={currentStep === step}>
+                      {step === 1 && t("stats_utility:createMeterModal.step_info", "Параметри")}
+                      {step === 2 && t("stats_utility:createMeterModal.step_tariff", "Тариф")}
+                      {step === 3 && t("stats_utility:createMeterModal.step_provider", "Провайдер")}
+                    </StepLabel>
+                  </StepItem>
                 ))}
-              </BaseSelect>
-            </div>
-            <div>
-              <SectionLabel>
-                {t("stats_utility:createMeterModal.unit_label")}
-              </SectionLabel>
-              <Input
-                placeholder={t("stats_utility:createMeterModal.placeholder_unit")}
-                {...register("unit", { required: true })}
-              />
-            </div>
-          </FormRow>
+              </StepIndicator>
+            </ProgressWrapper>
+          )}
 
-          <FormRow>
-            <div>
-              <SectionLabel>
-                {t("stats_utility:createMeterModal.tariff_label")}
-              </SectionLabel>
-              <Input
-                type="number"
-                step="0.0001"
-                placeholder="0.00"
-                {...register("tariff", { required: true })}
-              />
-            </div>
-            <div>
-              <SectionLabel>
-                {t("stats_utility:createMeterModal.account_number_label")}
-              </SectionLabel>
-              <Input
-                placeholder={t(
-                  "stats_utility:createMeterModal.placeholder_account",
+          {/* STEP 1: General Info (name, type, unit) */}
+          {(!isMobile || currentStep === 1) && (
+            <>
+              <div>
+                <SectionLabel>
+                  {t("stats_utility:createMeterModal.name_label")}
+                </SectionLabel>
+                <Input
+                  placeholder={t("stats_utility:createMeterModal.placeholder_name")}
+                  {...register("name", { required: t("common:validation.required", "Це поле обов'язкове") })}
+                  $hasError={!!errors.name}
+                  autoFocus
+                />
+                {errors.name && (
+                  <span style={{ color: "var(--color-red-600)", fontSize: "0.75rem", marginTop: "0.25rem", display: "block" }}>
+                    {errors.name.message as string}
+                  </span>
                 )}
-                {...register("personal_account")}
-              />
-            </div>
-          </FormRow>
+              </div>
 
-          <SelectorWrapper>
-            <SectionLabel>
-              {t("stats_utility:createMeterModal.asset_label")}
-            </SectionLabel>
-            <AssetSelector
-              transactionType="expense"
-              assetId={assets.assetId}
-              setAssetId={assets.setAssetId}
-              newAsset={assets.newAsset}
-              setNewAsset={assets.setNewAsset}
-              transactionDate={sessionDate}
-            />
-          </SelectorWrapper>
+              <FormRow>
+                <div>
+                  <SectionLabel>
+                    {t("stats_utility:createMeterModal.type_label")}
+                  </SectionLabel>
+                  <BaseSelect
+                    triggerLabel={
+                      <div
+                        style={{ display: "flex", alignItems: "center", gap: 8 }}
+                      >
+                        {activeTypeConfig?.icon}{" "}
+                        {activeTypeConfig?.label ||
+                          t("stats_utility:createMeterModal.placeholder_type")}
+                      </div>
+                    }
+                  >
+                    {SERVICE_TYPES.map((t) => (
+                      <TypeOption
+                        key={t.value}
+                        onClick={() => handleTypeChange(t.value)}
+                        $isActive={currentType === t.value}
+                      >
+                        {t.icon} <span style={{ flex: 1 }}>{t.label}</span>
+                        {currentType === t.value && (
+                          <HiCheck color="var(--color-brand-600)" />
+                        )}
+                      </TypeOption>
+                    ))}
+                  </BaseSelect>
+                </div>
+                <div>
+                  <SectionLabel>
+                    {t("stats_utility:createMeterModal.unit_label")}
+                  </SectionLabel>
+                  <Input
+                    placeholder={t("stats_utility:createMeterModal.placeholder_unit")}
+                    {...register("unit", { required: t("common:validation.required", "Це поле обов'язкове") })}
+                    $hasError={!!errors.unit}
+                  />
+                  {errors.unit && (
+                    <span style={{ color: "var(--color-red-600)", fontSize: "0.75rem", marginTop: "0.25rem", display: "block" }}>
+                      {errors.unit.message as string}
+                    </span>
+                  )}
+                </div>
+              </FormRow>
+            </>
+          )}
 
-          <SelectorWrapper>
-            <SectionLabel>
-              {t("stats_utility:createMeterModal.provider_label")}
-            </SectionLabel>
-            <CounterpartySelect
-              counterparties={data.utilityProviders}
-              value={currentCP}
-              onChange={(id) => setValue("counterparty_id", id)}
-              hasError={!currentCP && isSubmitting}
-              initialExpanded={data.expandedIds}
-              priorityCategoryId={data.priorityCategoryId}
-            />
-          </SelectorWrapper>
+          {/* STEP 2: Pricing & Account (tariff, personal_account) */}
+          {(!isMobile || currentStep === 2) && (
+            <FormRow>
+              <div>
+                <SectionLabel>
+                  {t("stats_utility:createMeterModal.tariff_label")}
+                </SectionLabel>
+                <Input
+                  type="number"
+                  step="0.0001"
+                  placeholder="0.00"
+                  {...register("tariff", { required: t("common:validation.required", "Це поле обов'язкове") })}
+                  $hasError={!!errors.tariff}
+                  autoFocus={isMobile}
+                />
+                {errors.tariff && (
+                  <span style={{ color: "var(--color-red-600)", fontSize: "0.75rem", marginTop: "0.25rem", display: "block" }}>
+                    {errors.tariff.message as string}
+                  </span>
+                )}
+              </div>
+              <div>
+                <SectionLabel>
+                  {t("stats_utility:createMeterModal.account_number_label")}
+                </SectionLabel>
+                <Input
+                  placeholder={t(
+                    "stats_utility:createMeterModal.placeholder_account",
+                  )}
+                  {...register("personal_account")}
+                />
+              </div>
+            </FormRow>
+          )}
 
+          {/* STEP 3: Providers & Assets (asset, provider) */}
+          {(!isMobile || currentStep === 3) && (
+            <>
+              <SelectorWrapper>
+                <SectionLabel>
+                  {t("stats_utility:createMeterModal.asset_label")}
+                </SectionLabel>
+                <AssetSelector
+                  transactionType="expense"
+                  assetId={assets.assetId}
+                  setAssetId={assets.setAssetId}
+                  newAsset={assets.newAsset}
+                  setNewAsset={assets.setNewAsset}
+                  transactionDate={sessionDate}
+                />
+              </SelectorWrapper>
+
+              <SelectorWrapper>
+                <SectionLabel>
+                  {t("stats_utility:createMeterModal.provider_label")}
+                </SectionLabel>
+                <CounterpartySelect
+                  counterparties={data.utilityProviders}
+                  value={currentCP}
+                  onChange={(id) => setValue("counterparty_id", id)}
+                  hasError={!currentCP && isSubmitting}
+                  initialExpanded={data.expandedIds}
+                  priorityCategoryId={data.priorityCategoryId}
+                />
+              </SelectorWrapper>
+            </>
+          )}
+
+          {/* ACTIONS */}
           <div
             style={{
               display: "flex",
@@ -336,17 +494,37 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
               marginTop: "1rem",
             }}
           >
-            <Button
-              variation="secondary"
-              // 🔥 Використовуємо розумне закриття
-              onClick={handleCloseAttempt}
-              type="button"
-            >
-              {t("common:common.cancel")}
-            </Button>
-            <Button variation="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? t("common:shared.saving") : t("common:common.save")}
-            </Button>
+            {isMobile && currentStep > 1 ? (
+              <Button
+                variation="secondary"
+                onClick={handlePrevStep}
+                type="button"
+              >
+                {t("common:common.return")}
+              </Button>
+            ) : (
+              <Button
+                variation="secondary"
+                onClick={handleCloseAttempt}
+                type="button"
+              >
+                {t("common:common.cancel")}
+              </Button>
+            )}
+
+            {isMobile && currentStep < 3 ? (
+              <Button
+                variation="primary"
+                onClick={handleNextStep}
+                type="button"
+              >
+                {t("common:common.next")}
+              </Button>
+            ) : (
+              <Button variation="primary" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? t("common:shared.saving") : t("common:common.save")}
+              </Button>
+            )}
           </div>
         </Form>
       </div>

@@ -208,7 +208,7 @@ function UtilityContent() {
 
         {/* MODALS */}
         <S.ModalWrapper>
-          <Modal.Window name="create-meter">
+          <Modal.Window name="create-meter" mobileBottomSheet>
             <CreateMeterForm meterToEdit={activeMeter} onCloseModal={close} />
           </Modal.Window>
 

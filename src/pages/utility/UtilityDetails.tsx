@@ -310,7 +310,7 @@ function UtilityDetailsContent() {
         </S.TableWrapper>
 
         {/* --- MODALS --- */}
-        <Modal.Window name="edit-meter">
+        <Modal.Window name="edit-meter" mobileBottomSheet>
           <CreateMeterForm meterToEdit={meter} onCloseModal={close} />
         </Modal.Window>
 
