@@ -5,7 +5,7 @@ import { WidgetControls } from "../../components/stats/widgets/WidgetControls";
 import { TrendWidget } from "../../components/stats/widgets/TrendWidget";
 import { ExpensesPieWidget } from "../../components/stats/widgets/ExpensesPieWidget";
 import { DetailedTable } from "../../components/stats/DetailedTable";
-import ExportStatsModal from "../../components/stats/ExportModal";
+import ExportPage from "../settings/ExportPage";
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -22,7 +22,6 @@ export const Statistics = () => {
   const isMobile = useIsMobile();
   const {
     filter,
-    isExportModalOpen,
     flowType,
     activeTab,
     enrichedData,
@@ -65,13 +64,14 @@ export const Statistics = () => {
             />
 
             {!isMobile && (
-              <Button
-                variation="secondary"
-                icon={<HiArrowDownTray size={18} />}
-                onClick={() => actions.setIsExportModalOpen(true)}
-              >
-                {t("export_import:exportPage.title")}
-              </Button>
+              <Modal.Open opens="export-all">
+                <Button
+                  variation="secondary"
+                  icon={<HiArrowDownTray size={18} />}
+                >
+                  {t("export_import:exportPage.title")}
+                </Button>
+              </Modal.Open>
             )}
           </S.ControlsGroup>
         </S.Header>
@@ -145,21 +145,20 @@ export const Statistics = () => {
           </S.ContentGrid>
         )}
 
-        {isExportModalOpen && (
-          <ExportStatsModal
+        <Modal.Window name="export-all">
+          <ExportPage
             initialFrom={filter.from}
             initialTo={filter.to}
             initialAccountIds={filter.accountIds}
-            onClose={() => actions.setIsExportModalOpen(false)}
+            initialTab="stats"
           />
-        )}
+        </Modal.Window>
       </S.PageContainer>
 
       {isMobile && (
-        <FAB 
-          onClick={() => actions.setIsExportModalOpen(true)} 
-          icon={<HiArrowDownTray />} 
-        />
+        <Modal.Open opens="export-all">
+          <FAB icon={<HiArrowDownTray />} />
+        </Modal.Open>
       )}
     </Modal>
   );

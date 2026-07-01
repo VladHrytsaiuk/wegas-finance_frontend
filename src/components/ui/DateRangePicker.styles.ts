@@ -314,6 +314,10 @@ export const TriggerBtn = styled.button<{ $active: boolean }>`
   &:hover {
     border-color: var(--color-text-secondary);
   }
+  &:focus, &:focus-visible, &:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 `;
 
 export const FooterBtn = styled.button`

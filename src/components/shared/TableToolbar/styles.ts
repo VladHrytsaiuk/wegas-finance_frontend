@@ -100,7 +100,7 @@ export const FilterButton = styled.button<{
   border: 1px solid
     ${(props) =>
       props.$isActive || props.$isOpen
-        ? "var(--color-brand-200)"
+        ? "var(--color-brand-500)"
         : "var(--color-border)"};
   border-radius: 8px;
 
@@ -110,9 +110,10 @@ export const FilterButton = styled.button<{
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   white-space: nowrap;
   flex-shrink: 0;
+  border-width: 1px !important;
 
   @media (max-width: 1300px) {
     padding: 0 0.6rem;
@@ -122,7 +123,7 @@ export const FilterButton = styled.button<{
 
   &:hover {
     background-color: var(--color-brand-50);
-    border-color: var(--color-brand-300);
+    border-color: var(--color-brand-500);
   }
 
   & svg:not(.chevron) {
@@ -141,6 +142,19 @@ export const FilterButton = styled.button<{
     opacity: 0.5;
     transition: transform 0.2s;
     transform: ${(props) => (props.$isOpen ? "rotate(180deg)" : "rotate(0)")};
+  }
+
+  outline: none !important;
+  box-shadow: none !important;
+
+  &:focus,
+  &:focus-visible,
+  &:focus-within,
+  &[data-autofocus],
+  &[role="combobox"]:focus,
+  &[role="combobox"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
   }
 `;
 
@@ -161,6 +175,11 @@ export const TriggerSearchInput = styled.input`
 
   &::placeholder {
     color: var(--color-text-tertiary);
+  }
+
+  &:focus, &:focus-visible, &:active {
+    outline: none !important;
+    box-shadow: none !important;
   }
 `;
 
@@ -222,7 +241,7 @@ export const ClearTextBtn = styled.button`
 
 export const PortalMenu = styled.div`
   position: fixed;
-  z-index: 9999;
+  z-index: 99999;
   min-width: 240px;
   max-width: 320px;
   max-height: 400px;
@@ -266,7 +285,8 @@ export const MenuOption = styled.div<{ $selected: boolean }>`
   color: ${(props) =>
     props.$selected ? "var(--color-brand-700)" : "var(--color-text-main)"};
   font-weight: ${(props) => (props.$selected ? "600" : "400")};
-  &:hover {
+  &:hover, &:focus {
+    outline: none;
     background-color: ${(props) =>
       props.$selected ? "var(--color-brand-100)" : "var(--color-bg-page)"};
   }

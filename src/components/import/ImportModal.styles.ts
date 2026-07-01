@@ -4,7 +4,7 @@ export const Container = styled.div`
   width: 70vw;
   max-width: 1200px;
   min-width: 900px;
-  height: 80vh;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-surface);

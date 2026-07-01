@@ -82,11 +82,8 @@ export default function UploadStep({
           </S.UploadTitle>
           <S.UploadSubtitle>
             {bankType === "privatbank"
-              ? t("export_import:importModal.upload_hint_privat", "Оберіть PDF файл")
-              : t(
-                  "importModal.upload_hint_mono",
-                  "Рекомендовано CSV або PDF, XLS"
-                )}
+              ? t("importModal.upload_hint_privat", "Рекомендовано XLSX або PDF")
+              : t("importModal.upload_hint_mono", "Рекомендовано CSV або PDF, XLS")}
           </S.UploadSubtitle>
         </S.UploadText>
 
@@ -94,7 +91,7 @@ export default function UploadStep({
           ref={fileInputRef}
           type="file"
           hidden
-          accept={bankType === "privatbank" ? ".pdf" : ".pdf,.csv,.xls,.xlsx"}
+          accept={bankType === "privatbank" ? ".pdf,.xls,.xlsx" : ".pdf,.csv,.xls,.xlsx"}
           onChange={handleFileChange}
         />
       </S.UploadZone>

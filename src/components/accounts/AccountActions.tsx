@@ -207,7 +207,7 @@ export function AccountActions({ account, onAction }: any) {
                 <span>{t("accounts:accountDetailsPage.action_import_button")}</span>
               </ImportBtn>
             </Modal.Open>
-            <Modal.Window name="import-modal">
+            <Modal.Window name="import-modal" padding="0">
               <ImportModal account={account} />
             </Modal.Window>
           </Modal>

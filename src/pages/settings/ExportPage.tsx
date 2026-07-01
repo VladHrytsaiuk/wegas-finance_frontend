@@ -20,8 +20,15 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./ExportPage.styles";
 
-export default function ExportPage() {
-  const { state, actions, t } = useExportPage();
+interface ExportPageProps {
+  initialFrom?: number;
+  initialTo?: number;
+  initialAccountIds?: string[];
+  initialTab?: "transactions" | "stats" | "backup";
+}
+
+export default function ExportPage(props?: ExportPageProps) {
+  const { state, actions, t } = useExportPage(props);
   const isMobile = useIsMobile();
   const {
     activeTab,

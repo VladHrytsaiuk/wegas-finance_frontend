@@ -70,7 +70,7 @@ export const TriggerButton = styled(Button)<{
 
 export const MegaDropdown = styled.div`
   position: fixed;
-  z-index: 9999;
+  z-index: 99999;
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);

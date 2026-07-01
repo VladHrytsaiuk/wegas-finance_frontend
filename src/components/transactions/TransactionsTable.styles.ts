@@ -299,7 +299,7 @@ export const MenuDropdown = styled.div`
   position: absolute;
   right: 0;
   top: 100%;
-  z-index: 9999;
+  z-index: 99999;
   background: var(--color-bg-page);
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

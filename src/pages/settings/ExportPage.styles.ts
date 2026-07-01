@@ -1,9 +1,14 @@
 import styled from "styled-components";
 
 export const PageContainer = styled.div`
-  max-width: 1000px;
+  width: 950px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 1rem;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 `;
 
 export const Header = styled.div`
@@ -66,6 +71,11 @@ export const ControlPanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  height: 460px;
+
+  @media (max-width: 1024px) {
+    height: auto;
+  }
 `;
 
 export const ControlRow = styled.div`

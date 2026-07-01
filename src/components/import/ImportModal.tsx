@@ -24,10 +24,10 @@ import { useImportModal } from "../../hooks/Import/useImportModal";
 interface ImportModalProps {
   // 🔥 Зміна: приймаємо об'єкт account
   account: any;
-  onClose?: () => void;
+  onCloseModal?: () => void;
 }
 
-export default function ImportModal({ account, onClose }: ImportModalProps) {
+export default function ImportModal({ account, onCloseModal }: ImportModalProps) {
   const {
     state: {
       step,
@@ -56,7 +56,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
       importBatch,
     },
     t,
-  } = useImportModal({ account, onClose });
+  } = useImportModal({ account, onClose: onCloseModal });
 
   if (isLoading) return <CenteredSpinner isContainer />;
 
@@ -164,7 +164,7 @@ export default function ImportModal({ account, onClose }: ImportModalProps) {
 
           <S.FooterLeftGroup>
             {step === "upload" ? (
-              <Button variation="secondary" onClick={onClose}>
+              <Button variation="secondary" onClick={onCloseModal}>
                 {t("accounts:accountForm.button_cancel")}
               </Button>
             ) : (

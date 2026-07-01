@@ -21,26 +21,40 @@ import {
   generatePDF,
 } from "../../utils/fileGenerators";
 
-export const useExportPage = () => {
+interface UseExportPageProps {
+  initialFrom?: number;
+  initialTo?: number;
+  initialAccountIds?: string[];
+  initialTab?: "transactions" | "stats" | "backup";
+}
+
+export const useExportPage = (props?: UseExportPageProps) => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const isChild = user?.role_id === "child";
 
+  const {
+    initialFrom = subDays(new Date(), 30).getTime(),
+    initialTo = endOfDay(new Date()).getTime(),
+    initialAccountIds = [],
+    initialTab = "transactions",
+  } = props || {};
+
   // --- UI State ---
   const [activeTab, setActiveTab] = useState<"transactions" | "stats" | "backup">(
-    "transactions"
+    initialTab
   );
   const [loading, setLoading] = useState(false);
 
   // --- Date Range ---
   const [dateRange, setDateRange] = useState({
-    from: subDays(new Date(), 30).getTime(),
-    to: endOfDay(new Date()).getTime(),
+    from: initialFrom,
+    to: initialTo,
   });
 
   // --- Transactions Filters & Format ---
   const [transFilters, setTransFilters] = useState({
-    accountIds: [] as string[],
+    accountIds: initialAccountIds,
     categoryIds: [] as string[],
     counterpartyIds: [] as string[],
     userIds: [] as string[],
@@ -51,7 +65,7 @@ export const useExportPage = () => {
   );
 
   // --- Stats Filters & Options ---
-  const [statsAccountIds, setStatsAccountIds] = useState<string[]>([]);
+  const [statsAccountIds, setStatsAccountIds] = useState<string[]>(initialAccountIds);
   const [statsOptions, setStatsOptions] = useState({
     summary: true,
     topTransactions: true,
@@ -115,7 +129,7 @@ export const useExportPage = () => {
       },
       {
         key: "accountIds",
-        label: t("accounts:accountsFilter.owner_label"),
+        label: t("navigation:general.accounts", "Рахунки"),
         type: "multi-select",
         options: (accounts || []).map((a: any) => ({
           label: a.name,
@@ -143,7 +157,7 @@ export const useExportPage = () => {
       },
       {
         key: "userIds",
-        label: t("export_import:exportPage.label_who"),
+        label: t("accounts:accountsFilter.owner_label", "Власник"),
         type: "multi-select",
         options: (users || []).map((u: any) => ({
           label: u.name,

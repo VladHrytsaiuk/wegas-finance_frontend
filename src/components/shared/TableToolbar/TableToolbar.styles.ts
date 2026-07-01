@@ -255,7 +255,7 @@ export const SortLabelValue = styled.span`
 `;
 export const PortalMenu = styled.div`
   position: fixed;
-  z-index: 9999;
+  z-index: 99999;
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;

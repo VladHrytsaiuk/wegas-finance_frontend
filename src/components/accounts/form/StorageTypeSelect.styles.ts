@@ -86,7 +86,7 @@ export const PortalMenu = styled.div`
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  z-index: 9999;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   overflow: hidden;
