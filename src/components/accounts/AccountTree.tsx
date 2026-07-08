@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import * as HeroIcons from "react-icons/hi2";
+import { useMemo, useState } from "react";
 import { HiChevronDown, HiCheck } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
 
 // Імпорт стилів
 import * as S from "./AccountTree.styles";
@@ -40,12 +41,6 @@ function isNodePartiallySelected(
   return selectedCount > 0 && selectedCount < leaves.length;
 }
 
-// Динамічна іконка
-const DynamicIcon = ({ name }: { name: string }) => {
-  const IconComponent = (HeroIcons as any)[name] || HeroIcons.HiTag;
-  return <IconComponent />;
-};
-
 // --- КОМПОНЕНТ ВУЗЛА (Рекурсивний) ---
 
 interface TreeNodeProps {
@@ -71,7 +66,6 @@ const TreeNode = ({
   const isSelected = isNodeSelected(node, selectedIds);
   const isPartiallySelected =
     !isSelected && isNodePartiallySelected(node, selectedIds);
-  const isBankLogo = node.icon?.startsWith("icon_");
 
   const handleExpandClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -185,8 +179,8 @@ const TreeNode = ({
 // --- ГОЛОВНИЙ КОМПОНЕНТ ---
 
 interface AccountTreeProps {
-  accounts: any[];
-  users: any[];
+  accounts: Account[];
+  users: UserProfile[];
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
   searchQuery?: string;
@@ -204,30 +198,42 @@ export const AccountTree = ({
   // Використовуємо наш новий хук
   const treeData = useAccountTree({ accounts, users, searchQuery });
 
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(
+    new Set(),
+  );
 
-  // Автоматичне розгортання при пошуку
-  useEffect(() => {
-    if (searchQuery) {
-      const allIds = new Set<string>();
-      const traverse = (nodes: AccountTreeNode[]) => {
-        nodes.forEach((n) => {
-          allIds.add(n.id);
-          if (n.children) traverse(n.children);
-        });
-      };
-      traverse(treeData);
-      setExpandedIds(allIds);
-    } else {
-      // За замовчуванням розгортаємо кореневі елементи (User)
-      setExpandedIds(new Set(treeData.map((n) => n.id)));
-    }
-  }, [treeData, searchQuery]);
+  const rootExpandedIds = useMemo(
+    () => new Set(treeData.map((node) => node.id)),
+    [treeData],
+  );
+
+  const searchExpandedIds = useMemo(() => {
+    const allIds = new Set<string>();
+    const traverse = (nodes: AccountTreeNode[]) => {
+      nodes.forEach((node) => {
+        allIds.add(node.id);
+        if (node.children.length > 0) traverse(node.children);
+      });
+    };
+
+    traverse(treeData);
+    return allIds;
+  }, [treeData]);
+
+  const expandedIds = searchQuery
+    ? searchExpandedIds
+    : manualExpandedIds.size > 0
+      ? manualExpandedIds
+      : rootExpandedIds;
 
   const toggleExpand = (id: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+    setManualExpandedIds(() => {
+      const next = new Set(expandedIds);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };

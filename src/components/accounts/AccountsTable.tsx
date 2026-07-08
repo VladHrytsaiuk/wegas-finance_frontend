@@ -5,10 +5,12 @@ import Table from "../ui/Table";
 import { useAccountsTable } from "../../hooks/Accounts/useAccountsTable";
 import { AccountRow } from "./AccountRow";
 import * as S from "./AccountsTable.styles";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
 
 interface AccountsTableProps {
-  accounts: any[];
-  users: any[];
+  accounts: Account[];
+  users: UserProfile[];
   onDelete: (id: string) => void;
   onClick: (id: string) => void;
   canManage: boolean;

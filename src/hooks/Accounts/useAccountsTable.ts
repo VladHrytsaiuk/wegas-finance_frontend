@@ -2,12 +2,14 @@ import { useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { BANK_SKINS, type BankSkin } from "../../components/accounts/bankSkins";
 import { formatMoney as formatMoneyHelper } from "../../utils/helpers";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
 
 // Можна додати мапу іконок для скарбничок
 
 interface UseAccountsTableProps {
-  accounts: any[];
-  users: any[];
+  accounts: Account[];
+  users: UserProfile[];
 }
 
 export const useAccountsTable = ({
@@ -18,7 +20,7 @@ export const useAccountsTable = ({
 
   // 1. ГРУПУВАННЯ ТА СОРТУВАННЯ
   const { groupedAccounts, sortedKeys } = useMemo(() => {
-    const groups: Record<string, any[]> = {};
+    const groups: Record<string, Account[]> = {};
 
     accounts.forEach((acc) => {
       let key = acc.type; // 'cash', 'piggy_bank', 'card'
@@ -113,14 +115,14 @@ export const useAccountsTable = ({
   // 4. ІМ'Я ВЛАСНИКА
   const getOwnerName = useCallback(
     (userId: string) => {
-      const u = users.find((user: any) => user.id === userId);
+      const u = users.find((user) => user.id === userId);
       return u ? u.name : t("accounts:accountsTable.owner_default_family");
     },
     [users, t],
   );
 
   // 5. 🔥 СТИЛІ ІКОНОК
-  const getIconStyles = useCallback((acc: any) => {
+  const getIconStyles = useCallback((acc: Account) => {
     // КАРТКИ
     if (acc.type === "card") {
       const bank = acc.bank_name;

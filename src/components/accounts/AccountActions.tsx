@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import axios from "axios";
 import {
   HiArrowDownTray,
   HiArrowUpTray,
@@ -15,9 +16,13 @@ import Modal from "../ui/Modal";
 import ImportModal from "../import/ImportModal";
 import CreateTransactionModal from "../transactions/CreateTransactionModal";
 
-import { useAccountActions } from "../../hooks/Accounts/useAccountActions";
+import {
+  useAccountActions,
+  type AccountActionType,
+} from "../../hooks/Accounts/useAccountActions";
 import { monobankApi } from "../../services/apiMonobank";
 import { useSync } from "../../context/SyncContext";
+import type { Account } from "../../services/apiAccounts";
 
 const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -99,7 +104,12 @@ const LockIcon = styled(HiLockClosed)`
   flex-shrink: 0;
 `;
 
-export function AccountActions({ account, onAction }: any) {
+interface AccountActionsProps {
+  account: Account;
+  onAction?: (type: AccountActionType) => void;
+}
+
+export function AccountActions({ account, onAction }: AccountActionsProps) {
   const { t } = useTranslation();
   const { state, actions } = useAccountActions(account);
   const { statusData, startPolling, stopPolling } = useSync();
@@ -115,10 +125,12 @@ export function AccountActions({ account, onAction }: any) {
     try {
       startPolling();
       await monobankApi.forceSync(account.id);
-    } catch (err: any) {
+    } catch (err) {
+      const errorMessage = axios.isAxiosError(err)
+        ? err.response?.data?.error
+        : undefined;
       toast.error(
-        err.response?.data?.error ||
-          t("accounts:accountDetailsPage.sync_error", "Помилка"),
+        errorMessage || t("accounts:accountDetailsPage.sync_error", "Помилка"),
       );
       stopPolling();
     } finally {
@@ -126,7 +138,7 @@ export function AccountActions({ account, onAction }: any) {
     }
   };
 
-  const handleClick = (type: "income" | "expense" | "transfer") => {
+  const handleClick = (type: AccountActionType) => {
     if (isLocked) return;
     if (onAction) onAction(type);
     else actions.handleOpenTransaction(type);

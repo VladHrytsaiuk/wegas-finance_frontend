@@ -8,15 +8,18 @@ export interface Account {
   type: string;
   name: string;
   icon?: string;
+  is_synced?: boolean;
   // Додаємо bank_name в інтерфейс, бо він є в JSON
   bank_name?: string;
 }
 
+export type AccountActionType = "income" | "expense" | "transfer";
+
 export const useAccountActions = (account: Account) => {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const [txType, setTxType] = useState<string>("expense");
+  const [txType, setTxType] = useState<AccountActionType>("expense");
 
-  const handleOpenTransaction = (type: string) => {
+  const handleOpenTransaction = (type: AccountActionType) => {
     setTxType(type);
     setIsTxModalOpen(true);
   };

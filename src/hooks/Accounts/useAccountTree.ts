@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 // 🔥 Додаємо імпорт скінів, щоб дерево знало про логотипи банків
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
 
 export interface AccountTreeNode {
   id: string;
@@ -12,12 +14,12 @@ export interface AccountTreeNode {
   icon?: string;
   color?: string;
   isBank?: boolean;
-  data?: any;
+  data?: Account;
 }
 
 interface UseAccountTreeProps {
-  accounts: any[];
-  users: any[];
+  accounts: Account[];
+  users: UserProfile[];
   searchQuery?: string;
 }
 
@@ -43,7 +45,7 @@ export function useAccountTree({
     if (filteredAccounts.length === 0) return [];
 
     // 2. Групування
-    const groupedByUser: Record<string, any[]> = {};
+    const groupedByUser: Record<string, Account[]> = {};
     users.forEach((u) => {
       groupedByUser[u.id] = [];
     });
@@ -66,7 +68,7 @@ export function useAccountTree({
         ? user.name
         : t("accounts:accountsTable.owner_default_family");
 
-      const groupedByType: Record<string, any[]> = {
+      const groupedByType: Record<string, Account[]> = {
         card: [],
         cash: [],
         savings: [],
@@ -91,7 +93,7 @@ export function useAccountTree({
         label: string,
         icon: string,
         color: string,
-      ) => {
+      ): AccountTreeNode | null => {
         const accs = groupedByType[key];
         if (!accs || accs.length === 0) return null;
 

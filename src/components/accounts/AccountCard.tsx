@@ -12,10 +12,12 @@ import { useTranslation } from "react-i18next"; // Додаємо хук пер�
 import { formatMoney } from "../../utils/helpers";
 import * as S from "./AccountCard.styles";
 import { BankLogo, PaymentSystemLogo } from "./form/CardStyles";
+import type { Account } from "../../services/apiAccounts";
+import type { BankSkin } from "./bankSkins";
 
 interface AccountCardProps {
-  account: any;
-  skin: any;
+  account: Account;
+  skin: BankSkin;
   ownerName?: string;
 }
 
