@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -9,10 +9,20 @@ import {
   getCounterpartiesApi,
   getCpCategoriesApi,
 } from "../../services/apiCounterparties";
+import type { CreateAssetOnFlyInput, UtilityMeter } from "../../types";
+
+type MeterFormValues = {
+  name: string;
+  type: string;
+  unit: string;
+  tariff: string;
+  personal_account: string;
+  counterparty_id: string;
+};
 
 interface UseCreateMeterFormProps {
   onCloseModal?: () => void;
-  meterToEdit?: any;
+  meterToEdit?: UtilityMeter;
 }
 
 export const useCreateMeterForm = ({
@@ -25,7 +35,7 @@ export const useCreateMeterForm = ({
 
   // --- 1. LOCAL STATE FOR ASSETS ---
   const [assetId, setAssetId] = useState(meterToEdit?.asset_id || "");
-  const [newAsset, setNewAssetState] = useState<any>(null);
+  const [newAsset, setNewAssetState] = useState<CreateAssetOnFlyInput | null>(null);
 
   // --- 2. FORM SETUP ---
   const {
@@ -36,7 +46,7 @@ export const useCreateMeterForm = ({
     trigger,
     reset,
     formState: { isSubmitting, errors, isSubmitted },
-  } = useForm({
+  } = useForm<MeterFormValues>({
     defaultValues: {
       name: "",
       type: "electricity",
@@ -127,12 +137,12 @@ export const useCreateMeterForm = ({
     setNewAssetState(null);
   };
 
-  const handleSetNewAsset = (asset: any) => {
+  const handleSetNewAsset = (asset: CreateAssetOnFlyInput | null) => {
     setNewAssetState(asset);
     setAssetId("");
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: MeterFormValues) => {
     if (!currentCP) {
       toast.error(t("stats_utility:utility.toast_select_provider"));
       return;
