@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,7 @@ import { getTransactionsApi } from "../../services/apiTransactions";
 import { getCategoriesApi } from "../../services/apiCategories";
 import { useHeader } from "../../context/HeaderContext";
 import { useSettings } from "../../context/SettingsContext";
-import type { Asset } from "../../types";
+import type { Asset, Category, PaginatedResponse, Transaction } from "../../types";
 
 // 🔥 Імпортуємо твої чисті функції утиліт (підправ шлях до файлу)
 import {
@@ -25,6 +25,7 @@ export const useAssetDetails = () => {
   const { setPageTitle } = useHeader();
   const { currency: baseCurrency, language } = useSettings();
   const queryClient = useQueryClient();
+  const [currentTime] = useState(() => Date.now());
 
   // --- API Queries ---
   const { data: asset, isLoading: isAssetLoading } = useQuery({
@@ -33,13 +34,15 @@ export const useAssetDetails = () => {
     enabled: !!id,
   });
 
-  const { data: txData, isLoading: isTxLoading } = useQuery({
+  const { data: txData, isLoading: isTxLoading } = useQuery<
+    PaginatedResponse<Transaction>
+  >({
     queryKey: ["transactions", { asset_id: id }],
     queryFn: () => getTransactionsApi({ asset_id: id, limit: 100 }),
     enabled: !!id,
   });
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: getCategoriesApi,
   });
@@ -71,13 +74,21 @@ export const useAssetDetails = () => {
 
     const maintenance = transactions
       .filter(
-        (t: any) => t.type === "expense" && t.date > asset.purchase_date + 1000,
+        (transaction: Transaction) =>
+          transaction.type === "expense" &&
+          transaction.date > asset.purchase_date + 1000,
       )
-      .reduce((sum: number, t: any) => sum + t.amount, 0);
+      .reduce(
+        (sum: number, transaction: Transaction) => sum + transaction.amount,
+        0,
+      );
 
     const incomeFromAsset = transactions
-      .filter((t: any) => t.type === "income")
-      .reduce((sum: number, t: any) => sum + t.amount, 0);
+      .filter((transaction: Transaction) => transaction.type === "income")
+      .reduce(
+        (sum: number, transaction: Transaction) => sum + transaction.amount,
+        0,
+      );
 
     return {
       purchase: purchasePrice,
@@ -86,9 +97,8 @@ export const useAssetDetails = () => {
     };
   }, [asset, txData]);
 
-  const calculateWarranty = (start: number, end: number) => {
+  const calculateWarranty = (start: number, end: number, now: number) => {
     if (!end || !start) return null;
-    const now = Date.now();
     const totalDuration = end - start;
     const elapsed = now - start;
 
@@ -128,8 +138,8 @@ export const useAssetDetails = () => {
     }
 
     if (asset.photos && asset.photos.length > 0) {
-      asset.photos.forEach((p: any) => {
-        if (p.path) pathSet.add(p.path);
+      asset.photos.forEach((photo) => {
+        if (photo.path) pathSet.add(photo.path);
       });
     }
 
@@ -150,7 +160,7 @@ export const useAssetDetails = () => {
       isDeleting: deleteMutation.isPending,
       stats,
       warrantyInfo: asset
-        ? calculateWarranty(asset.purchase_date, asset.warranty_end)
+        ? calculateWarranty(asset.purchase_date, asset.warranty_end, currentTime)
         : null,
       baseCurrency,
       language,
@@ -158,7 +168,7 @@ export const useAssetDetails = () => {
       mainPhotoUrl,
     },
     actions: {
-      handleDelete: (id: number) => deleteMutation.mutate(id),
+      handleDelete: (id: string) => deleteMutation.mutate(id),
       navigate,
     },
     helpers: {
