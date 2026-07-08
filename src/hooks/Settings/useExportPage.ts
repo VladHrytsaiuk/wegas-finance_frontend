@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { subDays, endOfDay, format } from "date-fns";
 import { uk, enGB } from "date-fns/locale";
@@ -8,13 +9,13 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useStatsExport } from "../Stats/useStatsExport";
 import { getExportData, getExportBackup } from "../../services/apiExport";
-import { getAccountsApi } from "../../services/apiAccounts";
+import { getAccountsApi, type Account } from "../../services/apiAccounts";
 import { getCategoriesApi } from "../../services/apiCategories";
 import {
   getCounterpartiesApi,
   getCpCategoriesApi,
 } from "../../services/apiCounterparties";
-import { getFamilyMembers } from "../../services/apiUsers";
+import { getFamilyMembers, type UserProfile } from "../../services/apiUsers";
 import {
   generateXLSX,
   generateCSV,
@@ -131,11 +132,11 @@ export const useExportPage = (props?: UseExportPageProps) => {
         key: "accountIds",
         label: t("navigation:general.accounts", "Рахунки"),
         type: "multi-select",
-        options: (accounts || []).map((a: any) => ({
-          label: a.name,
-          value: a.id,
-          icon: a.type === "cash" ? "HiBanknotes" : "HiCreditCard",
-          color: a.color || "#6b7280",
+        options: (accounts || []).map((account: Account) => ({
+          label: account.name,
+          value: account.id,
+          icon: account.type === "cash" ? "HiBanknotes" : "HiCreditCard",
+          color: account.color || "#6b7280",
         })),
       },
       {
@@ -159,11 +160,11 @@ export const useExportPage = (props?: UseExportPageProps) => {
         key: "userIds",
         label: t("accounts:accountsFilter.owner_label", "Власник"),
         type: "multi-select",
-        options: (users || []).map((u: any) => ({
-          label: u.name,
-          value: u.id,
+        options: (users || []).map((user: UserProfile) => ({
+          label: user.name,
+          value: user.id,
           icon: "HiUser",
-          logo: u.avatar_url,
+          logo: user.avatar_url,
         })),
       },
     ],
@@ -204,7 +205,7 @@ export const useExportPage = (props?: UseExportPageProps) => {
       toast.success(t("export_import:exportPage.status_ready", { count: data.length }), {
         id: toastId,
       });
-    } catch (error) {
+    } catch {
       toast.error(t("export_import:exportPage.status_error"), { id: toastId });
     } finally {
       setLoading(false);
@@ -241,8 +242,11 @@ export const useExportPage = (props?: UseExportPageProps) => {
       link.parentNode?.removeChild(link);
       
       toast.success(t("export_import:exportPage.status_backup_ready"), { id: toastId });
-    } catch (error: any) {
-      toast.error(error.message || t("export_import:exportPage.status_error"), { id: toastId });
+    } catch (error: unknown) {
+      const errorMessage = axios.isAxiosError(error)
+        ? error.message
+        : t("export_import:exportPage.status_error");
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setLoading(false);
     }
