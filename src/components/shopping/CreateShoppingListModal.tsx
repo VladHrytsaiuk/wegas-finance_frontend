@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { HiPlus } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import { NoteOptions } from "./NoteOptions";
 import { DEFAULT_NOTE_COLOR } from "../../utils/constants";
+import type { ShoppingVisibility } from "../../hooks/Shopping/useShoppingPage";
 
 const StyledModal = styled.div<{ $color: string }>`
   padding: 1.5rem;
@@ -51,7 +51,12 @@ const Footer = styled.div`
 `;
 
 interface CreateShoppingListModalProps {
-  onCreate: (title: string, color: string, visibility: string, hiddenFrom: string) => void | Promise<unknown>;
+  onCreate: (
+    title: string,
+    color: string,
+    visibility: ShoppingVisibility,
+    hiddenFrom: string,
+  ) => void | Promise<unknown>;
   onClose: () => void;
 }
 
@@ -72,7 +77,7 @@ export const CreateShoppingListModal = ({ onCreate, onClose }: CreateShoppingLis
         if (!openedNew) {
           onClose();
         }
-      } catch (err) {
+      } catch {
         setIsCreating(false);
       }
     }
@@ -99,7 +104,7 @@ export const CreateShoppingListModal = ({ onCreate, onClose }: CreateShoppingLis
           hiddenFrom={hiddenFrom}
           onChangeColor={setColor}
           onChangeVisibility={(vis, hidden) => {
-            setVisibility(vis as any);
+            setVisibility(vis);
             setHiddenFrom(hidden);
           }}
         />

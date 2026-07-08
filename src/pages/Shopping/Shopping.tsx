@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { usePageTitle } from "../../hooks/usePageTitle";
-import { HiPlus, HiPlusCircle } from "react-icons/hi2";
+import { HiPlusCircle } from "react-icons/hi2";
 
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { Button } from "../../components/ui/Button";
 import { NoteOptions } from "../../components/shopping/NoteOptions";
@@ -22,6 +21,7 @@ import * as S from "./Shopping.styles";
 import Modal, { useModal } from "../../components/ui/Modal";
 import { FAB } from "../../components/ui/FAB";
 import { CreateShoppingListModal } from "../../components/shopping/CreateShoppingListModal";
+import type { ShoppingVisibility } from "../../hooks/Shopping/useShoppingPage";
 
 function Shopping() {
   return (
@@ -57,9 +57,8 @@ function ShoppingContent() {
 
   const [newListTitle, setNewListTitle] = useState("");
   const [newListColor, setNewListColor] = useState(DEFAULT_NOTE_COLOR);
-  const [newListVisibility, setNewListVisibility] = useState<
-    "public" | "private" | "hidden"
-  >("public");
+  const [newListVisibility, setNewListVisibility] =
+    useState<ShoppingVisibility>("public");
   const [newListHiddenFrom, setNewListHiddenFrom] = useState("");
 
   // Встановлення глобального заголовка
@@ -100,17 +99,21 @@ function ShoppingContent() {
     <>
       {isMobile && <MobilePageHeader title={t("shopping_wishlist:shopping.title", "Списки покупок")} />}
       <S.PageContainer>
-        <TableToolbar        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        searchPlaceholder={t("shopping_wishlist:shopping.search_placeholder", "Пошук списків...")}
-        filtersConfig={filtersConfig as any}
-        filterValues={filterValues}
-        onFilterChange={handleFilterChange}
-        onClearAll={handleClearAll}
-        sortOptions={sortOptions}
-        sortValue={sortValue}
-        onSortChange={setSortValue}
-      />
+        <TableToolbar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder={t(
+            "shopping_wishlist:shopping.search_placeholder",
+            "Пошук списків...",
+          )}
+          filtersConfig={filtersConfig}
+          filterValues={filterValues}
+          onFilterChange={handleFilterChange}
+          onClearAll={handleClearAll}
+          sortOptions={sortOptions}
+          sortValue={sortValue}
+          onSortChange={setSortValue}
+        />
 
       {!isMobile && (
         <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
@@ -228,8 +231,7 @@ function ShoppingContent() {
                 return true;
               }
               return false;
-            } catch (err) {
-              console.error("Failed to create list: ", err);
+            } catch {
               return false;
             }
           }}

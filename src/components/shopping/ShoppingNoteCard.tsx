@@ -1,18 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { HiPlus, HiCheck, HiTrash, HiDocumentText } from "react-icons/hi2";
+import type { TFunction } from "i18next";
 
 import Modal from "../ui/Modal";
 import ConfirmDelete from "../ui/ConfirmDelete";
 import { NoteOptions } from "./NoteOptions";
 import { useUsers } from "../../hooks/Settings/useUsers";
+import type { ShoppingHandlers } from "../../hooks/Shopping/useShoppingPage";
 
 import type { ShoppingList, ShoppingItem } from "../../services/apiShopping";
 import * as S from "../../pages/Shopping/Shopping.styles"; // Переконайся, що шлях правильний
 
 interface ShoppingNoteCardProps {
   list: ShoppingList;
-  handlers: any; // Або заміни на твій конкретний тип з useShopping
-  t: any;
+  handlers: ShoppingHandlers;
+  t: TFunction;
   isMobileCompact?: boolean;
   isModal?: boolean;
   onClick?: React.MouseEventHandler;
@@ -27,12 +29,8 @@ export default function ShoppingNoteCard({
   onClick,
 }: ShoppingNoteCardProps) {
   const [newItemName, setNewItemName] = useState("");
-  const [title, setTitle] = useState(list.title);
+  const [title, setTitle] = useState(() => list.title);
   const { users } = useUsers();
-
-  useEffect(() => {
-    setTitle(list.title);
-  }, [list.title]);
 
   const author =
     users?.find((u) => String(u.id) === String(list.user_id))?.name ||

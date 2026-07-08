@@ -1,9 +1,16 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { type ShoppingList } from "../../services/apiShopping";
+import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 
 // Експортуємо константу, щоб знати розмір сторінки
 export const SHOPPING_PAGE_SIZE = 9;
+
+type ShoppingFilterValue = string[];
+
+interface ShoppingFilterValues {
+  visibility: ShoppingFilterValue;
+}
 
 export function useShoppingFilters(initialLists: ShoppingList[]) {
   const { t } = useTranslation();
@@ -12,14 +19,9 @@ export function useShoppingFilters(initialLists: ShoppingList[]) {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [sortValue, setSortValue] = useState("date-desc");
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({
+  const [filterValues, setFilterValues] = useState<ShoppingFilterValues>({
     visibility: [],
   });
-
-  // Скидаємо сторінку на 1, коли міняються фільтри
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, sortValue, filterValues]);
 
   // --- LOGIC ---
   const processedLists = useMemo(() => {
@@ -68,7 +70,7 @@ export function useShoppingFilters(initialLists: ShoppingList[]) {
   );
 
   // --- CONFIGS ---
-  const filtersConfig = [
+  const filtersConfig: FilterConfig[] = [
     {
       key: "visibility",
       label: t("shopping_wishlist:shopping.filter_visibility", "Приватність"),
@@ -87,8 +89,22 @@ export function useShoppingFilters(initialLists: ShoppingList[]) {
     { value: "title-asc", label: t("common:common.sort_az", "Назва (А-Я)") },
   ];
 
-  const handleFilterChange = (key: string, val: any) => {
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setPage(1);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSortValue(value);
+    setPage(1);
+  };
+
+  const handleFilterChange = (
+    key: keyof ShoppingFilterValues,
+    val: ShoppingFilterValue,
+  ) => {
     setFilterValues((prev) => ({ ...prev, [key]: val }));
+    setPage(1);
   };
 
   const handleClearAll = () => {
@@ -99,9 +115,9 @@ export function useShoppingFilters(initialLists: ShoppingList[]) {
 
   return {
     searchQuery,
-    setSearchQuery,
+    setSearchQuery: handleSearchChange,
     sortValue,
-    setSortValue,
+    setSortValue: handleSortChange,
     filterValues,
     handleFilterChange,
     handleClearAll,

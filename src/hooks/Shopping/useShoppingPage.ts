@@ -15,6 +15,29 @@ import {
 
 import type { ShoppingList } from "../../services/apiShopping";
 
+export type ShoppingVisibility = "public" | "private" | "hidden";
+
+export interface ShoppingHandlers {
+  createList: (
+    title: string,
+    color: string,
+    visibility: ShoppingVisibility,
+    hiddenFrom: string,
+  ) => Promise<ShoppingList>;
+  updateListColor: (id: string, color: string) => void;
+  updateListVisibility: (
+    id: string,
+    visibility: ShoppingVisibility,
+    hiddenFrom: string,
+  ) => void;
+  updateListTitle: (id: string, title: string) => void;
+  deleteList: (id: string) => void;
+  clearCompleted: (listId: string) => void;
+  addItem: (listId: string, name: string) => void;
+  toggleItem: (id: string, is_bought: boolean) => void;
+  deleteItem: (id: string) => void;
+}
+
 export const useShopping = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -94,7 +117,7 @@ export const useShopping = () => {
       createList: (
         title: string,
         color: string,
-        visibility: string,
+        visibility: ShoppingVisibility,
         hiddenFrom: string,
       ) =>
         createList.mutateAsync({
@@ -109,7 +132,7 @@ export const useShopping = () => {
 
       updateListVisibility: (
         id: string,
-        visibility: string,
+        visibility: ShoppingVisibility,
         hiddenFrom: string,
       ) => updateList.mutate({ id, visibility, hidden_from: hiddenFrom }),
 
@@ -124,7 +147,7 @@ export const useShopping = () => {
       toggleItem: (id: string, is_bought: boolean) =>
         toggleItem.mutate({ id, is_bought }),
       deleteItem: (id: string) => deleteItem.mutate(id),
-    },
+    } satisfies ShoppingHandlers,
     t,
   };
 };
