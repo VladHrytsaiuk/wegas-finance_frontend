@@ -25,6 +25,8 @@ import * as S from "./MultiSelectFilter.styles";
 // Logic
 import { useMultiSelectFilter } from "../../../hooks/Toolbar/useMultiSelectFilter";
 import type { FilterConfig } from "./types";
+import type { Account } from "../../../services/apiAccounts";
+import type { UserProfile } from "../../../services/apiUsers";
 // 🔥 Імпортуємо хук
 import {
   useCategoryTreeState,
@@ -131,7 +133,10 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
   };
 
   return (
-    <div ref={triggerRef as any} style={{ position: "relative" }}>
+    <div
+      ref={triggerRef as React.RefObject<HTMLDivElement>}
+      style={{ position: "relative" }}
+    >
       <FilterButton
         as="div"
         $isActive={activeCount > 0}
@@ -203,7 +208,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                     withCheckboxes={true}
                     collapsible={!search}
                     defaultExpandedIds={
-                      search ? categoryTreeData.map((c: any) => c.id) : []
+                      search ? categoryTreeData.map((c) => c.id) : []
                     }
                   />
                 ) : (
@@ -216,7 +221,7 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                   <CounterpartyTree
                     nodes={counterpartyTreeData}
                     selectedIds={value}
-                    onSelect={(node: any) => toggleNode(node)}
+                    onSelect={(node) => toggleNode(node)}
                     withCheckboxes={true}
                     defaultExpandedIds={cpExpandedIds}
                   />
@@ -227,8 +232,8 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
                 )
               ) : config.treeType === "accounts" ? (
                 <AccountTree
-                  accounts={config.rawData || []}
-                  users={config.relatedData || []}
+                  accounts={(config.rawData || []) as Account[]}
+                  users={(config.relatedData || []) as UserProfile[]}
                   selectedIds={value}
                   onSelect={(ids) => onChange(ids)}
                   searchQuery={search}
@@ -262,4 +267,3 @@ export const MultiSelectFilter = ({ config, value = [], onChange }: Props) => {
     </div>
   );
 };
-

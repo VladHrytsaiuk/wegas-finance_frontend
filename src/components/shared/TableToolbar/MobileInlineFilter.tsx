@@ -17,6 +17,10 @@ import { Checkbox } from "./styles";
 import type { FilterConfig } from "./types";
 import { useCategoryTreeState } from "../../../hooks/Categories/useCategoryTreeState";
 import { useCounterpartyTree } from "../../../hooks/Counterparties/useCounterpartyTree";
+import type { CategoryNode } from "../../../hooks/Categories/useCategoryTreeState";
+import type { TreeNodeData } from "../../counterparties/CounterpartyTree";
+import type { Account } from "../../../services/apiAccounts";
+import type { UserProfile } from "../../../services/apiUsers";
 
 const slideIn = keyframes`
   from { opacity: 0; transform: translateY(-10px); }
@@ -164,15 +168,22 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
     let filtered = categories;
     if (search) {
       const q = search.toLowerCase();
-      filtered = categories.filter((c: any) => c.name.toLowerCase().includes(q));
+      filtered = categories.filter((c: CategoryNode) =>
+        c.name.toLowerCase().includes(q),
+      );
     }
-    const map = new Map();
-    const roots: any[] = [];
-    filtered.forEach((cat: any) => map.set(cat.id, { ...cat, children: [] }));
-    filtered.forEach((cat: any) => {
+    const map = new Map<string, CategoryNode>();
+    const roots: CategoryNode[] = [];
+    filtered.forEach((cat: CategoryNode) =>
+      map.set(cat.id, { ...cat, children: [] }),
+    );
+    filtered.forEach((cat: CategoryNode) => {
       const node = map.get(cat.id);
-      if (cat.parent_id && map.has(cat.parent_id)) map.get(cat.parent_id).children.push(node);
-      else roots.push(node);
+      if (cat.parent_id && map.has(cat.parent_id)) {
+        map.get(cat.parent_id)?.children.push(node as CategoryNode);
+      } else if (node) {
+        roots.push(node);
+      }
     });
     return roots;
   }, [config.treeType, config.rawData, search]);
@@ -197,7 +208,9 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
     if (value.length === 1) {
       const opt = config.options?.find(o => o.value === value[0]);
       if (opt) return opt.label;
-      const raw = config.rawData?.find((r: any) => String(r.id) === String(value[0]));
+      const raw = config.rawData?.find(
+        (r: CategoryNode | TreeNodeData) => String(r.id) === String(value[0]),
+      );
       if (raw) return raw.name || raw.label;
       return t("common:ui.selected_count", { count: 1 });
     }
@@ -253,10 +266,12 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
               />
             ) : config.treeType === "counterparties" ? (
               <CounterpartyTree
-                nodes={counterpartyTreeData}
+                nodes={counterpartyTreeData as TreeNodeData[]}
                 selectedIds={value}
-                onSelect={(node: any) => {
-                   const ids = node.children ? node.children.map((c: any) => String(c.id)) : [String(node.id)];
+                onSelect={(node) => {
+                   const ids = node.children
+                     ? node.children.map((c: TreeNodeData) => String(c.id))
+                     : [String(node.id)];
                    const allSelected = ids.every(id => value.includes(id));
                    onChange(allSelected ? value.filter(id => !ids.includes(id)) : Array.from(new Set([...value, ...ids])));
                 }}
@@ -264,8 +279,8 @@ export const MobileInlineFilter = ({ config, value = [], onChange }: Props) => {
               />
             ) : config.treeType === "accounts" ? (
               <AccountTree
-                accounts={config.rawData || []}
-                users={config.relatedData || []}
+                accounts={(config.rawData || []) as Account[]}
+                users={(config.relatedData || []) as UserProfile[]}
                 selectedIds={value}
                 onSelect={(ids) => onChange(ids)}
                 searchQuery={search}

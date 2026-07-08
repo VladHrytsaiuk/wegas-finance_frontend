@@ -3,9 +3,16 @@ import { useTranslation } from "react-i18next";
 import { useDropdownPosition } from "../useDropdownPosition";
 import { useCounterpartyTree } from "../Counterparties/useCounterpartyTree";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+import type { CategoryNode } from "../Categories/useCategoryTreeState";
+import type { TreeNodeData } from "../../components/counterparties/CounterpartyTree";
 
 // Helper
-const getAllLeafIds = (node: any): string[] => {
+type TreeLikeNode = {
+  id: string | number;
+  children?: TreeLikeNode[];
+};
+
+const getAllLeafIds = (node: TreeLikeNode): string[] => {
   if (!node.children || node.children.length === 0) return [String(node.id)];
   return node.children.flatMap(getAllLeafIds);
 };
@@ -40,7 +47,7 @@ export const useMultiSelectFilter = ({
 
   // --- Handlers ---
   const toggleNode = useCallback(
-    (node: any) => {
+    (node: TreeLikeNode) => {
       const targetIds = getAllLeafIds(node);
       const allSelected = targetIds.every((id) => value.includes(id));
       let newValue: string[];
@@ -192,31 +199,34 @@ export const useMultiSelectFilter = ({
       const q = search.toLowerCase();
       const matches = new Set(
         categories
-          .filter((c: any) => c.name.toLowerCase().includes(q))
-          .map((c: any) => c.id)
+          .filter((c: CategoryNode) => c.name.toLowerCase().includes(q))
+          .map((c: CategoryNode) => c.id)
       );
       filtered = categories.filter(
-        (c: any) =>
+        (c: CategoryNode) =>
           matches.has(c.id) ||
           (c.parent_id && matches.has(c.parent_id)) ||
           categories.some(
-            (child: any) => child.parent_id === c.id && matches.has(child.id)
+            (child: CategoryNode) =>
+              child.parent_id === c.id && matches.has(child.id)
           )
       );
     }
 
     // Rebuild tree
-    const map = new Map();
-    const roots: any[] = [];
-    filtered.forEach((cat: any) => map.set(cat.id, { ...cat, children: [] }));
-    filtered.forEach((cat: any) => {
+    const map = new Map<string, CategoryNode>();
+    const roots: CategoryNode[] = [];
+    filtered.forEach((cat: CategoryNode) =>
+      map.set(cat.id, { ...cat, children: [] }),
+    );
+    filtered.forEach((cat: CategoryNode) => {
       const node = map.get(cat.id);
       if (cat.parent_id && map.has(cat.parent_id))
-        map.get(cat.parent_id).children.push(node);
-      else roots.push(node);
+        map.get(cat.parent_id)?.children.push(node as CategoryNode);
+      else if (node) roots.push(node);
     });
 
-    const sort = (nodes: any[]) => {
+    const sort = (nodes: CategoryNode[]) => {
       nodes.sort((a, b) =>
         a.children.length > 0 && b.children.length === 0 ? -1 : 0
       );
@@ -257,7 +267,7 @@ export const useMultiSelectFilter = ({
       search,
       activeCount,
       categoryTreeData,
-      counterpartyTreeData,
+      counterpartyTreeData: counterpartyTreeData as TreeNodeData[],
       cpExpandedIds,
       filteredFlatOptions,
       style,
