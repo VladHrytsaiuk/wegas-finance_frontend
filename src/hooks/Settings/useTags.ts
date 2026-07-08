@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { getTagsApi, createTagApi, deleteTagApi } from "../../services/apiTags";
 import type { FilterOption } from "../../components/shared/TableToolbar/types";
+import type { Tag } from "../../types";
 
 export const useTags = () => {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ export const useTags = () => {
   const [sortBy, setSortBy] = useState("default");
 
   // --- Data Fetching ---
-  const { data: tags = [], isLoading } = useQuery({
+  const { data: tags = [], isLoading } = useQuery<Tag[]>({
     queryKey: ["tags"],
     queryFn: getTagsApi,
   });
@@ -43,17 +44,19 @@ export const useTags = () => {
   const filteredTags = useMemo(() => {
     if (!tags) return [];
 
-    let result = tags.filter((tag: any) =>
-      tag.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = tags.filter((tag: Tag) =>
+      tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
     if (sortBy === "name-asc") {
-      result.sort((a: any, b: any) => a.name.localeCompare(b.name));
-    } else if (sortBy === "name-desc") {
-      result.sort((a: any, b: any) => b.name.localeCompare(a.name));
+      return [...filtered].sort((a: Tag, b: Tag) => a.name.localeCompare(b.name));
     }
 
-    return result;
+    if (sortBy === "name-desc") {
+      return [...filtered].sort((a: Tag, b: Tag) => b.name.localeCompare(a.name));
+    }
+
+    return filtered;
   }, [tags, searchQuery, sortBy]);
 
   // --- Configs ---
