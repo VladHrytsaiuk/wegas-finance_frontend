@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
@@ -16,7 +16,20 @@ import {
   createTransactionApi, // <-- ТВОЯ ФУНКЦІЯ СТВОРЕННЯ
 } from "../../services/apiTransactions";
 
-import { getAccountsApi } from "../../services/apiAccounts";
+import { getAccountsApi, type Account } from "../../services/apiAccounts";
+import type { Counterparty, CounterpartyBalance, Transaction } from "../../types";
+
+type TransactionsResponse =
+  | Transaction[]
+  | {
+      data?: Transaction[];
+    };
+
+type DebtTransactionType =
+  | "loan_give"
+  | "loan_repay"
+  | "debt_take"
+  | "debt_repay";
 
 export function useDebtorDetails() {
   const { id } = useParams();
@@ -24,9 +37,9 @@ export function useDebtorDetails() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const [counterparty, setCounterparty] = useState<any>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [counterparty, setCounterparty] = useState<Counterparty | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,16 +48,16 @@ export function useDebtorDetails() {
 
   // Стейт для модалки транзакцій
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const [txType, setTxType] = useState<
-    "loan_give" | "loan_repay" | "debt_take" | "debt_repay"
-  >("loan_give");
+  const [txType, setTxType] = useState<DebtTransactionType>("loan_give");
 
   useEffect(() => {
     if (!id) return;
     fetchData();
-  }, [id]);
+  }, [id, fetchData]);
 
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
+    if (!id) return;
+
     try {
       setIsLoading(true);
 
@@ -53,10 +66,10 @@ export function useDebtorDetails() {
 
       // 2. Отримуємо транзакції через фільтр (твоя існуюча функція)
       // В інтерфейсі ти вказав counterparty_id?: string[], тому передаємо масив
-      const txResponse = await getTransactionsApi({
+      const txResponse = (await getTransactionsApi({
         counterparty_id: [id!],
         limit: 100, // Можна збільшити ліміт, щоб бачити всю історію
-      });
+      })) as TransactionsResponse;
 
       // Перевірка: якщо бекенд повертає об'єкт { data: [...] }, беремо .data
       // Якщо повертає просто масив [...], беремо його
@@ -76,7 +89,7 @@ export function useDebtorDetails() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [id, t]);
 
   // --- ЛОГІКА ВИДАЛЕННЯ ТРАНЗАКЦІЇ ---
   const deleteTransaction = async (transactionId: string) => {
@@ -104,17 +117,19 @@ export function useDebtorDetails() {
     }
   };
 
-  const handleUpdateCounterparty = async (data: any) => {
+  const handleUpdateCounterparty = async (data: Partial<Counterparty>) => {
     setIsUpdating(true);
     try {
-      const updated = await updateCounterpartyApi(id!, data);
+      if (!id) return false;
+
+      const updated = await updateCounterpartyApi({ id, ...data });
       setCounterparty(updated);
 
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
 
       toast.success(t("counterparties:counterparties.update_success"));
       return true;
-    } catch (error) {
+    } catch {
       toast.error(t("common:ui.error_action"));
       return false;
     } finally {
@@ -126,7 +141,7 @@ export function useDebtorDetails() {
     accountId: string,
     amount: number,
     currency: string,
-    txType: string // loan_repay або debt_repay
+    txType: DebtTransactionType // loan_repay або debt_repay
   ) => {
     setIsForgiving(true);
     try {
@@ -159,8 +174,12 @@ export function useDebtorDetails() {
   };
 
   // Helpers
-  const hasPositive = counterparty?.balances?.some((b: any) => b.balance > 0);
-  const hasNegative = counterparty?.balances?.some((b: any) => b.balance < 0);
+  const hasPositive = counterparty?.balances?.some(
+    (b: CounterpartyBalance) => b.balance > 0,
+  );
+  const hasNegative = counterparty?.balances?.some(
+    (b: CounterpartyBalance) => b.balance < 0,
+  );
   const hasDebt = hasPositive || hasNegative;
 
   return {
@@ -185,7 +204,7 @@ export function useDebtorDetails() {
       forgiveDebt: handleForgiveDebt,
       deleteTransaction, // Експортуємо виправлену функцію
       refreshData: fetchData, // 🔥 Експортуємо функцію оновлення
-      openTxModal: (type: any) => {
+      openTxModal: (type: DebtTransactionType) => {
         setTxType(type);
         setIsTxModalOpen(true);
       },
