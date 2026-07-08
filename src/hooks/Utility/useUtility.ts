@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +14,7 @@ import {
   updateReadingStatus,
   payReading,
 } from "../../services/apiUtility";
+import type { UtilityMeter } from "../../types";
 
 // 1. Список лічильників
 export function useUtilityMeters() {
@@ -30,11 +32,16 @@ export function useUtilityMeters() {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
       toast.success(t("stats_utility:utility.toast_create_success"));
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (error: unknown) =>
+      toast.error(
+        axios.isAxiosError(error)
+          ? error.message
+          : t("common:common.error_occurred"),
+      ),
   });
 
   const { mutate: update } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<UtilityMeter> }) =>
       updateMeter(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
@@ -81,9 +88,9 @@ export function useUtilityReadings(meterId: string | null) {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
       toast.success(t("stats_utility:utility.toast_reading_add_success"));
     },
-    onError: (err: any) =>
+    onError: (error: unknown) =>
       toast.error(
-        err?.response?.data?.error ||
+        (axios.isAxiosError(error) ? error.response?.data?.error : undefined) ||
           t("stats_utility:utility.toast_reading_add_error"),
       ),
   });
@@ -114,7 +121,7 @@ export function useUtilityReadingActions() {
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] }); // Оновлюємо борг на картці
       toast.success(t("stats_utility:utility.toast_status_update_success"));
     },
-    onError: (err: any) =>
+    onError: () =>
       toast.error(t("stats_utility:utility.toast_status_update_error")),
   });
 
@@ -128,7 +135,12 @@ export function useUtilityReadingActions() {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       toast.success(t("stats_utility:utility.toast_pay_success"));
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (error: unknown) =>
+      toast.error(
+        axios.isAxiosError(error)
+          ? error.message
+          : t("common:common.error_occurred"),
+      ),
   });
 
   return { togglePaid, pay };
