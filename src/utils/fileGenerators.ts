@@ -1,12 +1,24 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { format } from "date-fns";
+import type { TFunction } from "i18next";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import type { Transaction } from "../services/apiStats";
 import { fontBase64 } from "./fonts/roboto";
 
-// Мапер тепер приймає функцію перекладу 't'
-const mapTransactionToRow = (tx: any, t: any) => {
+type ExportRow = {
+  date: string;
+  type: string;
+  category: string;
+  amount: string;
+  currency: string;
+  account: string;
+  counterparty: string;
+  note: string;
+};
+
+const mapTransactionToRow = (tx: Transaction, t: TFunction): ExportRow => {
   return {
     date: format(new Date(tx.date), "dd.MM.yyyy"),
     type: t(`exportMapping.type_${tx.type}`),
@@ -19,7 +31,11 @@ const mapTransactionToRow = (tx: any, t: any) => {
   };
 };
 
-export const generateXLSX = async (data: any[], fileName: string, t: any) => {
+export const generateXLSX = async (
+  data: Transaction[],
+  fileName: string,
+  t: TFunction,
+) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(t("export_import:exportPage.title"));
 
@@ -47,7 +63,11 @@ export const generateXLSX = async (data: any[], fileName: string, t: any) => {
   saveAs(blob, `${fileName}.xlsx`);
 };
 
-export const generateCSV = (data: any[], fileName: string, t: any) => {
+export const generateCSV = (
+  data: Transaction[],
+  fileName: string,
+  t: TFunction,
+) => {
   const mapped = data.map((item) => mapTransactionToRow(item, t));
   if (mapped.length === 0) return;
 
@@ -65,9 +85,7 @@ export const generateCSV = (data: any[], fileName: string, t: any) => {
   const csvContent = [
     headers.join(","),
     ...mapped.map((row) =>
-      Object.values(row)
-        .map((v) => `"${v}"`)
-        .join(",")
+      Object.values(row).map((value) => `"${value}"`).join(","),
     ),
   ].join("\n");
 
@@ -75,7 +93,11 @@ export const generateCSV = (data: any[], fileName: string, t: any) => {
   saveAs(blob, `${fileName}.csv`);
 };
 
-export const generatePDF = (data: any[], fileName: string, t: any) => {
+export const generatePDF = (
+  data: Transaction[],
+  fileName: string,
+  t: TFunction,
+) => {
   const doc = new jsPDF();
   const fontName = "Roboto-Regular.ttf";
 
@@ -92,7 +114,7 @@ export const generatePDF = (data: any[], fileName: string, t: any) => {
       date: format(new Date(), "dd.MM.yyyy"),
     }),
     14,
-    30
+    30,
   );
 
   const tableData = data.map((item) => {
