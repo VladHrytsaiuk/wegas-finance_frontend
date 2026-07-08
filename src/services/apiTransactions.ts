@@ -30,6 +30,16 @@ export interface CreateAssetOnFlyInput {
   warrantyFiles?: File[]; // Якщо ви передаєте файли, це поле теж може бути тут
 }
 
+export interface CreateTxItem {
+  name?: string;
+  quantity?: number;
+  price_per_unit?: number;
+  total_amount?: number;
+  comment?: string;
+  categoryId?: string;
+  category_id?: string | null;
+}
+
 export interface CreateTxData {
   account_id: string;
   target_account_id?: string;
@@ -39,7 +49,7 @@ export interface CreateTxData {
   date: number;
   note?: string;
   type: string;
-  items?: any[];
+  items?: CreateTxItem[];
   tag_ids?: string[];
 
   target_amount?: number;
@@ -50,6 +60,8 @@ export interface CreateTxData {
   mileage?: number;
   new_asset?: CreateAssetOnFlyInput | null; // Якщо створюємо новий
 }
+
+export type UpdateTxData = CreateTxData & { id: string };
 
 export const getTransactionsApi = async (filters: TransactionFilters = {}) => {
   const params = new URLSearchParams();
@@ -73,13 +85,13 @@ export const getTransactionsApi = async (filters: TransactionFilters = {}) => {
   return response.data;
 };
 
-export const createTransactionApi = async (data: CreateTxData) => {
+export const createTransactionApi = async (data: CreateTxData | FormData) => {
   // Тут TypeScript тепер дозволить передати asset_id або new_asset
   const response = await api.post("/transactions", data);
   return response.data;
 };
 
-export const updateTransactionApi = async (data: any) => {
+export const updateTransactionApi = async (data: UpdateTxData) => {
   const { id, ...rest } = data;
   if (!id) throw new Error("ID транзакції обов'язковий");
   const response = await api.put(`/transactions/${id}`, rest);

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
+import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -12,19 +13,42 @@ import {
   uploadReceiptApi,
   deleteReceiptApi,
   deleteTransactionPhotoApi,
+  type CreateTxData,
 } from "../../services/apiTransactions";
 import { compressImage } from "../../utils/compressor";
 import { isModifierPressed } from "../../utils/platform";
+import type { Tag, Transaction, TransactionItem } from "../../types";
+
+type EditableTransactionItem = Partial<TransactionItem> & {
+  comment?: string;
+  category_id?: string | null;
+  categoryId?: string;
+};
+
+type TransactionPhoto = {
+  id: string;
+  path: string;
+};
+
+type EditableTransaction = Partial<Transaction> & {
+  target_account_id?: string | null;
+  asset_id?: string | null;
+  mileage?: number | null;
+  tags?: Array<Partial<Tag>>;
+  items?: EditableTransactionItem[];
+  photos?: TransactionPhoto[];
+  receipt_img?: string | null;
+};
 
 interface UseTransactionLogicProps {
-  transactionToEdit?: any;
+  transactionToEdit?: EditableTransaction;
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
   initialAmount?: number;
   initialNote?: string;
   onCloseModal?: () => void;
-  onSuccess?: (data?: any) => void;
+  onSuccess?: (data?: unknown) => void;
 }
 
 interface FormErrors {
@@ -283,7 +307,10 @@ export const useTransactionLogic = ({
     return isValid;
   };
 
-  const buildPayload = (itemsToUse: any[], amountToUse?: number) => {
+  const buildPayload = (
+    itemsToUse: EditableTransactionItem[],
+    amountToUse?: number,
+  ): CreateTxData => {
     const dateObj = new Date(form.date);
     const [hours, minutes] = timeStr.split(":").map(Number);
     const fullTimestamp = setHours(
@@ -322,7 +349,7 @@ export const useTransactionLogic = ({
       target_amount: finalTargetAmount,
       date: fullTimestamp,
       note: form.note,
-      items: itemsToUse.map((item: any) => ({
+      items: itemsToUse.map((item) => ({
         ...item,
         category_id: item.categoryId || item.category_id || null,
       })),
@@ -333,9 +360,9 @@ export const useTransactionLogic = ({
     };
   };
 
-  const executeMutation = async (payload: any) => {
+  const executeMutation = async (payload: CreateTxData) => {
     setIsSubmitting(true);
-    let responseData = null;
+    let responseData: unknown = null;
 
     try {
       if (isEditSession && transactionToEdit) {
@@ -381,8 +408,11 @@ export const useTransactionLogic = ({
         setLocalAmount("");
         actions.setAmountStr("");
       }
-    } catch (error: any) {
-      toast.error(error.message || t("transactions:transactionForm.alert_error_default"));
+    } catch (error: unknown) {
+      const errorMessage = axios.isAxiosError(error)
+        ? error.message
+        : t("transactions:transactionForm.alert_error_default");
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
       setConflictState(null);
@@ -455,8 +485,8 @@ export const useTransactionLogic = ({
   const allPreviewUrls = useMemo(() => {
     const urls: string[] = [];
     if (transactionToEdit) {
-      transactionToEdit.photos?.forEach((p: any) => {
-        const url = getReceiptUrl(p.path);
+      transactionToEdit.photos?.forEach((photo: TransactionPhoto) => {
+        const url = getReceiptUrl(photo.path);
         if (url) urls.push(url);
       });
       if (!transactionToEdit.photos && transactionToEdit.receipt_img) {

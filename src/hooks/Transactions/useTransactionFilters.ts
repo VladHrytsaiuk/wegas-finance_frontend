@@ -1,18 +1,39 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { startOfDay, endOfDay } from "date-fns";
 
 // API
 import { getCategoriesApi } from "../../services/apiCategories";
-import { getAccountsApi } from "../../services/apiAccounts";
+import { getAccountsApi, type Account } from "../../services/apiAccounts";
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
-import { getUsersApi } from "../../services/apiUsers";
+import { getUsersApi, type UserProfile } from "../../services/apiUsers";
 
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
+import type {
+  Category,
+  Counterparty,
+  CounterpartyCategory,
+} from "../../types";
 
 const PAGE_SIZE = 20;
+
+type AmountRangeValue = {
+  min: string;
+  max: string;
+};
+
+type TransactionFilterValues = {
+  type: string[];
+  account: string[];
+  category: string[];
+  counterparty: string[];
+  amount: AmountRangeValue;
+};
+
+type TransactionFilterValue =
+  TransactionFilterValues[keyof TransactionFilterValues];
 
 export function useTransactionFilters() {
   const { t } = useTranslation();
@@ -34,7 +55,7 @@ export function useTransactionFilters() {
     to: undefined,
   });
 
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({
+  const [filterValues, setFilterValues] = useState<TransactionFilterValues>({
     type: [],
     account: [],
     category: [],
@@ -52,35 +73,30 @@ export function useTransactionFilters() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Коли змінюється реальний пошуковий запит - скидаємо сторінку
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch]);
-
   // --- 3. REFERENCE DATA ---
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: getCategoriesApi,
     staleTime: 5 * 60 * 1000,
   });
-  const { data: accounts = [] } = useQuery({
+  const { data: accounts = [] } = useQuery<Account[]>({
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
     staleTime: 5 * 60 * 1000,
   });
-  const { data: counterparties = [] } = useQuery({
+  const { data: counterparties = [] } = useQuery<Counterparty[]>({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
     staleTime: 5 * 60 * 1000,
   });
-  const { data: users = [] } = useQuery({
+  const { data: users = [] } = useQuery<UserProfile[]>({
     queryKey: ["users"],
     queryFn: getUsersApi,
     staleTime: 5 * 60 * 1000,
   });
 
   // --- 4. HANDLERS ---
-  const handleFilterChange = useCallback((key: string, val: any) => {
+  const handleFilterChange = useCallback((key: string, val: TransactionFilterValue) => {
     setFilterValues((prev) => ({ ...prev, [key]: val }));
     setPage(1);
   }, []);
@@ -88,7 +104,7 @@ export function useTransactionFilters() {
   const handleSearchChange = useCallback((val: string) => {
     // Оновлюємо тільки UI стейт миттєво
     setSearchQuery(val);
-    // setPage(1) прибрали звідси, воно тепер в useEffect
+    setPage(1);
   }, []);
 
   const handleSortChange = useCallback((val: string) => {
@@ -196,7 +212,7 @@ export function useTransactionFilters() {
         ),
         type: "multi-select",
         treeType: "accounts",
-        rawData: accounts.map((acc: any) => {
+        rawData: accounts.map((acc: Account) => {
           if (acc.type !== "card") return acc;
           const skinKey =
             acc.bank_name && acc.card_type
@@ -219,7 +235,7 @@ export function useTransactionFilters() {
         type: "multi-select",
         treeType: "categories",
         rawData: categories,
-        options: categories.map((cat: any) => ({
+        options: categories.map((cat: Category) => ({
           value: cat.id,
           label: cat.name,
           icon: cat.icon,
@@ -229,8 +245,8 @@ export function useTransactionFilters() {
     }
 
     if (counterparties.length > 0) {
-      const extractedCategoriesMap = new Map();
-      counterparties.forEach((cp: any) => {
+      const extractedCategoriesMap = new Map<string, CounterpartyCategory>();
+      counterparties.forEach((cp: Counterparty) => {
         if (cp.category && cp.category.id)
           extractedCategoriesMap.set(cp.category.id, cp.category);
       });
