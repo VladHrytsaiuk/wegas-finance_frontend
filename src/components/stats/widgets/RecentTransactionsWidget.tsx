@@ -3,7 +3,6 @@ import { EmptyState } from "../../ui/EmptyState";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
-import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { TransactionItem } from "../../transactions/TransactionItem";
 

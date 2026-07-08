@@ -7,6 +7,7 @@ import {
   useFilterMenu,
   type FilterState,
 } from "../../hooks/Toolbar/useFilterMenu";
+import type { Account } from "../../services/apiAccounts";
 
 interface Props {
   onFilterChange: (filters: FilterState) => void;
@@ -92,7 +93,7 @@ export const FilterMenu = ({ onFilterChange, currentLabel }: Props) => {
                 <span>{t("legacy:filterComponent.toggle_all")}</span>
               </S.AccountItem>
 
-              {accounts?.map((acc: any) => (
+              {accounts?.map((acc: Account) => (
                 <S.AccountItem
                   key={acc.id}
                   onClick={() => toggleAccount(acc.id)}

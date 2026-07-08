@@ -10,7 +10,7 @@ import {
   endOfMonth,
 } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
-import api from "../../services/Axios"; // Або імпорт вашого apiAccounts
+import { getAccountsApi, type Account } from "../../services/apiAccounts";
 import { useDropdownPosition } from "../useDropdownPosition";
 
 export interface FilterState {
@@ -27,23 +27,24 @@ interface UseFilterMenuProps {
 export const useFilterMenu = ({ onFilterChange }: UseFilterMenuProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const defaultFilterState: FilterState = {
+    from: subDays(new Date(), 30).getTime(),
+    to: endOfDay(new Date()).getTime(),
+    label: t("export_import:importModal.period_30days", "Останні 30 днів"),
+    accountIds: [],
+  };
 
   // 1. Data Fetching
   const { data: accounts = [] } = useQuery({
     queryKey: ["accounts"],
-    queryFn: async () => (await api.get<any[]>("/accounts")).data,
+    queryFn: getAccountsApi,
     staleTime: 5 * 60 * 1000,
   });
 
   // 2. State Snapshot (Applied vs Temporary)
-  const appliedRef = useRef<FilterState>({
-    from: subDays(new Date(), 30).getTime(),
-    to: endOfDay(new Date()).getTime(),
-    label: t("export_import:importModal.period_30days", "Останні 30 днів"), // Дефолтний лейбл
-    accountIds: [],
-  });
+  const appliedRef = useRef<FilterState>(defaultFilterState);
 
-  const [currentRange, setCurrentRange] = useState(appliedRef.current);
+  const [currentRange, setCurrentRange] = useState(defaultFilterState);
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
   // 3. Handlers
@@ -102,12 +103,13 @@ export const useFilterMenu = ({ onFilterChange }: UseFilterMenuProps) => {
         to = endOfDay(now);
         label = t("dashboard:dashboardPage.filter_period_month", "Цей місяць");
         break;
-      case "lastMonth":
+      case "lastMonth": {
         const last = subMonths(now, 1);
         from = startOfMonth(last);
         to = endOfMonth(last);
         label = t("export_import:importModal.period_last_month", "Минулий місяць");
         break;
+      }
       case "year":
         from = startOfYear(now);
         to = endOfDay(now);
@@ -131,7 +133,7 @@ export const useFilterMenu = ({ onFilterChange }: UseFilterMenuProps) => {
       isOpen,
       currentRange,
       selectedAccounts,
-      accounts,
+      accounts: accounts as Account[],
       style,
     },
     refs: {

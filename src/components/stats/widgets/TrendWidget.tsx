@@ -6,13 +6,17 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  type TooltipProps,
 } from "recharts";
 import { format } from "date-fns";
 import { uk, enUS } from "date-fns/locale";
+import type {
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
-import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { EmptyState } from "../../ui/EmptyState";
 import { HiOutlineChartBar } from "react-icons/hi2";
@@ -40,13 +44,20 @@ const CustomTrendTooltip = ({
   currency,
   language,
   isMonthly,
-}: any) => {
+}: TooltipProps<ValueType, NameType> & {
+  currency: string;
+  language: string;
+  isMonthly: boolean;
+}) => {
   const dateLocale = language === "uk" ? uk : enUS;
 
-  if (active && payload && payload.length) {
+  const value = typeof payload?.[0]?.value === "number" ? payload[0].value : null;
+  const stroke = payload?.[0]?.stroke;
+
+  if (active && value !== null && label) {
     // Recharts повертає value, яке ми підготували в хуку (уже / 100)
     // Але formatMoney очікує копійки, тому * 100
-    const valueInCents = payload[0].value * 100;
+    const valueInCents = value * 100;
 
     const dateLabel = isMonthly
       ? format(new Date(label), "LLLL yyyy", { locale: dateLocale })
@@ -55,7 +66,7 @@ const CustomTrendTooltip = ({
     return (
       <S.TooltipContainer>
         <p className="date">{dateLabel}</p>
-        <p className="value" style={{ color: payload[0].stroke }}>
+        <p className="value" style={{ color: stroke }}>
           {formatMoney(valueInCents, currency, language)}
         </p>
       </S.TooltipContainer>

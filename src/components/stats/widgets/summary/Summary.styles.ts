@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const BaseCard = styled.div`
   background: var(--color-bg-surface);

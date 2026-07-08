@@ -3,11 +3,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { getAccountsApi } from "../../services/apiAccounts";
+import { getAccountsApi, type Account } from "../../services/apiAccounts";
 import api from "../../services/Axios";
 import { useSettings } from "../../context/SettingsContext";
+import type { User } from "../../types";
 // 🔥 Додаємо скіни
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
+
+type WidgetAccount = Account & {
+  displayIcon?: string;
+};
 
 export const useAccountsWidget = () => {
   const { t } = useTranslation();
@@ -16,7 +21,7 @@ export const useAccountsWidget = () => {
 
   const { data: user } = useQuery({
     queryKey: ["me"],
-    queryFn: async () => (await api.get("/users/me")).data,
+    queryFn: async () => (await api.get<User>("/users/me")).data,
     staleTime: Infinity,
   });
 
@@ -29,9 +34,9 @@ export const useAccountsWidget = () => {
     if (!user || !accounts) return [];
 
     return accounts
-      .filter((acc: any) => acc.user_id === user.id && !acc.is_archived)
-      .sort((a: any, b: any) => b.balance - a.balance)
-      .map((acc: any) => {
+      .filter((acc) => acc.user_id === user.id && !acc.is_archived)
+      .sort((a, b) => b.balance - a.balance)
+      .map<WidgetAccount>((acc) => {
         // 🔥 Визначаємо іконку/логотип для кожного рахунку
         if (acc.type !== "card") return acc;
 

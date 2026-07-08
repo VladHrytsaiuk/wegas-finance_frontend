@@ -10,6 +10,11 @@ import * as S from "./AccountsWidget.styles";
 import { useAccountsWidget } from "../../../hooks/Stats/useAccountsWidget";
 import { formatMoney } from "../../../utils/helpers";
 import { SmartIcon } from "../../../utils/IconMap";
+import type { Account } from "../../../services/apiAccounts";
+
+type WidgetAccount = Account & {
+  displayIcon?: string;
+};
 
 export const AccountsWidget = React.memo(() => {
   const {
@@ -43,7 +48,7 @@ export const AccountsWidget = React.memo(() => {
       ) : (
         <S.ScrollArea>
           <S.List>
-            {accounts.map((acc: any) => {
+            {accounts.map((acc: WidgetAccount) => {
               const isBankLogo = acc.displayIcon?.startsWith("icon_");
               return (
                 <S.Item
