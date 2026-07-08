@@ -27,6 +27,23 @@ const getLast4Digits = (acc: MonoAccount) => {
   return pan.length >= 4 ? pan.slice(-4) : "";
 };
 
+type ApiErrorLike = {
+  response?: {
+    status?: number;
+    data?: {
+      error?: string;
+    };
+  };
+};
+
+const getApiError = (error: unknown): ApiErrorLike | null => {
+  if (typeof error !== "object" || error === null) {
+    return null;
+  }
+
+  return error as ApiErrorLike;
+};
+
 export function useMonobank() {
   const { t } = useTranslation();
   const { startPolling, statusData } = useSync();
@@ -56,14 +73,15 @@ export function useMonobank() {
         try {
           await monobankApi.getSettings();
           setHasExistingConnection(true);
-        } catch (e: any) {
-          if (e.response && e.response.status === 404) {
+        } catch (error: unknown) {
+          const apiError = getApiError(error);
+          if (apiError?.response?.status === 404) {
             // Користувач ще не підключений
             setHasExistingConnection(false);
             setStep("input");
             return;
           }
-          throw e; // Інша помилка — обробляємо нижче
+          throw error; // Інша помилка — обробляємо нижче
         }
 
         // Отримуємо свіжі дані з Mono
@@ -107,7 +125,7 @@ export function useMonobank() {
                 const parsed = JSON.parse(existingConfig.raw_data);
                 existingCreateGoal = parsed.createGoal === true;
               }
-            } catch (e) {
+            } catch {
               // ignore json error
             }
 
@@ -134,14 +152,15 @@ export function useMonobank() {
 
         setMapping(newMapping);
         setStep(isGlobalSyncing ? "active" : "selection");
-      } catch (err: any) {
-        console.error("Monobank Init Error:", err);
+      } catch (error: unknown) {
+        const apiError = getApiError(error);
+        console.error("Monobank Init Error:", error);
 
-        if (err.response && err.response.status === 429) {
+        if (apiError?.response?.status === 429) {
           setStep("rate_limit");
         } else if (
-          err.response &&
-          (err.response.status === 401 || err.response.status === 403)
+          apiError?.response?.status === 401 ||
+          apiError?.response?.status === 403
         ) {
           // Токен протух -> кидаємо на ввід нового
           setHasExistingConnection(false);
@@ -149,7 +168,9 @@ export function useMonobank() {
           setError("Токен недійсний або застарів. Введіть новий.");
         } else {
           setStep("input");
-          setError(err.response?.data?.error || "Помилка завантаження даних.");
+          setError(
+            apiError?.response?.data?.error || "Помилка завантаження даних.",
+          );
         }
       }
     };
@@ -182,8 +203,6 @@ export function useMonobank() {
               : "EUR";
         const last4 = getLast4Digits(acc);
         const cardName = last4 ? `Mono *${last4}` : "Mono Account";
-        const isJar = acc.type === "jar";
-
         initialMapping[acc.id] = {
           isEnabled: true, // При першому підключенні активуємо все
           name: `${cardName} (${currency})`,
@@ -196,12 +215,14 @@ export function useMonobank() {
 
       setMapping(initialMapping);
       setStep("selection");
-    } catch (err: any) {
-      if (err.response && err.response.status === 429) {
+    } catch (error: unknown) {
+      const apiError = getApiError(error);
+      if (apiError?.response?.status === 429) {
         setError("⏳ Monobank: Зачекайте 1 хвилину (Rate Limit).");
       } else {
         setError(
-          err.response?.data?.error || "Помилка підключення. Перевірте токен.",
+          apiError?.response?.data?.error ||
+            "Помилка підключення. Перевірте токен.",
         );
       }
       setStep("input");
@@ -258,7 +279,7 @@ export function useMonobank() {
     }
 
     const selectedAccounts = Object.entries(mapping)
-      .filter(([_, conf]) => conf.isEnabled)
+      .filter(([, conf]) => conf.isEnabled)
       .map(([externalId, conf]) => {
         const originalAcc = accounts.find((a) => a.id === externalId);
 
@@ -305,8 +326,9 @@ export function useMonobank() {
       await monobankApi.confirmSync(selectedAccounts);
       startPolling();
       setStep("active");
-    } catch (err: any) {
-      if (err.response && err.response.status === 429) {
+    } catch (error: unknown) {
+      const apiError = getApiError(error);
+      if (apiError?.response?.status === 429) {
         setStep("rate_limit");
       } else {
         toast.error("Не вдалося зберегти налаштування");
@@ -328,7 +350,7 @@ export function useMonobank() {
       setMapping({});
       setHasExistingConnection(false);
       setStep("input");
-    } catch (e) {
+    } catch {
       toast.error("Не вдалося відключити інтеграцію");
     }
   };
