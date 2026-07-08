@@ -19,14 +19,33 @@ import { useIsMobile } from "../../../hooks/useIsMobile";
 import * as S from "./TableToolbar.styles";
 import type { FilterConfig, FilterOption } from "./types";
 
+type RangeFilterValue = {
+  min?: string | number;
+  max?: string | number;
+};
+
+type FilterValue = string | string[] | boolean | RangeFilterValue | undefined;
+
+const hasFilterValue = (value: FilterValue): boolean => {
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Boolean(value.min || value.max);
+  }
+
+  return Boolean(value);
+};
+
 interface TableToolbarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchPlaceholder?: string;
   searchPosition?: "top" | "inline";
   filtersConfig: FilterConfig[];
-  filterValues: Record<string, any>;
-  onFilterChange: (key: string, value: any) => void;
+  filterValues: Record<string, FilterValue>;
+  onFilterChange: (key: string, value: FilterValue) => void;
   sortOptions: FilterOption[];
   sortValue: string;
   onSortChange: (value: string) => void;
@@ -67,7 +86,6 @@ export const TableToolbar = ({
 
   useEffect(() => {
     if (!enableSticky) {
-      setIsSticky(false);
       return;
     }
 
@@ -102,29 +120,24 @@ export const TableToolbar = ({
   const finalSearchPlaceholder =
     searchPlaceholder || t("legacy:toolbar.search_default_placeholder");
 
+  const stickyActive = enableSticky && isSticky;
   const hasDateFilter = dateRange && (dateRange.from || dateRange.to);
 
   const hasActiveFilters =
     searchQuery !== "" ||
     hasDateFilter ||
-    Object.values(filterValues).some((val: any) => {
-      if (Array.isArray(val)) return val.length > 0;
-      if (typeof val === "object" && val !== null) return val.min || val.max;
-      return !!val;
-    });
+    Object.values(filterValues).some((value) => hasFilterValue(value));
 
-  const activeFiltersCount = 
+  const activeFiltersCount =
     (searchQuery !== "" ? 1 : 0) +
     (hasDateFilter ? 1 : 0) +
-    Object.values(filterValues).reduce((acc: number, val: any) => {
-      if (Array.isArray(val)) return acc + (val.length > 0 ? 1 : 0);
-      if (typeof val === "object" && val !== null) return acc + (val.min || val.max ? 1 : 0);
-      return acc + (!!val ? 1 : 0);
+    Object.values(filterValues).reduce((count, value) => {
+      return count + (hasFilterValue(value) ? 1 : 0);
     }, 0);
 
   if (isMobile) {
     return (
-      <MobileTableToolbar 
+      <MobileTableToolbar
         searchQuery={searchQuery}
         onSearchChange={onSearchChange}
         searchPlaceholder={searchPlaceholder}
@@ -171,9 +184,9 @@ export const TableToolbar = ({
       </S.ChildrenTopRow>
 
       {/* 2. ЛИПКИЙ КОНТЕЙНЕР (Фільтри + Пошук + Сортування) */}
-      <S.StickyContainer $isSticky={isSticky} $stickyEnabled={enableSticky}>
+      <S.StickyContainer $isSticky={stickyActive} $stickyEnabled={enableSticky}>
         {showControlsRow && (
-          <S.ControlsRow $isSticky={isSticky}>
+          <S.ControlsRow $isSticky={stickyActive}>
             {searchPosition === "inline" && (
               <S.SearchWrapper $inline>
                 <HiMagnifyingGlass />
@@ -232,7 +245,7 @@ export const TableToolbar = ({
                     ref={triggerRef}
                     type="button"
                     onClick={() => setShowDatePicker(!showDatePicker)}
-                    $active={!!hasDateFilter || showDatePicker}
+                      $active={Boolean(hasDateFilter) || showDatePicker}
                   >
                     <HiCalendar />
                   </S.DateIconButton>
