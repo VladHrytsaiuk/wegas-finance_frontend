@@ -12,12 +12,38 @@ import { groupTransactionsByDate } from "../../utils/helpers";
 import { useDebounce } from "../useDebounce";
 import { useSettings } from "../../context/SettingsContext";
 import { type FilterConfig } from "../../components/shared/TableToolbar/types";
+import type {
+  Category,
+  Counterparty,
+  PaginatedResponse,
+  Transaction,
+} from "../../types";
 
-const mockGetCounterparties = async () => [];
+type TransactionsModalFilters = {
+  type: string[];
+  amountRange: {
+    min: string;
+    max: string;
+  };
+  categories: string[];
+  counterparties: string[];
+};
+
+type CategoryTreeNode = Category & {
+  children?: CategoryTreeNode[];
+};
+
+type GroupedTransactions = Record<string, Transaction[]>;
+
+type GroupableTransaction = Transaction & {
+  originalDate: number;
+};
+
+const mockGetCounterparties = async (): Promise<Counterparty[]> => [];
 
 interface UseTransactionsModalProps {
   accountId?: string;
-  initialFilters?: Record<string, any>;
+  initialFilters?: Partial<TransactionsModalFilters>;
   title?: string;
   onClose?: () => void;
 }
@@ -33,7 +59,7 @@ export const useTransactionsModal = ({
   const { language, currency: baseCurrency } = useSettings();
 
   // Ініціалізуємо фільтри ОДИН раз (це вирішує баг зі скиданням)
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<TransactionsModalFilters>({
     type: [] as string[],
     amountRange: { min: "", max: "" },
     categories: [] as string[],
@@ -45,7 +71,7 @@ export const useTransactionsModal = ({
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<CategoryTreeNode[]>({
     queryKey: ["categories"],
     queryFn: getCategoriesApi,
     staleTime: 5 * 60 * 1000,
@@ -120,7 +146,10 @@ export const useTransactionsModal = ({
     if (filters.categories.length > 0 && categories.length > 0) {
       const result = new Set<string>(filters.categories);
 
-      const traverseTree = (nodes: any[], parentSelected: boolean) => {
+      const traverseTree = (
+        nodes: CategoryTreeNode[],
+        parentSelected: boolean,
+      ) => {
         for (const node of nodes) {
           const isSelected = parentSelected || result.has(String(node.id));
           if (isSelected) result.add(String(node.id));
@@ -158,7 +187,7 @@ export const useTransactionsModal = ({
     data: responseData,
     isLoading,
     isFetching,
-  } = useQuery({
+  } = useQuery<Transaction[] | PaginatedResponse<Transaction>>({
     queryKey: ["transactions", apiParams],
     queryFn: () => getTransactionsApi(apiParams),
     placeholderData: keepPreviousData,
@@ -176,7 +205,7 @@ export const useTransactionsModal = ({
   const dataToRender = useMemo(() => {
     if (shouldGroup) {
       // 🔥 ХАК для helpers.ts: робимо дати числами (timestamp), щоб "b.date - a.date" працювало
-      let safeTransactions = transactions.map((tx: any) => ({
+      const safeTransactions: GroupableTransaction[] = transactions.map((tx) => ({
         ...tx,
         originalDate: tx.date, // зберігаємо строку для відображення
         date: new Date(tx.date || tx.created_at).getTime(), // підсовуємо число
@@ -192,7 +221,7 @@ export const useTransactionsModal = ({
         safeTransactions,
         language,
         sortValue,
-      );
+      ) as Record<string, GroupableTransaction[]>;
 
       // Оскільки helpers.ts завжди сортує date-desc, ми вручну перевертаємо групи для date-asc
       if (sortValue === "date-asc") {
@@ -209,7 +238,7 @@ export const useTransactionsModal = ({
         }));
       });
 
-      return grouped;
+      return grouped as GroupedTransactions;
     } else {
       // Сортування по сумі працює ідеально тут
       return [...transactions].sort((a, b) => {
@@ -223,7 +252,10 @@ export const useTransactionsModal = ({
   }, [transactions, shouldGroup, language, sortValue]);
 
   // --- HANDLERS ---
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = <K extends keyof TransactionsModalFilters>(
+    key: K,
+    value: TransactionsModalFilters[K],
+  ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
