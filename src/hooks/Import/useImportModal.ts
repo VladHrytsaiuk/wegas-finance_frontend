@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -14,18 +15,16 @@ import type {
   ExtendedTransaction,
   ExistingTransactionDB,
 } from "../../components/import/ImportTypes";
-
-// Додаємо тип Account, щоб читати bank_name
-interface Account {
-  id: string;
-  name: string;
-  bank_name?: string;
-  icon?: string;
-}
+import type { Account } from "../../services/apiAccounts";
+import type { Category, Counterparty } from "../../types";
 
 interface UseImportModalProps {
-  account: Account; // Приймаємо весь об'єкт рахунку, а не тільки ID
+  account: Account;
   onClose?: () => void;
+}
+
+interface ImportErrorResponse {
+  error?: string;
 }
 
 export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
@@ -116,12 +115,12 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       // Використовуємо account.id
       const data = await uploadBankStatementApi(account.id, bankType, file);
 
-      const processed = data.transactions.map((tx) => {
+      const processed = data.transactions.map((tx): ExtendedTransaction => {
         const foundCategory = categories.find(
-          (c: any) => c.id === tx.predicted_category,
+          (c: Category) => c.id === tx.predicted_category,
         );
         const foundCounterparty = counterparties.find(
-          (cp: any) =>
+          (cp: Counterparty) =>
             cp.name.toLowerCase() === tx.counterparty_name?.toLowerCase(),
         );
         return {
@@ -141,9 +140,12 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       setSelectedIndices(initialSelected);
 
       setStep("preview");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = axios.isAxiosError<ImportErrorResponse>(err)
+        ? err.response?.data?.error
+        : undefined;
       toast.error(
-        err.response?.data?.error ||
+        errorMessage ||
           t("export_import:importModal.error_upload", "Помилка завантаження файлу"),
       );
     } finally {
@@ -169,7 +171,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
 
   const handleFillEmptyCategories = () => {
     let fallbackCat = categories.find(
-      (c: any) => c.name.toLowerCase() === "інше",
+      (c: Category) => c.name.toLowerCase() === "інше",
     );
     if (!fallbackCat && categories.length > 0) fallbackCat = categories[0];
     if (!fallbackCat) {
@@ -231,8 +233,9 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       onClose?.();
     },
-    onError: (err: any) => {
-      toast.error(t("export_import:importModal.error_save") + ": " + err.message);
+    onError: (err: unknown) => {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      toast.error(t("export_import:importModal.error_save") + ": " + errorMessage);
     },
   });
 

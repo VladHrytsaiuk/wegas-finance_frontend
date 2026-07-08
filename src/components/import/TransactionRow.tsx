@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 // Components
 import Checkbox from "../ui/Checkbox";
+import type { Category, Counterparty } from "../../types";
 
 // Styles & Types
 import * as S from "./TransactionRow.styles";
@@ -21,8 +22,8 @@ interface Props {
   tx: ExtendedTransaction;
   idx: number;
   isSelected: boolean;
-  categories: any[];
-  counterparties: any[];
+  categories: Category[];
+  counterparties: Counterparty[];
   onToggle: (idx: number) => void;
   onEdit: (tx: ExtendedTransaction, idx: number) => void;
   onShowDuplicate: (
@@ -67,9 +68,9 @@ export default function TransactionRow({
 
       {/* DETAILS (Note + Counterparty + Status) */}
       <S.NoteCell>
-        <S.MainInfo>
-          {tx.counterparty_id
-            ? counterparties.find((c: any) => c.id === tx.counterparty_id)
+          <S.MainInfo>
+            {tx.counterparty_id
+            ? counterparties.find((c) => c.id === tx.counterparty_id)
                 ?.name || tx.counterparty_name
             : tx.counterparty_name}
 
@@ -122,7 +123,7 @@ export default function TransactionRow({
       <td>
         {tx.category_id ? (
           <S.CategoryBadge>
-            {categories.find((c: any) => c.id === tx.category_id)?.name}
+            {categories.find((c) => c.id === tx.category_id)?.name}
           </S.CategoryBadge>
         ) : (
           <S.MissingCategoryBadge onClick={() => onEdit(tx, idx)}>

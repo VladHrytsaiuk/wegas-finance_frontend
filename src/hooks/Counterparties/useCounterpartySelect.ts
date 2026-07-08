@@ -8,6 +8,7 @@ import {
 import { useCounterpartyData } from "./useCounterpartyData";
 import { useCounterpartyTree } from "./useCounterpartyTree";
 import { useDropdownPosition } from "../useDropdownPosition";
+import type { Counterparty, CounterpartyCategory } from "../../types";
 
 const EMPTY_ARRAY: string[] = [];
 const ROOT_ID_PEOPLE = "root_people";
@@ -16,7 +17,7 @@ const ROOT_ID_OTHER = "root_other";
 const ROOT_ID_PRIORITY = "root_priority";
 
 interface UseCounterpartySelectProps {
-  counterparties?: any[];
+  counterparties?: Counterparty[];
   value: string;
   onChange: (id: string) => void;
   type?: "person" | "shop" | "other";
@@ -36,7 +37,6 @@ export const useCounterpartySelect = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [imgError, setImgError] = useState(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const triggerBtnRef = useRef<HTMLButtonElement>(null);
@@ -112,26 +112,20 @@ export const useCounterpartySelect = ({
 
   // 4. Selected Item Logic
   const selectedCP = effectiveCounterparties.find(
-    (c: any) => String(c.id) === String(value),
+    (c) => String(c.id) === String(value),
   );
-
-  // --- ДОДАЙ useEffect ДЛЯ СКИНУ ПОМИЛКИ ПРИ ЗМІНІ ВИБОРУ ---
-  useEffect(() => {
-    setImgError(false);
-  }, [value]);
 
   const displayIconName = useMemo(() => {
     if (!selectedCP) return "HiUser";
     let iconToUse = selectedCP.icon;
 
     if (!iconToUse && selectedCP.category_id && categories.length > 0) {
-      const findCat = (cats: any[], id: string): any => {
+      const findCat = (
+        cats: CounterpartyCategory[],
+        id: string,
+      ): CounterpartyCategory | null => {
         for (const c of cats) {
           if (String(c.id) === String(id)) return c;
-          if (c.children) {
-            const f = findCat(c.children, id);
-            if (f) return f;
-          }
         }
         return null;
       };
@@ -256,8 +250,8 @@ export const useCounterpartySelect = ({
   }, [isOpen]);
 
   return {
-    state: { isOpen, searchQuery, imgError },
-    setters: { setIsOpen, setSearchQuery, setImgError },
+    state: { isOpen, searchQuery },
+    setters: { setIsOpen, setSearchQuery },
     refs: {
       triggerRef,
       menuRef,

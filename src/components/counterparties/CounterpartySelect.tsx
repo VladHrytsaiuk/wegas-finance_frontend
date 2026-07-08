@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { HiPlus } from "react-icons/hi2";
+import type { Counterparty } from "../../types";
 
 // Components & Utils
 import { SmartIcon } from "../../utils/IconMap";
-import { CounterpartyTree } from "./CounterpartyTree";
+import { CounterpartyTree, type TreeNodeData } from "./CounterpartyTree";
 import Modal from "../ui/Modal";
 import CounterpartyForm from "./form";
 import { useCounterpartySelect } from "../../hooks/Counterparties/useCounterpartySelect";
@@ -13,7 +14,7 @@ import { BaseSelect } from "../ui/Select/BaseSelect";
 import * as S from "./CounterpartySelect.styles";
 
 interface CounterpartySelectProps {
-  counterparties?: any[];
+  counterparties?: Counterparty[];
   value: string;
   onChange: (id: string) => void;
   hasError?: boolean;
@@ -23,7 +24,7 @@ interface CounterpartySelectProps {
 }
 
 // --- HELPER FUNCTION ---
-const getAllRecursiveIds = (nodes: any[]): string[] => {
+const getAllRecursiveIds = (nodes: TreeNodeData[]): string[] => {
   return nodes.reduce((acc, node) => {
     acc.push(String(node.id));
     if (node.children && node.children.length > 0) {
@@ -105,7 +106,7 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
             key={`${props.type || "all"}-${searchQuery}`}
             nodes={treeData}
             selectedId={props.value}
-            onSelect={(item: any) => {
+            onSelect={(item: Counterparty | TreeNodeData) => {
               if (item && item.id) handleSelect(String(item.id));
             }}
             defaultExpandedIds={expandedIds}

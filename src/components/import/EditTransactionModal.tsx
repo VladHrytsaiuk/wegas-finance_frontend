@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "../ui/Button";
 import { CategorySelect } from "../categories/CategorySelect";
 import CounterpartySelect from "../counterparties/CounterpartySelect";
+import type { Category, Counterparty } from "../../types";
 
 // Styles & Types
 import * as S from "./EditTransactionModal.styles";
@@ -13,8 +14,8 @@ import type { ExtendedTransaction } from "./ImportTypes";
 
 interface Props {
   transaction: ExtendedTransaction;
-  categories: any[];
-  counterparties: any[];
+  categories: Category[];
+  counterparties: Counterparty[];
   onSave: (updated: Partial<ExtendedTransaction>) => void;
   onCancel: () => void;
 }
@@ -42,7 +43,7 @@ export default function EditTransactionModal({
   );
 
   const handleSubmit = () => {
-    const selectedCp = counterparties.find((c: any) => c.id === cpId);
+    const selectedCp = counterparties.find((c) => c.id === cpId);
     const finalCpName = selectedCp ? selectedCp.name : cpName;
 
     onSave({
@@ -138,7 +139,7 @@ export default function EditTransactionModal({
             <S.FormField>
               <S.Label>{t("transactions:transactionForm.label_category")}</S.Label>
               <CategorySelect
-                categories={categories.filter((c: any) => c.type === type)}
+                categories={categories.filter((c) => c.type === type)}
                 value={catId}
                 onChange={setCatId}
               />

@@ -6,7 +6,6 @@ import {
 } from "react-icons/hi2";
 
 // UI Components
-import Spinner from "../ui/Spinner";
 import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { Button } from "../ui/Button";
 import Checkbox from "../ui/Checkbox";
@@ -20,10 +19,10 @@ import EditTransactionModal from "./EditTransactionModal";
 // Styles & Logic
 import * as S from "./ImportModal.styles";
 import { useImportModal } from "../../hooks/Import/useImportModal";
+import type { Account } from "../../services/apiAccounts";
 
 interface ImportModalProps {
-  // 🔥 Зміна: приймаємо об'єкт account
-  account: any;
+  account: Account;
   onCloseModal?: () => void;
 }
 
