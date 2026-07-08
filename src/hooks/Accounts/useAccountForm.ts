@@ -2,17 +2,41 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
-import { getGoalsApi } from "../../services/apiGoals";
+import { getGoalsApi, type Goal } from "../../services/apiGoals";
 import {
   getStorageTypesApi,
   createStorageTypeApi,
+  type StorageType,
 } from "../../services/apiStorageTypes";
 import { isModifierPressed } from "../../utils/platform";
+import type { Account } from "../../services/apiAccounts";
 
 interface UseAccountFormProps {
-  onSubmit: (data: any, options?: any) => void;
-  defaultValues?: any;
+  onSubmit: (
+    data: AccountFormSubmitData,
+    options?: { onSuccess?: () => void },
+  ) => void;
+  defaultValues?: Partial<Account> & {
+    payment_system?: string;
+    card_design?: string;
+  };
   onClose?: () => void;
+}
+
+export interface AccountFormSubmitData {
+  id?: string;
+  name: string;
+  type: "card" | "cash" | "piggy_bank";
+  currency: string;
+  initial_balance: number;
+  storage_type_id: string | null;
+  goal_id: string | null;
+  color: string;
+  bank_name?: string;
+  card_type?: string;
+  card_number: string;
+  payment_system: string;
+  user_id?: string;
 }
 
 interface FormErrors {
@@ -22,6 +46,82 @@ interface FormErrors {
   storageType?: string;
 }
 
+type AccountFormMode = "card" | "cash" | "savings";
+
+type InitialFormState = {
+  type: AccountFormMode;
+  ownerId: string;
+  name: string;
+  currency: string;
+  balance: string;
+  color: string;
+  cardNumber: string;
+  paymentSystem: string;
+  goalId: string;
+  storageTypeId: string;
+  skinKey: string;
+  activeBankTab: string;
+};
+
+function buildInitialFormState(
+  defaultValues?: Partial<Account> & {
+    payment_system?: string;
+    card_design?: string;
+  },
+): InitialFormState {
+  if (!defaultValues) {
+    return {
+      type: "card",
+      ownerId: "",
+      name: "",
+      currency: "UAH",
+      balance: "",
+      color: "#10b981",
+      cardNumber: "",
+      paymentSystem: "",
+      goalId: "",
+      storageTypeId: "",
+      skinKey: "monobank-black",
+      activeBankTab: "monobank",
+    };
+  }
+
+  const type =
+    defaultValues.type === "piggy_bank" ? "savings" : defaultValues.type ?? "card";
+  let skinKey = "monobank-black";
+  let activeBankTab = "monobank";
+
+  if (defaultValues.type === "card") {
+    if (defaultValues.bank_name && defaultValues.card_design) {
+      skinKey = `${defaultValues.bank_name}-${defaultValues.card_design}`;
+    } else if (defaultValues.icon && BANK_SKINS[defaultValues.icon]) {
+      skinKey = defaultValues.icon;
+    }
+
+    if (BANK_SKINS[skinKey]) {
+      activeBankTab = BANK_SKINS[skinKey].bankId;
+    }
+  }
+
+  return {
+    type,
+    ownerId: defaultValues.user_id || "",
+    name: defaultValues.name || "",
+    currency: defaultValues.currency || "UAH",
+    balance:
+      defaultValues.initial_balance !== undefined
+        ? (defaultValues.initial_balance / 100).toString()
+        : "",
+    color: defaultValues.color || "#10b981",
+    cardNumber: defaultValues.card_number || "",
+    paymentSystem: defaultValues.payment_system || "",
+    goalId: defaultValues.goal_id || "",
+    storageTypeId: defaultValues.storage_type_id || "",
+    skinKey,
+    activeBankTab,
+  };
+}
+
 export const useAccountForm = ({
   onSubmit,
   defaultValues,
@@ -29,188 +129,71 @@ export const useAccountForm = ({
 }: UseAccountFormProps) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const initialState = useMemo(
+    () => buildInitialFormState(defaultValues),
+    [defaultValues],
+  );
 
   // Refs
   const formRef = useRef<HTMLFormElement>(null);
   const initialFocusRef = useRef<HTMLButtonElement>(null);
   const skinBtnRef = useRef<HTMLButtonElement>(null);
-  const isInitialized = useRef(false); // 🔥 Додано для відстеження ініціалізації
 
   // --- Form State ---
-  const [type, setType] = useState("card");
+  const [type, setType] = useState<AccountFormMode>(initialState.type);
   const [pendingType, setPendingType] = useState<string | null>(null);
+  const [skinKey, setSkinKey] = useState(initialState.skinKey);
+  const [activeBankTab, setActiveBankTab] = useState(initialState.activeBankTab);
 
-  const [bank, setBank] = useState("monobank");
-  const [skinKey, setSkinKey] = useState("monobank-black");
-  const [activeBankTab, setActiveBankTab] = useState("monobank");
+  const [name, setName] = useState(initialState.name);
+  const [cardNumber, setCardNumber] = useState(initialState.cardNumber);
+  const [paymentSystem, setPaymentSystem] = useState(initialState.paymentSystem);
 
-  const [name, setName] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [paymentSystem, setPaymentSystem] = useState("");
+  const [balance, setBalance] = useState(initialState.balance);
+  const [currency, setCurrency] = useState(initialState.currency);
+  const [color, setColor] = useState(initialState.color);
+  const [ownerId, setOwnerId] = useState(initialState.ownerId);
 
-  const [balance, setBalance] = useState("");
-  const [currency, setCurrency] = useState("UAH");
-  const [color, setColor] = useState("#10b981");
-  const [ownerId, setOwnerId] = useState("");
-
-  const [storageTypeId, setStorageTypeId] = useState<string>("");
-  const [goalId, setGoalId] = useState<string>("");
+  const [storageTypeId, setStorageTypeId] = useState<string>(
+    initialState.storageTypeId,
+  );
+  const [goalId, setGoalId] = useState<string>(initialState.goalId);
 
   const [errors, setErrors] = useState<FormErrors>({});
-
-  // Snapshot
-  const [initialSnapshot, setInitialSnapshot] = useState<string>("");
 
   // --- API Queries ---
   const { data: storageTypes = [] } = useQuery({
     queryKey: ["storageTypes"],
-    queryFn: getStorageTypesApi,
+    queryFn: getStorageTypesApi as () => Promise<StorageType[]>,
     staleTime: 5 * 60 * 1000,
   });
 
   const { data: goals = [] } = useQuery({
     queryKey: ["goals"],
-    queryFn: getGoalsApi,
+    queryFn: getGoalsApi as () => Promise<Goal[]>,
   });
 
   const createTypeMutation = useMutation({
-    mutationFn: createStorageTypeApi,
-    onSuccess: (newType: any) => {
+    mutationFn: createStorageTypeApi as (data: {
+      name: string;
+      slug: string;
+      icon: string;
+      is_system: boolean;
+    }) => Promise<StorageType>,
+    onSuccess: (newType) => {
       queryClient.invalidateQueries({ queryKey: ["storageTypes"] });
       setStorageTypeId(newType.id);
     },
   });
 
-  // --- Initialization Logic ---
-  useEffect(() => {
-    if (defaultValues) {
-      // EDIT MODE: Тут ми точно знаємо значення
-      const mappedType =
-        defaultValues.type === "piggy_bank" ? "savings" : defaultValues.type;
-
-      setName(defaultValues.name);
-      setType(mappedType);
-      setCurrency(defaultValues.currency);
-      setBalance((defaultValues.initial_balance / 100).toString());
-      setColor(defaultValues.color || "#10b981");
-      setOwnerId(defaultValues.user_id || "");
-      setCardNumber(defaultValues.card_number || "");
-      setPaymentSystem(defaultValues.payment_system || "");
-      setGoalId(defaultValues.goal_id || "");
-
-      if (defaultValues.storage_type_id) {
-        setStorageTypeId(defaultValues.storage_type_id);
-      }
-
-      let restoredSkinKey = "monobank-black";
-      let restoredBank = "monobank";
-      if (defaultValues.type === "card") {
-        if (defaultValues.bank_name && defaultValues.card_design) {
-          restoredSkinKey = `${defaultValues.bank_name}-${defaultValues.card_design}`;
-        } else if (defaultValues.icon && BANK_SKINS[defaultValues.icon]) {
-          restoredSkinKey = defaultValues.icon;
-        }
-        if (BANK_SKINS[restoredSkinKey]) {
-          restoredBank = BANK_SKINS[restoredSkinKey].bankId;
-        }
-      }
-      setSkinKey(restoredSkinKey);
-      setBank(restoredBank);
-      setActiveBankTab(restoredBank);
-
-      // Створюємо зліпок
-      const uiState = {
-        name: defaultValues.name,
-        type: mappedType,
-        balance: (defaultValues.initial_balance / 100).toString(),
-        currency: defaultValues.currency,
-        cardNumber: defaultValues.card_number || "",
-        paymentSystem: defaultValues.payment_system || "",
-        color: mappedType === "card" ? "" : defaultValues.color || "#10b981",
-        ownerId: defaultValues.user_id || "",
-        storageTypeId: defaultValues.storage_type_id || "",
-        goalId: defaultValues.goal_id || "",
-        skinKey: mappedType === "card" ? restoredSkinKey : "",
-      };
-      setInitialSnapshot(JSON.stringify(uiState));
-      isInitialized.current = true;
-    } else {
-      // CREATE MODE:
-      // Ми НЕ створюємо зліпок тут вручну.
-      // Ми даємо компоненту відрендеритись з дефолтними useState,
-      // а потім useEffect нижче зафіксує цей стан як "чистий".
-    }
-    setErrors({});
-  }, [JSON.stringify(defaultValues)]);
-
-  // 🔥 Fix for Create Mode & Auto-Select
-  // Цей ефект запускається, коли завантажились типи скарбничок або просто при старті
-  useEffect(() => {
-    // Якщо це режим редагування - виходимо, там snapshot вже є
-    if (defaultValues) return;
-
-    // Авто-вибір типу скарбнички
-    let currentStorageTypeId = storageTypeId;
-    if (type === "savings" && storageTypes.length > 0 && !storageTypeId) {
-      currentStorageTypeId = storageTypes[0].id;
-      setStorageTypeId(currentStorageTypeId);
-    }
-
-    // 🔥 ЯКЩО зліпок ще не створений (Create Mode), створюємо його з ПОТОЧНИХ значень
-    // Це гарантує, що форма буде "чистою" при відкритті
-    if (!isInitialized.current || !initialSnapshot) {
-      const currentUiState = {
-        name,
-        type,
-        balance,
-        currency,
-        cardNumber: type === "card" ? cardNumber : "",
-        paymentSystem: type === "card" ? paymentSystem : "",
-        color: type === "card" ? "" : color,
-        ownerId,
-        storageTypeId: currentStorageTypeId, // Використовуємо актуальне
-        goalId,
-        skinKey: type === "card" ? skinKey : "",
-      };
-
-      // Якщо типи скарбничок ще вантажаться, не фіксуємо snapshot для savings
-      if (
-        type === "savings" &&
-        !currentStorageTypeId &&
-        storageTypes.length === 0
-      ) {
-        return;
-      }
-
-      setInitialSnapshot(JSON.stringify(currentUiState));
-
-      // Позначаємо, що ініціалізація пройшла, якщо у нас є всі критичні дані
-      if (type !== "savings" || (type === "savings" && currentStorageTypeId)) {
-        isInitialized.current = true;
-      }
-    }
-  }, [
-    type,
-    storageTypes,
-    defaultValues,
-    storageTypeId,
-    name,
-    balance,
-    currency,
-    cardNumber,
-    paymentSystem,
-    color,
-    ownerId,
-    goalId,
-    skinKey,
-    initialSnapshot,
-  ]);
+  const effectiveStorageTypeId =
+    type === "savings" && !storageTypeId && !defaultValues && storageTypes.length > 0
+      ? storageTypes[0].id
+      : storageTypeId;
 
   // 🔥 Is Dirty Calculation
   const isDirty = useMemo(() => {
-    if (!initialSnapshot) return false;
-
-    const initial = JSON.parse(initialSnapshot);
+    const initial = initialState;
 
     // Формуємо поточний стан (повний)
     const currentUiState = {
@@ -222,7 +205,7 @@ export const useAccountForm = ({
       paymentSystem: type === "card" ? paymentSystem : "",
       color: type === "card" ? "" : color,
       ownerId,
-      storageTypeId: type === "savings" ? storageTypeId : "",
+      storageTypeId: type === "savings" ? effectiveStorageTypeId : "",
       goalId: type === "savings" ? goalId : "",
       skinKey: type === "card" ? skinKey : "",
     };
@@ -231,7 +214,19 @@ export const useAccountForm = ({
     // Якщо ми редагуємо існуючий рахунок, то зміна типу — це серйозна зміна.
     // Тому тут перевіряємо повну невідповідність.
     if (defaultValues?.id) {
-      return JSON.stringify(currentUiState) !== initialSnapshot;
+      return JSON.stringify(currentUiState) !== JSON.stringify({
+        name: initial.name,
+        type: initial.type,
+        balance: initial.balance,
+        currency: initial.currency,
+        cardNumber: initial.cardNumber,
+        paymentSystem: initial.paymentSystem,
+        color: initial.type === "card" ? "" : initial.color,
+        ownerId: initial.ownerId,
+        storageTypeId: initial.type === "savings" ? initial.storageTypeId : "",
+        goalId: initial.type === "savings" ? initial.goalId : "",
+        skinKey: initial.type === "card" ? initial.skinKey : "",
+      });
     }
 
     // 2. ЛОГІКА ДЛЯ СТВОРЕННЯ (Create Mode)
@@ -240,7 +235,7 @@ export const useAccountForm = ({
 
     const hasDataChanged =
       name.trim() !== initial.name || // Ввели назву
-      balance.toString() !== initial.balance || // Ввели баланс
+      balance !== initial.balance || // Ввели баланс
       currency !== initial.currency || // Змінили валюту
       ownerId !== initial.ownerId || // Змінили власника
       (type === "card" && cardNumber.length > 0) || // Ввели номер картки
@@ -256,11 +251,11 @@ export const useAccountForm = ({
     paymentSystem,
     color,
     ownerId,
-    storageTypeId,
+    effectiveStorageTypeId,
     goalId,
     skinKey,
-    initialSnapshot,
-    defaultValues,
+    initialState,
+    defaultValues?.id,
   ]);
 
   // Focus
@@ -291,7 +286,6 @@ export const useAccountForm = ({
       const skin = BANK_SKINS[newSkinKey];
       if (skin) {
         setActiveBankTab(skin.bankId);
-        setBank(skin.bankId);
       }
     }
   };
@@ -331,8 +325,10 @@ export const useAccountForm = ({
       isValid = false;
     }
     if (type === "savings" && !storageTypeId) {
-      newErrors.storageType = t("accounts:accountForm.error_select_type");
-      isValid = false;
+      if (!effectiveStorageTypeId) {
+        newErrors.storageType = t("accounts:accountForm.error_select_type");
+        isValid = false;
+      }
     }
     setErrors(newErrors);
     return isValid;
@@ -366,7 +362,7 @@ export const useAccountForm = ({
       type: backendType,
       currency,
       initial_balance: Math.round(Number(balance) * 100),
-      storage_type_id: type === "savings" ? storageTypeId : null,
+      storage_type_id: type === "savings" ? effectiveStorageTypeId : null,
       goal_id: type === "savings" ? goalId || null : null,
       color: type === "card" ? "#000000" : color,
       bank_name: type === "card" ? selectedSkin?.bankId : undefined,
@@ -386,11 +382,12 @@ export const useAccountForm = ({
   };
 
   return {
-    refs: { formRef, initialFocusRef, skinBtnRef },
+    formRef,
+    initialFocusRef,
+    skinBtnRef,
     state: {
       type,
       pendingType,
-      bank,
       skinKey,
       name,
       cardNumber,
@@ -402,7 +399,7 @@ export const useAccountForm = ({
       activeBankTab,
       errors,
       isEditing: !!defaultValues?.id,
-      storageTypeId,
+      storageTypeId: effectiveStorageTypeId,
       storageTypes,
       goalId,
       goals,

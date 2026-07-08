@@ -1,17 +1,14 @@
-import {
-  HiPlus,
-  HiCheck,
-  HiArchiveBox,
-} from "react-icons/hi2";
+import { HiPlus, HiCheck, HiArchiveBox } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
 // Hooks & Styles
 import { useStorageTypeSelect } from "../../../hooks/Accounts/useStorageTypeSelect";
 import * as S from "./StorageTypeSelect.styles";
 import { BaseSelect } from "../../ui/Select/BaseSelect";
+import type { StorageType } from "../../../services/apiStorageTypes";
 
 interface StorageTypeSelectProps {
-  types: any[];
+  types: StorageType[];
   value: string | null;
   onChange: (id: string) => void;
   onCreate: (name: string) => void;
@@ -23,7 +20,7 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
   const { t } = useTranslation();
 
   const {
-    state: { isOpen, search, filteredTypes, exactMatch, selectedType },
+    state: { search, filteredTypes, exactMatch, selectedType },
     actions,
   } = useStorageTypeSelect(props);
 
@@ -37,7 +34,10 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
   return (
     <BaseSelect
       triggerLabel={triggerLabel}
-      placeholder={t("accounts:accountForm.select_type_placeholder", "Оберіть тип...")}
+      placeholder={t(
+        "accounts:accountForm.select_type_placeholder",
+        "Оберіть тип...",
+      )}
       onClear={props.value ? actions.handleClear : undefined}
       searchValue={search}
       onSearchChange={actions.setSearch}
@@ -91,4 +91,3 @@ export default function StorageTypeSelect(props: StorageTypeSelectProps) {
     </BaseSelect>
   );
 }
-

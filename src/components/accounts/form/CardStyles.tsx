@@ -1,13 +1,6 @@
 import styled from "styled-components";
 import type { BankSkin } from "../bankSkins";
 
-// === RE-EXPORTS ===
-export {
-  BANK_SKINS as SKINS,
-  PAYMENT_SYSTEMS,
-  CASH_COLORS,
-} from "../bankSkins";
-
 // === STYLED COMPONENTS ===
 
 const LogoContainer = styled.div<{ $color?: string }>`
@@ -87,8 +80,7 @@ const PaymentImg = styled.img`
 
 // 1. BANK LOGO// src/components/Accounts/form/CardStyles.tsx
 
-export const BankLogo = ({ skin }: { skin: any }) => {
-  // Можна тимчасово any або розширений інтерфейс
+export const BankLogo = ({ skin }: { skin: BankSkin }) => {
   if (!skin) return null;
 
   // 🔥 Спробуй взяти logoFile, якщо нема - бери bank

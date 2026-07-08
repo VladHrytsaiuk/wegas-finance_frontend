@@ -11,11 +11,13 @@ import {
   HiEnvelope,
   HiBeaker,
   HiNoSymbol,
-  HiFlag,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { getShortcutLabel } from "../../../utils/platform";
+import type { UserProfile } from "../../../services/apiUsers";
+import type { Account } from "../../../services/apiAccounts";
+import type { Goal } from "../../../services/apiGoals";
 
 // UI Components
 import { Button } from "../../ui/Button";
@@ -27,19 +29,17 @@ import Modal, { useModal, Overlay, StyledModal } from "../../ui/Modal"; // 🔥 
 import StorageTypeSelect from "./StorageTypeSelect";
 
 // Custom Hooks & Styles
-import { useAccountForm } from "../../../hooks/Accounts/useAccountForm";
+import {
+  useAccountForm,
+  type AccountFormSubmitData,
+} from "../../../hooks/Accounts/useAccountForm";
 import { SkinSelector } from "./SkinSelector";
 import { ColorPicker } from "../../ui/ColorIconPicker";
 import * as S from "./AccountForm.styles";
 import { focusNextElement } from "../../../utils/focusUtils";
-import { BANK_SKINS } from "../bankSkins";
+import { BANK_SKINS, PAYMENT_SYSTEMS } from "../bankSkins";
 
-import {
-  CASH_COLORS,
-  BankLogo,
-  PAYMENT_SYSTEMS,
-  PaymentSystemLogo,
-} from "./CardStyles";
+import { BankLogo, PaymentSystemLogo } from "./CardStyles";
 
 import {
   CreditCardContainer as BankCardStyled,
@@ -61,10 +61,16 @@ import { CurrencySymbol } from "../../ui/CurrencySymbol";
 import { SmartIcon } from "../../../utils/IconMap";
 
 interface AccountFormProps {
-  onSubmit: (data: any, options?: any) => void;
+  onSubmit: (
+    data: AccountFormSubmitData,
+    options?: { onSuccess?: () => void },
+  ) => void;
   isLoading: boolean;
-  users: any[];
-  defaultValues?: any;
+  users: UserProfile[];
+  defaultValues?: Partial<Account> & {
+    payment_system?: string;
+    card_design?: string;
+  };
   onClose?: () => void;
   onCloseModal?: () => void;
 }
@@ -126,13 +132,15 @@ const handleTabKey = (e: React.KeyboardEvent) => {
 };
 
 export function AccountForm(props: AccountFormProps) {
-  return <AccountFormContent {...props} />;
+  const formKey = props.defaultValues?.id ?? "new-account";
+  return <AccountFormContent key={formKey} {...props} />;
 }
 
 export function AccountFormContent(props: AccountFormProps) {
   const { t } = useTranslation();
   const { users, isLoading, onClose, onCloseModal, defaultValues } = props;
-  const { state, actions, refs } = useAccountForm(props);
+  const { state, actions, formRef, initialFocusRef, skinBtnRef } =
+    useAccountForm(props);
   const { setIsDirty } = useModal();
 
   // 🔥 ЛОКАЛЬНИЙ СТЕЙТ для модалки відв'язки
@@ -150,15 +158,15 @@ export function AccountFormContent(props: AccountFormProps) {
   const currentUserId = localStorage.getItem("user_id");
 
   const ownerName = state.ownerId
-    ? users.find((u: any) => u.id === state.ownerId)?.name
-    : users.find((u: any) => u.id === currentUserId)?.name ||
+    ? users.find((u) => u.id === state.ownerId)?.name
+    : users.find((u) => u.id === currentUserId)?.name ||
       t("accounts:accountForm.owner_me");
 
   const selectedPaymentSystem = PAYMENT_SYSTEMS.find(
     (ps) => ps.value === state.paymentSystem,
   );
 
-  const selectedGoal = state.goals.find((g: any) => g.id === state.goalId);
+  const selectedGoal = state.goals.find((g) => g.id === state.goalId);
 
   const currencyOptions = [
     {
@@ -181,8 +189,8 @@ export function AccountFormContent(props: AccountFormProps) {
   const ownerOptions = [
     { value: "", label: t("accounts:accountForm.owner_me"), icon: <HiUser /> },
     ...users
-      .filter((u: any) => u.id !== currentUserId)
-      .map((u: any) => ({
+      .filter((u) => u.id !== currentUserId)
+      .map((u) => ({
         value: u.id,
         label: `${u.name} (${u.email})`,
         icon: (
@@ -206,7 +214,7 @@ export function AccountFormContent(props: AccountFormProps) {
       })),
   ];
 
-  const handleTypeClick = (newType: string) => {
+  const handleTypeClick = (newType: "card" | "cash" | "savings") => {
     if (newType === state.type) return;
 
     // 🔥 УМОВА:
@@ -233,7 +241,7 @@ export function AccountFormContent(props: AccountFormProps) {
   );
 
   const selectedStorageType = state.storageTypes.find(
-    (st: any) => st.id === state.storageTypeId,
+    (st) => st.id === state.storageTypeId,
   );
 
   // --- Helper для рендеру іконки в PREVIEW ---
@@ -291,7 +299,7 @@ export function AccountFormContent(props: AccountFormProps) {
           document.body,
         )}
 
-      <S.Form ref={refs.formRef} onSubmit={actions.handleSubmit} noValidate>
+      <S.Form ref={formRef} onSubmit={actions.handleSubmit} noValidate>
         {/* TYPE SELECTOR */}
         <DisabledWrapper $disabled={isSynced}>
           <div style={{ marginBottom: "0.3rem" }}>
@@ -305,7 +313,7 @@ export function AccountFormContent(props: AccountFormProps) {
               <S.SegmentButton
                 as="button"
                 type="button"
-                ref={refs.initialFocusRef}
+                ref={initialFocusRef}
                 $active={state.type === "card"}
                 onClick={() => handleTypeClick("card")}
                 disabled={isSynced}
@@ -621,7 +629,7 @@ export function AccountFormContent(props: AccountFormProps) {
               >
                 <HiNoSymbol /> Не прив'язувати
               </S.SelectItem>
-              {state.goals.map((goal: any) => (
+              {state.goals.map((goal: Goal) => (
                 <S.SelectItem
                   key={goal.id}
                   type="button"
@@ -774,7 +782,7 @@ export function AccountFormContent(props: AccountFormProps) {
           <Modal>
             <Modal.Open opens="skin-selector-modal">
               <S.ChangeSkinBtn
-                ref={refs.skinBtnRef}
+                ref={skinBtnRef}
                 type="button"
                 onClick={() => {
                   const currentSkin = BANK_SKINS[state.skinKey];
