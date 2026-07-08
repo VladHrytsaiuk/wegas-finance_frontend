@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import * as Icons from "react-icons/hi2";
+import type { IconType } from "react-icons";
 
 // Constants
 export const PRESET_ICONS = [
@@ -63,17 +63,14 @@ interface UseColorIconPickerProps {
 }
 
 export const useColorIconPicker = ({ icon }: UseColorIconPickerProps) => {
-  const { t } = useTranslation();
-
   const [isColorOpen, setIsColorOpen] = useState(false);
   const [isIconOpen, setIsIconOpen] = useState(false);
 
   const colorRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
 
-  // Динамічний вибір компонента іконки
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const SelectedIconComponent = (Icons as any)[icon] || (Icons as any)["HiTag"];
+  const iconMap = Icons as Record<string, IconType>;
+  const SelectedIconComponent = iconMap[icon] || iconMap["HiTag"];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -119,6 +116,5 @@ export const useColorIconPicker = ({ icon }: UseColorIconPickerProps) => {
       toggleColor,
       toggleIcon,
     },
-    t,
   };
 };

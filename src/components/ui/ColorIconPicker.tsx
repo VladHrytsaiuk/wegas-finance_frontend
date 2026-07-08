@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { HiCheck, HiChevronDown } from "react-icons/hi2";
 import * as Icons from "react-icons/hi2";
+import type { IconType } from "react-icons";
 
 import { useColorIconPicker } from "../../hooks/ui/useColorIconPicker";
 import { useDropdownPosition } from "../../hooks/useDropdownPosition";
@@ -55,7 +56,7 @@ export function ColorPicker({
   onColorChange: (c: string) => void;
   square?: boolean;
 }) {
-  const { state, t } = useColorIconPicker({ icon: "" });
+  const { state } = useColorIconPicker({ icon: "" });
   const { presetColors } = state;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -66,10 +67,14 @@ export function ColorPicker({
     180,
   );
 
+  const setTriggerRef = (node: HTMLButtonElement | null) => {
+    triggerRef.current = node;
+  };
+
   return (
     <S.Container $square={square}>
       <S.PickerTrigger
-        ref={triggerRef as any}
+        ref={setTriggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         $square={square}
@@ -142,7 +147,7 @@ export function IconPicker({
   color: string;
   square?: boolean;
 }) {
-  const { state, t } = useColorIconPicker({ icon });
+  const { state } = useColorIconPicker({ icon });
   const { presetIcons, SelectedIconComponent } = state;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -153,10 +158,16 @@ export function IconPicker({
     180,
   );
 
+  const setTriggerRef = (node: HTMLButtonElement | null) => {
+    triggerRef.current = node;
+  };
+
+  const iconMap = Icons as Record<string, IconType>;
+
   return (
     <S.Container $square={square}>
       <S.PickerTrigger
-        ref={triggerRef as any}
+        ref={setTriggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         $square={square}
@@ -197,7 +208,7 @@ export function IconPicker({
             <S.Section>
               <S.IconGrid>
                 {presetIcons.map((iconName) => {
-                  const CurrentIcon = (Icons as any)[iconName];
+                  const CurrentIcon = iconMap[iconName];
                   if (!CurrentIcon) return null;
 
                   return (
