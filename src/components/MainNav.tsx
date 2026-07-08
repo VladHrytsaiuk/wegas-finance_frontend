@@ -133,10 +133,9 @@ const GroupContent = styled.div<{ $isOpen: boolean; $collapsed: boolean }>`
 
 interface MainNavProps {
   isCollapsed: boolean;
-  onFeedbackClick?: () => void; // 👈 Додаємо проп для кліку по фідбеку
 }
 
-function MainNav({ isCollapsed, onFeedbackClick }: MainNavProps) {
+function MainNav({ isCollapsed }: MainNavProps) {
   const { t } = useTranslation();
   const { mode } = useWorkspace();
 
@@ -305,7 +304,6 @@ function MainNav({ isCollapsed, onFeedbackClick }: MainNavProps) {
                     <StyledNavLink
                       to={item.to}
                       $collapsed={isCollapsed}
-                      onClick={(item as any).onClick} // Обробка кліку для фідбеку
                       end={
                         item.to === "/dashboard" ||
                         item.to === "/investments/dashboard"

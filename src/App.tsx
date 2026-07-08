@@ -6,6 +6,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import type { Location } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
@@ -89,10 +90,13 @@ const TOASTER_OPTIONS = {
 };
 
 const NOOP_SET_TOKEN = () => {};
+type ModalLocationState = {
+  background?: Location;
+};
 
 function AppRoutes() {
   const location = useLocation();
-  const background = location.state && location.state.background;
+  const background = (location.state as ModalLocationState | null)?.background;
 
   return (
     <Suspense
@@ -201,9 +205,6 @@ function App() {
                 <GlobalStyle />
                 <BrowserRouter>
                   <WorkspaceProvider>
-                    {" "}
-                    {/* 👈 Перенесли сюди */}
-                    <GlobalStyle />
                     <AppRoutes />
                   </WorkspaceProvider>
                 </BrowserRouter>
@@ -223,4 +224,3 @@ function App() {
 }
 
 export default App;
-;

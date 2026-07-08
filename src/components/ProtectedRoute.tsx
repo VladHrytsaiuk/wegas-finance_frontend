@@ -1,52 +1,39 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 import { getMeApi } from "../services/apiUsers";
 import CenteredSpinner from "./ui/CenteredSpinner";
-import { useAuth } from "../context/AuthContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { isUnlocked: contextUnlocked } = useAuth();
-  
-  // 🔥 ВАЖЛИВО: Перевіряємо sessionStorage + location.state.
-  // Це дозволяє миттєво побачити розблокування навіть на симуляторі.
-  const isUnlocked = 
-    contextUnlocked || 
-    sessionStorage.getItem("is_unlocked") === "true" ||
-    (location.state as any)?.unlocked === true;
 
   const token = localStorage.getItem("token");
-  const userEmail = localStorage.getItem("user_email");
-  const hasPinHint = localStorage.getItem("has_pin") === "true";
 
   const {
     isLoading,
     isError,
     error,
     data: user,
-    status,
-    isFetching
+    isFetching,
   } = useQuery({
     queryKey: ["me"],
     queryFn: getMeApi,
-    retry: 1, 
-    enabled: !!token, 
+    retry: 1,
+    enabled: !!token,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Only treat as unauthenticated if we have a definitive 401/403 from the server.
   // Network errors or 5xx server issues should not clear the token and force logout.
-  const isAuthError = isError && 
-                      ((error as any)?.response?.status === 401 || (error as any)?.response?.status === 403);
+  const isAuthError =
+    isError &&
+    axios.isAxiosError(error) &&
+    (error.response?.status === 401 || error.response?.status === 403);
 
   const isAuthenticated = !!token && !isAuthError;
-  const needsPin = user
-    ? !!user.has_passkeys || !!user.has_pin
-    : hasPinHint;
   // ТИМЧАСОВО: вимикаємо блокування, бо на віртуалці воно глючить і вимагає пін, якого немає
   const isLocked = false; // needsPin && !isUnlocked;
 
@@ -64,20 +51,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       }
     }
   }, [user]);
-
-  useEffect(() => {
-    if (token) {
-      console.log("ProtectedRoute State:", {
-        isLoading,
-        isFetching,
-        status,
-        isAuthenticated,
-        isLocked,
-        isUnlocked,
-        pathname: window.location.pathname
-      });
-    }
-  }, [isLoading, isFetching, status, isAuthenticated, isLocked, isUnlocked, token]);
 
   useEffect(
     function () {
