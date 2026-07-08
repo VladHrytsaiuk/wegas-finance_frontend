@@ -6,14 +6,21 @@ import {
   HiUser,
 } from "react-icons/hi2";
 import { BaseSelect } from "../../ui/Select/BaseSelect";
-import { useAccountSelect } from "../../../hooks/Accounts/useAccountSelect";
+import {
+  useAccountSelect,
+  type AccountSelectItem,
+  type AccountSelectOwnerNode,
+  type AccountSelectTypeNode,
+} from "../../../hooks/Accounts/useAccountSelect";
 import * as S from "./AccountSelect.styles";
 import { SmartIcon } from "../../../utils/IconMap";
 import { BANK_SKINS } from "../bankSkins";
+import type { Account } from "../../../services/apiAccounts";
+import type { UserProfile } from "../../../services/apiUsers";
 
 interface AccountSelectProps {
-  accounts: any[];
-  users?: any[];
+  accounts: Account[];
+  users?: UserProfile[];
   value: string;
   onChange: (id: string) => void;
   hasError?: boolean;
@@ -51,14 +58,14 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
   const currentExpandedIds = useMemo(() => {
     if (!search) return expandedIds;
     const allIds = new Set<string>();
-    treeData.forEach((owner: any) => {
+    treeData.forEach((owner: AccountSelectOwnerNode) => {
       allIds.add(owner.id);
-      owner.children.forEach((type: any) => allIds.add(type.id));
+      owner.children.forEach((type: AccountSelectTypeNode) => allIds.add(type.id));
     });
     return allIds;
   }, [search, treeData, expandedIds]);
 
-  const renderAccount = (acc: any) => {
+  const renderAccount = (acc: AccountSelectItem) => {
     const isSynced = Boolean(acc.is_synced);
     const skinKey =
       acc.bank_name && acc.card_type
@@ -190,7 +197,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
       hasError={hasError}
     >
       <S.TreeContainer>
-        {treeData.map((owner: any) => {
+        {treeData.map((owner: AccountSelectOwnerNode) => {
           const isOwnerExpanded = currentExpandedIds.has(owner.id);
           return (
             <div key={owner.id}>
@@ -212,7 +219,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
 
               {isOwnerExpanded && (
                 <>
-                  {owner.children.map((typeNode: any) => {
+                  {owner.children.map((typeNode: AccountSelectTypeNode) => {
                     const isTypeExpanded = currentExpandedIds.has(typeNode.id);
                     return (
                       <div key={typeNode.id}>
@@ -238,7 +245,7 @@ export const AccountSelect: React.FC<AccountSelectProps> = ({
 
                         {isTypeExpanded && (
                           <div style={{ marginTop: "1px", marginBottom: "2px" }}>
-                            {typeNode.children.map((acc: any) =>
+                            {typeNode.children.map((acc: AccountSelectItem) =>
                               renderAccount(acc),
                             )}
                           </div>

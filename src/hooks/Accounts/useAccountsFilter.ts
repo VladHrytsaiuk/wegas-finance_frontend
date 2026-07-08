@@ -1,14 +1,35 @@
-import React, { useState, useMemo, useEffect } from "react";
-// 🔥 Імпортуємо нові скіни (хоча для логіки фільтрації вони менш важливі, ніж bank_name)
-import { BANK_SKINS } from "../../components/accounts/bankSkins"; // Перевір шлях
-import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { BANK_SKINS, type BankSkin } from "../../components/accounts/bankSkins";
+import type {
+  FilterConfig,
+  FilterOption,
+} from "../../components/shared/TableToolbar/types";
 import { getCurrencyOptions } from "../../utils/currency";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
 
-export function useAccountsFilter(accounts: any[], users: any[]) {
+type AccountFilterType = "card" | "cash" | "savings";
+
+type FilterableAccount = Account & {
+  calculated_balance: number;
+};
+
+type AccountFilterState = {
+  type: AccountFilterType[];
+  bank: string[];
+  currency: string[];
+  owner: string[];
+  status: string[];
+  balance: {
+    min: string;
+    max: string;
+  };
+};
+
+export function useAccountsFilter(accounts: Account[], users: UserProfile[]) {
   const { t } = useTranslation();
 
-  // --- STATE ---
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("default");
 
@@ -17,12 +38,12 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     return saved === "table" ? "table" : "grid";
   });
 
-  const [filters, setFilters] = useState({
-    type: [] as string[],
-    bank: [] as string[],
-    currency: [] as string[],
-    owner: [] as string[],
-    status: [] as string[],
+  const [filters, setFilters] = useState<AccountFilterState>({
+    type: [],
+    bank: [],
+    currency: [],
+    owner: [],
+    status: [],
     balance: { min: "", max: "" },
   });
 
@@ -30,16 +51,13 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     localStorage.setItem("accountsViewMode", viewMode);
   }, [viewMode]);
 
-  // --- HELPER: Визначення банку ---
-  const identifyBank = (acc: any): string => {
-    if (acc.type !== "card") return "";
+  const identifyBank = (account: Account): string => {
+    if (account.type !== "card") return "";
 
-    // 1. Дивимось на поле bank_name
-    let bankId = acc.bank_name;
+    let bankId = account.bank_name;
 
-    // 2. Якщо пусто, пробуємо вгадати по іконці (стара логіка)
-    if (!bankId && acc.icon) {
-      const icon = acc.icon.toLowerCase();
+    if (!bankId && account.icon) {
+      const icon = account.icon.toLowerCase();
       if (icon.includes("mono")) bankId = "monobank";
       else if (icon.includes("privat")) bankId = "privat";
       else if (icon.includes("oschad")) bankId = "oschad";
@@ -52,53 +70,39 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     return bankId || "other";
   };
 
-  // --- CONFIGS ---
   const filtersConfig: FilterConfig[] = useMemo(() => {
-    const userOptions = users.map((u: any) => ({
-      value: u.id,
-      label: u.name,
+    const userOptions: FilterOption[] = users.map((user) => ({
+      value: user.id,
+      label: user.name,
     }));
 
-    // 🔥 ТЯГНЕМО З BANK_SKINS
-    // 1. Беремо всі значення об'єкта BANK_SKINS
-    // 2. Фільтруємо, щоб отримати тільки унікальні банки за їх bankId
-    const bankOptionsMap = new Map();
+    const bankOptionsMap = new Map<string, FilterOption>();
 
-    // --- ДИНАМІЧНА ФІЛЬТРАЦІЯ БАНКІВ ---
-    // Визначаємо, які банки реально є у користувача серед активних карток
     const activeBankIds = new Set(
       accounts
-        .filter((acc) => acc.type === "card")
-        .map((acc) => identifyBank(acc))
+        .filter((account) => account.type === "card")
+        .map((account) => identifyBank(account))
         .filter(Boolean),
     );
 
-    Object.values(BANK_SKINS).forEach((skin: any) => {
-      // Ігноруємо дефолтний скін та готівку, якщо вони там є
+    Object.values(BANK_SKINS).forEach((skin: BankSkin) => {
       if (skin.bankId && skin.bankId !== "cash" && skin.bankId !== "other") {
         if (!bankOptionsMap.has(skin.bankId) && activeBankIds.has(skin.bankId)) {
           bankOptionsMap.set(skin.bankId, {
             value: skin.bankId,
-            // Спробуємо взяти назву банку (наприклад, з label або розпарсити)
-            // Можна додати поле bankName в BANK_SKINS для чистоти,
-            // або просто зробити першу літеру великою:
             label: skin.bankId.charAt(0).toUpperCase() + skin.bankId.slice(1),
-            icon: skin.miniLogoFile, // Беремо іконку прямо зі скіна!
+            icon: skin.miniLogoFile,
           });
         }
       }
     });
 
-    // Перетворюємо Map у масив та додаємо "Інші", якщо вони є
-    const bankOptions = [...Array.from(bankOptionsMap.values())];
+    const bankOptions = Array.from(bankOptionsMap.values());
 
     if (activeBankIds.has("other")) {
       bankOptions.push({
         value: "other",
         label: t("accounts:accountsFilter.bank_other", "Інші"),
-        // 🔥 Змінюємо icon_default на HiCreditCard
-        // SmartIcon не знайде файл /banks/HiCreditCard.svg і автоматично
-        // відмалює іконку HiCreditCard з вашого ICON_MAP
         icon: "HiCreditCard",
       });
     }
@@ -158,75 +162,72 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     { value: "name-desc", label: t("accounts:accountsFilter.sort_name_desc") },
   ];
 
-  // --- LOGIC (Фільтрація та Сортування) ---
   const filteredAccounts = useMemo(() => {
-    // 1. Safe parsing
-    const safeAccounts = accounts.map((acc: any) => ({
-      ...acc,
-      calculated_balance: Number(acc.calculated_balance ?? acc.balance ?? 0),
+    const safeAccounts: FilterableAccount[] = accounts.map((account) => ({
+      ...account,
+      calculated_balance: Number(
+        account.calculated_balance ?? account.balance ?? 0,
+      ),
     }));
 
-    // 2. Filter
-    let result = safeAccounts.filter((acc: any) => {
-      // Пошук за назвою
+    const result = safeAccounts.filter((account) => {
       if (
         searchQuery &&
-        !acc.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+        !account.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
         return false;
+      }
 
-      // Тип
-      if (filters.type.length > 0 && !filters.type.includes(acc.type))
-        return false;
+      if (filters.type.length > 0) {
+        const normalizedType = account.type === "piggy_bank" ? "savings" : account.type;
+        if (!filters.type.includes(normalizedType)) return false;
+      }
 
-      // Валюта
       if (
         filters.currency.length > 0 &&
-        !filters.currency.includes(acc.currency)
-      )
+        !filters.currency.includes(account.currency)
+      ) {
         return false;
+      }
 
-      // Власник
-      if (filters.owner.length > 0 && !filters.owner.includes(acc.user_id))
+      if (filters.owner.length > 0 && !filters.owner.includes(account.user_id)) {
         return false;
+      }
 
-      // 🔥 Банк (Виправлено)
       if (filters.bank.length > 0) {
-        if (acc.type !== "card") return false;
-        const bankId = identifyBank(acc);
-        // Перевіряємо, чи є ID банку (напр. "monobank") у списку вибраних фільтрів
+        if (account.type !== "card") return false;
+        const bankId = identifyBank(account);
         if (!filters.bank.includes(bankId)) return false;
       }
 
-      // Статус (позитивний/негативний)
       if (filters.status.length > 0) {
         const status =
-          acc.calculated_balance > 0
+          account.calculated_balance > 0
             ? "positive"
-            : acc.calculated_balance < 0
+            : account.calculated_balance < 0
               ? "negative"
               : "zero";
         if (!filters.status.includes(status)) return false;
       }
 
-      // Баланс (Діапазон)
-      const balanceVal = acc.calculated_balance / 100;
+      const balanceValue = account.calculated_balance / 100;
       if (
         filters.balance.min !== "" &&
-        balanceVal < Number(filters.balance.min)
-      )
+        balanceValue < Number(filters.balance.min)
+      ) {
         return false;
+      }
       if (
         filters.balance.max !== "" &&
-        balanceVal > Number(filters.balance.max)
-      )
+        balanceValue > Number(filters.balance.max)
+      ) {
         return false;
+      }
 
       return true;
     });
 
-    // 3. Sort
-    result.sort((a: any, b: any) => {
+    result.sort((a, b) => {
       switch (sortBy) {
         case "name-asc":
           return a.name.localeCompare(b.name);
@@ -242,52 +243,52 @@ export function useAccountsFilter(accounts: any[], users: any[]) {
     });
 
     return result;
-  }, [accounts, searchQuery, sortBy, filters, t]);
+  }, [accounts, searchQuery, sortBy, filters]);
 
-  // --- GROUPING (Для відображення Grid, якщо використовується цей хук для групування) ---
   const groupedAccounts = useMemo(() => {
-    const groups: Record<string, any[]> = {};
+    const groups: Record<string, FilterableAccount[]> = {};
 
-    // Ключі для груп (мають збігатися з тим, що очікує Grid, або просто для відображення)
-    const KEY_OTHER = t("accounts:accountsFilter.group_other_cards");
-    const KEY_CASH = t("accounts:accountsFilter.group_cash");
-    const KEY_SAVINGS = t("accounts:accountsFilter.group_savings");
+    const keyOther = t("accounts:accountsFilter.group_other_cards");
+    const keyCash = t("accounts:accountsFilter.group_cash");
+    const keySavings = t("accounts:accountsFilter.group_savings");
 
-    // Ініціалізуємо основні групи, щоб вони були в певному порядку (опціонально)
-    groups["Monobank"] = [];
-    groups["PrivatBank"] = [];
-    groups["Oschadbank"] = [];
-    groups[KEY_OTHER] = [];
-    groups[KEY_CASH] = [];
-    groups[KEY_SAVINGS] = [];
+    groups.Monobank = [];
+    groups.PrivatBank = [];
+    groups.Oschadbank = [];
+    groups[keyOther] = [];
+    groups[keyCash] = [];
+    groups[keySavings] = [];
 
-    filteredAccounts.forEach((acc: any) => {
-      if (acc.type === "card") {
-        const bankId = identifyBank(acc);
+    filteredAccounts.forEach((account) => {
+      if (account.type === "card") {
+        const bankId = identifyBank(account);
 
-        // Мапимо ID на красиву назву групи
-        if (bankId === "monobank") groups["Monobank"].push(acc);
-        else if (bankId === "privat") groups["PrivatBank"].push(acc);
-        else if (bankId === "oschad") groups["Oschadbank"].push(acc);
+        if (bankId === "monobank") groups.Monobank.push(account);
+        else if (bankId === "privat") groups.PrivatBank.push(account);
+        else if (bankId === "oschad") groups.Oschadbank.push(account);
         else if (bankId === "pumb") {
-          if (!groups["PUMB"]) groups["PUMB"] = [];
-          groups["PUMB"].push(acc);
+          if (!groups.PUMB) groups.PUMB = [];
+          groups.PUMB.push(account);
         } else if (bankId === "sense") {
           if (!groups["Sense Bank"]) groups["Sense Bank"] = [];
-          groups["Sense Bank"].push(acc);
-        } else groups[KEY_OTHER].push(acc);
-      } else if (acc.type === "cash") {
-        groups[KEY_CASH].push(acc);
+          groups["Sense Bank"].push(account);
+        } else {
+          groups[keyOther].push(account);
+        }
+      } else if (account.type === "cash") {
+        groups[keyCash].push(account);
       } else {
-        groups[KEY_SAVINGS].push(acc);
+        groups[keySavings].push(account);
       }
     });
 
-    // Очищаємо пусті групи, якщо треба (але Grid зазвичай сам фільтрує)
     return groups;
   }, [filteredAccounts, t]);
 
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = <K extends keyof AccountFilterState>(
+    key: K,
+    value: AccountFilterState[K],
+  ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 

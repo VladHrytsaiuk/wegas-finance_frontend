@@ -1,15 +1,40 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
 
 const STORAGE_KEY = "last_selected_account_id";
 
 interface UseAccountSelectProps {
-  accounts: any[];
-  users: any[];
+  accounts: Account[];
+  users: UserProfile[];
   value: string;
   onChange: (id: string) => void;
-  currentUserId?: string; // 🔥 Додано для сортування "моїх" рахунків
+  currentUserId?: string;
 }
+
+export interface AccountSelectItem extends Account {
+  resolvedIcon: string;
+}
+
+export interface AccountSelectTypeNode {
+  id: string;
+  name: string;
+  icon: string;
+  isType: true;
+  children: AccountSelectItem[];
+}
+
+export interface AccountSelectOwnerNode {
+  id: string;
+  name: string;
+  isOwner: true;
+  children: AccountSelectTypeNode[];
+}
+
+type AccountSelectOwnerGroup = Omit<AccountSelectOwnerNode, "children"> & {
+  children: Record<string, AccountSelectTypeNode>;
+};
 
 export const useAccountSelect = ({
   accounts,
@@ -21,78 +46,65 @@ export const useAccountSelect = ({
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
-  // --- 1. Логіка авто-вибору при завантаженні ---
   useEffect(() => {
-    if (!value && accounts && accounts.length > 0) {
+    if (!value && accounts.length > 0) {
       const savedId = localStorage.getItem(STORAGE_KEY);
 
       if (savedId) {
         const accountExists = accounts.find(
-          (a: any) => String(a.id) === String(savedId),
+          (account) => String(account.id) === String(savedId),
         );
 
-        // Авто-вибираємо тільки якщо рахунок існує і він НЕ синхронізований
-        if (accountExists && !Boolean(accountExists.is_synced)) {
+        if (accountExists && !accountExists.is_synced) {
           onChange(String(savedId));
         }
       }
     }
   }, [accounts, value, onChange]);
 
-  // --- 2. Сортування рахунків ---
   const sortedAccounts = useMemo(() => {
     return [...accounts].sort((a, b) => {
-      // Пріоритет 1: Рахунки поточного користувача
       if (currentUserId) {
         const aIsMine = a.user_id === currentUserId ? 1 : 0;
         const bIsMine = b.user_id === currentUserId ? 1 : 0;
         if (aIsMine !== bIsMine) return bIsMine - aIsMine;
       }
 
-      // Пріоритет 2: Звичайні рахунки вище за синхронізовані
-      const aSynced = Boolean(a.is_synced) ? 1 : 0;
-      const bSynced = Boolean(b.is_synced) ? 1 : 0;
+      const aSynced = a.is_synced ? 1 : 0;
+      const bSynced = b.is_synced ? 1 : 0;
       if (aSynced !== bSynced) return aSynced - bSynced;
 
-      // Пріоритет 3: Алфавітний порядок
       return a.name.localeCompare(b.name);
     });
   }, [accounts, currentUserId]);
 
-  // --- 3. Поточний вибраний рахунок ---
   const selectedAccount = useMemo(() => {
-    return accounts.find((a: any) => String(a.id) === String(value));
+    return accounts.find((account) => String(account.id) === String(value));
   }, [accounts, value]);
 
-  // --- 4. Фільтрація за пошуком ---
   const searchedAccounts = useMemo(() => {
     if (!search) return sortedAccounts;
-    const q = search.toLowerCase();
-    return sortedAccounts.filter((acc: any) =>
-      acc.name.toLowerCase().includes(q),
+    const query = search.toLowerCase();
+    return sortedAccounts.filter((account) =>
+      account.name.toLowerCase().includes(query),
     );
   }, [sortedAccounts, search]);
 
-  // --- Helper: Icon Resolver ---
-  const getAccountIcon = useCallback((acc: any) => {
-    if (acc.type === "piggy_bank" || acc.type === "savings") return "HiCircleStack";
-    if (acc.type === "cash") return "HiBanknotes";
-    if (acc.type === "card") return "HiCreditCard";
+  const getAccountIcon = useCallback((account: Account) => {
+    if (account.type === "piggy_bank") return "HiCircleStack";
+    if (account.type === "cash") return "HiBanknotes";
+    if (account.type === "card") return "HiCreditCard";
     return "HiQuestionMarkCircle";
   }, []);
 
-  // --- 5. Групування рахунків (Tree Structure) ---
   const treeData = useMemo(() => {
-    const ownerMap: Record<string, any> = {};
+    const ownerMap: Record<string, AccountSelectOwnerGroup> = {};
 
-    searchedAccounts.forEach((acc: any) => {
-      // Пріоритет: дані з об'єкта users або fallback на user_id/owner_name
-      const ownerObj = users.find((u) => u.id === acc.user_id);
+    searchedAccounts.forEach((account) => {
+      const ownerObj = users.find((user) => user.id === account.user_id);
       const ownerName =
-        ownerObj?.name ||
-        acc.owner_name ||
-        t("accounts:accountForm.owner_other", "Інші");
-      const ownerId = `owner-${acc.user_id || "fallback"}`;
+        ownerObj?.name || t("accounts:accountForm.owner_other", "Інші");
+      const ownerId = `owner-${account.user_id || "fallback"}`;
 
       if (!ownerMap[ownerId]) {
         ownerMap[ownerId] = {
@@ -103,12 +115,10 @@ export const useAccountSelect = ({
         };
       }
 
-      // Нормалізуємо тип для перекладу та іконки
-      const rawType = acc.type || "other";
+      const rawType = account.type || "other";
       const typeId = `${ownerId}-type-${rawType}`;
 
       if (!ownerMap[ownerId].children[typeId]) {
-        // Отримуємо переклад для типу
         let typeLabel = rawType;
         let typeIcon = "HiQuestionMarkCircle";
 
@@ -122,7 +132,6 @@ export const useAccountSelect = ({
             typeIcon = "HiBanknotes";
             break;
           case "piggy_bank":
-          case "savings":
             typeLabel = t("accounts:accountForm.type_savings", "Скарбничка");
             typeIcon = "HiCircleStack";
             break;
@@ -139,29 +148,23 @@ export const useAccountSelect = ({
         };
       }
 
-      // Додаємо рахунок з уже розрахунковою іконкою
       ownerMap[ownerId].children[typeId].children.push({
-        ...acc,
-        resolvedIcon: getAccountIcon(acc)
+        ...account,
+        resolvedIcon: getAccountIcon(account),
       });
     });
 
-    // Перетворюємо об'єкти в масиви
-    return Object.values(ownerMap).map((owner: any) => ({
+    return Object.values(ownerMap).map((owner) => ({
       ...owner,
-      children: Object.values(owner.children).map((typeNode: any) => ({
-        ...typeNode,
-        children: typeNode.children,
-      })),
+      children: Object.values(owner.children),
     }));
   }, [searchedAccounts, users, t, getAccountIcon]);
 
-  // --- 6. Обробники подій ---
   const handleSelect = useCallback(
     (id: string) => {
       onChange(String(id));
       localStorage.setItem(STORAGE_KEY, String(id));
-      setSearch(""); // Очищуємо пошук після вибору
+      setSearch("");
     },
     [onChange],
   );
