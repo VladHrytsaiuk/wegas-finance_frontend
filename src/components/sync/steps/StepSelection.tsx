@@ -19,10 +19,29 @@ import * as S from "../MonobankModal.styles";
 
 // Types
 import type { MonoAccount } from "../../../services/apiMonobank";
+import type { Account } from "../../../services/apiAccounts";
+import type { AccountMapping, StepType } from "../../../hooks/Settings/useMonobank";
+
+type StepSelectionState = {
+  accounts: MonoAccount[];
+  mapping: Record<string, AccountMapping>;
+  hasExistingConnection: boolean;
+};
+
+type StepSelectionActions = {
+  confirmSync: () => Promise<void>;
+  handleDisconnect: () => Promise<void>;
+  toggleAccount: (id: string, cardNumber?: string) => void;
+  toggleCreateGoal: (id: string) => void;
+  setInternalId: (id: string, internalId: string) => void;
+  updateAccountName: (id: string, newName: string) => void;
+  setAccountSyncDate: (id: string, date: string) => void;
+  setStep: (step: StepType) => void;
+};
 
 interface StepSelectionProps {
-  state: any;
-  actions: any;
+  state: StepSelectionState;
+  actions: StepSelectionActions;
   onClose: () => void;
 }
 
@@ -46,8 +65,8 @@ export default function StepSelection({
     return existingAccounts.filter((acc) => acc.currency === currencyStr);
   };
 
-  const formatBalance = (acc: any) => {
-    const val = acc.calculated_balance ?? acc.balance ?? 0;
+  const formatBalance = (account: Account) => {
+    const val = account.calculated_balance ?? account.balance ?? 0;
     return (val / 100).toFixed(2);
   };
 
@@ -61,7 +80,7 @@ export default function StepSelection({
     try {
       startPolling();
       await actions.confirmSync();
-    } catch (err) {
+    } catch {
       // Error handled in hook/toast
     }
   };
@@ -350,7 +369,7 @@ export default function StepSelection({
           <Button
             type="button"
             onClick={handleStartImport}
-            disabled={!Object.values(mapping).some((m: any) => m.isEnabled)}
+            disabled={!Object.values(mapping).some((mappedAccount) => mappedAccount.isEnabled)}
           >
             {t("settings:integrations.mono_flow_btn_start_import")}
           </Button>
