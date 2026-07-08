@@ -6,10 +6,24 @@ import toast from "react-hot-toast";
 import { getCpCategoriesApi } from "../../services/apiCounterparties";
 import { getLogoSrc } from "../../utils/imageUtils";
 import { useModal } from "../../components/ui/Modal";
+import type { Counterparty, CounterpartyCategory } from "../../types";
+
+type CounterpartyFormValues = {
+  name: string;
+  type: string;
+  color: string;
+  icon: string;
+  logo: string;
+  category_id: string;
+};
+
+type CounterpartyFormDefaults = Partial<Counterparty> & {
+  category?: Partial<CounterpartyCategory>;
+};
 
 interface UseCounterpartyFormProps {
-  onSubmit: (data: any) => void;
-  defaultValues?: any;
+  onSubmit: (data: CounterpartyFormDefaults) => void;
+  defaultValues?: CounterpartyFormDefaults;
 }
 
 export const useCounterpartyForm = ({
@@ -21,7 +35,7 @@ export const useCounterpartyForm = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 1. Fetch Categories
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<CounterpartyCategory[]>({
     queryKey: ["counterparty-categories"],
     queryFn: getCpCategoriesApi,
     staleTime: 5 * 60 * 1000,
@@ -35,7 +49,7 @@ export const useCounterpartyForm = ({
   });
 
   // 2. Form Setup
-  const form = useForm({
+  const form = useForm<CounterpartyFormValues>({
     defaultValues: {
       name: "",
       type: "shop",
@@ -58,7 +72,7 @@ export const useCounterpartyForm = ({
 
   // 4. Computed Logic
   const availableCategories = useMemo(() => {
-    return categories.filter((c: any) => c.type === selectedType);
+    return categories.filter((category: CounterpartyCategory) => category.type === selectedType);
   }, [categories, selectedType]);
 
   const logoPreviewSrc = getLogoSrc(currentLogo);
@@ -129,12 +143,12 @@ export const useCounterpartyForm = ({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const onFormSubmit = (data: any) => {
+  const onFormSubmit = (data: CounterpartyFormValues) => {
     // 🔥 Очищення даних перед відправкою (якщо це людина, лого нам не треба)
-    const payload = { 
-      ...data, 
+    const payload: CounterpartyFormDefaults = {
+      ...data,
       category_id: data.category_id || null,
-      logo: (data.type === "shop" || data.type === "other") ? data.logo : ""
+      logo: data.type === "shop" || data.type === "other" ? data.logo : "",
     };
     onSubmit(payload);
     close();
