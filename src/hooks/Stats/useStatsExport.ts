@@ -1,7 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next"; // ✅ Додано
-import { statsService } from "../../services/apiStats";
+import {
+  statsService,
+  type DashboardStats,
+  type TopStat,
+  type Transaction,
+} from "../../services/apiStats";
 import { exportToExcel, type ExportSheet } from "../../utils/excelExport";
 
 interface ExportOptions {
@@ -17,6 +22,10 @@ interface FilterParams {
   to: number;
   accountIds: string[];
 }
+
+type ExtendedTopStat = TopStat & {
+  percent?: number | string;
+};
 
 export const useStatsExport = () => {
   const [loading, setLoading] = useState(false);
@@ -44,12 +53,12 @@ export const useStatsExport = () => {
       };
 
       const sheets: ExportSheet[] = [];
-      const safeNum = (v: any) => (isNaN(Number(v)) ? 0 : Number(v));
+      const safeNum = (v: unknown) => (isNaN(Number(v)) ? 0 : Number(v));
       const locale = i18n.language === "uk" ? "uk-UA" : "en-US";
 
       // 1. DASHBOARD
       if (options.summary) {
-        const dashboard = await statsService.getDashboard(apiFilter);
+        const dashboard: DashboardStats = await statsService.getDashboard(apiFilter);
         if (dashboard) {
           const inc =
             safeNum(dashboard.total_income || dashboard.monthly_income) / 100;
@@ -88,12 +97,12 @@ export const useStatsExport = () => {
 
       // 2. TOP TRANSACTIONS
       if (options.topTransactions) {
-        const recent = await statsService.getRecent(filters.accountIds);
+        const recent: Transaction[] = await statsService.getRecent(filters.accountIds);
         const top = (recent || [])
-          .filter((t: any) => t.type === "expense")
-          .sort((a: any, b: any) => safeNum(b.amount) - safeNum(a.amount))
+          .filter((tx) => tx.type === "expense")
+          .sort((a, b) => safeNum(b.amount) - safeNum(a.amount))
           .slice(0, 15)
-          .map((tx: any) => ({
+          .map((tx) => ({
             [t("export_import:statsExport.col_date")]: new Date(tx.date).toLocaleDateString(
               locale
             ),
@@ -101,7 +110,7 @@ export const useStatsExport = () => {
             [t("export_import:statsExport.col_category")]:
               tx.category?.name || t("export_import:exportMapping.no_category"),
             [t("export_import:statsExport.col_shop")]: tx.counterparty?.name || "-",
-            [t("export_import:statsExport.col_comment")]: tx.comment || "",
+            [t("export_import:statsExport.col_comment")]: tx.note || "",
           }));
 
         if (top.length)
@@ -110,12 +119,12 @@ export const useStatsExport = () => {
 
       // 3. CATEGORIES
       if (options.categories) {
-        const data = await statsService.getTopStats(
+        const data: ExtendedTopStat[] = await statsService.getTopStats(
           "expense",
           "category",
           apiFilter
         );
-        const mapped = (data || []).map((i: any) => ({
+        const mapped = (data || []).map((i) => ({
           [t("export_import:statsExport.col_category")]: i.name,
           [t("export_import:statsExport.col_amount")]: safeNum(i.total) / 100,
           "%": i.percent ? `${i.percent}%` : "-",
@@ -129,12 +138,12 @@ export const useStatsExport = () => {
 
       // 4. COUNTERPARTIES
       if (options.counterparties) {
-        const data = await statsService.getTopStats(
+        const data: TopStat[] = await statsService.getTopStats(
           "expense",
           "counterparty",
           apiFilter
         );
-        const mapped = (data || []).map((i: any) => ({
+        const mapped = (data || []).map((i) => ({
           [t("export_import:statsExport.col_shop")]: i.name,
           [t("export_import:statsExport.col_amount")]: safeNum(i.total) / 100,
         }));
@@ -144,12 +153,12 @@ export const useStatsExport = () => {
 
       // 5. TAGS
       if (options.tags) {
-        const data = await statsService.getTopStats(
+        const data: TopStat[] = await statsService.getTopStats(
           "expense",
           "tag",
           apiFilter
         );
-        const mapped = (data || []).map((i: any) => ({
+        const mapped = (data || []).map((i) => ({
           [t("export_import:statsExport.col_tag")]: i.name,
           [t("export_import:statsExport.col_amount")]: safeNum(i.total) / 100,
         }));
@@ -166,8 +175,10 @@ export const useStatsExport = () => {
       await exportToExcel(sheets, fileName, periodLabel, t);
 
       toast.success(t("export_import:statsExport.toast_success"), { id: toastId });
-    } catch (error: any) {
-      toast.error(`${t("export_import:statsExport.toast_error")}: ${error.message}`, {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : t("common:ui.error_action");
+      toast.error(`${t("export_import:statsExport.toast_error")}: ${errorMessage}`, {
         id: toastId,
       });
     } finally {
