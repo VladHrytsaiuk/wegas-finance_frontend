@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  HiFlag,
   HiPencil,
   HiTrash,
   HiArchiveBox,
@@ -13,22 +12,33 @@ import {
 import { format } from "date-fns";
 import { uk, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 
 import Modal from "../ui/Modal";
 import ConfirmDelete from "../ui/ConfirmDelete";
 import { SmartIcon } from "../../utils/IconMap";
 import { formatMoney } from "../../utils/helpers";
 import * as S from "../../pages/Goals/Goals.styles";
+import type { Account, Goal } from "../../types";
+
+type GoalCardGoal = Goal & {
+  isOverdue?: boolean;
+  percentage: number;
+  status: Goal["status"] | "done";
+  accounts?: Account[];
+};
+
+type GoalCardHandlers = {
+  handleToggleStatus: (goal: GoalCardGoal) => void;
+  handleEdit: (goal: GoalCardGoal) => void;
+  handleDelete: (id: string) => void;
+  handleExtend: (goal: GoalCardGoal) => void;
+};
 
 interface GoalCardProps {
-  goal: any; // Або заміни на твій тип, наприклад Goal
-  t: any;
-  handlers: {
-    handleToggleStatus: (goal: any) => void;
-    handleEdit: (goal: any) => void;
-    handleDelete: (id: string) => void;
-    handleExtend: (goal: any) => void;
-  };
+  goal: GoalCardGoal;
+  t: TFunction;
+  handlers: GoalCardHandlers;
 }
 
 export default memo(function GoalCard({ goal, t, handlers }: GoalCardProps) {
@@ -220,7 +230,7 @@ export default memo(function GoalCard({ goal, t, handlers }: GoalCardProps) {
           <S.SourcesSection>
             <S.SourcesLabel>{t("goals_debts:goals.linked_accounts_label")}</S.SourcesLabel>
             <S.SourcesList>
-              {goal.accounts.map((acc: any) => (
+              {goal.accounts.map((acc: Account) => (
                 <S.SourceChip
                   key={acc.id}
                   to={`/accounts/${acc.id}`}
