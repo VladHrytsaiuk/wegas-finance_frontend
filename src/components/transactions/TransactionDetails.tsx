@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import type { Account } from "../../services/apiAccounts";
+import type { Category, Counterparty, TransactionItem, Tag } from "../../types";
+import type { UserProfile } from "../../services/apiUsers";
 import { format } from "date-fns";
 import { uk, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
@@ -20,17 +22,40 @@ import { useTransactionDetails } from "../../hooks/Transactions/useTransactionDe
 import * as S from "./TransactionDetails.styles";
 
 interface TransactionDetailsProps {
-  transaction: any;
-  categories: any[];
-  accounts: any[];
-  counterparties?: any[];
+  transaction: TransactionDetailsEntity;
+  categories: Category[];
+  accounts: Account[];
+  counterparties?: Counterparty[];
 }
+
+type TransactionDetailsEntity = {
+  id: string;
+  date: number;
+  amount: number;
+  type?: string;
+  account_id?: string;
+  target_account_id?: string;
+  category_id?: string;
+  counterparty_id?: string;
+  receipt_img?: string;
+  note?: string;
+  user?: UserProfile;
+  tags?: Tag[];
+  items?: TransactionItem[];
+  photos?: { id: string; path: string }[];
+  related_transaction?: {
+    account_id?: string;
+    amount: number;
+  } | null;
+  account?: Account | null;
+  category?: Category | null;
+  counterparty?: Counterparty | null;
+};
 
 function TransactionDetails({
   transaction,
   categories,
   accounts,
-  hasCounterparty,
   counterparties = [],
 }: TransactionDetailsProps) {
   const { t } = useTranslation();
@@ -40,20 +65,6 @@ function TransactionDetails({
     accounts,
     counterparties,
   });
-
-  const [imgError, setImgError] = useState(false);
-
-  useEffect(() => {
-    setImgError(false);
-  }, [transaction?.id, state.counterparty?.id]);
-
-  // Шлях до зображень
-  const getLogoUrl = (filename: string) => {
-    if (!filename) return "";
-    if (filename.startsWith("http")) return filename;
-    return `/brands/${filename}`;
-  };
-
   const {
     account,
     category,
@@ -77,7 +88,7 @@ function TransactionDetails({
   const currentLocale = state.locale === "uk" ? uk : enUS;
 
   // Визначаємо, чи показувати логотип
-  const shouldShowLogo = counterparty?.logo && !imgError;
+  const shouldShowLogo = !!counterparty?.logo;
 
   return (
     <S.Container>
@@ -389,8 +400,8 @@ function TransactionDetails({
             {transaction.tags && transaction.tags.length > 0 && (
               <S.TagsWrapper>
                 {transaction.tags
-                  .filter((tag: any) => tag && tag.id && tag.name)
-                  .map((tag: any) => (
+                  .filter((tag): tag is Tag => Boolean(tag?.id && tag?.name))
+                  .map((tag) => (
                     <S.TagChip key={tag.id} $color={tag.color}>
                       <HiTag size={12} />
                       {tag.name}
@@ -439,7 +450,7 @@ function TransactionDetails({
                   </tr>
                 </thead>
                 <tbody>
-                  {transaction.items.map((item: any, idx: number) => (
+                  {transaction.items.map((item, idx: number) => (
                     <tr key={idx}>
                       <td>
                         <div style={{ fontWeight: 500 }}>{item.name}</div>
