@@ -1,12 +1,14 @@
 import { memo } from "react";
 import { useTransactionItem } from "../../hooks/Transactions/useTransactionItem";
+import type { TransactionListItem } from "../../hooks/Transactions/useTransactionItem";
+import type { Account, Category } from "../../types";
 import { TransactionIcon } from "./TransactionIcon";
 import * as S from "./TransactionItem.styles";
 
 interface TransactionItemProps {
-  transaction: any;
-  categories: any[];
-  accounts: any[];
+  transaction: TransactionListItem;
+  categories: Category[];
+  accounts: Account[];
   currency: string;
   language: string;
   onClick?: () => void;
@@ -32,7 +34,6 @@ export const TransactionItem = memo(
       baseCurrency: currency,
       language,
     });
-    console.log("ITEM DATA:", data.accountName, data.isAccountDeleted);
 
     return (
       <S.StyledItem
@@ -64,7 +65,6 @@ export const TransactionItem = memo(
         </S.MainSection>
 
         {!isWidget && !hideAccountColumn && (
-          // 🔥 ТУТ ВАЖЛИВО: передаємо $isDeleted
           <S.TableCol className="acc-col" $isDeleted={data.isAccountDeleted}>
             {data.accountName}
           </S.TableCol>

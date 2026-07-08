@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { format, isValid } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { formatMoney } from "../../utils/helpers";
+import type { Account, Category, Counterparty, Transaction } from "../../types";
 
 // 🔥 ОНОВЛЕНІ КОЛЬОРИ ТУТ
 const TX_CONFIG: Record<string, { color: string; sign: string }> = {
@@ -34,12 +35,40 @@ const getTxConfig = (type: string) => {
 };
 
 interface UseTransactionItemProps {
-  transaction: any;
-  categories: any[];
-  accounts: any[];
+  transaction: TransactionListItem;
+  categories: Category[];
+  accounts: Account[];
   baseCurrency: string;
   language: string;
 }
+
+type AccountWithDeleted = Account & {
+  deleted_at?: number;
+};
+
+type CounterpartyWithCategory = Counterparty & {
+  category?: Category;
+};
+
+export type TransactionListItem = Partial<Transaction> & {
+  id: string;
+  type: string;
+  amount: number;
+  date: number;
+  created_at?: number;
+  currency?: string;
+  account_id?: string;
+  target_account_id?: string;
+  note?: string;
+  description?: string;
+  is_forgiveness?: boolean;
+  account?: AccountWithDeleted;
+  category?: Category;
+  counterparty?: CounterpartyWithCategory;
+  utility_meter?: {
+    name?: string;
+  };
+};
 
 export const useTransactionItem = ({
   transaction: tx,
