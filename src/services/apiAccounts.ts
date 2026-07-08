@@ -52,6 +52,12 @@ export interface Account {
   calculated_balance?: number; // Може бути undefined
   card_design?: string;
 }
+
+export type AccountPayload = Omit<
+  Account,
+  "id" | "created_at" | "updated_at" | "balance"
+>;
+
 export const getAccountsApi = async () => {
   const response = await api.get<Account[]>("/accounts");
   return response.data;
@@ -62,12 +68,14 @@ export const getAccountApi = async (id: string) => {
   return response.data;
 };
 
-export const createAccountApi = async (data: any) => {
+export const createAccountApi = async (data: AccountPayload) => {
   const response = await api.post<Account>("/accounts", data);
   return response.data;
 };
 
-export const updateAccountApi = async (data: any) => {
+export const updateAccountApi = async (
+  data: Partial<AccountPayload> & { id: string },
+) => {
   const { id, ...rest } = data;
   if (!id) throw new Error("ID рахунку обов'язковий для оновлення");
 

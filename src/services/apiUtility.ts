@@ -65,8 +65,11 @@ export const payReading = async (id: string, accountId: string) => {
   return data;
 };
 
-export const patchUtilityReading = async (id: string, data: any) => {
-  const response = await api.patch(`/utility/readings/${id}`, data);
+export const patchUtilityReading = async (
+  id: string,
+  data: Partial<UtilityReading>,
+) => {
+  const response = await api.patch<UtilityReading>(`/utility/readings/${id}`, data);
   return response.data;
 };
 

@@ -1,13 +1,17 @@
 import api from "./Axios";
+import type { Category } from "../types";
+
+export type CategoryPayload = Pick<Category, "name" | "type" | "icon" | "color"> & {
+  parent_id?: string;
+};
 
 export const getCategoriesApi = async () => {
-  const response = await api.get("/categories");
+  const response = await api.get<Category[]>("/categories");
   return response.data;
 };
 
-export const createCategoryApi = async (data: any) => {
-  // data: { name, type, icon, color }
-  const response = await api.post("/categories", data);
+export const createCategoryApi = async (data: CategoryPayload) => {
+  const response = await api.post<Category>("/categories", data);
   return response.data;
 };
 
@@ -21,8 +25,7 @@ export const updateCategoryApi = async ({
   ...data
 }: {
   id: string;
-  [key: string]: any;
-}) => {
-  const response = await api.put(`/categories/${id}`, data);
+} & Partial<CategoryPayload>) => {
+  const response = await api.put<Category>(`/categories/${id}`, data);
   return response.data;
 };

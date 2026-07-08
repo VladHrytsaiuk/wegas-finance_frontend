@@ -1,20 +1,15 @@
 import api from "./Axios";
-
-export interface StorageType {
-  id: string;
-  name: string;
-  slug: string;
-  icon: string;
-  is_system: boolean;
-}
+import type { StorageType } from "../types";
 
 export const getStorageTypesApi = async () => {
-  const response = await api.get("/storage-types");
+  const response = await api.get<StorageType[]>("/storage-types");
   return response.data;
 };
 
-export const createStorageTypeApi = async (data: any) => {
-  const response = await api.post("/storage-types", data);
+export type StorageTypePayload = Pick<StorageType, "name" | "slug" | "icon">;
+
+export const createStorageTypeApi = async (data: StorageTypePayload) => {
+  const response = await api.post<StorageType>("/storage-types", data);
   return response.data;
 };
 

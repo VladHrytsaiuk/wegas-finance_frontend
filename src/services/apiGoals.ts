@@ -1,45 +1,53 @@
 import api from "./Axios";
+import type { Account, Goal } from "../types";
 
-// Тип для Цілi (узгоджено з бекендом)
-export interface Goal {
-  id: string;
-  name: string;
-  description?: string;
-  target_amount: number;
-  current_amount: number;
-  currency: string;
-  date_start: number;
-  date_deadline?: number;
-  color: string;
-  icon: string;
-  photo_url?: string; // Тепер тут буде шлях до файлу на сервері
-  external_link?: string;
-  status: "active" | "paused" | "reached" | "failed" | "done";
-  accounts?: any[];
-}
+export type GoalWithDoneStatus = Goal & {
+  status: Goal["status"] | "done";
+  accounts?: Account[];
+};
+
+export type GoalPayload = Pick<
+  GoalWithDoneStatus,
+  | "name"
+  | "description"
+  | "target_amount"
+  | "current_amount"
+  | "currency"
+  | "date_start"
+  | "date_deadline"
+  | "color"
+  | "icon"
+  | "photo_url"
+  | "external_link"
+  | "status"
+  | "visibility"
+  | "hidden_from"
+>;
 
 // === CRUD ===
 
 export const getGoalsApi = async () => {
-  const response = await api.get("/goals");
+  const response = await api.get<GoalWithDoneStatus[]>("/goals");
   return response.data;
 };
 
 export const getGoalApi = async (id: string) => {
-  const response = await api.get(`/goals/${id}`);
+  const response = await api.get<GoalWithDoneStatus>(`/goals/${id}`);
   return response.data;
 };
 
-export const createGoalApi = async (data: any) => {
-  const response = await api.post("/goals", data);
+export const createGoalApi = async (data: GoalPayload) => {
+  const response = await api.post<GoalWithDoneStatus>("/goals", data);
   return response.data;
 };
 
-export const updateGoalApi = async (data: any) => {
+export const updateGoalApi = async (
+  data: Partial<GoalPayload> & { id: string },
+) => {
   const { id, ...rest } = data;
   if (!id) throw new Error("ID цілі обов'язковий для оновлення");
 
-  const response = await api.put(`/goals/${id}`, rest);
+  const response = await api.put<GoalWithDoneStatus>(`/goals/${id}`, rest);
   return response.data;
 };
 
