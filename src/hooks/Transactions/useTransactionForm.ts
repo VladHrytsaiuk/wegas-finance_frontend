@@ -1,8 +1,12 @@
 import { useState, useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 
 import type { CreateAssetOnFlyInput } from "../../services/apiTransactions";
-import type { TransactionType, TransactionItem } from "../../types/index";
+import type {
+  Tag,
+  Transaction,
+  TransactionType,
+  TransactionItem,
+} from "../../types/index";
 
 const INITIAL_ITEM: TransactionItem = {
   name: "",
@@ -15,11 +19,25 @@ const isDebtType = (type: string) =>
   ["loan_give", "loan_repay", "debt_take", "debt_repay"].includes(type);
 
 // Утиліта для безпечного порівняння (перетворює null/undefined на пустий рядок)
-const safeStr = (val: any) =>
+const safeStr = (val: unknown) =>
   val === null || val === undefined ? "" : String(val);
 
+type EditableTransactionItem = Partial<TransactionItem> & {
+  comment?: string;
+  category_id?: string | null;
+  categoryId?: string;
+};
+
+type EditableTransaction = Partial<Transaction> & {
+  target_account_id?: string | null;
+  asset_id?: string | null;
+  mileage?: number | null;
+  tags?: Array<Partial<Tag>>;
+  items?: EditableTransactionItem[];
+};
+
 interface UseTransactionFormProps {
-  transactionToEdit?: any;
+  transactionToEdit?: EditableTransaction;
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
@@ -28,8 +46,6 @@ interface UseTransactionFormProps {
 }
 
 export const useTransactionForm = (props?: UseTransactionFormProps) => {
-  const { t } = useTranslation();
-
   const {
     transactionToEdit,
     initialType = "expense",
@@ -88,13 +104,13 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
 
   const [tagIds, setTagIds] = useState<string[]>(() =>
     transactionToEdit?.tags
-      ? transactionToEdit.tags.map((t: any) => safeStr(t.id))
+      ? transactionToEdit.tags.map((tag) => safeStr(tag.id))
       : [],
   );
 
   const [items, setItems] = useState<TransactionItem[]>(() => {
     if (transactionToEdit?.items?.length > 0) {
-      return transactionToEdit.items.map((item: any) => ({
+      return transactionToEdit.items.map((item) => ({
         name: safeStr(item.name),
         quantity: Number(item.quantity) || 1,
         price_per_unit: Number(item.price_per_unit) || 0,
@@ -161,10 +177,10 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
         : 0;
 
       const initTags = transactionToEdit.tags
-        ? transactionToEdit.tags.map((t: any) => safeStr(t.id)).sort()
+        ? transactionToEdit.tags.map((tag) => safeStr(tag.id)).sort()
         : [];
 
-      const initItems = (transactionToEdit.items || []).map((item: any) => ({
+      const initItems = (transactionToEdit.items || []).map((item) => ({
         name: safeStr(item.name),
         quantity: Number(item.quantity) || 1,
         price_per_unit: Number(item.price_per_unit) || 0,
@@ -187,7 +203,7 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
 
       const curTags = [...tagIds].map((id) => safeStr(id)).sort();
 
-      const curItems = items.map((item: any) => ({
+      const curItems = items.map((item) => ({
         name: safeStr(item.name),
         quantity: Number(item.quantity) || 1,
         price_per_unit: Number(item.price_per_unit) || 0,
@@ -273,13 +289,9 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
     amountStr,
     items,
     tagIds,
-    isAssetPanelOpen,
     assetId,
     newAsset,
     mileage,
-    initialType,
-    initialAccountId,
-    initialCounterpartyId,
     initialAmount,
     initialNote,
   ]);
@@ -328,7 +340,7 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
   const updateItem = (
     index: number,
     field: keyof TransactionItem,
-    value: any,
+    value: string | number,
   ) => {
     const newItems = [...items];
     const item = { ...newItems[index], [field]: value };
@@ -358,7 +370,7 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
     setIsAssetPanelOpen(false);
   };
 
-  const getPayload = (): any | null => {
+  const getPayload = (): null => {
     return null;
   };
 

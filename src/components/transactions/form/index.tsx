@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useTransactionLogic } from "../../../hooks/Transactions/useTransactionLogic";
 import * as S from "./styles";
+import type { Transaction } from "../../../types";
 
 // UI Components
 import TransactionConflictModal from "./TransactionConflictModal";
@@ -19,8 +20,8 @@ import { focusNextElement } from "../../../utils/focusUtils";
 
 interface CreateTransactionFormProps {
   onCloseModal?: () => void;
-  onSuccess?: (data: any) => void;
-  transactionToEdit?: any;
+  onSuccess?: (data?: unknown) => void;
+  transactionToEdit?: Partial<Transaction>;
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
@@ -47,14 +48,14 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
   }, [isDirty, setIsDirty]);
 
   // 🔥 Виправлена логіка спроби закриття
-  const handleCloseAttempt = () => {
+  const handleCloseAttempt = useCallback(() => {
     if (isDirty) {
       setShowConfirm(true);
     } else {
       // Якщо чисто — просто викликаємо пропс закриття
       props.onCloseModal?.();
     }
-  };
+  }, [isDirty, props]);
 
   // Focus Management
   useEffect(() => {
@@ -100,7 +101,7 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
     return () => document.removeEventListener("keydown", handleEsc, true);
   }, [
     showConfirm,
-    isDirty,
+    handleCloseAttempt,
     state.isViewerOpen,
     state.conflictState,
     state.isClearModalOpen,
@@ -269,7 +270,7 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
                 state={state}
                 actions={actions}
                 handlers={handlers}
-                refs={refs}
+                fileInputRef={refs.fileInputRef}
                 onCloseModal={handleCloseAttempt}
                 modalRef={modalContainerRef}
               />

@@ -25,6 +25,8 @@ import { getCounterpartiesApi } from "../../../services/apiCounterparties";
 import { getTagsApi, createTagApi } from "../../../services/apiTags";
 import { getAssets } from "../../../services/apiAssets";
 import { getUsersApi } from "../../../services/apiUsers";
+import type { CreateAssetOnFlyInput } from "../../../services/apiTransactions";
+import type { TransactionItem } from "../../../types";
 
 // UI Components
 import { Button } from "../../ui/Button";
@@ -63,19 +65,83 @@ const LabelWithLock = ({
 );
 
 interface FormContentProps {
-  state: any;
-  actions: any;
-  handlers: any;
-  refs: any;
+  state: FormContentState;
+  actions: FormContentActions;
+  handlers: FormContentHandlers;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   onCloseModal?: () => void;
   modalRef: React.RefObject<HTMLDivElement>;
 }
+
+type TransactionFormState = {
+  type: string;
+  accountId: string;
+  targetAccountId: string;
+  categoryId: string;
+  counterpartyId: string;
+  date: string;
+  note: string;
+  amountStr: string;
+  items: TransactionItem[];
+  tagIds: string[];
+  assetId: string;
+  newAsset: CreateAssetOnFlyInput | null;
+  isAssetPanelOpen: boolean;
+  mileage: string;
+};
+
+type FormContentState = {
+  form: TransactionFormState;
+  localAmount: string;
+  localTargetAmount: string;
+  timeStr: string;
+  errors: Record<string, string | undefined>;
+  showDetails: boolean;
+  isSubmitting: boolean;
+  isUploading: boolean;
+  isCompressing: boolean;
+  isDeleting: boolean;
+  allPreviewUrls: string[];
+  previewIndex: number;
+  isEditSession: boolean;
+  isViewerOpen: boolean;
+  isClearModalOpen: boolean;
+  isDirty: boolean;
+};
+
+type FormContentActions = {
+  setType: (value: string) => void;
+  setAccountId: (value: string) => void;
+  setTargetAccountId: (value: string) => void;
+  setCategoryId: (value: string) => void;
+  setCounterpartyId: (value: string) => void;
+  setDate: (value: string) => void;
+  setTagIds: (value: string[]) => void;
+  setAssetId: (value: string) => void;
+  setNewAsset: (value: CreateAssetOnFlyInput | null) => void;
+  setMileage: (value: string) => void;
+  setLocalAmount: (value: string) => void;
+  setLocalTargetAmount: (value: string) => void;
+  setTimeStr: (value: string) => void;
+  setShowDetails: (value: boolean) => void;
+  setPreviewIndex: React.Dispatch<React.SetStateAction<number>>;
+  setIsViewerOpen: (value: boolean) => void;
+  clearError: (field: string) => void;
+  toggleAssetPanel: () => void;
+  createEnterHandler: (
+    action: () => void,
+  ) => (e: React.KeyboardEvent) => void;
+};
+
+type FormContentHandlers = {
+  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
 
 export const FormContent: React.FC<FormContentProps> = ({
   state,
   actions,
   handlers,
-  refs,
+  fileInputRef,
   onCloseModal,
   modalRef,
 }) => {
@@ -136,14 +202,14 @@ export const FormContent: React.FC<FormContentProps> = ({
   });
 
   const activeAccount = accounts.find(
-    (a: any) => String(a.id) === String(form.accountId),
+    (a) => String(a.id) === String(form.accountId),
   );
   const targetAccount = accounts.find(
-    (a: any) => String(a.id) === String(form.targetAccountId),
+    (a) => String(a.id) === String(form.targetAccountId),
   );
 
   const selectedAsset = assets.find(
-    (a: any) => String(a.id) === String(form.assetId),
+    (a) => String(a.id) === String(form.assetId),
   );
   const isCarSelected = selectedAsset?.type === "car";
 
@@ -169,7 +235,7 @@ export const FormContent: React.FC<FormContentProps> = ({
   ].includes(form.type);
 
   const availableCategories = useMemo(
-    () => categories.filter((c: any) => c.type === form.type),
+    () => categories.filter((c) => c.type === form.type),
     [categories, form.type],
   );
 
@@ -399,7 +465,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                   >
                     <AccountSelect
                       accounts={accounts.filter(
-                        (a: any) => String(a.id) !== String(form.accountId),
+                        (a) => String(a.id) !== String(form.accountId),
                       )}
                       users={users}
                       value={form.targetAccountId}
@@ -615,7 +681,7 @@ export const FormContent: React.FC<FormContentProps> = ({
       <S.Footer>
         <S.FileUploadWrapper>
           <S.HiddenFileInput
-            ref={refs.fileInputRef}
+            ref={fileInputRef}
             type="file"
             id="receipt-upload"
             accept="image/*"

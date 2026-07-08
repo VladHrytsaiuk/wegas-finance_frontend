@@ -9,19 +9,50 @@ import {
 } from "../../services/apiTransactions";
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
 import { getUploadedFileUrl } from "../../utils/helpers";
+import type { Account } from "../../services/apiAccounts";
+import type { Category, Counterparty } from "../../types";
 
 // --- Types ---
+type TransactionPhoto = {
+  id: string;
+  path: string;
+};
+
+type RelatedTransaction = {
+  account_id?: string;
+  amount: number;
+};
+
+type TransactionDetailsEntity = {
+  id: string;
+  type?: string;
+  amount: number;
+  account_id?: string;
+  target_account_id?: string;
+  category_id?: string;
+  counterparty_id?: string;
+  receipt_img?: string;
+  account?: Account | null;
+  category?: Category | null;
+  counterparty?: Counterparty | null;
+  related_transaction?: RelatedTransaction | null;
+  photos?: TransactionPhoto[];
+};
+
 interface TransactionDetailsProps {
-  transaction: any;
-  categories: any[];
-  accounts: any[];
-  counterparties: any[];
+  transaction: TransactionDetailsEntity;
+  categories: Category[];
+  accounts: Account[];
+  counterparties: Counterparty[];
 }
 
 // --- Config Helper ---
-const getTxConfig = (type: string, t: any) => {
+const getTxConfig = (
+  type: string,
+  t: ReturnType<typeof useTranslation>["t"],
+) => {
   const normalized = (type || "").toLowerCase().trim();
-  const map: Record<string, any> = {
+  const map: Record<string, { label: string; color: string; sign: string }> = {
     expense: {
       label: t("transactions:transactionDetails.type_expense"),
       color: "var(--color-red-600)",
@@ -96,7 +127,7 @@ export const useTransactionDetails = ({
   const account = useMemo(() => {
     const acc =
       transaction.account ||
-      accounts.find((a: any) => a.id === transaction.account_id);
+      accounts.find((a) => a.id === transaction.account_id);
     if (!acc) return null;
 
     if (acc.type === "card") {
@@ -123,7 +154,7 @@ export const useTransactionDetails = ({
 
   const category =
     transaction.category ||
-    categories.find((c: any) => c.id === transaction.category_id);
+    categories.find((c) => c.id === transaction.category_id);
 
   // В useTransactionDetails.ts знайдіть блок визначення counterparty
   const counterparty = useMemo(() => {
@@ -154,7 +185,7 @@ export const useTransactionDetails = ({
   // --- Multi-currency Logic ---
   const myCurrency = account?.currency || baseCurrency;
   let partnerCurrency = myCurrency;
-  let amountMain = Math.abs(transaction.amount);
+  const amountMain = Math.abs(transaction.amount);
   let amountSecondary = 0;
   let partnerAccountName = "";
 
@@ -162,7 +193,7 @@ export const useTransactionDetails = ({
     const partnerId =
       transaction.target_account_id ||
       transaction.related_transaction?.account_id;
-    const partnerAcc = accounts.find((a: any) => a.id === partnerId);
+    const partnerAcc = accounts.find((a) => a.id === partnerId);
 
     partnerCurrency = partnerAcc?.currency || myCurrency;
     partnerAccountName = partnerAcc?.name;
@@ -182,7 +213,7 @@ export const useTransactionDetails = ({
   const allReceiptUrls = useMemo(() => {
     const urls: string[] = [];
     if (transaction.photos?.length) {
-      transaction.photos.forEach((p: any) => {
+      transaction.photos.forEach((p) => {
         const url = getUploadedFileUrl(p.path); // Використовуємо нашу функцію
         if (url) urls.push(url);
       });
