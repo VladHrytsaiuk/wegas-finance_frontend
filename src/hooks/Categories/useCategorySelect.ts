@@ -9,7 +9,7 @@ export interface Category {
   color?: string;
   icon?: string;
   children?: Category[];
-  [key: string]: any;
+  type?: "income" | "expense";
 }
 
 interface UseCategorySelectProps {

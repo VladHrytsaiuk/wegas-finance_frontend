@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { HiMagnifyingGlass } from "react-icons/hi2";
 
 // Components
 import { BaseSelect } from "../ui/Select/BaseSelect";

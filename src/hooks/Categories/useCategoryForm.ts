@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, FormEvent } from "react";
+import { useState, useMemo, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../../components/ui/Modal";
 
@@ -14,16 +14,20 @@ export interface Category {
 
 export interface CategoryFormData {
   name: string;
-  type: string;
+  type: "income" | "expense";
   icon: string;
   color: string;
   parent_id: string | null;
 }
 
+export interface FormSubmitOptions {
+  onSuccess?: () => void;
+}
+
 interface UseCategoryFormProps {
   initialData?: Category;
   categories: Category[];
-  onSubmit: (data: CategoryFormData, options?: any) => void;
+  onSubmit: (data: CategoryFormData, options?: FormSubmitOptions) => void;
 }
 
 const normalizeIconName = (iconName: string | undefined): string => {
@@ -36,6 +40,14 @@ const normalizeIconName = (iconName: string | undefined): string => {
   return `Hi${pascal}`;
 };
 
+const getInitialCategoryFormState = (initialData?: Category) => ({
+  name: initialData?.name || "",
+  type: initialData?.type || "expense",
+  icon: normalizeIconName(initialData?.icon),
+  color: initialData?.color || "#10b981",
+  parentId: initialData?.parent_id || "",
+});
+
 export function useCategoryForm({
   initialData,
   categories,
@@ -43,25 +55,17 @@ export function useCategoryForm({
 }: UseCategoryFormProps) {
   const { close } = useModal();
   const { t } = useTranslation();
+  const initialState = getInitialCategoryFormState(initialData);
 
   // Form State
-  const [name, setName] = useState("");
-  const [type, setType] = useState<"income" | "expense">("expense");
-  const [icon, setIcon] = useState("HiTag");
-  const [color, setColor] = useState("#10b981");
-  const [parentId, setParentId] = useState("");
+  const [name, setName] = useState(initialState.name);
+  const [type, setType] = useState<"income" | "expense">(initialState.type);
+  const [icon, setIcon] = useState(initialState.icon);
+  const [color, setColor] = useState(initialState.color);
+  const [parentId, setParentId] = useState(initialState.parentId);
 
   // Search State
   const [parentSearch, setParentSearch] = useState("");
-
-  // Initialization
-  useEffect(() => {
-    setName(initialData?.name || "");
-    setType(initialData?.type || "expense");
-    setIcon(normalizeIconName(initialData?.icon));
-    setColor(initialData?.color || "#10b981");
-    setParentId(initialData?.parent_id || "");
-  }, [initialData]);
 
   // Filtering Logic
   const rootCategories = useMemo(() => {

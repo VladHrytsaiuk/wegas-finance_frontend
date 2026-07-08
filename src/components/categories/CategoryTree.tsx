@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { HiChevronDown, HiCheck, HiPencil, HiTrash, HiEllipsisVertical } from "react-icons/hi2";
+import type { TFunction } from "i18next";
 import { CategoryIcon } from "../../utils/IconMap"; // Використовуємо глобальний маппер
 
 // Logic & Styles
@@ -29,7 +30,7 @@ function MobileActionsMenu({
 }: {
   onEdit?: () => void;
   onDelete?: () => void;
-  t: any;
+  t: TFunction;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -92,8 +93,14 @@ interface TreeNodeProps {
   toggle: (id: string) => void;
   // Передаємо всі колбеки та налаштування через об'єкт contextProps, щоб не дублювати типи
   contextProps: Omit<CategoryTreeProps, "categories"> & {
-    t: any;
-    getSelectionState: any;
+    t: TFunction;
+    getSelectionState: (
+      node: CategoryNode,
+      selectedIds: string[],
+    ) => {
+      fully: boolean;
+      partially: boolean;
+    };
   };
 }
 

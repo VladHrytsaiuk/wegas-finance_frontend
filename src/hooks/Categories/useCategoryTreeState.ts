@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 export interface CategoryNode {
@@ -7,8 +7,7 @@ export interface CategoryNode {
   icon?: string;
   color?: string;
   children?: CategoryNode[];
-  type?: string;
-  [key: string]: any;
+  type?: "income" | "expense";
 }
 
 // --- Logic Helpers (Оновлено) ---
@@ -66,30 +65,54 @@ interface UseCategoryTreeStateProps {
 
 export function useCategoryTreeState({
   defaultExpandedIds = [],
-  collapsible = true,
 }: UseCategoryTreeStateProps) {
   const { t } = useTranslation();
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(
-    new Set(defaultExpandedIds),
+  const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const [collapsedDefaultIds, setCollapsedDefaultIds] = useState<Set<string>>(
+    new Set(),
   );
 
-  useEffect(() => {
-    if (defaultExpandedIds.length > 0) {
-      setExpandedIds((prev) => {
-        const next = new Set(prev);
-        defaultExpandedIds.forEach((id) => next.add(id));
-        return next;
-      });
-    }
-  }, [defaultExpandedIds]);
+  const defaultExpandedSet = useMemo(
+    () => new Set(defaultExpandedIds),
+    [defaultExpandedIds],
+  );
+
+  const expandedIds = useMemo(() => {
+    const next = new Set(manualExpandedIds);
+    defaultExpandedIds.forEach((id) => {
+      if (!collapsedDefaultIds.has(id)) {
+        next.add(id);
+      }
+    });
+    return next;
+  }, [manualExpandedIds, defaultExpandedIds, collapsedDefaultIds]);
 
   const toggle = useCallback((id: string) => {
-    setExpandedIds((prev) => {
+    if (defaultExpandedSet.has(id)) {
+      setCollapsedDefaultIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+        }
+        return next;
+      });
+      return;
+    }
+
+    setManualExpandedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
-  }, []);
+  }, [defaultExpandedSet]);
 
   /**
    * Визначає візуальний стан чекбокса

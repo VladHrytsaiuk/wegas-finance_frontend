@@ -14,13 +14,15 @@ import { BaseSelect } from "../ui/Select/BaseSelect";
 import {
   useCategoryForm,
   type Category,
+  type CategoryFormData,
+  type FormSubmitOptions,
 } from "../../hooks/Categories/useCategoryForm";
 import * as S from "./CategoryForm.styles";
 
 interface CategoryFormProps {
   initialData?: Category;
   categories: Category[];
-  onSubmit: (data: any, options?: any) => void;
+  onSubmit: (data: CategoryFormData, options?: FormSubmitOptions) => void;
   isLoading: boolean;
   buttonLabel?: string;
 }
