@@ -27,6 +27,30 @@ interface UseAssetFormProps {
   onCloseModal?: () => void;
 }
 
+type ExistingPhoto = {
+  id?: string;
+  path: string;
+};
+
+type AssetFormValues = {
+  name: string;
+  serial_number: string;
+  type: string;
+  price: string;
+  currency: string;
+  purchase_date: string;
+  warranty_end: string;
+  note: string;
+  vin_code: string;
+  mileage: string;
+  initial_mileage: string;
+  insurance_expiry: string;
+  last_service_date: string;
+  address: string;
+  area: string;
+  cadastral_num: string;
+};
+
 export const useAssetForm = ({
   assetToEdit,
   onCloseModal,
@@ -36,7 +60,7 @@ export const useAssetForm = ({
 
   // --- Стейт для ФОТО ---
   const [files, setFiles] = useState<File[]>([]);
-  const [existingFiles, setExistingFiles] = useState<any[]>([]);
+  const [existingFiles, setExistingFiles] = useState<ExistingPhoto[]>([]);
   const [photosToDelete, setPhotosToDelete] = useState<string[]>([]);
 
   // --- 🔥 Стейт для ДОКУМЕНТІВ ---
@@ -55,7 +79,7 @@ export const useAssetForm = ({
     watch,
     trigger,
     formState: { errors, isDirty: isFormDirty },
-  } = useForm({
+  } = useForm<AssetFormValues>({
     defaultValues: {
       name: "",
       serial_number: "",
@@ -98,7 +122,7 @@ export const useAssetForm = ({
       });
 
       // Підвантажуємо фотографії
-      const loadedPhotos: any[] = [];
+      const loadedPhotos: ExistingPhoto[] = [];
       if (assetToEdit.photos && assetToEdit.photos.length > 0) {
         loadedPhotos.push(...assetToEdit.photos);
       }
@@ -128,7 +152,7 @@ export const useAssetForm = ({
     docs.length > 0 ||
     docsToDelete.length > 0;
 
-  const prepareData = (values: any) => {
+  const prepareData = (values: AssetFormValues): Partial<Asset> => {
     return {
       ...values,
       price: Number(values.price) * 100,
@@ -146,12 +170,18 @@ export const useAssetForm = ({
 
   // --- Мутації ---
   const createMutation = useMutation({
-    mutationFn: async (values: any) => createAsset(prepareData(values)),
+    mutationFn: async (values: AssetFormValues) => createAsset(prepareData(values)),
     onError: () => toast.error(t("assets:assetForm.error_create")),
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, values }: { id: string; values: any }) =>
+    mutationFn: async ({
+      id,
+      values,
+    }: {
+      id: string;
+      values: AssetFormValues;
+    }) =>
       updateAsset(id, prepareData(values)),
     onError: () => toast.error(t("assets:assetForm.error_update")),
   });
@@ -241,7 +271,7 @@ export const useAssetForm = ({
   };
 
   // --- Сабміт форми ---
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: AssetFormValues) => {
     setIsSubmitting(true);
     try {
       let assetId = assetToEdit?.id;
