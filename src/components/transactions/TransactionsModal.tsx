@@ -1,16 +1,19 @@
 import { useTranslation } from "react-i18next";
 import { useTransactionsModal } from "../../hooks/Transactions/useTransactionsModal";
+import type { TransactionFilters } from "../../services/apiTransactions";
+import type { Transaction } from "../../types";
 
 // UI Components
-import Spinner from "../ui/Spinner";
 import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { TableToolbar } from "../shared/TableToolbar/TableToolbar";
 import { TransactionItem } from "./TransactionItem";
 import * as S from "./TransactionsModal.styles";
 
+type GroupedTransactions = Record<string, Transaction[]>;
+
 interface TransactionsModalProps {
   accountId?: string;
-  initialFilters?: Record<string, any>;
+  initialFilters?: Partial<TransactionFilters>;
   title?: string;
   onClose?: () => void;
 }
@@ -36,7 +39,7 @@ export default function TransactionsModal(props: TransactionsModalProps) {
     language,
   } = state;
 
-  const renderList = (txList: any[]) =>
+  const renderList = (txList: Transaction[]) =>
     txList.map((tx) => (
       <TransactionItem
         key={tx.id}
@@ -86,7 +89,7 @@ export default function TransactionsModal(props: TransactionsModalProps) {
             )}
 
             {shouldGroup
-              ? Object.entries(dataToRender as Record<string, any[]>).map(
+              ? Object.entries(dataToRender as GroupedTransactions).map(
                   ([dateLabel, txs]) => (
                     <S.DateGroup key={dateLabel}>
                       <S.DateLabel>{dateLabel}</S.DateLabel>
@@ -94,7 +97,7 @@ export default function TransactionsModal(props: TransactionsModalProps) {
                     </S.DateGroup>
                   ),
                 )
-              : renderList(dataToRender as any[])}
+              : renderList(dataToRender as Transaction[])}
           </>
         )}
       </S.ScrollArea>
