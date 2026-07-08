@@ -6,7 +6,6 @@ import { SmartIcon } from "../../../utils/IconMap";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
-import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
 
 // Styles & Logic
@@ -28,8 +27,28 @@ interface Props {
   hideHeader?: boolean;
 }
 
+type PieTooltipPayload = {
+  payload: {
+    name: string;
+    value: number;
+    color: string;
+    logo: string | null;
+    icon: string | null;
+  };
+};
+
 // --- Custom Tooltip ---
-const CustomPieTooltip = ({ active, payload, currency, language }: any) => {
+const CustomPieTooltip = ({
+  active,
+  payload,
+  currency,
+  language,
+}: {
+  active?: boolean;
+  payload?: PieTooltipPayload[];
+  currency: string;
+  language: string;
+}) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -55,7 +74,15 @@ const CustomPieTooltip = ({ active, payload, currency, language }: any) => {
 };
 
 // --- Custom Active Shape (Hover Effect) ---
-const renderActiveShape = (props: any) => {
+const renderActiveShape = (props: {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  fill: string;
+}) => {
   const {
     cx,
     cy,
@@ -99,7 +126,7 @@ export const ExpensesPieWidget = (props: Props) => {
     t,
   } = useExpensesPieWidget(props);
 
-  const onPieEnter = (_: any, index: number) => {
+  const onPieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);
   };
 

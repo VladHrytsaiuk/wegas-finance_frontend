@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
@@ -6,6 +6,7 @@ import { statsService, type StatsFilter } from "../../services/apiStats";
 import { getCategoriesApi } from "../../services/apiCategories";
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
 import { useSettings } from "../../context/SettingsContext";
+import type { Category, Counterparty } from "../../types";
 
 // Helper for random color generation
 const stringToColor = (str: string) => {
@@ -22,8 +23,19 @@ export interface DataItem {
   name: string;
   total: number;
   color?: string;
-  [key: string]: any;
+  metadata?: string;
+  logo?: string | null;
+  icon?: string | null;
+  id?: string;
 }
+
+type ChartDataItem = {
+  name: string;
+  value: number;
+  color: string;
+  logo: string | null;
+  icon: string | null;
+};
 
 interface UseExpensesPieWidgetProps {
   globalFilter?: StatsFilter;
@@ -47,17 +59,21 @@ export const useExpensesPieWidget = ({
   const currency = externalCurrency || contextCurrency;
 
   // Local Filter
-  const [localFilter, setLocalFilter] = useState<StatsFilter>(
-    globalFilter || { from: 0, to: 0, label: "", accountIds: [] }
+  const [localOverrides, setLocalOverrides] = useState<Partial<StatsFilter>>({});
+
+  const localFilter = useMemo<StatsFilter>(
+    () => ({
+      from: globalFilter?.from ?? 0,
+      to: globalFilter?.to ?? 0,
+      accountIds: globalFilter?.accountIds ?? [],
+      currency: globalFilter?.currency,
+      ...localOverrides,
+    }),
+    [globalFilter, localOverrides],
   );
 
-  // Sync Global Filter
-  useEffect(() => {
-    if (globalFilter) setLocalFilter(globalFilter);
-  }, [globalFilter]);
-
   const handleFilterUpdate = (updates: Partial<StatsFilter>) => {
-    setLocalFilter((prev) => ({ ...prev, ...updates }));
+    setLocalOverrides((prev) => ({ ...prev, ...updates }));
     if (onDiverge) onDiverge();
   };
 
@@ -86,15 +102,15 @@ export const useExpensesPieWidget = ({
   });
 
   // --- Data Processing ---
-  const rawData = externalData || fetchedData || [];
   const isLoading = shouldFetch ? isDataLoading : false;
 
-  const chartData = useMemo(() => {
+  const chartData = useMemo<ChartDataItem[]>(() => {
+    const rawData = externalData || fetchedData || [];
     if (!rawData || rawData.length === 0) return [];
 
     const sorted = [...rawData].sort((a, b) => b.total - a.total);
 
-    const enrichData = (item: any) => {
+    const enrichData = (item: DataItem) => {
       let color = item.color || item.metadata;
       let logo = item.logo || null;
       let icon = item.icon || null;
@@ -102,13 +118,14 @@ export const useExpensesPieWidget = ({
       if (shouldFetch) {
         if (activeTab === "category") {
           const cat = categories.find(
-            (c: any) => String(c.id) === String(item.id) || c.name === item.name
+            (c: Category) => String(c.id) === String(item.id) || c.name === item.name
           );
           if (cat?.color) color = cat.color;
           if (cat?.icon) icon = cat.icon;
         } else if (activeTab === "counterparty") {
           const cp = counterparties.find(
-            (c: any) => String(c.id) === String(item.id) || c.name === item.name
+            (c: Counterparty) =>
+              String(c.id) === String(item.id) || c.name === item.name
           );
           if (cp) {
             if (cp.logo) logo = cp.logo;
@@ -117,7 +134,7 @@ export const useExpensesPieWidget = ({
             icon = cp.icon || cp.category?.icon;
             if (!icon && cp.category_id) {
               const parentCat = categories.find(
-                (c: any) => String(c.id) === String(cp.category_id)
+                (c: Category) => String(c.id) === String(cp.category_id)
               );
               if (parentCat?.icon) icon = parentCat.icon;
             }
@@ -126,7 +143,7 @@ export const useExpensesPieWidget = ({
             else if (cp.category?.color) color = cp.category.color;
             else if (cp.category_id) {
               const parentCat = categories.find(
-                (c: any) => String(c.id) === String(cp.category_id)
+                (c: Category) => String(c.id) === String(cp.category_id)
               );
               if (parentCat?.color) color = parentCat.color;
             }
@@ -140,7 +157,7 @@ export const useExpensesPieWidget = ({
       };
     };
 
-    let result = [];
+    let result: ChartDataItem[] = [];
     if (sorted.length <= 6) {
       result = sorted.map((item) => ({
         name: item.name,
@@ -169,7 +186,7 @@ export const useExpensesPieWidget = ({
       }
     }
     return result;
-  }, [rawData, categories, counterparties, shouldFetch, activeTab, t]);
+  }, [externalData, fetchedData, categories, counterparties, shouldFetch, activeTab, t]);
 
   const widgetTitle = useMemo(() => {
     if (activeTab === "counterparty") return t("dashboard:dashboard.widget_top_shops");
