@@ -1,10 +1,20 @@
 import { useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { BANK_SKINS, type BankSkin } from "../../components/accounts/bankSkins";
+import type { Account } from "../../services/apiAccounts";
+import type { UserProfile } from "../../services/apiUsers";
+
+type GridAccount = Account & {
+  owner_name?: string;
+};
+
+type GridSkin = BankSkin & {
+  iconType?: string;
+};
 
 interface UseAccountsGridProps {
-  groupedAccounts: Record<string, any[]>;
-  users: any[];
+  groupedAccounts: Record<string, Account[]>;
+  users: UserProfile[];
 }
 
 export const useAccountsGrid = ({
@@ -15,7 +25,7 @@ export const useAccountsGrid = ({
 
   // 1. Логіка скіна (ОНОВЛЕНА)
   const getSkin = useCallback(
-    (account: any): BankSkin | any => {
+    (account: Account): GridSkin => {
       // --- КАРТКИ (Банківські) ---
       if (account.type === "card") {
         const bank = account.bank_name;
@@ -63,7 +73,7 @@ export const useAccountsGrid = ({
   // 2. Групування (Залишається як було в попередньому кроці)
   const processedGroups = useMemo(() => {
     const allAccounts = Object.values(groupedAccounts).flat();
-    const newGroups: Record<string, any[]> = {};
+    const newGroups: Record<string, GridAccount[]> = {};
 
     allAccounts.forEach((acc) => {
       let key = "other";
