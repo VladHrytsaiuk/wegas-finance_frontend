@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useUsers } from "../Settings/useUsers";
 import { useDropdownPosition } from "../useDropdownPosition";
+import type { UserProfile } from "../../services/apiUsers";
 
 interface UseNoteOptionsProps {
   hiddenFrom: string;
@@ -53,7 +54,7 @@ export const useNoteOptions = ({
   }
 
   const otherUsers = (users || []).filter(
-    (u: any) => String(u.id) !== String(currentUserId),
+    (u: UserProfile) => String(u.id) !== String(currentUserId),
   );
 
   const handleToggleHiddenUser = (userId: string) => {
@@ -88,14 +89,12 @@ export const useNoteOptions = ({
       setIsHiddenListOpen,
       otherUsers,
     },
-    refs: {
-      colorTrigger: colorDropdown.triggerRef,
-      colorMenu: colorDropdown.menuRef,
-      colorStyle: colorDropdown.style,
-      privacyTrigger: privacyDropdown.triggerRef,
-      privacyMenu: privacyDropdown.menuRef,
-      privacyStyle: privacyDropdown.style,
-    },
+    colorTriggerRef: colorDropdown.triggerRef,
+    colorMenuRef: colorDropdown.menuRef,
+    colorStyle: colorDropdown.style,
+    privacyTriggerRef: privacyDropdown.triggerRef,
+    privacyMenuRef: privacyDropdown.menuRef,
+    privacyStyle: privacyDropdown.style,
     actions: {
       handleToggleHiddenUser,
       handleSetPublic,

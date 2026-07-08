@@ -10,6 +10,8 @@ import {
 } from "react-icons/hi2";
 import { NOTE_COLORS } from "../../utils/constants";
 import { useTranslation } from "react-i18next";
+import type { UserProfile } from "../../services/apiUsers";
+import type { useDropdownPosition } from "../../hooks/useDropdownPosition";
 
 import * as S from "./NoteOptions.styles";
 import { useNoteOptions } from "../../hooks/Shopping/useNoteOptions";
@@ -22,7 +24,7 @@ const PortalDropdown = ({
   menuRef,
 }: {
   isOpen: boolean;
-  positionStyle: any;
+  positionStyle: ReturnType<typeof useDropdownPosition>["style"];
   children: React.ReactNode;
   menuRef: React.RefObject<HTMLDivElement>;
 }) => {
@@ -63,7 +65,16 @@ export function NoteOptions({
 }: NoteOptionsProps) {
   const { t } = useTranslation();
 
-  const { state, refs, actions } = useNoteOptions({
+  const {
+    state,
+    colorTriggerRef,
+    colorMenuRef,
+    colorStyle,
+    privacyTriggerRef,
+    privacyMenuRef,
+    privacyStyle,
+    actions,
+  } = useNoteOptions({
     hiddenFrom,
     onChangeVisibility,
   });
@@ -73,7 +84,7 @@ export function NoteOptions({
     <S.Container>
       {/* --- COLOR PICKER --- */}
       <S.IconButton
-        ref={refs.colorTrigger as any}
+        ref={colorTriggerRef as React.RefObject<HTMLButtonElement>}
         type="button"
         onClick={() => state.setIsColorOpen((v) => !v)}
         $isActive={state.isColorOpen}
@@ -84,8 +95,8 @@ export function NoteOptions({
 
       <PortalDropdown
         isOpen={state.isColorOpen}
-        positionStyle={refs.colorStyle}
-        menuRef={refs.colorMenu}
+        positionStyle={colorStyle}
+        menuRef={colorMenuRef}
       >
         <S.DropdownMenu>
           <S.ColorGrid>
@@ -108,7 +119,7 @@ export function NoteOptions({
 
       {/* --- PRIVACY PICKER --- */}
       <S.IconButton
-        ref={refs.privacyTrigger as any}
+        ref={privacyTriggerRef as React.RefObject<HTMLButtonElement>}
         type="button"
         onClick={() => state.setIsPrivacyOpen((v) => !v)}
         $isActive={state.isPrivacyOpen}
@@ -125,8 +136,8 @@ export function NoteOptions({
 
       <PortalDropdown
         isOpen={state.isPrivacyOpen}
-        positionStyle={refs.privacyStyle}
-        menuRef={refs.privacyMenu}
+        positionStyle={privacyStyle}
+        menuRef={privacyMenuRef}
       >
         <S.DropdownMenu>
           <S.MenuItem
@@ -170,7 +181,7 @@ export function NoteOptions({
 
               {state.isHiddenListOpen && (
                 <S.UserScrollList>
-                  {otherUsers.map((user: any) => {
+                  {otherUsers.map((user: UserProfile) => {
                     const isHidden = hiddenFrom
                       .split(",")
                       .includes(String(user.id));
