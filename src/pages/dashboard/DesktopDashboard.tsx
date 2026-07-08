@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { endOfMonth, startOfMonth, subDays } from "date-fns";
+import { subDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { HiCheck, HiPencil, HiXMark } from "react-icons/hi2";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
-import type { ResponsiveLayouts as Layouts } from "react-grid-layout/legacy";
+import type {
+  Layout,
+  ResponsiveLayouts as Layouts,
+} from "react-grid-layout/legacy";
 import { useTranslation } from "react-i18next";
 import { usePageTitle } from "../../hooks/usePageTitle";
 
@@ -21,7 +24,9 @@ import { AccountsWidget } from "../../components/stats/widgets/AccountsWidget";
 import { ExpensesPieWidget } from "../../components/stats/widgets/ExpensesPieWidget";
 
 import { useHeader } from "../../context/HeaderContext";
-import api from "../../services/Axios";
+import { getAccountsApi, type Account } from "../../services/apiAccounts";
+import { getMeApi, type UserProfile } from "../../services/apiUsers";
+import type { StatsFilter } from "../../services/apiStats";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { useSummaryWidget } from "../../hooks/Stats/useSummaryWidget";
 import { formatMoney } from "../../utils/helpers";
@@ -105,7 +110,13 @@ interface GridItemProps {
   style?: React.CSSProperties;
   className?: string;
   children?: React.ReactNode;
-  [key: string]: any;
+  onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
+  onTouchEnd?: React.TouchEventHandler<HTMLDivElement>;
+}
+
+interface DashboardFilter extends StatsFilter {
+  label: string;
 }
 
 const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
@@ -136,28 +147,29 @@ function Dashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  const [layouts, setLayouts] = useState(() => {
+  const [layouts, setLayouts] = useState<Layouts>(() => {
     try {
       const saved = localStorage.getItem("dashboard_layout_v19");
-      return saved ? JSON.parse(saved) : defaultLayouts;
-    } catch (e) {
+      return saved ? (JSON.parse(saved) as Layouts) : defaultLayouts;
+    } catch {
       return defaultLayouts;
     }
   });
 
   const controlledLayouts = useMemo(() => {
-    const newLayouts = JSON.parse(JSON.stringify(layouts));
-    for (const key in newLayouts) {
-      newLayouts[key] = newLayouts[key].map((item: any) => ({
-        ...item,
-        static: !isEditMode ? true : item.static || false,
-      }));
-    }
-    return newLayouts;
+    return Object.fromEntries(
+      Object.entries(layouts).map(([key, items]) => [
+        key,
+        items.map((item: Layout) => ({
+          ...item,
+          static: !isEditMode || item.static || false,
+        })),
+      ]),
+    ) as Layouts;
   }, [layouts, isEditMode]);
 
   const onLayoutChange = useCallback(
-    (_currentLayout: any, allLayouts: any) => {
+    (_currentLayout: Layout[], allLayouts: Layouts) => {
       if (!isEditMode) return;
       const allLayoutsStr = JSON.stringify(allLayouts);
       setLayouts(allLayouts);
@@ -172,14 +184,14 @@ function Dashboard() {
     setIsEditMode(false);
   };
 
-  const { data: user, isLoading: isUserLoading } = useQuery({
+  const { data: user, isLoading: isUserLoading } = useQuery<UserProfile>({
     queryKey: ["me"],
-    queryFn: async () => (await api.get("/users/me")).data,
+    queryFn: getMeApi,
   });
 
-  const { data: accounts, isLoading: isAccLoading } = useQuery({
+  const { data: accounts, isLoading: isAccLoading } = useQuery<Account[]>({
     queryKey: ["accounts"],
-    queryFn: async () => (await api.get<any[]>("/accounts")).data,
+    queryFn: getAccountsApi,
   });
 
   const myAccountIds = useMemo(() => {
@@ -190,25 +202,30 @@ function Dashboard() {
     );
   }, [accounts, user?.id]);
 
-  const [globalFilter, setGlobalFilter] = useState<any>({
+  const [globalFilter, setGlobalFilter] = useState<DashboardFilter>({
     from: subDays(new Date(), 30).getTime(),
     to: new Date().getTime(),
     label: t("legacy:filters.periods.last_30_days"),
     accountIds: [],
   });
 
+  const effectiveGlobalFilter = useMemo<DashboardFilter>(
+    () => ({
+      ...globalFilter,
+      accountIds:
+        globalFilter.accountIds.length > 0
+          ? globalFilter.accountIds
+          : myAccountIds,
+    }),
+    [globalFilter, myAccountIds],
+  );
+
   const {
     totals: { balance, income, expense },
     meta: { currency, language },
-  } = useSummaryWidget({ globalFilter });
+  } = useSummaryWidget({ globalFilter: effectiveGlobalFilter });
 
   const [isDiverged, setIsDiverged] = useState(false);
-
-  useEffect(() => {
-    if (myAccountIds.length > 0 && globalFilter.accountIds.length === 0) {
-      setGlobalFilter((prev: any) => ({ ...prev, accountIds: myAccountIds }));
-    }
-  }, [myAccountIds]);
 
   useEffect(() => {
     const name = user?.name || t("common:shared.user_default");
@@ -219,11 +236,11 @@ function Dashboard() {
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, user, t]);
 
-  const handleGlobalUpdate = (updates: any) => {
-    setGlobalFilter((prev: any) => ({ ...prev, ...updates }));
+  const handleGlobalUpdate = useCallback((updates: Partial<DashboardFilter>) => {
+    setGlobalFilter((prev) => ({ ...prev, ...updates }));
     setIsDiverged(false);
-  };
-  const handleLocalChange = () => setIsDiverged(true);
+  }, []);
+  const handleLocalChange = useCallback(() => setIsDiverged(true), []);
 
   const breakpoints = useMemo(
     () => ({ xl: 1300, lg: 1000, md: 768, sm: 480, xs: 0 }),
@@ -295,14 +312,14 @@ function Dashboard() {
       <GridItem key="recent">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           <RecentTransactionsWidget
-            globalFilter={globalFilter}
+            globalFilter={effectiveGlobalFilter}
             onDiverge={handleLocalChange}
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, globalFilter, handleLocalChange],
+    [isEditMode, effectiveGlobalFilter, handleLocalChange],
   );
 
   const trendWidget = useMemo(
@@ -313,14 +330,14 @@ function Dashboard() {
             type="expense"
             title={t("dashboard:dashboardPage.widget_trend_expenses")}
             color="#ef4444"
-            globalFilter={globalFilter}
+            globalFilter={effectiveGlobalFilter}
             onDiverge={handleLocalChange}
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, globalFilter, handleLocalChange],
+    [isEditMode, t, effectiveGlobalFilter, handleLocalChange],
   );
 
   const pieWidget = useMemo(
@@ -328,7 +345,7 @@ function Dashboard() {
       <GridItem key="pie">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           <ExpensesPieWidget
-            globalFilter={globalFilter}
+            globalFilter={effectiveGlobalFilter}
             onDiverge={handleLocalChange}
             type="expense"
           />
@@ -336,7 +353,7 @@ function Dashboard() {
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, globalFilter, handleLocalChange],
+    [isEditMode, effectiveGlobalFilter, handleLocalChange],
   );
 
   const topCategoriesWidget = useMemo(
@@ -347,14 +364,14 @@ function Dashboard() {
             type="expense"
             entity="category"
             title={t("dashboard:dashboardPage.widget_top_categories")}
-            globalFilter={globalFilter}
+            globalFilter={effectiveGlobalFilter}
             onDiverge={handleLocalChange}
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, globalFilter, handleLocalChange],
+    [isEditMode, t, effectiveGlobalFilter, handleLocalChange],
   );
 
   const topCounterpartiesWidget = useMemo(
@@ -365,14 +382,14 @@ function Dashboard() {
             type="expense"
             entity="counterparty"
             title={t("dashboard:dashboardPage.widget_top_shops")}
-            globalFilter={globalFilter}
+            globalFilter={effectiveGlobalFilter}
             onDiverge={handleLocalChange}
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, globalFilter, handleLocalChange],
+    [isEditMode, t, effectiveGlobalFilter, handleLocalChange],
   );
 
   if (isUserLoading || isAccLoading)
@@ -411,11 +428,11 @@ function Dashboard() {
         <WidgetControls
           variant="global"
           hasChanges={isDiverged}
-          currentLabel={globalFilter.label}
-          currentAccountIds={globalFilter.accountIds}
+          currentLabel={effectiveGlobalFilter.label}
+          currentAccountIds={effectiveGlobalFilter.accountIds}
           onFilterChange={handleGlobalUpdate}
-          currentFrom={globalFilter.from}
-          currentTo={globalFilter.to}
+          currentFrom={effectiveGlobalFilter.from}
+          currentTo={effectiveGlobalFilter.to}
           restrictedAccountIds={myAccountIds}
           disabled={isEditMode}
         />
