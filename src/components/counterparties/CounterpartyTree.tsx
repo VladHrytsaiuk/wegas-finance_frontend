@@ -1,7 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { HiPencil, HiTrash, HiChevronDown, HiCheck, HiEllipsisVertical } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { SmartIcon } from "../../utils/IconMap";
+import type {
+  Counterparty as CounterpartyEntity,
+  CounterpartyCategory,
+} from "../../types";
 
 import {
   isNodeFullySelected,
@@ -10,18 +15,6 @@ import {
 
 import * as S from "./CounterpartyTree.styles";
 
-export interface Counterparty {
-  id: string;
-  name: string;
-  type: string;
-  subtype?: string;
-  icon?: string;
-  logo?: string;
-  color?: string;
-  category_id?: string | number;
-  [key: string]: any;
-}
-
 export interface TreeNodeData {
   id: string;
   name: string;
@@ -29,7 +22,10 @@ export interface TreeNodeData {
   logo?: string | null;
   color?: string;
   type: "group" | "subgroup" | "item";
-  data?: Counterparty;
+  data?: CounterpartyEntity;
+  raw?: CounterpartyEntity | CounterpartyCategory;
+  isCategory?: boolean;
+  isRoot?: boolean;
   children: TreeNodeData[];
 }
 
@@ -37,8 +33,8 @@ interface CounterpartyTreeProps {
   nodes: TreeNodeData[];
   selectedId?: string;
   selectedIds?: string[];
-  onSelect?: (cp: Counterparty | any) => void;
-  onEdit?: (node: any) => void;
+  onSelect?: (cp: CounterpartyEntity | TreeNodeData) => void;
+  onEdit?: (node: TreeNodeData) => void;
   onDelete?: (id: string, isCat: boolean) => void;
   defaultExpandedIds?: string[];
   withCheckboxes?: boolean;
@@ -50,9 +46,9 @@ function MobileActionsMenu({
   onDelete,
   t,
 }: {
-  onEdit?: () => void;
-  onDelete?: () => void;
-  t: any;
+	onEdit?: () => void;
+	onDelete?: () => void;
+	t: TFunction;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -309,31 +305,31 @@ export function CounterpartyTree({
   defaultExpandedIds = ["root_shops", "root_people", "root_other"],
   withCheckboxes = false,
 }: CounterpartyTreeProps) {
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(
-    () => new Set(defaultExpandedIds),
-  );
+  const [toggledIds, setToggledIds] = useState<Set<string>>(() => new Set());
 
-  // Ref for efficient prop comparison to avoid re-renders
-  const prevDefaultIdsRef = useRef(JSON.stringify(defaultExpandedIds));
+  const expandedIds = useMemo(() => {
+    const next = new Set(defaultExpandedIds);
 
-  useEffect(() => {
-    const currentIdsStr = JSON.stringify(defaultExpandedIds);
-    if (prevDefaultIdsRef.current !== currentIdsStr) {
-      if (defaultExpandedIds.length > 0) {
-        setExpandedIds((prev) => {
-          const next = new Set(prev);
-          defaultExpandedIds.forEach((id) => next.add(id));
-          return next;
-        });
+    toggledIds.forEach((id) => {
+      if (next.has(id)) {
+        next.delete(id);
+        return;
       }
-      prevDefaultIdsRef.current = currentIdsStr;
-    }
-  }, [defaultExpandedIds]);
+
+      next.add(id);
+    });
+
+    return next;
+  }, [defaultExpandedIds, toggledIds]);
 
   const toggle = (id: string) => {
-    setExpandedIds((prev) => {
+    setToggledIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };

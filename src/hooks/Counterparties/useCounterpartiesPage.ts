@@ -4,6 +4,18 @@ import { useCounterpartyData } from "./useCounterpartyData";
 import { useCounterpartyTree } from "./useCounterpartyTree";
 import { useUserRole } from "../useUserRole";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+import type { TreeNodeData } from "../../components/counterparties/CounterpartyTree";
+import type {
+  Counterparty,
+  CounterpartyBalance,
+  CounterpartyCategory,
+} from "../../types";
+
+type EditableTreeNode = TreeNodeData & {
+  data?: Counterparty;
+  raw?: Counterparty | CounterpartyCategory;
+  isCategory?: boolean;
+};
 
 export const useCounterpartiesPage = () => {
   const { t } = useTranslation();
@@ -18,8 +30,8 @@ export const useCounterpartiesPage = () => {
   const [filters, setFilters] = useState({ type: [] as string[] });
   const [sortValue, setSortValue] = useState("default");
 
-  const [selectedCp, setSelectedCp] = useState<any>(null);
-  const [selectedCat, setSelectedCat] = useState<any>(null);
+  const [selectedCp, setSelectedCp] = useState<Counterparty | null>(null);
+  const [selectedCat, setSelectedCat] = useState<CounterpartyCategory | null>(null);
   const [itemToDelete, setItemToDelete] = useState<{
     id: string;
     name: string;
@@ -41,7 +53,7 @@ export const useCounterpartiesPage = () => {
     setTimeout(() => document.getElementById(`trigger-${name}`)?.click(), 0);
   };
 
-  const handleEditClick = (node: any) => {
+  const handleEditClick = (node: EditableTreeNode) => {
     if (!canManageStructure) return;
 
     // node - це об'єкт TreeNode, у нього є поле raw (оригінальні дані) або data
@@ -51,10 +63,10 @@ export const useCounterpartiesPage = () => {
     if (node.type === "subgroup" || node.type === "group" || node.isCategory) {
       // Якщо це категорія (або підгрупа, яка є категорією)
       // Треба знайти справжню категорію в масиві categories, якщо node.raw неповний
-      setSelectedCat(rawData);
+      setSelectedCat(rawData as CounterpartyCategory);
       openModal("edit-cat");
     } else {
-      setSelectedCp(rawData);
+      setSelectedCp(rawData as Counterparty);
       openModal("edit-cp");
     }
   };
@@ -70,12 +82,15 @@ export const useCounterpartiesPage = () => {
       t("counterparties:counterpartiesPage.resource_counterparty") || "Counterparty";
 
     if (isCategory) {
-      const cat = categories.find((c: any) => c.id === id);
+      const cat = categories.find((category: CounterpartyCategory) => category.id === id);
       name = cat ? cat.name : categoryNameDefault;
     } else {
-      const cp = counterparties.find((c: any) => c.id === id);
+      const cp = counterparties.find((counterparty: Counterparty) => counterparty.id === id);
       name = cp ? cp.name : counterpartyNameDefault;
-      hasDebt = cp?.balances?.some((b: any) => Math.abs(b.balance) > 0.01) || false;
+      hasDebt =
+        cp?.balances?.some(
+          (balance: CounterpartyBalance) => Math.abs(balance.balance) > 0.01,
+        ) || false;
     }
     setItemToDelete({ id, name, isCategory, hasDebt });
     openModal("delete-confirm");
