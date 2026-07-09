@@ -13,6 +13,7 @@ import { useTags } from "../../hooks/Settings/useTags";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Tags.styles";
+import type { Tag } from "../../types";
 
 function Tags() {
   return (
@@ -75,7 +76,7 @@ function TagsContent() {
                   title={t("settings:tagsPage.status_empty")}
                 />
               ) : (
-                tags.map((tag: any) => (
+                tags.map((tag: Tag) => (
                   <TagItem
                     key={tag.id}
                     tag={tag}

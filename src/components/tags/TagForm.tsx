@@ -7,9 +7,18 @@ import { Input } from "../ui/Input";
 import { ColorPicker } from "../ui/ColorIconPicker";
 import * as S from "./TagForm.styles";
 
+interface TagFormData {
+  name: string;
+  color: string;
+}
+
+interface TagFormSubmitOptions {
+  onSuccess?: () => void;
+}
+
 // === COMPONENT ===
 interface TagFormProps {
-  onSubmit: (data: any, options?: any) => void;
+  onSubmit: (data: TagFormData, options?: TagFormSubmitOptions) => void;
   isLoading?: boolean;
 }
 

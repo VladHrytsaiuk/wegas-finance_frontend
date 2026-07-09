@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { HiPlus, HiCheck } from "react-icons/hi2";
+import type { Tag } from "../../types";
 
 // Custom Hook & Styles
 import { useTagSelect } from "../../hooks/Tags/useTagSelect";
@@ -7,7 +8,7 @@ import * as S from "./TagSelect.styles";
 import { BaseSelect } from "../ui/Select/BaseSelect";
 
 interface TagSelectProps {
-  tags: any[];
+  tags: Tag[];
   value: string[];
   onChange: (ids: string[]) => void;
   onCreate: (name: string) => void;
@@ -20,7 +21,6 @@ export default function TagSelect(props: TagSelectProps) {
   const {
     state: { search, filteredTags, exactMatch, selectedTags },
     actions,
-    refs,
   } = useTagSelect(props);
 
   const triggerLabel =
@@ -137,7 +137,7 @@ export default function TagSelect(props: TagSelectProps) {
           </S.FooterBtn>
         )}
         <S.FooterBtn
-          ref={refs.doneBtnRef}
+          data-tag-select-done="true"
           $variant="primary"
           type="button"
           onClick={() => actions.setIsOpen(false)}

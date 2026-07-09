@@ -1,12 +1,7 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useDropdownPosition } from "../useDropdownPosition";
 import { focusNextElement } from "../../utils/focusUtils";
-
-interface Tag {
-  id: string;
-  name: string;
-  color?: string;
-}
+import type { Tag } from "../../types";
 
 interface UseTagSelectProps {
   tags: Tag[];
@@ -27,7 +22,6 @@ export const useTagSelect = ({
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null);
   const triggerBtnRef = useRef<HTMLButtonElement>(null);
-  const doneBtnRef = useRef<HTMLButtonElement>(null);
 
   // Position Hook
   const { triggerRef, menuRef, style } = useDropdownPosition(
@@ -111,7 +105,8 @@ export const useTagSelect = ({
 
       // Tab Navigation Logic to close menu when leaving via bottom
       if (e.key === "Tab") {
-        if (document.activeElement === doneBtnRef.current && !e.shiftKey) {
+        const activeElement = document.activeElement as HTMLElement | null;
+        if (activeElement?.dataset.tagSelectDone === "true" && !e.shiftKey) {
           e.preventDefault();
           setIsOpen(false);
           if (triggerBtnRef.current) {
@@ -177,7 +172,6 @@ export const useTagSelect = ({
       menuRef,
       triggerBtnRef,
       searchInputRef,
-      doneBtnRef,
     },
   };
 };
