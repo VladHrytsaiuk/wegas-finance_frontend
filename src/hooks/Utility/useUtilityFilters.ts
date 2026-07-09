@@ -3,6 +3,10 @@ import { useTranslation } from "react-i18next";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 import type { UtilityMeter } from "../../types";
 
+interface UtilityFilterValues {
+  type: string[];
+}
+
 export function useUtilityFilters(meters: UtilityMeter[]) {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,13 +16,16 @@ export function useUtilityFilters(meters: UtilityMeter[]) {
   // "group-type" -> Групувати по типу
   const [sortValue, setSortValue] = useState("group-asset");
 
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({
+  const [filterValues, setFilterValues] = useState<UtilityFilterValues>({
     type: [],
   });
 
   const handleSearchChange = (val: string) => setSearchQuery(val);
   const handleSortChange = (val: string) => setSortValue(val);
-  const handleFilterChange = (key: string, val: any) => {
+  const handleFilterChange = <K extends keyof UtilityFilterValues>(
+    key: K,
+    val: UtilityFilterValues[K],
+  ) => {
     setFilterValues((prev) => ({ ...prev, [key]: val }));
   };
   const handleClearAll = () => {

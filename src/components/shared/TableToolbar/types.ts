@@ -15,8 +15,8 @@ export interface FilterConfig {
 
   // Налаштування для дерев
   treeType?: "categories" | "counterparties" | "accounts";
-  rawData?: any[]; // Основні дані (категорії або контрагенти)
-  relatedData?: any[]; // ✅ НОВЕ ПОЛЕ: Додаткові дані (наприклад, категорії для контрагентів)
+  rawData?: unknown[]; // Основні дані (категорії або контрагенти)
+  relatedData?: unknown[]; // ✅ НОВЕ ПОЛЕ: Додаткові дані (наприклад, категорії для контрагентів)
 
   options?: FilterOption[]; // Для звичайних списків
 }

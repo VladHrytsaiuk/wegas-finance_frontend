@@ -8,7 +8,7 @@ export interface DataItem {
   color?: string;
   icon?: string;
   logo?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface UseDetailedTableProps {
