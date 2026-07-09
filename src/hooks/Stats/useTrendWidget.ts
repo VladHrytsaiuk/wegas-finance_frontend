@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   eachDayOfInterval,
@@ -34,17 +34,27 @@ export const useTrendWidget = ({
   );
 
   // Локальний фільтр для віджету (може відрізнятися від глобального при зміні на самому віджеті)
-  const [localFilter, setLocalFilter] = useState<StatsFilter>(
-    globalFilter || { from: 0, to: 0, label: "", accountIds: [] }
+  const globalFilterKey = JSON.stringify(globalFilter);
+  const [localFilterOverride, setLocalFilterOverride] = useState<{
+    sourceKey: string;
+    value: StatsFilter;
+  } | null>(null);
+  const localFilter = useMemo(
+    () =>
+      localFilterOverride?.sourceKey === globalFilterKey
+        ? localFilterOverride.value
+        : globalFilter || { from: 0, to: 0, label: "", accountIds: [] },
+    [globalFilter, globalFilterKey, localFilterOverride],
   );
 
-  // Синхронізація з глобальним фільтром
-  useEffect(() => {
-    if (globalFilter) setLocalFilter(globalFilter);
-  }, [globalFilter]); // Примітка: краще використовувати примітиви або deep compare, але тут поки так
-
   const handleFilterUpdate = (updates: Partial<StatsFilter>) => {
-    setLocalFilter((prev) => ({ ...prev, ...updates }));
+    setLocalFilterOverride((prev) => ({
+      sourceKey: globalFilterKey,
+      value: {
+        ...(prev?.sourceKey === globalFilterKey ? prev.value : localFilter),
+        ...updates,
+      },
+    }));
     if (onDiverge) onDiverge();
   };
 
@@ -88,7 +98,7 @@ export const useTrendWidget = ({
       } else {
         ticks = eachDayOfInterval({ start: startDate, end: endDate });
       }
-    } catch (e) {
+    } catch {
       // Фолбек на випадок некоректних дат
       ticks = [];
     }

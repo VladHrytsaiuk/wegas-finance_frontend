@@ -14,8 +14,9 @@ import { uk, enUS } from "date-fns/locale";
 import { type DateRange } from "react-day-picker";
 import { useQuery } from "@tanstack/react-query";
 
-import api from "../../services/Axios";
+import { getAccountsApi } from "../../services/apiAccounts";
 import { type StatsFilter } from "../../services/apiStats";
+import { getUsersApi } from "../../services/apiUsers";
 import { useDropdownPosition } from "../useDropdownPosition";
 
 interface UseWidgetControlsProps {
@@ -59,12 +60,12 @@ export const useWidgetControls = ({
   // Queries
   const { data: accounts = [] } = useQuery({
     queryKey: ["accounts"],
-    queryFn: async () => (await api.get<any[]>("/accounts")).data,
+    queryFn: getAccountsApi,
   });
 
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
-    queryFn: async () => (await api.get<any[]>("/users")).data,
+    queryFn: getUsersApi,
   });
 
   // Helpers
@@ -101,10 +102,12 @@ export const useWidgetControls = ({
         from = startOfDay(now).getTime();
         break;
       case "yesterday":
+        {
         const yest = subDays(now, 1);
         from = startOfDay(yest).getTime();
         to = endOfDay(yest).getTime();
         break;
+        }
       case "7_days":
         from = subDays(now, 6).getTime();
         break;
@@ -113,11 +116,13 @@ export const useWidgetControls = ({
         to = endOfMonth(now).getTime();
         break;
       case "last_month":
+        {
         const lastMonth = subMonths(now, 1);
         from = startOfMonth(lastMonth).getTime();
         to = endOfMonth(lastMonth).getTime();
         label = t("legacy:filters.periods.last_month");
         break;
+        }
       case "last_30_days":
         from = subDays(now, 30).getTime();
         to = now.getTime();

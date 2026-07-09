@@ -32,11 +32,13 @@ export const useWidgetMenu = ({ onRangeChange }: UseWidgetMenuProps) => {
 
     switch (type) {
       case "lastMonth":
+        {
         const last = subMonths(now, 1);
         from = startOfMonth(last).getTime();
         to = endOfMonth(last).getTime();
         label = t("legacy:filters.periods.last_month");
         break;
+        }
       case "year":
         from = startOfYear(now).getTime();
         to = endOfMonth(now).getTime();
