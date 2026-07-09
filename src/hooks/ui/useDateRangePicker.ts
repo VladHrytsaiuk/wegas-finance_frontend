@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { uk, enUS } from "date-fns/locale";
 import {
@@ -25,6 +25,25 @@ export interface DatePickerProps {
   onDateChange?: (date: number) => void;
 }
 
+const getInitialRange = (props: DatePickerProps): DateRange | undefined => ({
+  from: props.dateFrom ? new Date(props.dateFrom) : undefined,
+  to: props.dateTo ? new Date(props.dateTo) : undefined,
+});
+
+const getInitialDate = (props: DatePickerProps) => {
+  const inputDate = props.dateFrom || props.date;
+  if (!inputDate) return undefined;
+
+  const date = new Date(inputDate);
+  return isValid(date) ? date : undefined;
+};
+
+const getDateParts = (date?: Date) => ({
+  day: date ? format(date, "dd") : "",
+  month: date ? format(date, "MM") : "",
+  year: date ? format(date, "yyyy") : "",
+});
+
 export const useDateRangePicker = (props: DatePickerProps) => {
   const { t, i18n } = useTranslation();
   const currentLocale = i18n.language === "uk" ? uk : enUS;
@@ -32,38 +51,28 @@ export const useDateRangePicker = (props: DatePickerProps) => {
 
   // --- States ---
   const [isOpen, setIsOpen] = useState(false);
-  const [tempRange, setTempRange] = useState<DateRange | undefined>();
-  const [tempDate, setTempDate] = useState<Date | undefined>();
-
-  // --- Inputs ---
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const [tempRangeOverride, setTempRangeOverride] = useState<
+    DateRange | undefined | null
+  >(null);
+  const [tempDateOverride, setTempDateOverride] = useState<
+    Date | undefined | null
+  >(null);
+  const [datePartsOverride, setDatePartsOverride] = useState<{
+    day: string;
+    month: string;
+    year: string;
+  } | null>(null);
 
   const dayRef = useRef<HTMLInputElement>(null);
   const monthRef = useRef<HTMLInputElement>(null);
   const yearRef = useRef<HTMLInputElement>(null);
 
-  // --- 1. ІНІЦІАЛІЗАЦІЯ ---
-  useEffect(() => {
-    if (mode === "range") {
-      setTempRange({
-        from: props.dateFrom ? new Date(props.dateFrom) : undefined,
-        to: props.dateTo ? new Date(props.dateTo) : undefined,
-      });
-    } else {
-      const inputDate = props.dateFrom || props.date;
-      if (inputDate) {
-        const d = new Date(inputDate);
-        if (isValid(d)) {
-          setTempDate(d);
-          setDay(format(d, "dd"));
-          setMonth(format(d, "MM"));
-          setYear(format(d, "yyyy"));
-        }
-      }
-    }
-  }, [mode, props.dateFrom, props.dateTo]); // Слухаємо зміни пропсів
+  const tempRange =
+    tempRangeOverride === null ? getInitialRange(props) : tempRangeOverride;
+  const tempDate =
+    tempDateOverride === null ? getInitialDate(props) : tempDateOverride;
+  const { day, month, year } =
+    datePartsOverride ?? getDateParts(mode === "single" ? tempDate : undefined);
 
   // --- 2. INTERNAL HELPER: SEND DATA UP ---
   const sendDataToParent = (from?: Date, to?: Date) => {
@@ -85,7 +94,8 @@ export const useDateRangePicker = (props: DatePickerProps) => {
         parsed.getFullYear() > 1900 &&
         format(parsed, "dd.MM.yyyy") === str
       ) {
-        setTempDate(parsed);
+        setTempDateOverride(parsed);
+        setDatePartsOverride(getDateParts(parsed));
         sendDataToParent(parsed, undefined);
       }
     }
@@ -96,16 +106,16 @@ export const useDateRangePicker = (props: DatePickerProps) => {
   // Вибір мишкою в календарі (тільки оновлює візуальний стейт)
   const handleRangeSelect = (range: DateRange | undefined) => {
     // console.log("📅 [Calendar] Selected temporarily:", range);
-    setTempRange(range);
+    setTempRangeOverride(range);
   };
 
   const handleSingleSelect = (date: Date | undefined) => {
-    setTempDate(date);
+    setTempDateOverride(date);
     if (date) {
-      setDay(format(date, "dd"));
-      setMonth(format(date, "MM"));
-      setYear(format(date, "yyyy"));
+      setDatePartsOverride(getDateParts(date));
       sendDataToParent(date, undefined);
+    } else {
+      setDatePartsOverride(getDateParts(undefined));
     }
   };
 
@@ -140,10 +150,12 @@ export const useDateRangePicker = (props: DatePickerProps) => {
         to = endOfDay(now);
         break;
       case "yesterday":
-        const y = subDays(now, 1);
+        {
+          const y = subDays(now, 1);
         from = startOfDay(y);
         to = endOfDay(y);
         break;
+        }
       case "last7":
         from = startOfDay(subDays(now, 6));
         to = endOfDay(now);
@@ -153,10 +165,12 @@ export const useDateRangePicker = (props: DatePickerProps) => {
         to = endOfMonth(now);
         break;
       case "lastMonth":
-        const lm = subMonths(now, 1);
+        {
+          const lm = subMonths(now, 1);
         from = startOfMonth(lm);
         to = endOfMonth(lm);
         break;
+        }
       case "thisYear":
         from = startOfYear(now);
         to = endOfYear(now);
@@ -164,7 +178,7 @@ export const useDateRangePicker = (props: DatePickerProps) => {
     }
 
     // Оновлюємо внутрішній стейт, щоб календар перемалювався
-    setTempRange({ from, to });
+    setTempRangeOverride({ from, to });
     // І ВІДРАЗУ відправляємо наверх
     sendDataToParent(from, to);
     setIsOpen(false);
@@ -174,7 +188,7 @@ export const useDateRangePicker = (props: DatePickerProps) => {
   const handleDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
     if (parseInt(val) > 31) val = "31";
-    setDay(val);
+    setDatePartsOverride({ day: val, month, year });
     if (val.length === 2) {
       monthRef.current?.focus();
       tryUpdateDate(val, month, year);
@@ -183,15 +197,15 @@ export const useDateRangePicker = (props: DatePickerProps) => {
   const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
     if (parseInt(val) > 12) val = "12";
-    setMonth(val);
+    setDatePartsOverride({ day, month: val, year });
     if (val.length === 2) {
       yearRef.current?.focus();
       tryUpdateDate(day, val, year);
     }
   };
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value.replace(/\D/g, "").slice(0, 4);
-    setYear(val);
+    const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+    setDatePartsOverride({ day, month, year: val });
     if (val.length === 4) tryUpdateDate(day, month, val);
   };
   const handleKeyDown = (e: React.KeyboardEvent, field: "d" | "m" | "y") => {

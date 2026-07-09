@@ -1,10 +1,11 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import styled, { css } from "styled-components";
 import { BANK_SKINS } from "../accounts/bankSkins";
 import { formatMoney } from "../../utils/helpers";
 import { useSettings } from "../../context/SettingsContext";
 import { BankLogo, PaymentSystemLogo } from "../accounts/form/CardStyles";
 import { HiArrowPath, HiUser } from "react-icons/hi2";
+import type { Account } from "../../services/apiAccounts";
 
 const Wrapper = styled.div`
   display: flex;
@@ -179,8 +180,12 @@ const Dot = styled.div<{ $active: boolean }>`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
+type SliderAccount = Account & {
+  owner_name?: string;
+};
+
 interface CardSliderProps {
-  accounts: any[];
+  accounts: SliderAccount[];
   activeAccountId: string | null;
   onAccountChange: (accountId: string) => void;
   onCardClick: (accountId: string) => void;
@@ -189,9 +194,9 @@ interface CardSliderProps {
 function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }: CardSliderProps) {
   const { currency: baseCurrency, language } = useSettings();
   const sliderRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndex = accounts.findIndex((account) => account.id === activeAccountId);
 
-  const getSkin = (account: any) => {
+  const getSkin = (account: SliderAccount) => {
     if (account.type === "card") {
       const bank = account.bank_name;
       const design = account.card_type || account.card_design;
@@ -219,20 +224,14 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
     const index = Math.round(scrollLeft / itemWidth);
     
     if (index !== activeIndex && accounts[index]) {
-      setActiveIndex(index);
       onAccountChange(accounts[index].id);
     }
   };
 
-  useEffect(() => {
-    const index = accounts.findIndex(acc => acc.id === activeAccountId);
-    if (index !== -1) setActiveIndex(index);
-  }, [activeAccountId, accounts]);
-
   return (
     <Wrapper>
       <SliderContainer ref={sliderRef} onScroll={handleScroll}>
-        {accounts.map((acc, index) => {
+        {accounts.map((acc) => {
           const skin = getSkin(acc);
           const isActive = acc.id === activeAccountId;
           const isPrivat = skin.bankId === "privat";

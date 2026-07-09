@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDropdownPosition } from "../useDropdownPosition";
 
@@ -10,24 +10,18 @@ interface UseTimePickerProps {
 export const useTimePicker = ({ value, onChange }: UseTimePickerProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-
-  const [hh, setHh] = useState("");
-  const [mm, setMm] = useState("");
+  const [draftTime, setDraftTime] = useState<{ hh: string; mm: string } | null>(
+    null,
+  );
 
   const hourRef = useRef<HTMLInputElement>(null);
   const minRef = useRef<HTMLInputElement>(null);
-
-  // Синхронізація локального стану з пропсом value
-  useEffect(() => {
-    if (value && value.includes(":")) {
-      const [hVal, mVal] = value.split(":");
-      setHh(hVal);
-      setMm(mVal);
-    } else {
-      setHh("");
-      setMm("");
-    }
-  }, [value]);
+  const [hh, mm] =
+    draftTime !== null
+      ? [draftTime.hh, draftTime.mm]
+      : value && value.includes(":")
+        ? value.split(":")
+        : ["", ""];
 
   const { triggerRef, menuRef, style } = useDropdownPosition(
     isOpen,
@@ -48,7 +42,7 @@ export const useTimePicker = ({ value, onChange }: UseTimePickerProps) => {
     if (val.length === 2 && parseInt(val) > 23) val = "23";
     val = val.slice(0, 2);
 
-    setHh(val);
+    setDraftTime({ hh: val, mm });
 
     if (val.length === 2) {
       minRef.current?.focus();
@@ -62,7 +56,7 @@ export const useTimePicker = ({ value, onChange }: UseTimePickerProps) => {
     if (val.length === 2 && parseInt(val) > 59) val = "59";
     val = val.slice(0, 2);
 
-    setMm(val);
+    setDraftTime({ hh, mm: val });
 
     if (val.length === 2) {
       updateParent(hh, val);
@@ -89,8 +83,7 @@ export const useTimePicker = ({ value, onChange }: UseTimePickerProps) => {
   const handleSelect = (h: number, m: number) => {
     const hStr = h.toString().padStart(2, "0");
     const mStr = m.toString().padStart(2, "0");
-    setHh(hStr);
-    setMm(mStr);
+    setDraftTime({ hh: hStr, mm: mStr });
     onChange(`${hStr}:${mStr}`);
   };
 
