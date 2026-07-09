@@ -1,6 +1,7 @@
 import { useEffect } from "react"; // ✅ Додано
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { format } from "date-fns"; // ✅ Додано
@@ -82,7 +83,8 @@ export const useTransactionPage = () => {
       // Повертаємось на список або попередню сторінку
       navigate("/transactions");
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: AxiosError<{ error?: string }>) =>
+      toast.error(err.response?.data?.error || err.message),
   });
 
   const handleBack = () => navigate(-1);

@@ -1,9 +1,10 @@
 import { useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { groupTransactionsByDate } from "../../utils/helpers";
+import type { Transaction } from "../../types";
 
 interface UseTransactionsTableProps {
-  transactions: any[];
+  transactions: Transaction[];
   sortValue: string;
   language: string;
 }

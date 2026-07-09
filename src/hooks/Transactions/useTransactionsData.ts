@@ -10,10 +10,20 @@ import { useTranslation } from "react-i18next";
 import {
   getTransactionsApi,
   deleteTransactionApi,
+  type TransactionFilters,
 } from "../../services/apiTransactions";
+import type { AxiosError } from "axios";
+import type { Transaction } from "../../types";
+
+type TransactionsResponse =
+  | Transaction[]
+  | {
+      data?: Transaction[];
+      count?: number;
+    };
 
 // ✅ ПЕРЕВІРТЕ: Тут має бути export function
-export function useTransactionsData(apiParams: any) {
+export function useTransactionsData(apiParams: TransactionFilters) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -24,7 +34,7 @@ export function useTransactionsData(apiParams: any) {
     isPlaceholderData,
   } = useQuery({
     queryKey: ["transactions", apiParams],
-    queryFn: () => getTransactionsApi(apiParams),
+    queryFn: () => getTransactionsApi(apiParams) as Promise<TransactionsResponse>,
     placeholderData: keepPreviousData,
   });
 
@@ -62,7 +72,7 @@ export function useTransactionsData(apiParams: any) {
       queryClient.invalidateQueries({ queryKey: ["stats"] });
       queryClient.invalidateQueries({ queryKey: ["counterparties"] });
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ error?: string }>) => {
       const errorMessage =
         err.response?.data?.error ||
         t("transactions:transactionsDataHook.alert_delete_error");

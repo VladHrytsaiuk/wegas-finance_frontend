@@ -1,13 +1,33 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
 import { predictCategoryApi } from "../../services/apiTransactions";
+import type { Category, TransactionItem } from "../../types";
+
+type EditableTransactionItem = Partial<TransactionItem> & {
+  name?: string;
+  quantity?: number;
+  price_per_unit?: number;
+  comment?: string;
+  categoryId?: string;
+  category_id?: string | null;
+  tempId?: string;
+};
+
+interface ItemRowActions {
+  updateItem: (
+    idx: number,
+    field: "categoryId" | "name" | "quantity" | "price_per_unit" | "comment",
+    value: string | number,
+  ) => void;
+  removeItem: (idx: number) => void;
+}
 
 interface UseItemRowProps {
-  item: any;
+  item: EditableTransactionItem;
   idx: number;
-  actions: any;
-  categories: any[];
+  actions: ItemRowActions;
+  categories: Category[];
 }
 
 export const useItemRow = ({
@@ -16,7 +36,7 @@ export const useItemRow = ({
   actions,
   categories,
 }: UseItemRowProps) => {
-  const [isAutoFilled, setIsAutoFilled] = useState(false);
+  const isAutoFilledRef = useRef(false);
   const debouncedName = useDebounce(item.name, 600);
 
   // 1. Fetch prediction
@@ -31,7 +51,7 @@ export const useItemRow = ({
   // 2. Apply prediction
   useEffect(() => {
     if (predictedCategoryId) {
-      const canUpdate = !item.categoryId || isAutoFilled;
+      const canUpdate = !item.categoryId || isAutoFilledRef.current;
       const isDifferent =
         String(item.categoryId) !== String(predictedCategoryId);
 
@@ -43,23 +63,16 @@ export const useItemRow = ({
 
         if (exists) {
           actions.updateItem(idx, "categoryId", String(predictedCategoryId));
-          setIsAutoFilled(true);
+          isAutoFilledRef.current = true;
         }
       }
     }
-  }, [
-    predictedCategoryId,
-    item.categoryId,
-    idx,
-    actions,
-    categories,
-    isAutoFilled,
-  ]);
+  }, [predictedCategoryId, item.categoryId, idx, actions, categories]);
 
   // 3. Handlers
   const handleManualCategoryChange = (val: string) => {
     actions.updateItem(idx, "categoryId", val);
-    setIsAutoFilled(false);
+    isAutoFilledRef.current = false;
   };
 
   const handleUpdateName = (val: string) =>
