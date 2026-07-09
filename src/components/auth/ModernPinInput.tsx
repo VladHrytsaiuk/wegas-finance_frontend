@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { HiBackspace } from "react-icons/hi2";
 
@@ -101,25 +101,33 @@ interface ModernPinInputProps {
 
 export const ModernPinInput = ({ pin, onPinChange, error, disabled }: ModernPinInputProps) => {
   const [lastChar, setLastChar] = useState<string | null>(null);
+  const clearTimerRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (pin.length > 0) {
-      const char = pin[pin.length - 1];
-      setLastChar(char);
-      const timer = setTimeout(() => setLastChar(null), 800);
-      return () => clearTimeout(timer);
-    } else {
-      setLastChar(null);
+  const revealLastChar = (char: string | null) => {
+    if (clearTimerRef.current !== null) {
+      window.clearTimeout(clearTimerRef.current);
+      clearTimerRef.current = null;
     }
-  }, [pin]);
+
+    setLastChar(char);
+
+    if (char !== null) {
+      clearTimerRef.current = window.setTimeout(() => {
+        setLastChar(null);
+        clearTimerRef.current = null;
+      }, 800);
+    }
+  };
 
   const handleKeyClick = (val: string) => {
     if (pin.length < 4) {
+      revealLastChar(val);
       onPinChange(pin + val);
     }
   };
 
   const handleBackspace = () => {
+    revealLastChar(null);
     onPinChange(pin.slice(0, -1));
   };
 

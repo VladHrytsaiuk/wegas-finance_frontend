@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   // --- UI & General ---
   HiQuestionMarkCircle,
@@ -101,7 +101,7 @@ import {
 } from "react-icons/hi2";
 
 // === 1. МАПА ІКОНОК ===
-export const ICON_MAP: Record<string, React.ElementType> = {
+const ICON_MAP: Record<string, React.ElementType> = {
   HiEllipsisHorizontalCircle,
   HiQuestionMarkCircle,
   HiCheckCircle,
@@ -243,23 +243,18 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
   className,
   ...props
 }) => {
-  const [imageError, setImageError] = useState(false);
-
-  // Скидаємо помилку при зміні лого
-  useEffect(() => {
-    setImageError(false);
-  }, [logo]);
+  const [failedLogo, setFailedLogo] = useState<string | null>(null);
 
   // Спроба 1: Логотип
   const logoSrc = getLogoSrc(logo);
 
-  if (logoSrc && !imageError) {
+  if (logoSrc && failedLogo !== logoSrc) {
     return (
       <img
         src={logoSrc}
         alt={iconName || "logo"}
         className={className}
-        onError={() => setImageError(true)}
+        onError={() => setFailedLogo(logoSrc)}
         style={{
           width: typeof size === "number" ? `${size}px` : size,
           height: typeof size === "number" ? `${size}px` : size,

@@ -1,15 +1,16 @@
 // useDropdownPosition.ts
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useId } from "react";
 
 export function useDropdownPosition(
   isOpen: boolean,
   onClose: () => void,
   preferredAlign: "left" | "right" = "left",
-  width: number = 300,
+  width: number | "auto" = 300,
 ) {
   const triggerRef = useRef<HTMLElement>(null); // змінив на HTMLElement для універсальності
   const menuRef = useRef<HTMLDivElement>(null);
-  const hookId = useRef("dropdown-" + Math.random().toString(36).substr(2, 9));
+  const hookId = useId();
+  const estimatedWidth = typeof width === "number" ? width : 300;
 
   const [style, setStyle] = useState<{
     top?: number;
@@ -19,7 +20,7 @@ export function useDropdownPosition(
     maxHeight: number;
     transformOrigin: string;
     position: "fixed";
-    width: number;
+    width: number | "auto";
     zIndex: number;
   }>({
     maxHeight: 300,
@@ -42,10 +43,10 @@ export function useDropdownPosition(
 
     const spaceRight = windowWidth - rect.left;
     if (preferredAlign === "left") {
-      if (spaceRight < width) right = windowWidth - rect.right;
+      if (spaceRight < estimatedWidth) right = windowWidth - rect.right;
       else left = rect.left;
     } else {
-      if (rect.right < width) left = rect.left;
+      if (rect.right < estimatedWidth) left = rect.left;
       else right = windowWidth - rect.right;
     }
 
@@ -79,21 +80,22 @@ export function useDropdownPosition(
       width,
       zIndex: 20001,
     });
-  }, [preferredAlign, width]);
+  }, [estimatedWidth, preferredAlign, width]);
 
   useEffect(() => {
-    if (isOpen) {
-      calculate();
-      // Додаємо requestAnimationFrame для гарантії, що DOM відрендерився
-      requestAnimationFrame(calculate);
+    if (!isOpen) return;
 
-      window.addEventListener("resize", calculate);
-      window.dispatchEvent(
-        new CustomEvent("dropdown-opened", { detail: hookId.current }),
-      );
-    }
-    return () => window.removeEventListener("resize", calculate);
-  }, [isOpen, calculate]);
+    // Даємо React завершити поточний commit перед позиціонуванням меню.
+    const frameId = window.requestAnimationFrame(calculate);
+
+    window.addEventListener("resize", calculate);
+    window.dispatchEvent(new CustomEvent("dropdown-opened", { detail: hookId }));
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", calculate);
+    };
+  }, [isOpen, calculate, hookId]);
 
   // --- 2. ЛОГІКА ЗАКРИТТЯ ---
   useEffect(() => {
@@ -155,20 +157,20 @@ export function useDropdownPosition(
       document.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("scroll", handleScroll, true);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, calculate]);
 
   // --- 3. ЗАКРИТТЯ ІНШИХ МЕНЮ ---
   useEffect(() => {
     const handleOtherOpened = (e: Event) => {
       const customEvent = e as CustomEvent;
-      if (customEvent.detail !== hookId.current && isOpen) {
+      if (customEvent.detail !== hookId && isOpen) {
         onClose();
       }
     };
     window.addEventListener("dropdown-opened", handleOtherOpened);
     return () =>
       window.removeEventListener("dropdown-opened", handleOtherOpened);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, hookId]);
 
   return { triggerRef, menuRef, style };
 }
