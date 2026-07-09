@@ -20,6 +20,24 @@ interface Account {
   currency: string;
 }
 
+interface SeedTransactionItem {
+  name: string;
+  quantity: number;
+  price_per_unit: number;
+  total_amount: number;
+}
+
+interface SeedTransactionPayload {
+  amount: number;
+  date: number;
+  note: string;
+  type: "income" | "expense";
+  account_id: string;
+  category_id: string;
+  counterparty_id: string | null;
+  items: SeedTransactionItem[];
+}
+
 // === ОНОВЛЕНІ ПРОДУКТИ (Ціни в копійках, 100 = 1 грн) ===
 const GROCERY_ITEMS = [
   { name: "Молоко 2.5%", priceMin: 3900, priceMax: 4600 },
@@ -104,12 +122,12 @@ export const useSeedData = () => {
       try {
         const accRes = await api.get("/accounts");
         if (accRes.data.length > 0) {
-          accounts = accRes.data.map((a: any) => ({
+          accounts = accRes.data.map((a: Account) => ({
             id: a.id,
             currency: a.currency,
           }));
         }
-      } catch (e) {
+      } catch {
         console.log("No accounts found, creating...");
       }
 
@@ -142,7 +160,7 @@ export const useSeedData = () => {
 
       // 3. ГЕНЕРАЦІЯ ТРАНЗАКЦІЙ
       // Стратегія: Проходимо по 3 місяцях (0, 1, 2 місяці тому)
-      const txDataPayloads = [];
+      const txDataPayloads: SeedTransactionPayload[] = [];
       const salaryCat =
         incomeCats.find((c) => c.name.toLowerCase().includes("зарплата")) ||
         incomeCats[0];
@@ -194,11 +212,15 @@ export const useSeedData = () => {
             expenseCats.filter((c) => c.id !== rentCat?.id)
           );
 
-          let items: any[] = [];
+          const items: SeedTransactionItem[] = [];
           let totalAmount = 0;
           let selectedCounterpartyId: string | null = null;
           let possibleCPs: Counterparty[] = [];
-          let possibleItems = [];
+          let possibleItems: Array<{
+            name: string;
+            priceMin: number;
+            priceMax: number;
+          }> = [];
 
           const catNameLower = category.name.toLowerCase();
 
@@ -277,11 +299,27 @@ export const useSeedData = () => {
               catNameLower.includes("аптека")
             ) {
               // Логіка як для продуктів, але менше товарів
+              possibleItems = PHARMACY_ITEMS;
               possibleCPs = counterparties.filter(
                 (c) =>
                   c.name.toLowerCase().includes("аптека") ||
                   c.name.toLowerCase().includes("анц")
               );
+              const itemsCount = rand(1, 3);
+              for (let j = 0; j < itemsCount; j++) {
+                const prod = randArr(possibleItems);
+                const qty = rand(1, 2);
+                const price =
+                  prod.priceMin + rand(0, prod.priceMax - prod.priceMin);
+                const rowTotal = price * qty;
+                items.push({
+                  name: prod.name,
+                  quantity: qty,
+                  price_per_unit: price,
+                  total_amount: rowTotal,
+                });
+                totalAmount += rowTotal;
+              }
             }
           }
 
@@ -301,7 +339,7 @@ export const useSeedData = () => {
             account_id: account.id,
             category_id: category.id,
             counterparty_id: selectedCounterpartyId,
-            items: items,
+            items,
           });
         }
       }
