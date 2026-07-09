@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { addDays, addMonths, addYears, isValid } from "date-fns";
@@ -16,6 +16,17 @@ interface ExtendGoalModalProps {
   currentDeadline: string | Date | number | null;
 }
 
+const getInitialSelectedTimestamp = (
+  currentDeadline: string | Date | number | null,
+) => {
+  const baseDate = currentDeadline ? new Date(currentDeadline) : new Date();
+  const validDate = isValid(baseDate) ? baseDate : new Date();
+  const isPast = validDate.getTime() < Date.now();
+  const initialDate = isPast ? addMonths(new Date(), 1) : validDate;
+
+  return initialDate.getTime();
+};
+
 export default function ExtendGoalModal({
   isOpen,
   onClose,
@@ -23,43 +34,31 @@ export default function ExtendGoalModal({
   currentDeadline,
 }: ExtendGoalModalProps) {
   const { t } = useTranslation();
+  const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
+  const effectiveTimestamp =
+    selectedTimestamp ?? getInitialSelectedTimestamp(currentDeadline);
 
-  // Використовуємо timestamp для сумісності з DateRangePicker
-  const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(
-    null,
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      // 1. Нормалізація вхідної дати
-      const baseDate = currentDeadline ? new Date(currentDeadline) : new Date();
-      const validDate = isValid(baseDate) ? baseDate : new Date();
-
-      // 2. Логіка: якщо дедлайн прострочено або його немає, пропонуємо +1 місяць від сьогодні
-      // Якщо дедлайн активний — пропонуємо його як стартову точку
-      const isPast = validDate.getTime() < Date.now();
-      const initialDate = isPast ? addMonths(new Date(), 1) : validDate;
-
-      setSelectedTimestamp(initialDate.getTime());
-    }
-  }, [isOpen, currentDeadline]);
+  const handleClose = useCallback(() => {
+    setSelectedTimestamp(null);
+    onClose();
+  }, [onClose]);
 
   // Закриття на ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
     if (isOpen) window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [isOpen, onClose]);
+  }, [handleClose, isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedTimestamp) {
-      onConfirm(new Date(selectedTimestamp).toISOString());
-      onClose();
+    if (effectiveTimestamp) {
+      onConfirm(new Date(effectiveTimestamp).toISOString());
+      handleClose();
     }
   };
 
@@ -67,7 +66,7 @@ export default function ExtendGoalModal({
     type: "days" | "months" | "years",
     amount: number,
   ) => {
-    const base = selectedTimestamp ? new Date(selectedTimestamp) : new Date();
+    const base = new Date(effectiveTimestamp);
     let newDate = base;
 
     switch (type) {
@@ -86,9 +85,9 @@ export default function ExtendGoalModal({
   };
 
   return createPortal(
-    <Overlay onClick={onClose}>
+    <Overlay onClick={handleClose}>
       <S.ModalContent onClick={(e) => e.stopPropagation()}>
-        <S.CloseBtn onClick={onClose}>
+        <S.CloseBtn onClick={handleClose}>
           <HiXMark size={24} />
         </S.CloseBtn>
 
@@ -103,7 +102,7 @@ export default function ExtendGoalModal({
 
             <DateRangePicker
               mode="single"
-              date={selectedTimestamp}
+              date={effectiveTimestamp}
               onDateChange={(ts) => setSelectedTimestamp(ts)}
             />
 
@@ -136,7 +135,7 @@ export default function ExtendGoalModal({
           </div>
 
           <S.Footer>
-            <Button type="button" variation="secondary" onClick={onClose}>
+            <Button type="button" variation="secondary" onClick={handleClose}>
               {t("common:common.cancel")}
             </Button>
             <Button type="submit" variation="primary" icon={<HiCalendar />}>

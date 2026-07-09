@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   HiArrowLongRight,
   HiArrowLongLeft,
@@ -25,12 +25,7 @@ export const TransactionIcon = ({
   isTransfer,
   size = 40,
 }: TransactionIconProps) => {
-  const [imgError, setImgError] = useState(false);
-
-  // 1. Скидаємо помилку, якщо змінився URL (важливо при скролі/фільтрації)
-  useEffect(() => {
-    setImgError(false);
-  }, [logoUrl]);
+  const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
 
   // 2. Хелпер для шляху
   const getLogoUrl = (filename: string) => {
@@ -41,7 +36,10 @@ export const TransactionIcon = ({
 
   // Визначаємо, чи показувати логотип (умова: є URL, немає помилки, не переказ, не борг)
   const shouldShowLogo =
-    !!logoUrl && !imgError && !isTransfer && !iconName.startsWith("Debt");
+    !!logoUrl &&
+    failedLogoUrl !== logoUrl &&
+    !isTransfer &&
+    !iconName.startsWith("Debt");
 
   // Helper to render content based on type
   const renderContent = () => {
@@ -76,7 +74,7 @@ export const TransactionIcon = ({
         <img
           src={getLogoUrl(logoUrl!)}
           alt="brand logo"
-          onError={() => setImgError(true)}
+          onError={() => setFailedLogoUrl(logoUrl)}
           loading="lazy"
         />
       );

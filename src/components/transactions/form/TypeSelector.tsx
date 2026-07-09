@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   HiOutlineBanknotes,
@@ -22,7 +22,7 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
 }) => {
   const { t } = useTranslation();
   const firstSubBtnRef = useRef<HTMLButtonElement>(null);
-  const [prevTab, setPrevTab] = useState("");
+  const prevTabRef = useRef("");
 
   const getActiveTab = (val: string) => {
     if (["expense", "transfer_out"].includes(val)) return "expense";
@@ -37,13 +37,13 @@ export const TypeSelector: React.FC<TypeSelectorProps> = ({
 
   // Focus management logic ... (без змін)
   useEffect(() => {
-    if (activeTab === "debt" && prevTab !== "debt") {
+    if (activeTab === "debt" && prevTabRef.current !== "debt") {
       setTimeout(() => {
         firstSubBtnRef.current?.focus();
       }, 50);
     }
-    setPrevTab(activeTab);
-  }, [activeTab, prevTab]);
+    prevTabRef.current = activeTab;
+  }, [activeTab]);
 
   const handleKeyDown = (e: React.KeyboardEvent, type: string) => {
     if (disabled) return; // 👇 Блокуємо клавіатуру

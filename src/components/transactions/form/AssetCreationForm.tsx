@@ -1,13 +1,11 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import {
-  HiOutlineCube,
   HiHashtag,
   HiTag,
   HiCheck,
   HiPaperClip,
-  HiTruck, // Іконка для авто
 } from "react-icons/hi2";
 
 import { BaseSelect } from "../../ui/Select/BaseSelect";
@@ -34,19 +32,13 @@ export const AssetCreationForm = ({
   const createFormRef = useRef<HTMLDivElement>(null);
   const saveBtnRef = useRef<HTMLButtonElement>(null);
 
-  const [localDate, setLocalDate] = useState("");
-  const isInputFocused = useRef(false);
-
-  useEffect(() => {
-    if (isInputFocused.current) return;
-
-    if (newAsset?.warranty_end) {
-      const formatted = format(new Date(newAsset.warranty_end), "yyyy-MM-dd");
-      setLocalDate(formatted);
-    } else {
-      setLocalDate("");
-    }
-  }, [newAsset?.warranty_end]);
+  const [draftDate, setDraftDate] = useState<string | null>(null);
+  const localDate =
+    draftDate !== null
+      ? draftDate
+      : newAsset?.warranty_end
+        ? format(new Date(newAsset.warranty_end), "yyyy-MM-dd")
+        : "";
 
   const ASSET_TYPES = [
     { value: "electronics", label: t("assets:assetForm.type_electronics") },
@@ -56,7 +48,10 @@ export const AssetCreationForm = ({
     { value: "other", label: t("assets:assetForm.type_other") },
   ];
 
-  const handleNewAssetChange = (field: string, value: any) => {
+  const handleNewAssetChange = (
+    field: keyof CreateAssetOnFlyInput,
+    value: CreateAssetOnFlyInput[keyof CreateAssetOnFlyInput],
+  ) => {
     if (newAsset) setNewAsset({ ...newAsset, [field]: value });
   };
 
@@ -65,7 +60,7 @@ export const AssetCreationForm = ({
     const [year] = val.split("-");
     if (year && year.length > 4) return;
 
-    setLocalDate(val);
+    setDraftDate(val);
 
     if (!newAsset) return;
 
@@ -117,17 +112,6 @@ export const AssetCreationForm = ({
     }, 0);
   };
 
-  const renderIcon = (type: string) => {
-    switch (type) {
-      case "electronics":
-        return <HiOutlineCube />;
-      case "car":
-        return <HiTruck />;
-      default:
-        return <HiOutlineCube />;
-    }
-  };
-
   return (
     <S.FlyFormWrapper ref={createFormRef} onKeyDown={handleWrapperKeyDown}>
       <S.FlyFormRow>
@@ -176,8 +160,12 @@ export const AssetCreationForm = ({
             type="date"
             value={localDate}
             onChange={handleWarrantyDateChange}
-            onFocus={() => (isInputFocused.current = true)}
-            onBlur={() => (isInputFocused.current = false)}
+            onFocus={() => {
+              setDraftDate(localDate);
+            }}
+            onBlur={() => {
+              setDraftDate(null);
+            }}
           />
         </S.FlyFormGroup>
       </S.FlyFormRow>
