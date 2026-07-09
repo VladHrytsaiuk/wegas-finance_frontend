@@ -1,16 +1,17 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import type { TFunction } from "i18next";
 
-export interface ExportSheet {
+export interface ExportSheet<T extends Record<string, unknown> = Record<string, unknown>> {
   name: string;
-  data: any[];
+  data: T[];
 }
 
 export const exportToExcel = async (
   sheets: ExportSheet[],
   fileName: string,
   periodLabel: string,
-  t: any // Додаємо функцію перекладу
+  t: TFunction,
 ) => {
   if (sheets.length === 0) return;
 
@@ -93,7 +94,10 @@ export const exportToExcel = async (
   saveAs(blob, `${fileName}.xlsx`);
 };
 
-export const exportToCSV = (data: any[], fileName: string) => {
+export const exportToCSV = <T extends Record<string, unknown>>(
+  data: T[],
+  fileName: string,
+) => {
   if (data.length === 0) return;
   const headers = Object.keys(data[0]);
   const csvContent = [

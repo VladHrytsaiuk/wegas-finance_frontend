@@ -1,6 +1,12 @@
 import { format, isToday, isYesterday } from "date-fns";
 import { uk, enUS } from "date-fns/locale";
 
+type DatedAmountEntity = {
+  date: number | string;
+  amount: number;
+  id?: string | number | null;
+};
+
 const CURRENCY_SYMBOLS: Record<string, string> = {
   UAH: "₴",
   USD: "$",
@@ -43,11 +49,11 @@ export const formatMoney = (
 
 // 🔥 ОНОВЛЕНА ФУНКЦІЯ ГРУПУВАННЯ + СОРТУВАННЯ ВСЕРЕДИНІ
 export const groupTransactionsByDate = (
-  transactions: any[],
+  transactions: DatedAmountEntity[],
   language: string = "uk",
   sortValue: string = "date-desc", // ✅ Додали параметр сортування
 ) => {
-  const groups: Record<string, any[]> = {};
+  const groups: Record<string, DatedAmountEntity[]> = {};
   const currentLocale = language === "uk" ? uk : enUS;
 
   // 1. Спочатку просто розкладаємо по днях
@@ -88,7 +94,7 @@ export const groupTransactionsByDate = (
   return groups;
 };
 
-export const sortTransactions = (transactions: any[]) => {
+export const sortTransactions = <T extends DatedAmountEntity>(transactions: T[]) => {
   return [...transactions].sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();

@@ -1,11 +1,19 @@
-export const isMac = () => {
-  if (typeof window === "undefined") return false;
-  // @ts-ignore
-  const platform = navigator.userAgentData?.platform || navigator.platform || "";
-  return /Mac|iPhone|iPod|iPad/i.test(platform) || /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent);
+type KeyboardLikeEvent = Pick<KeyboardEvent, "metaKey" | "altKey">;
+
+type NavigatorWithUAData = Navigator & {
+  userAgentData?: {
+    platform?: string;
+  };
 };
 
-export const isModifierPressed = (e: any) => {
+export const isMac = () => {
+  if (typeof window === "undefined") return false;
+  const nav = navigator as NavigatorWithUAData;
+  const platform = nav.userAgentData?.platform || nav.platform || "";
+  return /Mac|iPhone|iPod|iPad/i.test(platform) || /Mac|iPhone|iPod|iPad/i.test(nav.userAgent);
+};
+
+export const isModifierPressed = (e: KeyboardLikeEvent) => {
   return isMac() ? e.metaKey : e.altKey;
 };
 
