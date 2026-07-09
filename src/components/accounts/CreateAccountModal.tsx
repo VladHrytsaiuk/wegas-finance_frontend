@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { HiXMark } from "react-icons/hi2";
@@ -31,17 +31,17 @@ function CreateAccountModalContent() {
   const { create } = actions;
   const isCreating = create.isPending;
 
-  const handleCloseAttempt = () => {
+  const handleCloseAttempt = useCallback(() => {
     if (isDirty) {
       setShowConfirm(true);
     } else {
       navigate(-1);
     }
-  };
+  }, [isDirty, navigate]);
 
-  const forceClose = () => {
+  const forceClose = useCallback(() => {
     navigate(-1);
-  };
+  }, [navigate]);
 
   // Обробка ESC
   useEffect(() => {
@@ -60,7 +60,7 @@ function CreateAccountModalContent() {
     // Використовуємо capture фазу, щоб перехопити подію раніше за інших
     document.addEventListener("keydown", handleEsc, true);
     return () => document.removeEventListener("keydown", handleEsc, true);
-  }, [showConfirm, isDirty]);
+  }, [handleCloseAttempt, showConfirm]);
 
   return (
     <>

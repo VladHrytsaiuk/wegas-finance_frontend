@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,6 @@ import styled from "styled-components";
 
 import { Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
-import Spinner from "../ui/Spinner";
 import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { getTransactionApi } from "../../services/apiTransactions";
 
@@ -30,9 +29,9 @@ function EditTransactionModal() {
     enabled: !!transactionId,
   });
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     navigate(-1);
-  };
+  }, [navigate]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -47,7 +46,7 @@ function EditTransactionModal() {
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, []);
+  }, [handleClose]);
 
   return createPortal(
     <Overlay onClick={handleClose}>

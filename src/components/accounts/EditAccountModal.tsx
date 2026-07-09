@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ function EditAccountModal() {
     enabled: !!accountId,
   });
 
-  const handleClose = () => navigate(-1);
+  const handleClose = useCallback(() => navigate(-1), [navigate]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -34,7 +34,7 @@ function EditAccountModal() {
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, []);
+  }, [handleClose]);
 
   return createPortal(
     <Overlay onClick={handleClose}>
