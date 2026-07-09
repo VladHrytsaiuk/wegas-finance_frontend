@@ -8,7 +8,6 @@ import {
   HiOutlineCog6Tooth,
   HiPlus,
 } from "react-icons/hi2";
-import { useTranslation } from "react-i18next";
 import MobileActionMenu from "./MobileActionMenu";
 
 const Nav = styled.nav`
@@ -87,7 +86,6 @@ const ActionButton = styled.button`
 `;
 
 function MobileNav() {
-  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (

@@ -18,7 +18,6 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
 import Modal from "../../components/ui/Modal";
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { AccountCard } from "../../components/accounts/AccountCard";
 import { AccountActions } from "../../components/accounts/AccountActions";
