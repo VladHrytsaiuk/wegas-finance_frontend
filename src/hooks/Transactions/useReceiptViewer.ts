@@ -20,6 +20,8 @@ export const useReceiptViewer = ({
 
   // Filter valid URLs
   const validUrls = useMemo(() => imageUrls.filter((u) => u), [imageUrls]);
+  const safeIndex =
+    validUrls.length === 0 ? 0 : Math.min(index, validUrls.length - 1);
 
   // Reset functionality
   const handleReset = useCallback(() => {
@@ -30,19 +32,19 @@ export const useReceiptViewer = ({
   // Navigation Logic
   const handleNext = useCallback(() => {
     if (validUrls.length === 0) return;
-    const newIndex = (index + 1) % validUrls.length;
+    const newIndex = (safeIndex + 1) % validUrls.length;
     setIndex(newIndex);
     onIndexChange?.(newIndex);
     handleReset();
-  }, [index, validUrls.length, onIndexChange, handleReset]);
+  }, [safeIndex, validUrls.length, onIndexChange, handleReset]);
 
   const handlePrev = useCallback(() => {
     if (validUrls.length === 0) return;
-    const newIndex = (index - 1 + validUrls.length) % validUrls.length;
+    const newIndex = (safeIndex - 1 + validUrls.length) % validUrls.length;
     setIndex(newIndex);
     onIndexChange?.(newIndex);
     handleReset();
-  }, [index, validUrls.length, onIndexChange, handleReset]);
+  }, [safeIndex, validUrls.length, onIndexChange, handleReset]);
 
   // Zoom Logic
   const handleZoomIn = useCallback(
@@ -121,22 +123,14 @@ export const useReceiptViewer = ({
     onClose,
   ]);
 
-  // Sync index if urls change drastically
-  useEffect(() => {
-    if (index >= validUrls.length && validUrls.length > 0) {
-      setIndex(0);
-      onIndexChange?.(0);
-    }
-  }, [validUrls.length, index, onIndexChange]);
-
   return {
     state: {
-      index,
+      index: safeIndex,
       scale,
       position,
       validUrls,
       hasMultipleImages: validUrls.length > 1,
-      currentUrl: validUrls[index],
+      currentUrl: validUrls[safeIndex],
     },
     handlers: {
       handleNext,

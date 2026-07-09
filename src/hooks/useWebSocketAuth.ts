@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 interface WebSocketMessage {
   type: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -18,6 +18,7 @@ export function useWebSocketAuth(onMessage?: (data: WebSocketMessage) => void) {
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
+  const connectRef = useRef<() => void>(() => {});
   
   // 1. Use a ref to store the latest onMessage callback.
   // This allows the effect to access the latest logic without re-running 
@@ -78,7 +79,7 @@ export function useWebSocketAuth(onMessage?: (data: WebSocketMessage) => void) {
       if (!reconnectTimeoutRef.current) {
         reconnectTimeoutRef.current = window.setTimeout(() => {
           reconnectTimeoutRef.current = null;
-          connect();
+          connectRef.current();
         }, 3000);
       }
     };
@@ -90,6 +91,10 @@ export function useWebSocketAuth(onMessage?: (data: WebSocketMessage) => void) {
 
     socketRef.current = socket;
   }, []); // Stable identity
+
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   useEffect(() => {
     connect();
@@ -113,7 +118,7 @@ export function useWebSocketAuth(onMessage?: (data: WebSocketMessage) => void) {
     };
   }, [connect]);
 
-  const sendMessage = useCallback((message: any) => {
+  const sendMessage = useCallback((message: unknown) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify(message));
     }
