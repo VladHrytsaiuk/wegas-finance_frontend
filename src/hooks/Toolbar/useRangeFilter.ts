@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDropdownPosition } from "../useDropdownPosition"; // Перевір шлях
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
@@ -16,8 +16,11 @@ export const useRangeFilter = ({
 }: UseRangeFilterProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [localMin, setLocalMin] = useState(value.min);
-  const [localMax, setLocalMax] = useState(value.max);
+  const [draftRange, setDraftRange] = useState<{ min: string; max: string } | null>(
+    null,
+  );
+  const localMin = draftRange?.min ?? value.min;
+  const localMax = draftRange?.max ?? value.max;
 
   // Позиціонування
   const { triggerRef, menuRef, style } = useDropdownPosition(
@@ -27,24 +30,20 @@ export const useRangeFilter = ({
     260 // Ширина меню
   );
 
-  // Синхронізація локального стану з пропсами при відкритті
-  useEffect(() => {
-    if (isOpen) {
-      setLocalMin(value.min);
-      setLocalMax(value.max);
-    }
-  }, [isOpen, value]);
+  const close = () => {
+    setIsOpen(false);
+    setDraftRange(null);
+  };
 
   const apply = () => {
     onChange({ min: localMin, max: localMax });
-    setIsOpen(false);
+    close();
   };
 
   const reset = () => {
-    setLocalMin("");
-    setLocalMax("");
+    setDraftRange({ min: "", max: "" });
     onChange({ min: "", max: "" });
-    setIsOpen(false);
+    close();
   };
 
   const isActive = value.min !== "" || value.max !== "";
@@ -69,9 +68,19 @@ export const useRangeFilter = ({
       menuRef,
     },
     handlers: {
-      toggleOpen: () => setIsOpen(!isOpen),
-      setLocalMin,
-      setLocalMax,
+      toggleOpen: () => {
+        if (isOpen) {
+          close();
+          return;
+        }
+
+        setDraftRange({ min: value.min, max: value.max });
+        setIsOpen(true);
+      },
+      setLocalMin: (min: string) =>
+        setDraftRange((prev) => ({ min, max: prev?.max ?? value.max })),
+      setLocalMax: (max: string) =>
+        setDraftRange((prev) => ({ min: prev?.min ?? value.min, max })),
       apply,
       reset,
     },

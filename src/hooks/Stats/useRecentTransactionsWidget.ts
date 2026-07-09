@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -23,21 +23,24 @@ export const useRecentTransactionsWidget = ({
   const navigate = useNavigate();
 
   // Local Filter State
-  const [localFilter, setLocalFilter] = useState<StatsFilter>(globalFilter);
-  const prevGlobalFilter = useRef(globalFilter);
-
-  // Sync Global Filter
-  useEffect(() => {
-    if (
-      JSON.stringify(globalFilter) !== JSON.stringify(prevGlobalFilter.current)
-    ) {
-      setLocalFilter(globalFilter);
-      prevGlobalFilter.current = globalFilter;
-    }
-  }, [globalFilter]);
+  const globalFilterKey = JSON.stringify(globalFilter);
+  const [localFilterOverride, setLocalFilterOverride] = useState<{
+    sourceKey: string;
+    value: StatsFilter;
+  } | null>(null);
+  const localFilter =
+    localFilterOverride?.sourceKey === globalFilterKey
+      ? localFilterOverride.value
+      : globalFilter;
 
   const handleFilterUpdate = (updates: Partial<StatsFilter>) => {
-    setLocalFilter((prev) => ({ ...prev, ...updates }));
+    setLocalFilterOverride((prev) => ({
+      sourceKey: globalFilterKey,
+      value: {
+        ...(prev?.sourceKey === globalFilterKey ? prev.value : localFilter),
+        ...updates,
+      },
+    }));
     if (onDiverge) onDiverge();
   };
 

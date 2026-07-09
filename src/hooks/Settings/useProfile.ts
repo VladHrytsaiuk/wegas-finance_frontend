@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
@@ -21,15 +22,12 @@ export const useProfileForm = () => {
     queryFn: getMeApi,
   });
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-    }
-  }, [user]);
+  const [draftProfile, setDraftProfile] = useState<{
+    name: string;
+    email: string;
+  } | null>(null);
+  const name = draftProfile?.name ?? user?.name ?? "";
+  const email = draftProfile?.email ?? user?.email ?? "";
 
   const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
     mutationFn: updateProfileApi,
@@ -63,8 +61,10 @@ export const useProfileForm = () => {
       user,
     },
     actions: {
-      setName,
-      setEmail,
+      setName: (nextName: string) =>
+        setDraftProfile((prev) => ({ name: nextName, email: prev?.email ?? email })),
+      setEmail: (nextEmail: string) =>
+        setDraftProfile((prev) => ({ name: prev?.name ?? name, email: nextEmail })),
       handleUpdateProfile,
     },
     t,
@@ -89,7 +89,7 @@ export const useChangePasswordForm = () => {
       setConfirmPassword("");
       close();
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ error?: string }>) => {
       const defaultMsg = t("settings:profilePage.pass_alert_error");
       const msg = err.response?.data?.error || defaultMsg;
       toast.error(msg);
