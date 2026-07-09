@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { TFunction } from "i18next";
 import { HiOutlineQrCode, HiOutlineClock, HiOutlineShieldCheck, HiOutlineUser, HiOutlineFaceSmile } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import * as S from "./FamilySettings.styles";
@@ -9,7 +10,7 @@ interface GenerateInviteCodeSectionProps {
   formattedTime: string;
   isGenerating: boolean;
   onGenerate: (roleID: string) => void;
-  t: any;
+  t: TFunction;
 }
 
 export const GenerateInviteCodeSection: React.FC<GenerateInviteCodeSectionProps> = ({

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import type { TFunction } from "i18next";
 import { HiOutlineUserPlus } from "react-icons/hi2";
 import { Button } from "../../components/ui/Button";
 import { useOtpInput } from "../../hooks/useOtpInput";
@@ -7,7 +8,7 @@ import * as S from "./FamilySettings.styles";
 interface JoinFamilySectionProps {
   isJoining: boolean;
   onJoin: (code: string) => void;
-  t: any;
+  t: TFunction;
 }
 
 export const JoinFamilySection: React.FC<JoinFamilySectionProps> = ({
@@ -15,22 +16,15 @@ export const JoinFamilySection: React.FC<JoinFamilySectionProps> = ({
   onJoin,
   t,
 }) => {
-  const {
-    otp,
-    otpString,
-    inputRefs,
-    handleChange,
-    handleKeyDown,
-    handlePaste,
-    resetOtp,
-  } = useOtpInput(6);
+  const { otp, inputRefs, handleChange, handleKeyDown, handlePaste, resetOtp } =
+    useOtpInput(6);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    
+
     // Strictly combine and trim
     const finalCode = otp.join("").trim();
-    
+
     if (finalCode.length === 6) {
       onJoin(finalCode);
     }
@@ -44,9 +38,14 @@ export const JoinFamilySection: React.FC<JoinFamilySectionProps> = ({
   return (
     <S.Section>
       <S.SectionHeader>
-        <S.SectionTitle>{t("settings:usersPage.join_title", "Приєднатися до сім'ї")}</S.SectionTitle>
+        <S.SectionTitle>
+          {t("settings:usersPage.join_title", "Приєднатися до сім'ї")}
+        </S.SectionTitle>
         <S.SectionDescription>
-          {t("settings:usersPage.join_description", "Введіть 6-значний код, щоб приєднатися до існуючої сім'ї.")}
+          {t(
+            "settings:usersPage.join_description",
+            "Введіть 6-значний код, щоб приєднатися до існуючої сім'ї.",
+          )}
         </S.SectionDescription>
       </S.SectionHeader>
 
@@ -69,7 +68,7 @@ export const JoinFamilySection: React.FC<JoinFamilySectionProps> = ({
               />
             ))}
           </S.OtpContainer>
-          
+
           <Button
             type="submit"
             isLoading={isJoining}

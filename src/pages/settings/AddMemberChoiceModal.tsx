@@ -1,7 +1,7 @@
 import React from "react";
+import type { TFunction } from "i18next";
 import styled from "styled-components";
 import { HiOutlineQrCode, HiOutlineUserPlus } from "react-icons/hi2";
-import Modal from "../../components/ui/Modal";
 
 const ChoiceContainer = styled.div`
   display: flex;
@@ -60,7 +60,7 @@ const ChoiceDescription = styled.span`
 interface AddMemberChoiceModalProps {
   onInviteViaCode: () => void;
   onCreateManually: () => void;
-  t: any;
+  t: TFunction;
 }
 
 export const AddMemberChoiceModal: React.FC<AddMemberChoiceModalProps> = ({
@@ -73,9 +73,14 @@ export const AddMemberChoiceModal: React.FC<AddMemberChoiceModalProps> = ({
       <ChoiceCard onClick={onInviteViaCode}>
         <HiOutlineQrCode />
         <ChoiceContent>
-          <ChoiceTitle>{t("settings:usersPage.choice_invite_title", "Запросити через код")}</ChoiceTitle>
+          <ChoiceTitle>
+            {t("settings:usersPage.choice_invite_title", "Запросити через код")}
+          </ChoiceTitle>
           <ChoiceDescription>
-            {t("settings:usersPage.choice_invite_desc", "Згенеруйте 6-значний код для швидкого приєднання.")}
+            {t(
+              "settings:usersPage.choice_invite_desc",
+              "Згенеруйте 6-значний код для швидкого приєднання.",
+            )}
           </ChoiceDescription>
         </ChoiceContent>
       </ChoiceCard>
@@ -83,9 +88,14 @@ export const AddMemberChoiceModal: React.FC<AddMemberChoiceModalProps> = ({
       <ChoiceCard onClick={onCreateManually}>
         <HiOutlineUserPlus />
         <ChoiceContent>
-          <ChoiceTitle>{t("settings:usersPage.choice_manual_title", "Створити вручну")}</ChoiceTitle>
+          <ChoiceTitle>
+            {t("settings:usersPage.choice_manual_title", "Створити вручну")}
+          </ChoiceTitle>
           <ChoiceDescription>
-            {t("settings:usersPage.choice_manual_desc", "Додайте учасника, ввівши його дані та пароль.")}
+            {t(
+              "settings:usersPage.choice_manual_desc",
+              "Додайте учасника, ввівши його дані та пароль.",
+            )}
           </ChoiceDescription>
         </ChoiceContent>
       </ChoiceCard>
