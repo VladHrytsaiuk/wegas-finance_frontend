@@ -7,10 +7,18 @@ import { ColorPicker, IconPicker } from "../ui/ColorIconPicker";
 
 import * as S from "./CounterpartyCategoryForm.styles";
 import { useCounterpartyCategoryForm } from "../../hooks/Counterparties/useCounterpartyCategoryForm";
+import type { CounterpartyCategory } from "../../types";
+
+type CounterpartyCategoryFormValues = Pick<
+  CounterpartyCategory,
+  "name" | "type" | "color" | "icon"
+> & {
+  id?: string;
+};
 
 interface Props {
-  onSubmit: (data: any) => void;
-  defaultValues?: any;
+  onSubmit: (data: CounterpartyCategoryFormValues) => void;
+  defaultValues?: Partial<CounterpartyCategoryFormValues>;
   isLoading?: boolean;
 }
 

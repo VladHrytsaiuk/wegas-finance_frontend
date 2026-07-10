@@ -1,10 +1,18 @@
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../../components/ui/Modal"; // Перевір шлях імпорту
+import type { CounterpartyCategory, CounterpartyType } from "../../types";
+
+type CounterpartyCategoryFormValues = Pick<
+  CounterpartyCategory,
+  "name" | "type" | "color" | "icon"
+> & {
+  id?: string;
+};
 
 interface UseCounterpartyCategoryFormProps {
-  onSubmit: (data: any) => void;
-  defaultValues?: any;
+  onSubmit: (data: CounterpartyCategoryFormValues) => void;
+  defaultValues?: Partial<CounterpartyCategoryFormValues>;
 }
 
 export const useCounterpartyCategoryForm = ({
@@ -14,7 +22,7 @@ export const useCounterpartyCategoryForm = ({
   const { t } = useTranslation();
   const { close } = useModal();
 
-  const form = useForm({
+  const form = useForm<CounterpartyCategoryFormValues>({
     defaultValues: {
       name: "",
       type: "shop",
@@ -37,12 +45,12 @@ export const useCounterpartyCategoryForm = ({
     : t("counterparties:counterpartyCategoryForm.title_new");
 
   // Handlers
-  const submitHandler = (data: any) => {
+  const submitHandler = (data: CounterpartyCategoryFormValues) => {
     onSubmit(data);
     close();
   };
 
-  const handleTypeChange = (newType: string) => {
+  const handleTypeChange = (newType: CounterpartyType) => {
     setValue("type", newType, { shouldDirty: true });
   };
 
