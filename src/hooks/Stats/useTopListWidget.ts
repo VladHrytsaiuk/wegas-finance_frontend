@@ -2,10 +2,15 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { statsService, type StatsFilter } from "../../services/apiStats";
+import {
+  statsService,
+  type StatsFilter,
+  type TopStat,
+} from "../../services/apiStats";
 import { getCategoriesApi } from "../../services/apiCategories";
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
 import { useSettings } from "../../context/SettingsContext";
+import type { Category, Counterparty } from "../../types";
 
 interface UseTopListWidgetProps {
   type: "income" | "expense";
@@ -86,7 +91,7 @@ export const useTopListWidget = ({
     const maxValue = topItems.length > 0 ? topItems[0].total : 0;
     const DEFAULT_COLOR = activeType === "income" ? "#22c55e" : "#ef4444";
 
-    return topItems.map((item) => {
+    return topItems.map((item: TopStat) => {
       const percent = maxValue > 0 ? (item.total / maxValue) * 100 : 0;
       let displayColor = item.metadata;
       let logo = null;
@@ -94,11 +99,11 @@ export const useTopListWidget = ({
 
       // Color & Logo Logic
       if (entity === "category") {
-        const cat = categories.find((c: any) => c.name === item.name);
+        const cat = categories.find((c: Category) => c.name === item.name);
         if (cat?.color) displayColor = cat.color;
         if (cat?.icon) icon = cat.icon;
       } else if (entity === "counterparty") {
-        const cp = counterparties.find((c: any) => c.name === item.name);
+        const cp = counterparties.find((c: Counterparty) => c.name === item.name);
         if (cp) {
           if (cp.logo) logo = cp.logo;
 
@@ -106,7 +111,7 @@ export const useTopListWidget = ({
           icon = cp.icon || cp.category?.icon;
           if (!icon && cp.category_id) {
             const parentCat = categories.find(
-              (c: any) => String(c.id) === String(cp.category_id),
+              (c: Category) => String(c.id) === String(cp.category_id),
             );
             if (parentCat?.icon) icon = parentCat.icon;
           }
@@ -117,7 +122,7 @@ export const useTopListWidget = ({
             displayColor = cp.category.color;
           } else if (cp.category_id) {
             const parentCat = categories.find(
-              (c: any) => String(c.id) === String(cp.category_id),
+              (c: Category) => String(c.id) === String(cp.category_id),
             );
             if (parentCat?.color) displayColor = parentCat.color;
           }

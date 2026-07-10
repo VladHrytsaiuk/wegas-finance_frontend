@@ -1,13 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
-import { startOfMonth, endOfMonth, subDays } from "date-fns";
+import { subDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { statsService, type StatsFilter } from "../../services/apiStats";
+import {
+  statsService,
+  type StatsFilter,
+  type TopStat,
+} from "../../services/apiStats";
 import { getCategoriesApi } from "../../services/apiCategories";
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
 import { useSettings } from "../../context/SettingsContext";
 import { useHeader } from "../../context/HeaderContext";
+import type { Category, Counterparty } from "../../types";
 
 // --- Helpers ---
 const stringToColor = (str: string) => {
@@ -27,7 +32,10 @@ export const useStatistics = () => {
 
   // --- Title Management ---
   useEffect(() => {
-    setPageTitle(t("stats_utility:statisticsPage.title"), t("stats_utility:statisticsPage.subtitle"));
+    setPageTitle(
+      t("stats_utility:statisticsPage.title"),
+      t("stats_utility:statisticsPage.subtitle"),
+    );
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t]);
 
@@ -71,7 +79,7 @@ export const useStatistics = () => {
   const enrichedData = useMemo(() => {
     if (!listData) return [];
 
-    return listData.map((item) => {
+    return listData.map((item: TopStat) => {
       let finalColor = item.color;
       let finalIcon = item.icon;
       let finalLogo = item.logo;
@@ -79,7 +87,7 @@ export const useStatistics = () => {
       // Logic for Categories
       if (activeTab === "category") {
         const found = categories.find(
-          (c: any) => String(c.id) === String(item.id) || c.name === item.name
+          (c: Category) => String(c.id) === String(item.id) || c.name === item.name,
         );
         finalColor = found?.color || item.color || stringToColor(item.name);
         finalIcon = found?.icon || item.icon;
@@ -89,15 +97,16 @@ export const useStatistics = () => {
       // Logic for Counterparties
       if (activeTab === "counterparty") {
         const foundCP = counterparties.find(
-          (c: any) => String(c.id) === String(item.id) || c.name === item.name
+          (c: Counterparty) =>
+            String(c.id) === String(item.id) || c.name === item.name,
         );
 
         const nestedCategory = foundCP?.category;
-        let parentCat = null;
+        let parentCat: Category | null = null;
         if (!nestedCategory && foundCP?.category_id) {
           parentCat = categories.find(
-            (c: any) => String(c.id) === String(foundCP.category_id)
-          );
+            (c: Category) => String(c.id) === String(foundCP.category_id),
+          ) || null;
         }
 
         finalColor =
