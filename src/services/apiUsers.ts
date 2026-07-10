@@ -15,6 +15,13 @@ export interface UserProfile {
   has_passkeys?: boolean;
 }
 
+export interface UpdateUserData {
+  id: string;
+  name?: string;
+  email?: string;
+  role_id?: string;
+}
+
 // Отримати дані про себе (хто залогінився)
 export const getMeApi = async (): Promise<UserProfile> => {
   const response = await api.get<UserProfile>("/users/me");
@@ -84,12 +91,7 @@ export const addUserApi = async (data: CreateUserData): Promise<UserProfile> => 
 export const updateUserApi = async ({
   id,
   ...data
-}: {
-  id: string;
-  name?: string;
-  email?: string;
-  role_id?: string;
-}): Promise<UserProfile> => {
+}: UpdateUserData): Promise<UserProfile> => {
   const response = await api.put<UserProfile>(`/users/${id}`, data);
   return response.data;
 };

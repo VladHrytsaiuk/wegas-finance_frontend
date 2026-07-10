@@ -7,9 +7,17 @@ import {
   addUserApi,
   updateUserApi,
   deleteUserApi,
-  type UserProfile, // Не забудь імпортувати тип, якщо він експортується
+  type CreateUserData,
+  type UserProfile,
 } from "../../services/apiUsers";
 import { useUserRole } from "../useUserRole";
+import { AxiosError } from "axios";
+
+interface ErrorResponse {
+  error?: string;
+}
+
+type UpdateUserData = Partial<Pick<UserProfile, "name" | "email" | "role_id">>;
 
 export const useUsers = () => {
   const { t } = useTranslation();
@@ -30,10 +38,12 @@ export const useUsers = () => {
   const { mutateAsync: addUser, isPending: isAdding } = useMutation({
     mutationFn: addUserApi,
     onSuccess: () => {
-      toast.success(t("settings:usersPage.alert_add_success", "Користувача додано"));
+      toast.success(
+        t("settings:usersPage.alert_add_success", "Користувача додано"),
+      );
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (err: any) =>
+    onError: (err: AxiosError<ErrorResponse>) =>
       toast.error(
         err.response?.data?.error ||
           t("settings:usersPage.alert_add_error", "Помилка додавання"),
@@ -43,11 +53,15 @@ export const useUsers = () => {
   const { mutateAsync: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateUserApi,
     onSuccess: () => {
-      toast.success(t("settings:usersPage.alert_update_success", "Дані оновлено"));
+      toast.success(
+        t("settings:usersPage.alert_update_success", "Дані оновлено"),
+      );
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: () =>
-      toast.error(t("settings:usersPage.alert_update_error", "Помилка оновлення")),
+      toast.error(
+        t("settings:usersPage.alert_update_error", "Помилка оновлення"),
+      ),
   });
 
   const { mutateAsync: removeUser, isPending: isDeleting } = useMutation({
@@ -59,11 +73,13 @@ export const useUsers = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: () =>
-      toast.error(t("settings:usersPage.alert_delete_error", "Помилка видалення")),
+      toast.error(
+        t("settings:usersPage.alert_delete_error", "Помилка видалення"),
+      ),
   });
 
   // Обгортки для хендлерів
-  const handleUpdate = async (id: string, data: any) => {
+  const handleUpdate = async (id: string, data: UpdateUserData) => {
     try {
       await updateUser({ id, ...data });
       return true;
@@ -81,7 +97,7 @@ export const useUsers = () => {
     }
   };
 
-  const handleAddUser = async (data: any) => {
+  const handleAddUser = async (data: CreateUserData) => {
     try {
       await addUser(data);
       return true;

@@ -5,11 +5,12 @@ import { Input } from "../ui/Input";
 import { FUN_ROLES } from "./userConstants";
 import * as S from "./styles";
 import { useTranslation } from "react-i18next";
+import type { CreateUserData, UserProfile } from "../../services/apiUsers";
 
 interface BaseFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: CreateUserData) => void;
   isLoading: boolean;
-  initialData?: any;
+  initialData?: Partial<UserProfile>;
   onCloseModal?: () => void; // Provided by Modal.Window cloneElement
 }
 

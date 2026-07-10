@@ -13,9 +13,10 @@ import {
   ActionButtons,
   IconButton,
 } from "./styles";
+import type { UserProfile } from "../../services/apiUsers";
 
 interface UserCardProps {
-  user: any;
+  user: UserProfile;
   canManage: boolean;
 }
 
