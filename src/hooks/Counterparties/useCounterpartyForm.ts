@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -61,14 +61,14 @@ export const useCounterpartyForm = ({
     },
   });
 
-  const { watch, setValue, handleSubmit } = form;
+  const { control, setValue, handleSubmit } = form;
 
   // 3. Watched Values
-  const selectedType = watch("type");
-  const currentLogo = watch("logo");
-  const currentCategoryId = watch("category_id");
-  const currentColor = watch("color");
-  const currentIcon = watch("icon");
+  const selectedType = useWatch({ control, name: "type" });
+  const currentLogo = useWatch({ control, name: "logo" });
+  const currentCategoryId = useWatch({ control, name: "category_id" });
+  const currentColor = useWatch({ control, name: "color" });
+  const currentIcon = useWatch({ control, name: "icon" });
 
   // 4. Computed Logic
   const availableCategories = useMemo(() => {

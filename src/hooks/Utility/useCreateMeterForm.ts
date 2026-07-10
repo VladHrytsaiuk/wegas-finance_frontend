@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -34,15 +34,16 @@ export const useCreateMeterForm = ({
   const isEdit = !!meterToEdit;
 
   // --- 1. LOCAL STATE FOR ASSETS ---
-  const [assetId, setAssetId] = useState(meterToEdit?.asset_id || "");
+  const [assetIdOverride, setAssetIdOverride] = useState<string | null>(null);
   const [newAsset, setNewAssetState] = useState<CreateAssetOnFlyInput | null>(null);
+  const assetId = assetIdOverride ?? meterToEdit?.asset_id ?? "";
 
   // --- 2. FORM SETUP ---
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     trigger,
     reset,
     formState: { isSubmitting, errors, isSubmitted },
@@ -68,7 +69,6 @@ export const useCreateMeterForm = ({
         personal_account: meterToEdit.personal_account || "",
         counterparty_id: meterToEdit.counterparty_id || "",
       });
-      setAssetId(meterToEdit.asset_id || "");
     }
   }, [meterToEdit, reset]);
 
@@ -101,9 +101,9 @@ export const useCreateMeterForm = ({
   }, [priorityCategoryId]);
 
   // --- 4. WATCHERS ---
-  const currentType = watch("type");
-  const currentCP = watch("counterparty_id");
-  const formValues = watch(); // Стежимо за всіма полями для isDirty
+  const currentType = useWatch({ control, name: "type" });
+  const currentCP = useWatch({ control, name: "counterparty_id" });
+  const formValues = useWatch({ control }); // Стежимо за всіма полями для isDirty
 
   // --- 5. 🔥 IS DIRTY CALCULATION ---
   const isDirty = useMemo(() => {
@@ -133,13 +133,13 @@ export const useCreateMeterForm = ({
 
   // --- 6. HANDLERS ---
   const handleSetAssetId = (id: string) => {
-    setAssetId(id);
+    setAssetIdOverride(id);
     setNewAssetState(null);
   };
 
   const handleSetNewAsset = (asset: CreateAssetOnFlyInput | null) => {
     setNewAssetState(asset);
-    setAssetId("");
+    setAssetIdOverride("");
   };
 
   const onSubmit = (data: MeterFormValues) => {
@@ -172,7 +172,6 @@ export const useCreateMeterForm = ({
       handleSubmit,
       setValue,
       trigger,
-      watch,
       errors,
       isSubmitting,
       isSubmitted,

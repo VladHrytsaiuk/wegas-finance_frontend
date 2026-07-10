@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../../components/ui/Modal"; // Перевір шлях імпорту
 import type { CounterpartyCategory, CounterpartyType } from "../../types";
@@ -32,12 +32,12 @@ export const useCounterpartyCategoryForm = ({
     },
   });
 
-  const { watch, handleSubmit, setValue } = form;
+  const { control, handleSubmit, setValue } = form;
 
   // Spies
-  const type = watch("type");
-  const color = watch("color");
-  const icon = watch("icon");
+  const type = useWatch({ control, name: "type" });
+  const color = useWatch({ control, name: "color" });
+  const icon = useWatch({ control, name: "icon" });
 
   // Computed
   const title = defaultValues.id

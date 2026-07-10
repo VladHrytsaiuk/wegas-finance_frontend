@@ -415,7 +415,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
     return () => clearTimeout(timer);
   }, [isClosing]);
 
-  const processFiles = (newFiles: File[]) => {
+  const processFiles = useCallback((newFiles: File[]) => {
     const validImages = newFiles.filter((file) =>
       file.type.startsWith("image/"),
     );
@@ -436,7 +436,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
     setImages((prev) => [...prev, ...filesToAdd]);
     const newPreviews = filesToAdd.map((file) => URL.createObjectURL(file));
     setPreviews((prev) => [...prev, ...newPreviews]);
-  };
+  }, [images.length, t]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -463,7 +463,7 @@ export default function FeedbackWidget({ onClose, isCollapsed }: Props) {
         }
       }
     },
-    [images],
+    [processFiles],
   );
 
   const onDragOver = (e: React.DragEvent) => {

@@ -76,9 +76,6 @@ export function useAccountDetails() {
   const recentTransactions = Array.isArray(recentRes)
     ? recentRes
     : recentRes?.data || [];
-  const allTxForStats = Array.isArray(statsRes)
-    ? statsRes
-    : statsRes?.data || [];
 
   // --- 2. PREPARE DISPLAY DATA ---
   const displayAccount = useMemo(() => {
@@ -143,6 +140,9 @@ export function useAccountDetails() {
 
   // --- 4. STATS CALCULATION ---
   const monthlyStats = useMemo(() => {
+    const allTxForStats = Array.isArray(statsRes)
+      ? statsRes
+      : statsRes?.data || [];
     const now = new Date();
     let income = 0;
     let expense = 0;
@@ -169,7 +169,7 @@ export function useAccountDetails() {
     });
 
     return { income, expense, totalTurnover };
-  }, [allTxForStats]);
+  }, [statsRes]);
 
   // --- 5. MUTATIONS ---
   const { mutate: deleteAccount, isPending: isDeleting } = useMutation({
