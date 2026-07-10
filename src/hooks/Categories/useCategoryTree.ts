@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { Category } from "../../types";
 
 // Helper
 const normalizeIconName = (iconName: string | undefined): string => {
@@ -10,8 +11,13 @@ const normalizeIconName = (iconName: string | undefined): string => {
   return `Hi${pascal}`;
 };
 
+export interface CategoryTreeNode extends Category {
+  icon: string;
+  children: CategoryTreeNode[];
+}
+
 interface UseTreeProps {
-  categories: any[];
+  categories: Category[];
   searchQuery?: string;
   filters?: { type: string[] };
   sortValue?: string;
@@ -59,8 +65,8 @@ export function useCategoryTree({
     }
 
     // 4. Побудова дерева (Зберігаючи порядок)
-    const map = new Map<string, any>();
-    const roots: any[] = [];
+    const map = new Map<string, CategoryTreeNode>();
+    const roots: CategoryTreeNode[] = [];
 
     // Ініціалізація нод
     items.forEach((cat) => {
@@ -84,7 +90,7 @@ export function useCategoryTree({
     });
 
     // 5. Сортування (рекурсивно)
-    const sortNodes = (nodes: any[]) => {
+    const sortNodes = (nodes: CategoryTreeNode[]) => {
       if (sortValue === "name-asc") {
         nodes.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
       } else if (sortValue === "name-desc") {

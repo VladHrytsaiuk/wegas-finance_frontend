@@ -4,6 +4,11 @@ import { useCategoryData } from "./useCategoryData";
 import { useCategoryTree } from "./useCategoryTree";
 import { useUserRole } from "../useUserRole";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
+import type {
+  Category,
+  CategoryFormData,
+  FormSubmitOptions,
+} from "./useCategoryForm";
 
 export const useCategoriesPage = () => {
   const { t } = useTranslation();
@@ -14,7 +19,7 @@ export const useCategoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ type: [] as string[] });
   const [sortValue, setSortValue] = useState("default");
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   // --- Computed Tree ---
   const categoryTreeRoots = useCategoryTree({
@@ -25,7 +30,7 @@ export const useCategoriesPage = () => {
   });
 
   // --- Handlers ---
-  const handleEdit = (category: any) => {
+  const handleEdit = (category: Category) => {
     if (!canManageStructure) return;
     setEditingCategory(category);
     // Programmatic open trigger
@@ -37,7 +42,7 @@ export const useCategoriesPage = () => {
 
   const handleDelete = (id: string) => {
     if (!canManageStructure) return;
-    const cat = flatCategories.find((c: any) => c.id === id);
+    const cat = flatCategories.find((c) => c.id === id) ?? null;
     setEditingCategory(cat);
     setTimeout(
       () => document.getElementById("trigger-delete-confirm")?.click(),
@@ -49,7 +54,7 @@ export const useCategoriesPage = () => {
     setEditingCategory(null);
   };
 
-  const handleSave = (data: any, options: any) => {
+  const handleSave = (data: CategoryFormData, options?: FormSubmitOptions) => {
     if (editingCategory) {
       actions.update.mutate({ ...data, id: editingCategory.id }, options);
     } else {
