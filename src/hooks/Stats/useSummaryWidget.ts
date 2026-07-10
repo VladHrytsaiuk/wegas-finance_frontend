@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { statsService, type StatsFilter } from "../../services/apiStats";
 import { getAccountsApi } from "../../services/apiAccounts"; // Використовуємо сервіс замість axios напряму
 import { useSettings } from "../../context/SettingsContext";
+import type { Account } from "../../types";
 
 interface UseSummaryWidgetProps {
   globalFilter: StatsFilter;
@@ -26,7 +27,7 @@ export const useSummaryWidget = ({ globalFilter }: UseSummaryWidgetProps) => {
       return globalFilter.accountIds;
     }
     // Якщо фільтр не вибрано, беремо всі доступні
-    return accounts.map((acc: any) => acc.id);
+    return accounts.map((acc: Account) => acc.id);
   }, [globalFilter.accountIds, accounts]);
 
   // 3. Запит загального балансу (не залежить від дат)

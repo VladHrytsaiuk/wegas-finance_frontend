@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { useStatsExport } from "./useStatsExport";
 import { getAccountsApi } from "../../services/apiAccounts";
+import type { Account } from "../../types";
 
 interface UseExportStatsModalProps {
   initialFrom: number;
@@ -49,7 +50,7 @@ export const useExportStatsModal = ({
       key: "accountIds",
       label: t("accounts:accountsFilter.owner_label"),
       type: "multi-select",
-      options: (accounts || []).map((a: any) => ({
+      options: (accounts || []).map((a: Account) => ({
         label: a.name,
         value: a.id,
         icon: a.type === "cash" ? "HiBanknotes" : "HiCreditCard",

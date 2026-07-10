@@ -5,6 +5,7 @@ import { getAssets } from "../../services/apiAssets";
 import { useDropdownPosition } from "../useDropdownPosition";
 import { focusNextElement } from "../../utils/focusUtils";
 import { type CreateAssetOnFlyInput } from "../../services/apiTransactions";
+import type { Asset } from "../../types";
 
 interface UseAssetSelectorProps {
   assetId: string;
@@ -46,12 +47,12 @@ export const useAssetSelector = ({
 
   // --- Calculations ---
   const selectedAssetName = useMemo(() => {
-    return assets?.find((a: any) => String(a.id) === String(assetId))?.name;
+    return assets?.find((a: Asset) => String(a.id) === String(assetId))?.name;
   }, [assets, assetId]);
 
   const filteredAssets = useMemo(() => {
     if (!search) return assets;
-    return assets.filter((a: any) =>
+    return assets.filter((a: Asset) =>
       a.name.toLowerCase().includes(search.toLowerCase()),
     );
   }, [assets, search]);
