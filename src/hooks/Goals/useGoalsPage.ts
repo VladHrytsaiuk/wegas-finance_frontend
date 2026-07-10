@@ -8,8 +8,17 @@ import {
   getGoalsApi,
   deleteGoalApi,
   updateGoalApi,
+  type GoalPayload,
+  type GoalWithDoneStatus,
 } from "../../services/apiGoals";
 import type { Goal } from "../../types";
+
+interface GoalWithStats extends GoalWithDoneStatus {
+  percentage: number;
+  daysLeft: number | null;
+  isUrgent: boolean;
+  isOverdue: boolean;
+}
 
 export const useGoalsPage = () => {
   const { t } = useTranslation();
@@ -20,7 +29,7 @@ export const useGoalsPage = () => {
   const [extendingGoal, setExtendingGoal] = useState<Goal | null>(null);
 
   // 1. Fetch
-  const { data: goals = [], isLoading } = useQuery<Goal[]>({
+  const { data: goals = [], isLoading } = useQuery<GoalWithDoneStatus[]>({
     queryKey: ["goals"],
     queryFn: getGoalsApi,
   });
@@ -66,9 +75,12 @@ export const useGoalsPage = () => {
   });
 
   // 🔥 Payload Preparation
-  const preparePayload = (goal: any, changes: Partial<Goal>) => {
+  const preparePayload = (
+    goal: GoalWithDoneStatus | GoalWithStats,
+    changes: Partial<GoalPayload>,
+  ) => {
     // 1. Дата (конвертація в timestamp)
-    let rawDate =
+    const rawDate =
       changes.date_deadline !== undefined
         ? changes.date_deadline
         : goal.date_deadline;
@@ -118,7 +130,8 @@ export const useGoalsPage = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (payload: any) => updateGoalApi(payload),
+    mutationFn: (payload: Partial<GoalPayload> & { id: string }) =>
+      updateGoalApi(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["goals"] }),
     onError: () => toast.error(t("common:common.error_occurred")),
   });
