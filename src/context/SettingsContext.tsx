@@ -5,10 +5,15 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query"; // ⬅️ 1. Імпорт
 import { settingsService, type AppSettings } from "../services/apiSettings";
 import { useTheme } from "./ThemeContext";
+
+interface ErrorResponse {
+  error?: string;
+}
 
 interface SettingsContextType {
   currency: string;
@@ -56,11 +61,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         if (data.theme) {
           setTheme(data.theme as "light" | "dark");
         }
-      } catch (error: any) {
-        if (error.response?.status === 401) {
+      } catch (error) {
+        const axiosError = error as AxiosError<ErrorResponse>;
+
+        if (axiosError.response?.status === 401) {
           console.log("User not logged in, using default settings");
         } else {
-          console.error("Failed to load settings:", error);
+          console.error("Failed to load settings:", axiosError);
         }
       } finally {
         setIsLoading(false);
@@ -126,6 +133,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (!context) {

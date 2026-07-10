@@ -7,6 +7,10 @@ import { AxiosError } from "axios"; // 👇 Для типізації помил
 
 import { registerApi } from "../../services/apiAuth";
 
+interface RegisterErrorResponse {
+  error?: string;
+}
+
 export const useRegister = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -22,7 +26,7 @@ export const useRegister = () => {
       toast.success(t("auth:auth.register_alert_success"));
       navigate("/login");
     },
-    onError: (error: AxiosError<any>) => {
+    onError: (error: AxiosError<RegisterErrorResponse>) => {
       // 👇 Обробка помилки інвайт-коду
       if (error.response?.status === 403) {
         toast.error(

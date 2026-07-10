@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,6 +9,10 @@ import {
   deleteAccountApi,
 } from "../../services/apiAccounts";
 import { getUsersApi } from "../../services/apiUsers";
+
+interface ErrorResponse {
+  error?: string;
+}
 
 export function useAccountsData() {
   const { t } = useTranslation();
@@ -44,8 +49,10 @@ export function useAccountsData() {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
     },
-    onError: (err: any) =>
-      toast.error(err.message || t("accounts:accountsDataHook.alert_update_error")),
+    onError: (err: AxiosError<ErrorResponse>) =>
+      toast.error(
+        err.message || t("accounts:accountsDataHook.alert_update_error"),
+      ),
   });
 
   const deleteAccount = useMutation({

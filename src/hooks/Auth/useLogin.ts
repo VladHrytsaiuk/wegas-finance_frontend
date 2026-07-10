@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -11,6 +12,10 @@ import { useAuth } from "../../context/AuthContext";
 
 interface UseLoginProps {
   setToken: (token: string) => void;
+}
+
+interface LoginErrorResponse {
+  error?: string;
 }
 
 export const useLogin = ({ setToken }: UseLoginProps) => {
@@ -56,7 +61,7 @@ export const useLogin = ({ setToken }: UseLoginProps) => {
       toast.success(t("auth:auth.login_alert_success", { name: data.user.name }));
       navigate("/dashboard", { replace: true });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<LoginErrorResponse>) => {
       // Якщо бекенд повертає конкретну помилку текстом
       const msg = error.response?.data?.error || t("auth:auth.login_alert_error");
       toast.error(msg);
