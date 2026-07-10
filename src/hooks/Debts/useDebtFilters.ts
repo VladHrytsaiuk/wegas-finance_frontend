@@ -1,7 +1,12 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 import { getCurrencyOptions } from "../../utils/currency";
+
+interface DebtFilterValues {
+  type: string[];
+  currency: string[];
+}
 
 export function useDebtFilters(availableCurrencies: string[]) {
   const { t } = useTranslation();
@@ -9,7 +14,7 @@ export function useDebtFilters(availableCurrencies: string[]) {
   // --- STATE ---
   const [searchQuery, setSearchQuery] = useState("");
   const [sortValue, setSortValue] = useState("name-asc");
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({
+  const [filterValues, setFilterValues] = useState<DebtFilterValues>({
     type: [], // 'debtor' (мені винні) або 'creditor' (я винен)
     currency: [],
   });
@@ -18,7 +23,10 @@ export function useDebtFilters(availableCurrencies: string[]) {
   const handleSearchChange = (val: string) => setSearchQuery(val);
   const handleSortChange = (val: string) => setSortValue(val);
 
-  const handleFilterChange = (key: string, val: any) => {
+  const handleFilterChange = <K extends keyof DebtFilterValues>(
+    key: K,
+    val: DebtFilterValues[K],
+  ) => {
     setFilterValues((prev) => ({ ...prev, [key]: val }));
   };
 
@@ -66,8 +74,14 @@ export function useDebtFilters(availableCurrencies: string[]) {
 
   const sortOptions = [
     // Використовуємо стандартні ключі сортування з counterpartiesPage
-    { value: "name-asc", label: t("counterparties:counterpartiesPage.sort_name_asc") },
-    { value: "name-desc", label: t("counterparties:counterpartiesPage.sort_name_desc") },
+    {
+      value: "name-asc",
+      label: t("counterparties:counterpartiesPage.sort_name_asc"),
+    },
+    {
+      value: "name-desc",
+      label: t("counterparties:counterpartiesPage.sort_name_desc"),
+    },
   ];
 
   return {

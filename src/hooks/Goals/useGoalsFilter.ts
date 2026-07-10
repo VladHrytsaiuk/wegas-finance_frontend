@@ -1,16 +1,29 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { FilterConfig } from "../../components/shared/TableToolbar/types";
 import { getCurrencyOptions } from "../../utils/currency";
+import type { Goal } from "../../types";
 
-export function useGoalsFilter(goals: any[]) {
+interface GoalWithStats extends Goal {
+  percentage: number;
+  daysLeft: number | null;
+  isUrgent: boolean;
+  isOverdue: boolean;
+}
+
+interface GoalFilters {
+  status: string[];
+  currency: string[];
+}
+
+export function useGoalsFilter(goals: GoalWithStats[]) {
   const { t } = useTranslation();
 
   // --- STATE ---
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("deadline-asc"); // Сортування за замовчуванням: найближчі дедлайни
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<GoalFilters>({
     status: [] as string[],
     currency: [] as string[],
     // Можна додати діапазон прогресу, якщо треба
@@ -74,7 +87,7 @@ export function useGoalsFilter(goals: any[]) {
 
   // --- LOGIC ---
   const filteredGoals = useMemo(() => {
-    let result = goals.filter((goal) => {
+    const result = goals.filter((goal) => {
       // 1. Пошук
       if (
         searchQuery &&
@@ -87,23 +100,23 @@ export function useGoalsFilter(goals: any[]) {
       if (filters.status.length > 0) {
         const goalStatus = (goal.status || "").toLowerCase();
         // A goal is visually 'Done' if status is reached/done OR progress is 100%
-        const isVisuallyCompleted = 
-          goalStatus === "reached" || 
-          goalStatus === "done" || 
+        const isVisuallyCompleted =
+          goalStatus === "reached" ||
+          goalStatus === "done" ||
           (goal.percentage && goal.percentage >= 100);
 
         const isMatch = filters.status.some((filterVal) => {
           const fv = filterVal.toLowerCase();
-          
+
           if (fv === "reached" || fv === "done") {
             return isVisuallyCompleted;
           }
-          
+
           if (fv === "active") {
             // Active filter should exclude visually completed goals
             return goalStatus === "active" && !isVisuallyCompleted;
           }
-          
+
           return goalStatus === fv;
         });
 
@@ -157,7 +170,10 @@ export function useGoalsFilter(goals: any[]) {
   }, [goals, searchQuery, filters, sortBy]);
 
   // --- HANDLERS ---
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = <K extends keyof GoalFilters>(
+    key: K,
+    value: GoalFilters[K],
+  ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
