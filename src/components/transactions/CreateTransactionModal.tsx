@@ -7,6 +7,15 @@ import { Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import type { TransactionType } from "../../types";
 
+interface TransactionSuccessResponse {
+  id?: string;
+  data?: {
+    id?: string;
+  };
+}
+
+type TransactionSuccessPayload = TransactionSuccessResponse | string | null;
+
 const CenteredLayout = styled.div`
   display: flex;
   align-items: center;
@@ -19,9 +28,9 @@ const CenteredLayout = styled.div`
 interface CreateTransactionModalProps {
   isOpen?: boolean;
   onClose?: () => void;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data?: TransactionSuccessPayload) => void;
   initialData?: {
-    type?: string;
+    type?: TransactionType;
     account_id?: string;
     counterparty_id?: string; // Важливо!
     amount?: number; // 🔥 ДОДАНО

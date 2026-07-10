@@ -1,4 +1,4 @@
-import { ReactNode, createContext } from "react";
+import { ReactNode, createContext, type TdHTMLAttributes } from "react";
 import styled from "styled-components";
 
 // --- STYLES ---
@@ -147,12 +147,11 @@ function Cell({
   colSpan,
   style,
   ...props
-}: {
+}: TdHTMLAttributes<HTMLTableCellElement> & {
   children: ReactNode;
   className?: string;
   colSpan?: number;
   style?: React.CSSProperties;
-  [key: string]: any;
 }) {
   return (
     <StyledCell className={className} colSpan={colSpan} style={style} {...props}>

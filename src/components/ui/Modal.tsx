@@ -9,6 +9,7 @@ import {
   forwardRef,
   type ReactNode,
   type ReactElement,
+  type HTMLAttributes,
 } from "react";
 import { createPortal } from "react-dom";
 import styled, { keyframes, css } from "styled-components";
@@ -60,11 +61,10 @@ const StyledOverlay = styled.div<{ $isBottomSheet?: boolean }>`
 
 export const Overlay = forwardRef<
   HTMLDivElement,
-  {
+  HTMLAttributes<HTMLDivElement> & {
     children?: ReactNode;
     $isBottomSheet?: boolean;
     style?: React.CSSProperties;
-    [key: string]: any;
   }
 >(({ children, $isBottomSheet, style, ...props }, ref) => {
   const [viewportStyles, setViewportStyles] = useState<React.CSSProperties>({});
@@ -490,6 +490,7 @@ function Window({
 Modal.Open = Open;
 Modal.Window = Window;
 
+// eslint-disable-next-line react-refresh/only-export-components
 // 🔥 ВИПРАВЛЕНО: БЕЗПЕЧНИЙ useModal
 export const useModal = () => {
   const context = useContext(ModalContext);
