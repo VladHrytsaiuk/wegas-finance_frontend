@@ -45,6 +45,7 @@ export const BaseSelect = ({
     onClear,
     searchValue,
   });
+  const { triggerRef, searchInputRef, dropdownRef } = refs;
 
   const handleInputClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -54,7 +55,7 @@ export const BaseSelect = ({
   return (
     <S.Wrapper className={className}>
       <S.Trigger
-        ref={refs.triggerRef}
+        ref={triggerRef}
         onClick={actions.toggle}
         onKeyDown={actions.handleTriggerKeyDown}
         tabIndex={disabled ? -1 : 0}
@@ -77,7 +78,7 @@ export const BaseSelect = ({
 
         {onSearchChange && state.isOpen && (
           <S.TriggerSearchInput
-            ref={refs.searchInputRef}
+            ref={searchInputRef}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             onClick={handleInputClick}
@@ -121,7 +122,7 @@ export const BaseSelect = ({
       {state.isOpen &&
         createPortal(
           <S.Dropdown
-            ref={refs.dropdownRef}
+            ref={dropdownRef}
             tabIndex={-1}
             onKeyDown={actions.handleMenuKeyDown}
             $isAbove={state.coords.isAbove}

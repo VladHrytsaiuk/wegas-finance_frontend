@@ -24,7 +24,7 @@ export const useCreateGoalForm = (
   const totalSteps = 3;
 
   // --- FORM STATE (Using lazy initializers for stability) ---
-  const [name, setName] = useState(() => editingGoal?.name || "");
+  const [name, setNameState] = useState(() => editingGoal?.name || "");
   const [amount, setAmount] = useState(() => 
     editingGoal ? (editingGoal.target_amount / 100).toFixed(2) : ""
   );
@@ -122,11 +122,12 @@ export const useCreateGoalForm = (
     setIsDirty(checkIsDirty());
   }, [name, amount, description, visibility, hiddenFrom, photoFile, isPhotoRemoved, editingGoal, setIsDirty]);
 
-  useEffect(() => {
+  const setName = (value: string) => {
+    setNameState(value);
     if (!editingGoal && linkMode === "new") {
-      setNewAccountName(name);
+      setNewAccountName(value);
     }
-  }, [name, linkMode, editingGoal]);
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

@@ -11,10 +11,11 @@ interface Props {
 
 export const TimePicker = (props: Props) => {
   const { state, refs, actions, t } = useTimePicker(props);
+  const { triggerRef, hourRef, minRef, menuRef } = refs;
   const { isOpen, hh, mm, hoursList, minutesList, positionStyle } = state;
 
   return (
-    <S.Wrapper ref={refs.triggerRef}>
+    <S.Wrapper ref={triggerRef}>
       <S.SegmentedWrapper onClick={actions.handleWrapperClick}>
         <S.IconButton
           type="button"
@@ -26,7 +27,7 @@ export const TimePicker = (props: Props) => {
 
         <div style={{ display: "flex", alignItems: "center" }}>
           <S.SegmentInput
-            ref={refs.hourRef}
+            ref={hourRef}
             value={hh}
             onChange={actions.handleHourChange}
             onKeyDown={(e) => actions.handleKeyDown(e, "hh")}
@@ -35,7 +36,7 @@ export const TimePicker = (props: Props) => {
           />
           <S.Separator>:</S.Separator>
           <S.SegmentInput
-            ref={refs.minRef}
+            ref={minRef}
             value={mm}
             onChange={actions.handleMinChange}
             onKeyDown={(e) => actions.handleKeyDown(e, "mm")}
@@ -48,7 +49,7 @@ export const TimePicker = (props: Props) => {
       {isOpen &&
         createPortal(
           <S.PickerContainer
-            ref={refs.menuRef}
+            ref={menuRef}
             style={{
               top: positionStyle.top,
               bottom: positionStyle.bottom,

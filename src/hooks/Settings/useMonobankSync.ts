@@ -30,16 +30,19 @@ export function useMonobankSync() {
         // Якщо тільки що закінчили - чекаємо 4 сек і ховаємо
         setTimeout(() => setIsVisible(false), 4000);
       }
-    } catch (error) {
+    } catch {
       // Тиша в консолі, щоб не спамити помилками якщо бек лежить
     }
   };
 
   useEffect(() => {
-    checkStatus();
+    const initialCheckTimeout = window.setTimeout(() => {
+      void checkStatus();
+    }, 0);
     intervalRef.current = window.setInterval(checkStatus, 2000); // Опитування кожні 2 сек
 
     return () => {
+      window.clearTimeout(initialCheckTimeout);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []); // eslint-disable-line

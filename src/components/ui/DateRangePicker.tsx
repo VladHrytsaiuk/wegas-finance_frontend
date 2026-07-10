@@ -212,6 +212,7 @@ const CustomDayPickerDropdown = (props: DropdownProps) => {
 
 export const DateRangePicker = (props: ExtendedDatePickerProps) => {
   const { state, refs: datePickerRefs, actions, t } = useDateRangePicker(props);
+  const { dayRef, monthRef, yearRef } = datePickerRefs;
   const {
     isOpen,
     tempRange,
@@ -355,7 +356,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
           </S.IconButton>
           <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
             <S.SegmentInput
-              ref={datePickerRefs.dayRef}
+              ref={dayRef}
               value={day}
               onChange={actions.handleDayChange}
               onKeyDown={(e) => actions.handleKeyDown(e, "d")}
@@ -367,7 +368,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
             />
             <S.Separator>.</S.Separator>
             <S.SegmentInput
-              ref={datePickerRefs.monthRef}
+              ref={monthRef}
               value={month}
               onChange={actions.handleMonthChange}
               onKeyDown={(e) => actions.handleKeyDown(e, "m")}
@@ -379,7 +380,7 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
             />
             <S.Separator>.</S.Separator>
             <S.SegmentInput
-              ref={datePickerRefs.yearRef}
+              ref={yearRef}
               value={year}
               onChange={actions.handleYearChange}
               onKeyDown={(e) => actions.handleKeyDown(e, "y")}
