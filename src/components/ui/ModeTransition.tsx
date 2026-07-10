@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
@@ -55,15 +54,9 @@ export function ModeTransition({
 }: ModeTransitionProps) {
   const { t } = useTranslation();
   const isFinance = targetMode === "finance";
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
 
   // Якщо DOM ще не готовий (рідкісний кейс), повертаємо null
-  if (!mounted) return null;
+  if (typeof document === "undefined") return null;
 
   return createPortal(
     <AnimatePresence>

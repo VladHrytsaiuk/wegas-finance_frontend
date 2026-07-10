@@ -39,6 +39,7 @@ const indeterminateLoading = keyframes`
 const WidgetContainer = styled.div<{
   $minimized: boolean;
   $isFinished: boolean;
+  $isClosing: boolean;
 }>`
   position: fixed;
   bottom: 24px;
@@ -156,26 +157,33 @@ const SuccessIcon = styled(HiCheckCircle)`
 export function SyncWidget() {
   const { statusData, isVisible } = useSync();
   const [isMinimized, setIsMinimized] = useState(false);
-  const [shouldRender, setShouldRender] = useState(isVisible);
   const [isClosing, setIsClosing] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
     if (isVisible) {
-      setShouldRender(true);
-      setIsClosing(false);
-    } else if (shouldRender) {
+      if (isClosing) {
+        const frameId = window.requestAnimationFrame(() => {
+          setIsClosing(false);
+        });
+        return () => window.cancelAnimationFrame(frameId);
+      }
+    } else if (!isClosing) {
       // Починаємо анімацію закриття
-      setIsClosing(true);
+      const frameId = window.requestAnimationFrame(() => {
+        setIsClosing(true);
+      });
       const timer = setTimeout(() => {
-        setShouldRender(false);
         setIsClosing(false);
       }, 400); // Час анімації
-      return () => clearTimeout(timer);
+      return () => {
+        window.cancelAnimationFrame(frameId);
+        clearTimeout(timer);
+      };
     }
-  }, [isVisible, shouldRender]);
+  }, [isVisible, isClosing]);
 
-  // 🔥 ВАЖЛИВО: Перевіряємо shouldRender, а не isVisible
+  const shouldRender = isVisible || isClosing;
   if (!shouldRender) return null;
 
   const isFinished = !statusData.is_running;
