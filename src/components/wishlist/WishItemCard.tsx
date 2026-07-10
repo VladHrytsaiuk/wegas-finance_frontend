@@ -16,6 +16,7 @@ import ConfirmDelete from "../ui/ConfirmDelete";
 import EditWishModal from "./EditWishModal";
 import { formatMoney, getUploadedFileUrl } from "../../utils/helpers";
 import * as S from "../../pages/wishlist/Wishlist.styles";
+import type { WishlistItemFormData } from "../../hooks/Wishlist/useWishlistForms";
 
 import type { WishlistItem, WishlistGroup, User } from "../../types";
 
@@ -25,7 +26,7 @@ interface WishItemCardProps {
   familyMembers: User[] | undefined;
   groups: WishlistGroup[];
   handlers: {
-    updateItem: (data: any) => void;
+    updateItem: (data: WishlistItemFormData) => void;
     deleteItem: (id: string) => void;
     toggleReservation: (id: string) => void;
   };

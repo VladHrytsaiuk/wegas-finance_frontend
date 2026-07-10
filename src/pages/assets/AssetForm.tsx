@@ -16,7 +16,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { AmountInput } from "../../components/ui/AmountInput";
 import { BaseSelect } from "../../components/ui/Select/BaseSelect";
-import { type Asset } from "../../types";
+import { type Asset, type AssetDocument } from "../../types";
 
 import ConfirmCloseModal from "../../components/ui/ConfirmCloseModal";
 import { Overlay, StyledModal } from "../../components/ui/Modal";
@@ -86,10 +86,6 @@ export default function AssetForm({
 
   const { register, control, handleSubmit, isSubmitting, trigger, errors } = form;
 
-  const handleCloseAttempt = () => {
-    isDirty ? setShowConfirm(true) : onCloseModal?.();
-  };
-
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -97,13 +93,17 @@ export default function AssetForm({
         if (showConfirm) {
           setShowConfirm(false);
         } else {
-          handleCloseAttempt();
+          if (isDirty) {
+            setShowConfirm(true);
+          } else {
+            onCloseModal?.();
+          }
         }
       }
     };
     document.addEventListener("keydown", handleEsc, true);
     return () => document.removeEventListener("keydown", handleEsc, true);
-  }, [showConfirm, isDirty]);
+  }, [showConfirm, isDirty, onCloseModal]);
 
   const nextStep = async (e?: React.MouseEvent | React.FormEvent) => {
     e?.preventDefault();
@@ -416,7 +416,7 @@ export default function AssetForm({
 
                       {totalFiles > 0 && (
                         <S.ImageGallery>
-                          {(files?.existing || []).map((f: any, idx: number) => {
+                          {(files?.existing || []).map((f, idx: number) => {
                             const fullUrl = getUploadedFileUrl(f.path);
 
                             return (
@@ -491,7 +491,10 @@ export default function AssetForm({
 
                       {totalDocs > 0 && (
                         <S.DocList>
-                          {(documents?.existing || []).map((doc: any, idx: number) => (
+                          {(documents?.existing || []).map((
+                            doc: AssetDocument,
+                            idx: number,
+                          ) => (
                             <S.DocItem key={`ex-doc-${idx}`}>
                               <S.DocInfo>
                                 <HiDocumentText size={18} />
