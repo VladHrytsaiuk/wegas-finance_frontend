@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -7,10 +8,18 @@ import { useUserRole } from "../useUserRole";
 import { useWebSocketAuth } from "../useWebSocketAuth";
 import { getMeApi } from "../../services/apiUsers";
 
+interface ErrorResponse {
+  error?: string;
+}
+
+interface MemberJoinedMessage {
+  type: "member_joined";
+}
+
 export function useFamilySettings(options?: { onMemberJoined?: () => void }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { canManageTeam, user } = useUserRole();
+  const { canManageTeam } = useUserRole();
 
   const [inviteCode, setInviteCode] = useState<string | null>(null);
   const [joinCodeInput, setJoinCodeInput] = useState("");
@@ -19,20 +28,28 @@ export function useFamilySettings(options?: { onMemberJoined?: () => void }) {
   const [isJoining, setIsJoining] = useState(false);
 
   // Handle WebSocket events
-  const onWebSocketMessage = useCallback((data: any) => {
-    if (data.type === "member_joined") {
-      toast.success(t("settings:usersPage.alert_member_joined", "Новий учасник приєднався!"));
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      // Clear invite code if someone joined
-      setInviteCode(null);
-      setTimeLeft(0);
+  const onWebSocketMessage = useCallback(
+    (data: MemberJoinedMessage) => {
+      if (data.type === "member_joined") {
+        toast.success(
+          t(
+            "settings:usersPage.alert_member_joined",
+            "Новий учасник приєднався!",
+          ),
+        );
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        // Clear invite code if someone joined
+        setInviteCode(null);
+        setTimeLeft(0);
 
-      // Auto-close modal if callback provided
-      if (options?.onMemberJoined) {
-        options.onMemberJoined();
+        // Auto-close modal if callback provided
+        if (options?.onMemberJoined) {
+          options.onMemberJoined();
+        }
       }
-    }
-  }, [t, queryClient, options]);
+    },
+    [t, queryClient, options],
+  );
 
   useWebSocketAuth(onWebSocketMessage);
 
@@ -54,17 +71,30 @@ export function useFamilySettings(options?: { onMemberJoined?: () => void }) {
       const familyId = me.family_id;
 
       if (!familyId) {
-        toast.error(t("settings:usersPage.error_no_family", "Сім'я не знайдена"));
+        toast.error(
+          t("settings:usersPage.error_no_family", "Сім'я не знайдена"),
+        );
         return false;
       }
 
-      const response = await api.post(`/families/${familyId}/generate-code`, { role_id: roleID });
+      const response = await api.post(`/families/${familyId}/generate-code`, {
+        role_id: roleID,
+      });
       setInviteCode(response.data.code);
       setTimeLeft(120); // 2 minutes
-      toast.success(t("settings:usersPage.alert_code_generated", "Код згенеровано"));
+      toast.success(
+        t("settings:usersPage.alert_code_generated", "Код згенеровано"),
+      );
       return true;
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || t("settings:usersPage.error_generating_code", "Помилка генерації коду"));
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.error ||
+          t(
+            "settings:usersPage.error_generating_code",
+            "Помилка генерації коду",
+          ),
+      );
       return false;
     } finally {
       setIsGenerating(false);
@@ -74,21 +104,35 @@ export function useFamilySettings(options?: { onMemberJoined?: () => void }) {
   const joinFamily = async (code: string) => {
     const finalCode = code.trim();
     if (finalCode.length !== 6) {
-      toast.error(t("settings:usersPage.error_invalid_code_format", "Код має містити 6 цифр"));
+      toast.error(
+        t(
+          "settings:usersPage.error_invalid_code_format",
+          "Код має містити 6 цифр",
+        ),
+      );
       return false;
     }
 
     try {
       setIsJoining(true);
       await api.post("/families/join", { code: finalCode });
-      toast.success(t("settings:usersPage.alert_join_success", "Ви успішно приєдналися до сім'ї!"));
-      
+      toast.success(
+        t(
+          "settings:usersPage.alert_join_success",
+          "Ви успішно приєдналися до сім'ї!",
+        ),
+      );
+
       // Refresh user data and team list
       queryClient.invalidateQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
       return true;
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || t("settings:usersPage.error_joining_family", "Помилка приєднання"));
+    } catch (error) {
+      const axiosError = error as AxiosError<ErrorResponse>;
+      toast.error(
+        axiosError.response?.data?.error ||
+          t("settings:usersPage.error_joining_family", "Помилка приєднання"),
+      );
       return false;
     } finally {
       setIsJoining(false);

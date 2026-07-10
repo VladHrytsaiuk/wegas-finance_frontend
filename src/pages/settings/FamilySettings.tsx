@@ -25,6 +25,7 @@ import { GenerateInviteCodeSection } from "./GenerateInviteCodeSection";
 import { JoinFamilySection } from "./JoinFamilySection";
 import { AddMemberChoiceModal } from "./AddMemberChoiceModal";
 import { FAB } from "../../components/ui/FAB";
+import type { UserProfile } from "../../services/apiUsers";
 
 import * as S from "./FamilySettings.styles";
 
@@ -139,7 +140,7 @@ function FamilySettings() {
           )}
 
           <S.UserGrid>
-            {users.map((user: any) => (
+            {users.map((user: UserProfile) => (
               <div key={user.id} style={{ display: "flex", flexDirection: "column" }}>
                 <UserCard user={user} canManage={canManageTeam} />
 
