@@ -329,6 +329,6 @@ export interface WishlistGroup {
   name: string;
   color: string;
   icon: string;
-  visibility: string;
+  visibility: "public" | "private" | "hidden";
   hidden_from?: string;
 }

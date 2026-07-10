@@ -184,7 +184,7 @@ function WishlistGroupsContent() {
               name,
               color,
               icon || "HiFolder",
-              visibility as any,
+              visibility,
               hiddenFrom,
             )
           }
@@ -197,7 +197,7 @@ function WishlistGroupsContent() {
               name,
               color,
               icon || "HiFolder",
-              visibility as any,
+              visibility,
               hiddenFrom,
             )
           }

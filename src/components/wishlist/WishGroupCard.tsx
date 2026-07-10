@@ -1,4 +1,5 @@
 import * as Icons from "react-icons/hi2";
+import type { IconType } from "react-icons";
 import { useTranslation } from "react-i18next";
 
 import Modal from "../ui/Modal";
@@ -18,7 +19,7 @@ interface WishGroupCardProps {
       name: string,
       color: string,
       icon: string,
-      visibility: any,
+      visibility: WishlistGroup["visibility"],
       hiddenFrom: string,
     ) => void;
     deleteGroup: (id: string) => void;
@@ -32,7 +33,8 @@ export default function WishGroupCard({
   handlers,
 }: WishGroupCardProps) {
   const { t } = useTranslation();
-  const IconComponent = (Icons as any)[group.icon] || Icons.HiFolder;
+  const iconMap = Icons as Record<string, IconType>;
+  const IconComponent = iconMap[group.icon] || Icons.HiFolder;
 
   return (
     <S.FolderCard $color={group.color} onClick={onClick}>
@@ -54,14 +56,14 @@ export default function WishGroupCard({
               </Modal.Open>
               <Modal.Window name={`edit-${group.id}`} padding="0" mobileBottomSheet>
                 <EditGroupModal
-                  initialData={group as any}
+                  initialData={group}
                   onUpdate={(id, name, color, icon, visibility, hiddenFrom) =>
                     handlers.updateGroup(
                       id,
                       name,
                       color,
                       icon,
-                      visibility as any,
+                      visibility,
                       hiddenFrom,
                     )
                   }

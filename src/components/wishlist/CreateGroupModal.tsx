@@ -48,7 +48,7 @@ export default function CreateGroupModal({ onCloseModal, onCreate }: Props) {
       payload.name,
       payload.color,
       payload.icon,
-      payload.visibility as any,
+      payload.visibility,
       payload.hiddenFromStr,
     );
     setIsDirty(false);
