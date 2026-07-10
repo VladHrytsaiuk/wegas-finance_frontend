@@ -10,7 +10,6 @@ import {
   HiCheckCircle,
   HiExclamationCircle,
   HiArrowTopRightOnSquare,
-  HiBanknotes,
   HiChartBar,
   HiPencil,
 } from "react-icons/hi2";
@@ -36,6 +35,21 @@ import { useTranslation } from "react-i18next";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
+import type { UtilityReading } from "../../types";
+
+interface TransactionSuccessResponse {
+  id?: string;
+  data?: {
+    id?: string;
+  };
+}
+
+type TransactionSuccessPayload = TransactionSuccessResponse | string | null;
+
+const extractTransactionId = (response: TransactionSuccessPayload) => {
+  if (typeof response === "string") return response;
+  return response?.id || response?.data?.id || null;
+};
 
 export default function UtilityDetails() {
   return (
@@ -55,25 +69,24 @@ function UtilityDetailsContent() {
   const isMobile = useIsMobile();
   const { remove } = useUtilityMeters();
 
-  const [activeReading, setActiveReading] = useState<any>(null);
+  const [activeReading, setActiveReading] = useState<UtilityReading | null>(
+    null,
+  );
 
   if (state.isLoading) return <Spinner />;
   if (!data.meter) return <div>{t("stats_utility:utility.not_found")}</div>;
 
   const { meter, readings, totalDebt, lastReadingDate } = data;
 
-  const formatDateSafe = (date: any) => {
+  const formatDateSafe = (date: number | string | null | undefined) => {
     if (!date) return "—";
     const d = new Date(date);
     return isValid(d) ? format(d, "dd.MM.yyyy") : "—";
   };
 
-  const handlePayAllSuccess = async (response: any) => {
+  const handlePayAllSuccess = async (response?: TransactionSuccessPayload) => {
     try {
-      const txId =
-        response?.id ||
-        response?.data?.id ||
-        (typeof response === "string" ? response : null);
+      const txId = extractTransactionId(response ?? null);
 
       if (!txId) {
         toast.error(t("stats_utility:utility.error_tx_create"));
@@ -112,25 +125,41 @@ function UtilityDetailsContent() {
   return (
     <>
       {isMobile ? (
-        <MobilePageHeader 
-          title={meter.name} 
+        <MobilePageHeader
+          title={meter.name}
           rightAction={
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <Button 
-                variation="secondary" 
-                size="small" 
+            <div style={{ display: "flex", gap: "8px" }}>
+              <Button
+                variation="secondary"
+                size="small"
                 onClick={() => navigate("analytics")}
-                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+                style={{
+                  border: "none",
+                  boxShadow: "none",
+                  background: "transparent",
+                  padding: "8px",
+                }}
               >
-                <HiChartBar size={24} style={{ color: 'var(--color-brand-600)' }} />
+                <HiChartBar
+                  size={24}
+                  style={{ color: "var(--color-brand-600)" }}
+                />
               </Button>
-              <Button 
-                variation="secondary" 
-                size="small" 
+              <Button
+                variation="secondary"
+                size="small"
                 onClick={() => open("edit-meter")}
-                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+                style={{
+                  border: "none",
+                  boxShadow: "none",
+                  background: "transparent",
+                  padding: "8px",
+                }}
               >
-                <HiPencil size={24} style={{ color: 'var(--color-brand-600)' }} />
+                <HiPencil
+                  size={24}
+                  style={{ color: "var(--color-brand-600)" }}
+                />
               </Button>
             </div>
           }
@@ -144,12 +173,10 @@ function UtilityDetailsContent() {
         </S.PageContainer>
       )}
 
-      <S.PageContainer style={{ padding: isMobile ? "20px 16px 80px 16px" : undefined }}>
-        {!isMobile && (
-          <S.Header>
-...
-          </S.Header>
-        )}
+      <S.PageContainer
+        style={{ padding: isMobile ? "20px 16px 80px 16px" : undefined }}
+      >
+        {!isMobile && <S.Header>...</S.Header>}
 
         <S.StatsGrid>
           <S.StatCard>
@@ -372,10 +399,9 @@ function UtilityDetailsContent() {
           }}
           onSuccess={async (response) => {
             if (activeReading) {
-              const txId =
-                response?.id ||
-                response?.data?.id ||
-                (typeof response === "string" ? response : null);
+              const txId = extractTransactionId(
+                (response as TransactionSuccessPayload) ?? null,
+              );
 
               await patchUtilityReading(activeReading.id, {
                 is_paid: true,
@@ -393,25 +419,25 @@ function UtilityDetailsContent() {
       )}
 
       {openName === "pay-all" && (
-      <CreateTransactionModal
-      key={`pay-all-${meter.id}`}
-      isOpen={true}
-      onClose={close}
-      initialData={{
-        type: "debt_repay",
-        counterparty_id: meter.counterparty_id,
-        amount: totalDebt,
-        note: t("stats_utility:utility.payment_full_note", {
-          name: meter.name,
-        }),
-      }}
-      onSuccess={handlePayAllSuccess}
-      />
+        <CreateTransactionModal
+          key={`pay-all-${meter.id}`}
+          isOpen={true}
+          onClose={close}
+          initialData={{
+            type: "debt_repay",
+            counterparty_id: meter.counterparty_id,
+            amount: totalDebt,
+            note: t("stats_utility:utility.payment_full_note", {
+              name: meter.name,
+            }),
+          }}
+          onSuccess={handlePayAllSuccess}
+        />
       )}
 
       {isMobile && (
-      <FAB onClick={() => open("add-reading")} icon={<HiCalendar />} />
+        <FAB onClick={() => open("add-reading")} icon={<HiCalendar />} />
       )}
-      </>
-      );
-      }
+    </>
+  );
+}

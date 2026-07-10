@@ -9,7 +9,6 @@ import {
   HiCheckCircle,
 } from "react-icons/hi2";
 
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
@@ -25,6 +24,7 @@ import { formatMoney } from "../../utils/helpers";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
+import type { CounterpartyBalance } from "../../types";
 
 function DebtorDetails() {
   const {
@@ -41,7 +41,6 @@ function DebtorDetails() {
       hasPositive,
       hasNegative,
       profileColor,
-      id,
     },
     actions: {
       updateCounterparty,
@@ -93,7 +92,7 @@ function DebtorDetails() {
     onSuccessClose: () => void;
   }) => {
     const debtBalance = counterparty?.balances?.find(
-      (b: any) => Math.abs(b.balance) > 0.01,
+      (b: CounterpartyBalance) => Math.abs(b.balance) > 0.01,
     );
 
     if (!debtBalance) {
@@ -140,7 +139,10 @@ function DebtorDetails() {
         <S.ProfileInfo>
           <S.LargeAvatar $color={profileColor}>
             {counterparty.logo ? (
-              <img src={`/brands/${counterparty.logo}`} alt={counterparty.name} />
+              <img
+                src={`/brands/${counterparty.logo}`}
+                alt={counterparty.name}
+              />
             ) : (
               <HiOutlineUser />
             )}
@@ -151,7 +153,9 @@ function DebtorDetails() {
               {hasPositive ? t("goals_debts:debtsPage.summary_owed_to_me") : ""}
               {hasPositive && hasNegative ? " • " : ""}
               {hasNegative ? t("goals_debts:debtsPage.summary_i_owe") : ""}
-              {!hasPositive && !hasNegative ? t("goals_debts:debtsPage.empty_title") : ""}
+              {!hasPositive && !hasNegative
+                ? t("goals_debts:debtsPage.empty_title")
+                : ""}
             </span>
           </S.NameBlock>
         </S.ProfileInfo>
@@ -172,8 +176,6 @@ function DebtorDetails() {
               </Modal.Open>
             )}
 
-
-
             <Modal.Window name="edit-cp" padding="2rem 2.5rem">
               <CounterpartyForm
                 defaultValues={counterparty}
@@ -189,8 +191,6 @@ function DebtorDetails() {
                 onConfirm={handleForgiveSubmit}
               />
             </Modal.Window>
-
-
           </Modal>
         </S.Actions>
       </S.ProfileHeader>
@@ -198,7 +198,7 @@ function DebtorDetails() {
       {/* BALANCES */}
       {counterparty.balances && counterparty.balances.length > 0 && (
         <S.BalancesGrid>
-          {counterparty.balances.map((b: any) => {
+          {counterparty.balances.map((b: CounterpartyBalance) => {
             if (Math.abs(b.balance) < 0.01) return null;
             const isPositive = b.balance > 0;
             return (
@@ -209,11 +209,13 @@ function DebtorDetails() {
                 <S.BalanceLabel>
                   {isPositive ? (
                     <>
-                      <HiArrowUpRight /> {t("goals_debts:debtsPage.summary_owed_to_me")}
+                      <HiArrowUpRight />{" "}
+                      {t("goals_debts:debtsPage.summary_owed_to_me")}
                     </>
                   ) : (
                     <>
-                      <HiArrowDownLeft /> {t("goals_debts:debtsPage.summary_i_owe")}
+                      <HiArrowDownLeft />{" "}
+                      {t("goals_debts:debtsPage.summary_i_owe")}
                     </>
                   )}
                 </S.BalanceLabel>
@@ -279,7 +281,9 @@ function DebtorDetails() {
       )}
 
       {/* HISTORY */}
-      <S.HistoryContainer style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
+      <S.HistoryContainer
+        style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}
+      >
         <S.SectionHeader>
           <S.SectionTitle>
             {t("accounts:accountDetailsPage.history_section_title")}
@@ -325,21 +329,29 @@ function DebtorDetails() {
       )}
 
       {isMobile && (
-        <FAB 
+        <FAB
           actions={[
             {
               icon: <HiArrowUpRight />,
               label: t("goals_debts:debtsPage.btn_lend"),
-              onClick: () => handleOpenTx("loan_give")
+              onClick: () => handleOpenTx("loan_give"),
             },
             {
               icon: <HiArrowDownLeft />,
               label: t("goals_debts:debtsPage.btn_repay_to_me"),
               onClick: () => {
-                const balance = counterparty.balances.find((b: any) => b.balance > 0)?.balance;
-                handleOpenTx("loan_repay", balance, counterparty.balances.find((b: any) => b.balance > 0)?.currency);
-              }
-            }
+                const balance = counterparty.balances.find(
+                  (b: CounterpartyBalance) => b.balance > 0,
+                )?.balance;
+                handleOpenTx(
+                  "loan_repay",
+                  balance,
+                  counterparty.balances.find(
+                    (b: CounterpartyBalance) => b.balance > 0,
+                  )?.currency,
+                );
+              },
+            },
           ]}
         />
       )}
