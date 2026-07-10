@@ -3,12 +3,28 @@ import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { compressImage } from "../../utils/compressor";
-import { DEFAULT_NOTE_COLOR, DEFAULT_WISHLIST_GROUP_COLOR } from "../../utils/constants";
+import { DEFAULT_WISHLIST_GROUP_COLOR } from "../../utils/constants";
 import { getUploadedFileUrl } from "../../utils/helpers";
+import type { WishlistGroup, WishlistItem } from "../../types";
+
+export type WishlistItemFormData = Partial<WishlistItem> & {
+  id?: string;
+  photoFile?: File | null;
+  removePhoto?: boolean;
+};
+
+export type WishlistGroupFormData = {
+  id?: string;
+  name: string;
+  color: string;
+  icon: string;
+  visibility: WishlistGroup["visibility"];
+  hiddenFromStr: string;
+};
 
 // --- ХУК ДЛЯ БАЖАНЬ (ITEMS) ---
 export const useWishlistItemForm = (
-  initialData?: any,
+  initialData?: Partial<WishlistItem>,
   defaultGroupId?: string,
 ) => {
   const { t } = useTranslation();
@@ -50,7 +66,9 @@ export const useWishlistItemForm = (
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error(t("shopping_wishlist:wishlist.error_image_only", "Тільки зображення"));
+      toast.error(
+        t("shopping_wishlist:wishlist.error_image_only", "Тільки зображення"),
+      );
       return;
     }
 
@@ -84,7 +102,7 @@ export const useWishlistItemForm = (
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const getPayload = () => ({
+  const getPayload = (): WishlistItemFormData => ({
     id: initialData?.id,
     name: name.trim(),
     price: price ? Math.round(parseFloat(price) * 100) : null,
@@ -119,14 +137,16 @@ export const useWishlistItemForm = (
       setGroupId,
     },
     handlers: { handleFileSelect, handleRemovePhoto, getPayload },
-    refs: { fileInputRef },
+    fileInputRef,
   };
 };
 
 // --- ХУК ДЛЯ ПАПОК (GROUPS) ---
-export const useWishlistGroupForm = (initialData?: any) => {
+export const useWishlistGroupForm = (initialData?: Partial<WishlistGroup>) => {
   const [name, setName] = useState(initialData?.name || "");
-  const [color, setColor] = useState(initialData?.color || DEFAULT_WISHLIST_GROUP_COLOR);
+  const [color, setColor] = useState(
+    initialData?.color || DEFAULT_WISHLIST_GROUP_COLOR,
+  );
   const [icon, setIcon] = useState(initialData?.icon || "HiFolder");
   const [visibility, setVisibility] = useState(
     initialData?.visibility || "public",
@@ -156,7 +176,7 @@ export const useWishlistGroupForm = (initialData?: any) => {
     );
   };
 
-  const getPayload = () => ({
+  const getPayload = (): WishlistGroupFormData => ({
     id: initialData?.id,
     name: name.trim(),
     color,

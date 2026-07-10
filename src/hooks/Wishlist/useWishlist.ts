@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 
@@ -14,11 +15,19 @@ import {
   updateWishlistGroupApi,
   deleteWishlistGroupApi,
   toggleReservationApi, // <-- Import
+  type WishlistItemsQuery,
 } from "../../services/apiWishlist";
 
 import type { WishlistItem, WishlistGroup } from "../../types";
+import type {
+  WishlistItemFormData,
+} from "./useWishlistForms";
 
-export const useWishlist = (filters?: any) => {
+interface ErrorResponse {
+  error?: string;
+}
+
+export const useWishlist = (filters?: WishlistItemsQuery) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -55,7 +64,7 @@ export const useWishlist = (filters?: any) => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-groups"] });
       toast.success(t("shopping_wishlist:wishlist.group_updated", "Групу оновлено"));
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<ErrorResponse>) => {
       toast.error(
         err.response?.data?.error ||
           t("shopping_wishlist:wishlist.error_update_group", "Помилка оновлення"),
@@ -135,7 +144,7 @@ export const useWishlist = (filters?: any) => {
       queryClient.invalidateQueries({ queryKey: ["wishlist-items"] });
       // Можна без тоста, або короткий
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<ErrorResponse>) => {
       toast.error(err.response?.data?.error || t("common:common.error_occurred"));
     },
   });
@@ -167,7 +176,7 @@ export const useWishlist = (filters?: any) => {
         name: string,
         color: string,
         icon: string,
-        visibility: "public" | "private" | "hidden",
+        visibility: WishlistGroup["visibility"],
         hiddenFrom: string,
       ) =>
         createGroup.mutate({
@@ -182,7 +191,7 @@ export const useWishlist = (filters?: any) => {
         name: string,
         color: string,
         icon: string,
-        visibility: "public" | "private" | "hidden",
+        visibility: WishlistGroup["visibility"],
         hiddenFrom: string,
       ) =>
         updateGroup.mutate({
@@ -195,14 +204,9 @@ export const useWishlist = (filters?: any) => {
         }),
       deleteGroup: (id: string) => deleteGroup.mutate(id),
 
-      createItem: (data: Partial<WishlistItem> & { photoFile?: File | null }) =>
+      createItem: (data: WishlistItemFormData) =>
         createItem.mutate(data),
-      updateItem: (
-        data: Partial<WishlistItem> & {
-          photoFile?: File | null;
-          removePhoto?: boolean;
-        },
-      ) => updateItem.mutate(data),
+      updateItem: (data: WishlistItemFormData) => updateItem.mutate(data),
       deleteItem: (id: string) => deleteItem.mutate(id),
 
       toggleReservation: (id: string) => toggleReservation.mutate(id), // <-- Expose

@@ -9,17 +9,21 @@ import { ColorPicker, IconPicker } from "../ui/ColorIconPicker";
 import { useModal } from "../ui/Modal";
 import { getFamilyMembers, getMeApi } from "../../services/apiUsers";
 import * as S from "./WishlistModals.styles";
-import { useWishlistGroupForm } from "../../hooks/Wishlist/useWishlistForms";
+import {
+  useWishlistGroupForm,
+  type WishlistGroupFormData,
+} from "../../hooks/Wishlist/useWishlistForms";
+import type { WishlistGroup } from "../../types";
 
 interface Props {
   onCloseModal?: () => void;
-  initialData: any;
+  initialData: Partial<WishlistGroup>;
   onUpdate: (
     id: string,
     name: string,
     color: string,
     icon: string,
-    visibility: "public" | "private" | "hidden",
+    visibility: WishlistGroup["visibility"],
     hiddenFrom: string,
   ) => void;
 }
@@ -49,13 +53,13 @@ export default function EditGroupModal({
     e.preventDefault();
     if (!state.name.trim()) return;
 
-    const payload = handlers.getPayload();
+    const payload: WishlistGroupFormData = handlers.getPayload();
     onUpdate(
-      payload.id,
+      payload.id || "",
       payload.name,
       payload.color,
       payload.icon,
-      payload.visibility as any,
+      payload.visibility,
       payload.hiddenFromStr,
     );
     setIsDirty(false);

@@ -9,14 +9,17 @@ import { BaseSelect } from "../ui/Select/BaseSelect";
 import type { WishlistGroup } from "../../types";
 import { useModal } from "../ui/Modal";
 import * as S from "./WishlistModals.styles";
-import { useWishlistItemForm } from "../../hooks/Wishlist/useWishlistForms";
+import {
+  useWishlistItemForm,
+  type WishlistItemFormData,
+} from "../../hooks/Wishlist/useWishlistForms";
 import Spinner from "../ui/Spinner";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface Props {
   onCloseModal?: () => void;
   groups: WishlistGroup[];
-  onCreate: (data: any) => void;
+  onCreate: (data: WishlistItemFormData) => void;
   defaultGroupId?: string;
 }
 
@@ -31,7 +34,7 @@ export default function CreateWishModal({
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState(1);
 
-  const { state, actions, handlers, refs } = useWishlistItemForm(
+  const { state, actions, handlers, fileInputRef } = useWishlistItemForm(
     undefined,
     defaultGroupId,
   );
@@ -95,7 +98,7 @@ export default function CreateWishModal({
             <S.LeftColumn>
               <S.ImageUploadContainer
                 onClick={() => {
-                  if (!state.isCompressing) refs.fileInputRef.current?.click();
+                  if (!state.isCompressing) fileInputRef.current?.click();
                 }}
               >
                 {state.isCompressing ? (
@@ -125,7 +128,7 @@ export default function CreateWishModal({
                 )}
                 <input
                   type="file"
-                  ref={refs.fileInputRef}
+                  ref={fileInputRef}
                   style={{ display: "none" }}
                   accept="image/*"
                   onChange={handlers.handleFileSelect}
