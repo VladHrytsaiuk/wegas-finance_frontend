@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { HiChevronLeft, HiChevronRight, HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { Button } from "../Button"; // Твій стандартний компонент кнопки
@@ -16,6 +16,14 @@ export default function ImageViewer({
   const [currentIndex, setCurrentIndex] = useState(0);
   const { t } = useTranslation();
 
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === imageUrls.length - 1 ? 0 : prev + 1));
+  }, [imageUrls.length]);
+
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? imageUrls.length - 1 : prev - 1));
+  }, [imageUrls.length]);
+
   // Клавіатурна навігація (Стрілки вліво/вправо)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,17 +33,9 @@ export default function ImageViewer({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, imageUrls.length]);
+  }, [handleNext, handlePrev]);
 
   if (!imageUrls || imageUrls.length === 0) return null;
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === imageUrls.length - 1 ? 0 : prev + 1));
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? imageUrls.length - 1 : prev - 1));
-  };
 
   return (
     <S.ViewerContainer onClick={(e) => e.stopPropagation()}>
@@ -49,8 +49,7 @@ export default function ImageViewer({
       </S.TopBar>
 
       <S.MainImageContainer>
-...
-
+        {imageUrls.length > 1 && (
           <S.NavButton $direction="left" onClick={handlePrev}>
             <HiChevronLeft size={28} />
           </S.NavButton>

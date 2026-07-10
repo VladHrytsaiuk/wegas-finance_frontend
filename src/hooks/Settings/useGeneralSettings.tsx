@@ -9,7 +9,7 @@ import { CurrencySymbol } from "../../components/ui/CurrencySymbol";
 
 // --- Components ---
 
-const UKFlag = () => (
+const getUkFlagIcon = () => (
   <svg
     width="18"
     height="14"
@@ -24,7 +24,7 @@ const UKFlag = () => (
   </svg>
 );
 
-const UAFlag = () => (
+const getUaFlagIcon = () => (
   <svg
     width="18"
     height="14"
@@ -83,12 +83,12 @@ export const useGeneralSettings = () => {
       {
         value: "uk",
         label: t("common:languages.uk", "Українська"),
-        icon: <UAFlag />,
+        icon: getUaFlagIcon(),
       },
       {
         value: "en",
         label: t("common:languages.en", "English"),
-        icon: <UKFlag />,
+        icon: getUkFlagIcon(),
       },
     ],
     [t],

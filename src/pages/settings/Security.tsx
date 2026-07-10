@@ -10,7 +10,11 @@ import {
 } from "react-icons/hi2";
 
 import api from "../../services/Axios";
-import { getMeApi, removePinApi, removePasskeysApi } from "../../services/apiUsers";
+import {
+  getMeApi,
+  removePinApi,
+  removePasskeysApi,
+} from "../../services/apiUsers";
 import { usePasskeys } from "../../hooks/usePasskeys";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useModal } from "../../components/ui/Modal";
@@ -48,10 +52,12 @@ function SetPinForm() {
     try {
       await api.post("/users/pin", { pin });
       localStorage.setItem("has_pin", "true");
-      toast.success(t("settings:profilePage.pin_success", "ПІН-код успішно встановлено!"));
+      toast.success(
+        t("settings:profilePage.pin_success", "ПІН-код успішно встановлено!"),
+      );
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       close();
-    } catch (err: unknown) {
+    } catch {
       toast.error("Failed to set PIN code");
     } finally {
       setLoading(false);
@@ -64,7 +70,9 @@ function SetPinForm() {
         handleSubmit();
       } else {
         setError(true);
-        toast.error(t("settings:profilePage.pin_mismatch", "ПІН-коди не збігаються"));
+        toast.error(
+          t("settings:profilePage.pin_mismatch", "ПІН-коди не збігаються"),
+        );
         setTimeout(() => {
           setConfirmPin("");
           setError(false);
@@ -74,29 +82,63 @@ function SetPinForm() {
   }, [confirmPin, pin, step, handleSubmit, t]);
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-        <p style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
-          {step === 1 
-            ? t("settings:profilePage.label_enter_pin", "Встановіть ПІН-код") 
-            : t("settings:profilePage.label_confirm_pin", "Підтвердьте ПІН-код")}
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+        <p
+          style={{
+            fontSize: "1rem",
+            fontWeight: 700,
+            marginBottom: "0.25rem",
+            color: "var(--color-text-main)",
+          }}
+        >
+          {step === 1
+            ? t("settings:profilePage.label_enter_pin", "Встановіть ПІН-код")
+            : t(
+                "settings:profilePage.label_confirm_pin",
+                "Підтвердьте ПІН-код",
+              )}
         </p>
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>
-          {step === 1 
-            ? t("settings:profilePage.desc_enter_pin", "Введіть 4 цифри для швидкого входу")
-            : t("settings:profilePage.desc_confirm_pin", "Введіть код ще раз для збереження")}
+        <p
+          style={{ color: "var(--color-text-secondary)", fontSize: "0.85rem" }}
+        >
+          {step === 1
+            ? t(
+                "settings:profilePage.desc_enter_pin",
+                "Введіть 4 цифри для швидкого входу",
+              )
+            : t(
+                "settings:profilePage.desc_confirm_pin",
+                "Введіть код ще раз для збереження",
+              )}
         </p>
       </div>
 
-      <ModernPinInput 
-        pin={step === 1 ? pin : confirmPin} 
-        onPinChange={step === 1 ? setPin : setConfirmPin} 
+      <ModernPinInput
+        pin={step === 1 ? pin : confirmPin}
+        onPinChange={step === 1 ? setPin : setConfirmPin}
         disabled={loading}
         error={error}
       />
 
-      <div style={{ marginTop: '2rem' }}>
-        <Button variation="secondary" onClick={close} disabled={loading} style={{ border: 'none', textDecoration: 'underline', boxShadow: 'none' }}>
+      <div style={{ marginTop: "2rem" }}>
+        <Button
+          variation="secondary"
+          onClick={close}
+          disabled={loading}
+          style={{
+            border: "none",
+            textDecoration: "underline",
+            boxShadow: "none",
+          }}
+        >
           {t("settings:profilePage.pass_button_cancel", "Скасувати")}
         </Button>
       </div>
@@ -111,9 +153,11 @@ function ChangePasswordForm() {
   const { oldPassword, newPassword, confirmPassword, isPending } = state;
 
   return (
-    <S.PasswordForm onSubmit={async (e) => {
-      await actions.handleSubmit(e);
-    }}>
+    <S.PasswordForm
+      onSubmit={async (e) => {
+        await actions.handleSubmit(e);
+      }}
+    >
       <div>
         <S.Label>{t("settings:profilePage.pass_label_old")}</S.Label>
         <Input
@@ -168,7 +212,10 @@ function SecurityContent() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
-  const { registerPasskey, loading: passkeyLoading, isSupported } = usePasskeys();
+  const {
+    registerPasskey,
+    isSupported,
+  } = usePasskeys();
   const { open } = useModal();
 
   const { data: userDetails, isLoading } = useQuery({
@@ -176,25 +223,37 @@ function SecurityContent() {
     queryFn: getMeApi,
   });
 
-  const { mutate: removePin, isPending: isRemovingPin } = useMutation({
+  const { mutate: removePin } = useMutation({
     mutationFn: removePinApi,
     onSuccess: () => {
-      toast.success(t("settings:profilePage.pin_removed_success", "ПІН-код успішно вимкнено"));
+      toast.success(
+        t(
+          "settings:profilePage.pin_removed_success",
+          "ПІН-код успішно вимкнено",
+        ),
+      );
       queryClient.invalidateQueries({ queryKey: ["me"] });
       localStorage.setItem("has_pin", "false");
     },
     onError: () => toast.error("Не вдалося вимкнути ПІН-код"),
   });
 
-  const { mutate: removePasskeys, isPending: isRemovingPasskeys } = useMutation({
-    mutationFn: removePasskeysApi,
-    onSuccess: () => {
-      toast.success(t("settings:profilePage.passkeys_removed_success", "Біометрію успішно вимкнено"));
-      queryClient.invalidateQueries({ queryKey: ["me"] });
-      localStorage.setItem("has_passkeys", "false");
+  const { mutate: removePasskeys } = useMutation(
+    {
+      mutationFn: removePasskeysApi,
+      onSuccess: () => {
+        toast.success(
+          t(
+            "settings:profilePage.passkeys_removed_success",
+            "Біометрію успішно вимкнено",
+          ),
+        );
+        queryClient.invalidateQueries({ queryKey: ["me"] });
+        localStorage.setItem("has_passkeys", "false");
+      },
+      onError: () => toast.error("Не вдалося вимкнути біометрію"),
     },
-    onError: () => toast.error("Не вдалося вимкнути біометрію"),
-  });
+  );
 
   const hasPassword = !!userDetails?.has_password;
   const hasPin = !!userDetails?.has_pin;
@@ -202,7 +261,14 @@ function SecurityContent() {
 
   const handleTogglePin = () => {
     if (hasPin) {
-      if (window.confirm(t("settings:profilePage.confirm_remove_pin", "Ви впевнені, що хочете вимкнути ПІН-код?"))) {
+      if (
+        window.confirm(
+          t(
+            "settings:profilePage.confirm_remove_pin",
+            "Ви впевнені, що хочете вимкнути ПІН-код?",
+          ),
+        )
+      ) {
         removePin();
       }
     } else {
@@ -212,7 +278,14 @@ function SecurityContent() {
 
   const handleTogglePasskey = async () => {
     if (hasPasskeys) {
-      if (window.confirm(t("settings:profilePage.confirm_remove_passkeys", "Ви впевнені, що хочете видалити біометрію?"))) {
+      if (
+        window.confirm(
+          t(
+            "settings:profilePage.confirm_remove_passkeys",
+            "Ви впевнені, що хочете видалити біометрію?",
+          ),
+        )
+      ) {
         removePasskeys();
       }
     } else {
@@ -225,11 +298,21 @@ function SecurityContent() {
 
   return (
     <>
-      {isMobile && <MobilePageHeader title={t("settings:settingsLayout.menu_security", "Безпека")} />}
+      {isMobile && (
+        <MobilePageHeader
+          title={t("settings:settingsLayout.menu_security", "Безпека")}
+        />
+      )}
       <S.Container style={{ padding: isMobile ? "16px" : "0" }}>
         {!isMobile && (
           <S.SectionTitle>
-            <HiShieldCheck style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-brand-600)' }} />
+            <HiShieldCheck
+              style={{
+                verticalAlign: "middle",
+                marginRight: "8px",
+                color: "var(--color-brand-600)",
+              }}
+            />
             {t("settings:profilePage.title_security", "Безпека")}
           </S.SectionTitle>
         )}
@@ -242,8 +325,12 @@ function SecurityContent() {
                 <HiKey />
               </S.IconBox>
               <S.SecurityText>
-                <S.SecurityLabel>{t("settings:profilePage.label_password", "Пароль")}</S.SecurityLabel>
-                <S.SecurityDesc>{t("settings:profilePage.desc_password", "Вхід в акаунт")}</S.SecurityDesc>
+                <S.SecurityLabel>
+                  {t("settings:profilePage.label_password", "Пароль")}
+                </S.SecurityLabel>
+                <S.SecurityDesc>
+                  {t("settings:profilePage.desc_password", "Вхід в акаунт")}
+                </S.SecurityDesc>
               </S.SecurityText>
             </S.SecurityInfo>
             <Modal.Open opens="change-password">
@@ -260,14 +347,18 @@ function SecurityContent() {
                 <HiLockClosed />
               </S.IconBox>
               <S.SecurityText>
-                <S.SecurityLabel>{t("settings:profilePage.label_pin", "ПІН-код")}</S.SecurityLabel>
-                <S.SecurityDesc>{t("settings:profilePage.desc_pin", "Швидкий доступ")}</S.SecurityDesc>
+                <S.SecurityLabel>
+                  {t("settings:profilePage.label_pin", "ПІН-код")}
+                </S.SecurityLabel>
+                <S.SecurityDesc>
+                  {t("settings:profilePage.desc_pin", "Швидкий доступ")}
+                </S.SecurityDesc>
               </S.SecurityText>
             </S.SecurityInfo>
             <S.SecurityActions>
-              <S.SwitchButton 
-                $isActive={hasPin} 
-                onClick={handleTogglePin} 
+              <S.SwitchButton
+                $isActive={hasPin}
+                onClick={handleTogglePin}
                 disabled={true}
               />
             </S.SecurityActions>
@@ -280,19 +371,27 @@ function SecurityContent() {
                 <HiFingerPrint />
               </S.IconBox>
               <S.SecurityText>
-                <S.SecurityLabel>{t("settings:profilePage.label_passkey", "Біометрія")}</S.SecurityLabel>
+                <S.SecurityLabel>
+                  {t("settings:profilePage.label_passkey", "Біометрія")}
+                </S.SecurityLabel>
                 <S.SecurityDesc>
-                  {!isSupported 
-                    ? t("settings:profilePage.desc_passkey_unsupported", "Не підтримується")
-                    : !hasPin 
-                      ? t("settings:profilePage.desc_passkey_no_pin", "Потрібен ПІН")
+                  {!isSupported
+                    ? t(
+                        "settings:profilePage.desc_passkey_unsupported",
+                        "Не підтримується",
+                      )
+                    : !hasPin
+                      ? t(
+                          "settings:profilePage.desc_passkey_no_pin",
+                          "Потрібен ПІН",
+                        )
                       : "FaceID / TouchID"}
                 </S.SecurityDesc>
               </S.SecurityText>
             </S.SecurityInfo>
             <S.SecurityActions>
-              <S.SwitchButton 
-                $isActive={hasPasskeys} 
+              <S.SwitchButton
+                $isActive={hasPasskeys}
                 onClick={handleTogglePasskey}
                 disabled={true}
               />
@@ -303,14 +402,16 @@ function SecurityContent() {
 
       <Modal.Window name="change-password">
         <S.ModalContainer>
-          <S.ModalTitle>{t("settings:profilePage.title_change_password")}</S.ModalTitle>
+          <S.ModalTitle>
+            {t("settings:profilePage.title_change_password")}
+          </S.ModalTitle>
           <ChangePasswordForm />
         </S.ModalContainer>
       </Modal.Window>
 
       <Modal.Window name="set-pin">
         <S.ModalContainer>
-          <SetPinForm /> 
+          <SetPinForm />
         </S.ModalContainer>
       </Modal.Window>
     </>

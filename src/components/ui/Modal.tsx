@@ -491,7 +491,6 @@ Modal.Open = Open;
 Modal.Window = Window;
 
 // eslint-disable-next-line react-refresh/only-export-components
-// 🔥 ВИПРАВЛЕНО: БЕЗПЕЧНИЙ useModal
 export const useModal = () => {
   const context = useContext(ModalContext);
 

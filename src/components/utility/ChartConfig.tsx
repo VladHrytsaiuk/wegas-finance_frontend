@@ -4,7 +4,6 @@ import { formatMoney } from "../../utils/helpers";
 import type { UtilityGlobalStat, UtilityMeterStat } from "../../types";
 
 // eslint-disable-next-line react-refresh/only-export-components
-// Кольори (Tailwind palette adaptation)
 export const CHART_COLORS = {
   electricity: "#F59E0B", // Amber
   water: "#3B82F6", // Blue

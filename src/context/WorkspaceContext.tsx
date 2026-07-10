@@ -2,7 +2,6 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
 } from "react";
 import { useLocation } from "react-router-dom"; // 👈 Додано
@@ -28,7 +27,7 @@ export const WorkspaceProvider = ({
   const location = useLocation();
 
   // 1. Ініціалізація (Правильна)
-  const [mode, setModeState] = useState<WorkspaceMode>(() => {
+  const [modeState, setModeState] = useState<WorkspaceMode>(() => {
     // Якщо в URL є слово investments — це залізно investments
     if (location.pathname.includes("/investments")) {
       return "investments";
@@ -38,24 +37,21 @@ export const WorkspaceProvider = ({
     return saved === "finance" || saved === "investments" ? saved : "finance";
   });
 
-  // 2. Слідкуємо за URL (щоб кнопка "Назад" в браузері теж перемикала світчер)
-  useEffect(() => {
+  const mode = React.useMemo<WorkspaceMode>(() => {
     if (location.pathname.includes("/investments")) {
-      setModeState("investments");
-    } else if (
-      !location.pathname.includes("/investments") &&
-      !location.pathname.includes("/settings") // Налаштування спільні, не чіпаємо
-    ) {
-      setModeState("finance");
+      return !isLoading && isStartupper ? "finance" : "investments";
     }
-  }, [location.pathname]);
 
-  // 3. Захист від дітей (ТІЛЬКИ КОЛИ ЗАВАНТАЖИЛОСЬ)
-  useEffect(() => {
-    if (!isLoading && isStartupper && mode === "investments") {
-      setModeState("finance");
+    if (!location.pathname.includes("/settings")) {
+      return "finance";
     }
-  }, [isStartupper, mode, isLoading]);
+
+    if (!isLoading && isStartupper && modeState === "investments") {
+      return "finance";
+    }
+
+    return modeState;
+  }, [isLoading, isStartupper, location.pathname, modeState]);
 
   const setMode = useCallback((newMode: WorkspaceMode) => {
     setModeState(newMode);
@@ -71,6 +67,7 @@ export const WorkspaceProvider = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useWorkspace = () => {
   const context = useContext(WorkspaceContext);
   if (!context) {
