@@ -10,6 +10,7 @@ import {
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { CHART_COLORS, CustomTooltip } from "./ChartConfig";
+import type { UtilityMeterStat } from "../../types";
 
 const ChartWrapper = styled.div`
   background: var(--color-bg-secondary, white);
@@ -44,7 +45,7 @@ const Title = styled.h3`
 `;
 
 interface TariffHistoryProps {
-  data: any[];
+  data: UtilityMeterStat[];
   unit: string;
   currency: string;
 }

@@ -1,7 +1,9 @@
 import styled, { keyframes } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { formatMoney } from "../../utils/helpers";
+import type { UtilityGlobalStat, UtilityMeterStat } from "../../types";
 
+// eslint-disable-next-line react-refresh/only-export-components
 // Кольори (Tailwind palette adaptation)
 export const CHART_COLORS = {
   electricity: "#F59E0B", // Amber
@@ -16,6 +18,23 @@ export const CHART_COLORS = {
   grid: "#E5E7EB", // Grey 200
   hoverCursor: "rgba(59, 130, 246, 0.1)", // Світло-блакитний фон при наведенні
 };
+
+type TooltipDataKey = keyof UtilityGlobalStat["data"] | keyof UtilityMeterStat;
+
+interface TooltipEntry {
+  dataKey?: TooltipDataKey | string;
+  name?: string;
+  value?: number | string | null;
+  color?: string;
+  fill?: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipEntry[];
+  label?: string;
+  currency?: string;
+}
 
 // Анімація появи
 const fadeIn = keyframes`
@@ -82,7 +101,7 @@ export const CustomTooltip = ({
   payload,
   label,
   currency = "UAH",
-}: any) => {
+}: CustomTooltipProps) => {
   const { t } = useTranslation();
 
   // 1. Максимально сувора перевірка
@@ -102,7 +121,7 @@ export const CustomTooltip = ({
         {label || t("stats_utility:utility.chart_data_header")}
       </div>
       <div className="list">
-        {validEntries.map((entry: any, index: number) => (
+        {validEntries.map((entry, index: number) => (
           <div className="item" key={`${entry.dataKey}-${index}`}>
             <div className="label-group">
               <span
@@ -115,8 +134,8 @@ export const CustomTooltip = ({
             </div>
             <div className="value">
               {entry.dataKey === "total_consumption"
-                ? `${entry.value}`
-                : formatMoney(entry.value * 100, currency)}
+                ? `${entry.value ?? 0}`
+                : formatMoney(Number(entry.value ?? 0) * 100, currency)}
             </div>
           </div>
         ))}
