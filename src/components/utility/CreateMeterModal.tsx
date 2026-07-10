@@ -23,6 +23,7 @@ import ConfirmCloseModal from "../ui/ConfirmCloseModal";
 import { Overlay, StyledModal } from "../ui/Modal";
 import { useCreateMeterForm } from "../../hooks/Utility/useCreateMeterForm";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import type { UtilityMeter } from "../../types";
 
 const Form = styled.form`
   display: flex;
@@ -149,13 +150,13 @@ const StepLabel = styled.span<{ $active: boolean }>`
 
 interface Props {
   onCloseModal?: () => void;
-  meterToEdit?: any;
+  meterToEdit?: UtilityMeter;
 }
 
 export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  
+
   // 🔥 Локальний стейт для підтвердження та кроків на мобільці
   const [showConfirm, setShowConfirm] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -213,7 +214,6 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
     handleSubmit,
     setValue,
     trigger,
-    watch,
     errors,
     isSubmitting,
     isSubmitted,
@@ -367,9 +367,21 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                       {currentStep > step ? <HiCheck /> : step}
                     </StepNumber>
                     <StepLabel $active={currentStep === step}>
-                      {step === 1 && t("stats_utility:createMeterModal.step_info", "Параметри")}
-                      {step === 2 && t("stats_utility:createMeterModal.step_tariff", "Тариф")}
-                      {step === 3 && t("stats_utility:createMeterModal.step_provider", "Провайдер")}
+                      {step === 1 &&
+                        t(
+                          "stats_utility:createMeterModal.step_info",
+                          "Параметри",
+                        )}
+                      {step === 2 &&
+                        t(
+                          "stats_utility:createMeterModal.step_tariff",
+                          "Тариф",
+                        )}
+                      {step === 3 &&
+                        t(
+                          "stats_utility:createMeterModal.step_provider",
+                          "Провайдер",
+                        )}
                     </StepLabel>
                   </StepItem>
                 ))}
@@ -385,13 +397,27 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                   {t("stats_utility:createMeterModal.name_label")}
                 </SectionLabel>
                 <Input
-                  placeholder={t("stats_utility:createMeterModal.placeholder_name")}
-                  {...register("name", { required: t("common:validation.required", "Це поле обов'язкове") })}
+                  placeholder={t(
+                    "stats_utility:createMeterModal.placeholder_name",
+                  )}
+                  {...register("name", {
+                    required: t(
+                      "common:validation.required",
+                      "Це поле обов'язкове",
+                    ),
+                  })}
                   $hasError={!!errors.name}
                   autoFocus
                 />
                 {errors.name && (
-                  <span style={{ color: "var(--color-red-600)", fontSize: "0.75rem", marginTop: "0.25rem", display: "block" }}>
+                  <span
+                    style={{
+                      color: "var(--color-red-600)",
+                      fontSize: "0.75rem",
+                      marginTop: "0.25rem",
+                      display: "block",
+                    }}
+                  >
                     {errors.name.message as string}
                   </span>
                 )}
@@ -405,7 +431,11 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                   <BaseSelect
                     triggerLabel={
                       <div
-                        style={{ display: "flex", alignItems: "center", gap: 8 }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
                       >
                         {activeTypeConfig?.icon}{" "}
                         {activeTypeConfig?.label ||
@@ -432,12 +462,26 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                     {t("stats_utility:createMeterModal.unit_label")}
                   </SectionLabel>
                   <Input
-                    placeholder={t("stats_utility:createMeterModal.placeholder_unit")}
-                    {...register("unit", { required: t("common:validation.required", "Це поле обов'язкове") })}
+                    placeholder={t(
+                      "stats_utility:createMeterModal.placeholder_unit",
+                    )}
+                    {...register("unit", {
+                      required: t(
+                        "common:validation.required",
+                        "Це поле обов'язкове",
+                      ),
+                    })}
                     $hasError={!!errors.unit}
                   />
                   {errors.unit && (
-                    <span style={{ color: "var(--color-red-600)", fontSize: "0.75rem", marginTop: "0.25rem", display: "block" }}>
+                    <span
+                      style={{
+                        color: "var(--color-red-600)",
+                        fontSize: "0.75rem",
+                        marginTop: "0.25rem",
+                        display: "block",
+                      }}
+                    >
                       {errors.unit.message as string}
                     </span>
                   )}
@@ -457,12 +501,24 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                   type="number"
                   step="0.0001"
                   placeholder="0.00"
-                  {...register("tariff", { required: t("common:validation.required", "Це поле обов'язкове") })}
+                  {...register("tariff", {
+                    required: t(
+                      "common:validation.required",
+                      "Це поле обов'язкове",
+                    ),
+                  })}
                   $hasError={!!errors.tariff}
                   autoFocus={isMobile}
                 />
                 {errors.tariff && (
-                  <span style={{ color: "var(--color-red-600)", fontSize: "0.75rem", marginTop: "0.25rem", display: "block" }}>
+                  <span
+                    style={{
+                      color: "var(--color-red-600)",
+                      fontSize: "0.75rem",
+                      marginTop: "0.25rem",
+                      display: "block",
+                    }}
+                  >
                     {errors.tariff.message as string}
                   </span>
                 )}
@@ -559,7 +615,9 @@ export default function CreateMeterForm({ onCloseModal, meterToEdit }: Props) {
                 type="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? t("common:shared.saving") : t("common:common.save")}
+                {isSubmitting
+                  ? t("common:shared.saving")
+                  : t("common:common.save")}
               </Button>
             )}
           </div>

@@ -8,6 +8,7 @@ import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { useUtilityReadings } from "../../hooks/Utility/useUtility";
 import Spinner from "../ui/Spinner";
+import type { UtilityMeter } from "../../types";
 
 const Form = styled.form`
   display: flex;
@@ -49,7 +50,13 @@ const TariffBox = styled.div`
 
 interface Props {
   onCloseModal?: () => void;
-  meter: any;
+  meter: UtilityMeter;
+}
+
+interface AddReadingFormValues {
+  date: string;
+  value: string;
+  tariff: string | number;
 }
 
 export default function AddReadingForm({ onCloseModal, meter }: Props) {
@@ -60,7 +67,7 @@ export default function AddReadingForm({ onCloseModal, meter }: Props) {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm({
+  } = useForm<AddReadingFormValues>({
     defaultValues: {
       date: format(new Date(), "yyyy-MM-dd"),
       value: "",
@@ -69,7 +76,7 @@ export default function AddReadingForm({ onCloseModal, meter }: Props) {
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: AddReadingFormValues) => {
     addReading(
       {
         meter_id: meter.id,
