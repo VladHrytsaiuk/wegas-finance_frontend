@@ -17,14 +17,11 @@ import { useIsMobile } from "../../../hooks/useIsMobile";
 
 // Styles & Types
 import * as S from "./TableToolbar.styles";
-import type { FilterConfig, FilterOption } from "./types";
-
-type RangeFilterValue = {
-  min?: string | number;
-  max?: string | number;
-};
-
-type FilterValue = string | string[] | boolean | RangeFilterValue | undefined;
+import type {
+  FilterConfig,
+  FilterOption,
+  FilterValue,
+} from "./types";
 
 const hasFilterValue = (value: FilterValue): boolean => {
   if (Array.isArray(value)) {

@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "../ui/Modal";
 import { Button } from "../ui/Button";
 import { AccountSelect } from "../accounts/form/AccountSelect";
+import type { Account } from "../../types";
 
 interface Props {
   onConfirm: (data: { accountId: string; onSuccessClose: () => void }) => void;
   isLoading: boolean;
-  accounts: any[];
+  accounts: Account[];
 }
 
 export const ForgiveDebtWindow = ({
@@ -81,7 +82,9 @@ export const ForgiveDebtWindow = ({
 
         {/* debtsPage.btn_confirm_forgive = "Списати назавжди" */}
         <Button disabled={!accountId || isLoading} onClick={handleConfirm}>
-          {isLoading ? t("common:shared.loading") : t("goals_debts:debtsPage.btn_confirm_forgive")}
+          {isLoading
+            ? t("common:shared.loading")
+            : t("goals_debts:debtsPage.btn_confirm_forgive")}
         </Button>
       </div>
     </div>

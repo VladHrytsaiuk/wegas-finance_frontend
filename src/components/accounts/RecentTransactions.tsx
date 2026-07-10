@@ -6,13 +6,22 @@ import { HiOutlineBanknotes } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { sortTransactions } from "../../utils/helpers";
 import { useNavigate } from "react-router-dom";
+import type { Account, Category } from "../../types";
+import type { TransactionListItem } from "../../hooks/Transactions/useTransactionItem";
+
+interface RecentTransactionsProps {
+  transactions?: TransactionListItem[];
+  categories: Category[];
+  accounts?: Account[];
+  loading?: boolean;
+}
 
 export const RecentTransactions = ({
   transactions,
   categories,
   accounts,
   loading,
-}: any) => {
+}: RecentTransactionsProps) => {
   const { t } = useTranslation();
   const { currency, language } = useSettings();
   const navigate = useNavigate();
@@ -33,7 +42,7 @@ export const RecentTransactions = ({
 
   return (
     <ListWrapper>
-      {sortedTransactions.map((tx: any) => (
+      {sortedTransactions.map((tx) => (
         <TransactionItem
           key={tx.id}
           transaction={tx}

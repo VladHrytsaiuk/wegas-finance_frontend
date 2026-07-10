@@ -4,8 +4,22 @@ import { Button } from "../../ui/Button";
 import { Input } from "../../ui/Input";
 import Spinner from "../../ui/Spinner";
 import * as S from "../MonobankModal.styles";
+import type { useMonobank } from "../../../hooks/Settings/useMonobank";
 
-export default function StepInput({ state, actions, onClose }: any) {
+type MonobankState = ReturnType<typeof useMonobank>["state"];
+type MonobankActions = ReturnType<typeof useMonobank>["actions"];
+
+interface StepInputProps {
+  state: MonobankState;
+  actions: MonobankActions;
+  onClose: () => void;
+}
+
+export default function StepInput({
+  state,
+  actions,
+  onClose,
+}: StepInputProps) {
   const { t } = useTranslation();
   const { token, isPending, error } = state;
 
@@ -64,7 +78,11 @@ export default function StepInput({ state, actions, onClose }: any) {
           onClick={() => actions.handleConnect()}
           disabled={!token || isPending}
         >
-          {isPending ? <Spinner size="sm" /> : t("settings:integrations.mono_flow_btn_connect")}
+          {isPending ? (
+            <Spinner size="sm" />
+          ) : (
+            t("settings:integrations.mono_flow_btn_connect")
+          )}
         </Button>
       </S.FooterRow>
     </S.ContentWrapper>

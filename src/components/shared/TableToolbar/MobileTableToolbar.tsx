@@ -1,17 +1,16 @@
 import { useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { 
-  HiMagnifyingGlass, 
-  HiFunnel, 
+import {
+  HiMagnifyingGlass,
+  HiFunnel,
   HiXMark,
   HiCheck,
-  HiCalendar,
-  HiArrowsUpDown
+  HiArrowsUpDown,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 
-import type { FilterConfig, FilterOption } from "./types";
+import type { FilterConfig, FilterOption, FilterValue } from "./types";
 import { MobileInlineFilter } from "./MobileInlineFilter";
 import { DateRangePicker } from "../../ui/DateRangePicker";
 
@@ -41,7 +40,7 @@ const SearchBarRow = styled.div`
 const SearchInputWrapper = styled.div`
   position: relative;
   flex: 1;
-  
+
   svg {
     position: absolute;
     left: 12px;
@@ -74,16 +73,19 @@ const IconButton = styled.button<{ $active?: boolean }>`
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background-color: ${props => props.$active ? 'var(--color-brand-600)' : 'var(--color-bg-surface)'};
-  color: ${props => props.$active ? 'white' : 'var(--color-text-main)'};
-  border: 1px solid ${props => props.$active ? 'var(--color-brand-600)' : 'var(--color-border)'};
+  background-color: ${(props) =>
+    props.$active ? "var(--color-brand-600)" : "var(--color-bg-surface)"};
+  color: ${(props) => (props.$active ? "white" : "var(--color-text-main)")};
+  border: 1px solid
+    ${(props) =>
+      props.$active ? "var(--color-brand-600)" : "var(--color-border)"};
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-sm);
   position: relative;
   flex-shrink: 0;
-  
+
   svg {
     width: 20px;
     height: 20px;
@@ -186,16 +188,17 @@ const SortOptionItem = styled.button<{ $active: boolean }>`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: ${props => props.$active ? 'var(--color-brand-50)' : 'var(--color-bg-surface)'};
+  background: ${(props) =>
+    props.$active ? "var(--color-brand-50)" : "var(--color-bg-surface)"};
   border: none;
   border-bottom: 1px solid var(--color-border);
   width: 100%;
   text-align: left;
-  
+
   &:active {
     background-color: var(--color-bg-hover);
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -203,7 +206,8 @@ const SortOptionItem = styled.button<{ $active: boolean }>`
   span {
     font-size: 16px;
     font-weight: 600;
-    color: ${props => props.$active ? 'var(--color-brand-700)' : 'var(--color-text-main)'};
+    color: ${(props) =>
+      props.$active ? "var(--color-brand-700)" : "var(--color-text-main)"};
   }
 `;
 
@@ -218,8 +222,8 @@ interface MobileTableToolbarProps {
   onSearchChange: (query: string) => void;
   searchPlaceholder?: string;
   filtersConfig: FilterConfig[];
-  filterValues: Record<string, any>;
-  onFilterChange: (key: string, value: any) => void;
+  filterValues: Record<string, FilterValue>;
+  onFilterChange: (key: string, value: FilterValue) => void;
   sortOptions: FilterOption[];
   sortValue: string;
   onSortChange: (value: string) => void;
@@ -245,7 +249,7 @@ export const MobileTableToolbar = ({
   onClearAll,
   activeFiltersCount,
   dateRange,
-  onDateRangeChange
+  onDateRangeChange,
 }: MobileTableToolbarProps) => {
   const { t } = useTranslation();
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -262,24 +266,31 @@ export const MobileTableToolbar = ({
       <SearchBarRow>
         <SearchInputWrapper>
           <HiMagnifyingGlass />
-          <SearchInput 
-            placeholder={searchPlaceholder || t("legacy:toolbar.search_default_placeholder")}
+          <SearchInput
+            placeholder={
+              searchPlaceholder ||
+              t("legacy:toolbar.search_default_placeholder")
+            }
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </SearchInputWrapper>
 
         {sortOptions.length > 0 && (
-           <IconButton 
-            $active={!!sortValue && sortValue !== 'date-desc' && sortValue !== 'name-asc'} 
+          <IconButton
+            $active={
+              !!sortValue &&
+              sortValue !== "date-desc" &&
+              sortValue !== "name-asc"
+            }
             onClick={() => setIsSortSheetOpen(true)}
           >
             <HiArrowsUpDown />
           </IconButton>
         )}
 
-        <IconButton 
-          $active={isFilterSheetOpen || actualFiltersCount > 0} 
+        <IconButton
+          $active={isFilterSheetOpen || actualFiltersCount > 0}
           onClick={() => setIsFilterSheetOpen(true)}
         >
           <HiFunnel />
@@ -288,113 +299,159 @@ export const MobileTableToolbar = ({
       </SearchBarRow>
 
       {/* Sort Sheet */}
-      {isSortSheetOpen && createPortal(
-        <Overlay onClick={() => setIsSortSheetOpen(false)}>
-          <Sheet onClick={(e) => e.stopPropagation()}>
-            <SheetHeader>
-              <SheetTitle>{t("legacy:toolbar.sort_default")}</SheetTitle>
-              <IconButton onClick={() => setIsSortSheetOpen(false)} style={{ border: 'none', background: 'none', boxShadow: 'none' }}>
-                <HiXMark size={24} />
-              </IconButton>
-            </SheetHeader>
-            <SheetContent style={{ gap: 0, padding: '16px' }}>
-              <SortList>
-                {sortOptions.map(opt => (
-                  <SortOptionItem 
-                    key={opt.value} 
-                    $active={sortValue === opt.value}
-                    onClick={() => { onSortChange(opt.value); setIsSortSheetOpen(false); }}
-                  >
-                    <span>{opt.label}</span>
-                    {sortValue === opt.value && <HiCheck size={20} color="var(--color-brand-600)" />}
-                  </SortOptionItem>
-                ))}
-              </SortList>
-            </SheetContent>
-          </Sheet>
-        </Overlay>,
-        document.body
-      )}
+      {isSortSheetOpen &&
+        createPortal(
+          <Overlay onClick={() => setIsSortSheetOpen(false)}>
+            <Sheet onClick={(e) => e.stopPropagation()}>
+              <SheetHeader>
+                <SheetTitle>{t("legacy:toolbar.sort_default")}</SheetTitle>
+                <IconButton
+                  onClick={() => setIsSortSheetOpen(false)}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    boxShadow: "none",
+                  }}
+                >
+                  <HiXMark size={24} />
+                </IconButton>
+              </SheetHeader>
+              <SheetContent style={{ gap: 0, padding: "16px" }}>
+                <SortList>
+                  {sortOptions.map((opt) => (
+                    <SortOptionItem
+                      key={opt.value}
+                      $active={sortValue === opt.value}
+                      onClick={() => {
+                        onSortChange(opt.value);
+                        setIsSortSheetOpen(false);
+                      }}
+                    >
+                      <span>{opt.label}</span>
+                      {sortValue === opt.value && (
+                        <HiCheck size={20} color="var(--color-brand-600)" />
+                      )}
+                    </SortOptionItem>
+                  ))}
+                </SortList>
+              </SheetContent>
+            </Sheet>
+          </Overlay>,
+          document.body,
+        )}
 
       {/* Filter Sheet */}
-      {isFilterSheetOpen && createPortal(
-        <Overlay onClick={() => setIsFilterSheetOpen(false)}>
-          <Sheet onClick={(e) => e.stopPropagation()}>
-            <SheetHeader>
-              <SheetTitle>{t("legacy:filters.title")}</SheetTitle>
-              <IconButton onClick={() => setIsFilterSheetOpen(false)} style={{ border: 'none', background: 'none', boxShadow: 'none' }}>
-                <HiXMark size={24} />
-              </IconButton>
-            </SheetHeader>
-            
-            <SheetContent>
-              {/* Date Range Section */}
-              {dateRange && onDateRangeChange && (
-                <FilterSection>
-                  <SectionLabel>{t("legacy:filters.period_label")}</SectionLabel>
-                  <div style={{ background: 'var(--color-bg-surface)', borderRadius: '16px', padding: '12px', border: '1px solid var(--color-border)' }}>
-                    <DateRangePicker 
-                      dateFrom={dateRange.from} 
-                      dateTo={dateRange.to} 
-                      onChange={onDateRangeChange}
-                      staticPicker
-                      numberOfMonths={1}
-                    />
-                  </div>
-                </FilterSection>
-              )}
+      {isFilterSheetOpen &&
+        createPortal(
+          <Overlay onClick={() => setIsFilterSheetOpen(false)}>
+            <Sheet onClick={(e) => e.stopPropagation()}>
+              <SheetHeader>
+                <SheetTitle>{t("legacy:filters.title")}</SheetTitle>
+                <IconButton
+                  onClick={() => setIsFilterSheetOpen(false)}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    boxShadow: "none",
+                  }}
+                >
+                  <HiXMark size={24} />
+                </IconButton>
+              </SheetHeader>
 
-              {/* Dynamic Filters Sections */}
-              {filtersConfig.length > 0 && (
-                <FilterSection>
-                  <SectionLabel>{t("legacy:filters.parameters_label")}</SectionLabel>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {filtersConfig.map(config => (
-                      <MobileInlineFilter 
-                        key={config.key}
-                        config={config} 
-                        value={filterValues[config.key] || []} 
-                        onChange={(vals) => onFilterChange(config.key, vals)}
+              <SheetContent>
+                {/* Date Range Section */}
+                {dateRange && onDateRangeChange && (
+                  <FilterSection>
+                    <SectionLabel>
+                      {t("legacy:filters.period_label")}
+                    </SectionLabel>
+                    <div
+                      style={{
+                        background: "var(--color-bg-surface)",
+                        borderRadius: "16px",
+                        padding: "12px",
+                        border: "1px solid var(--color-border)",
+                      }}
+                    >
+                      <DateRangePicker
+                        dateFrom={dateRange.from}
+                        dateTo={dateRange.to}
+                        onChange={onDateRangeChange}
+                        staticPicker
+                        numberOfMonths={1}
                       />
-                    ))}
-                  </div>
-                </FilterSection>
-              )}
-            </SheetContent>
+                    </div>
+                  </FilterSection>
+                )}
 
-            <SheetFooter>
-              <ButtonFull 
-                $variant="secondary" 
-                onClick={() => { onClearAll(); setIsFilterSheetOpen(false); }}
-                style={{ flex: 1 }}
-              >
-                {t("legacy:filters.reset")}
-              </ButtonFull>
-              <ButtonFull 
-                $variant="primary" 
-                onClick={handleApply}
-                style={{ flex: 2 }}
-              >
-                {t("legacy:filters.apply")}
-              </ButtonFull>
-            </SheetFooter>
-          </Sheet>
-        </Overlay>,
-        document.body
-      )}
+                {/* Dynamic Filters Sections */}
+                {filtersConfig.length > 0 && (
+                  <FilterSection>
+                    <SectionLabel>
+                      {t("legacy:filters.parameters_label")}
+                    </SectionLabel>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "12px",
+                      }}
+                    >
+                      {filtersConfig.map((config) => (
+                        <MobileInlineFilter
+                          key={config.key}
+                          config={config}
+                          value={filterValues[config.key] || []}
+                          onChange={(vals) => onFilterChange(config.key, vals)}
+                        />
+                      ))}
+                    </div>
+                  </FilterSection>
+                )}
+              </SheetContent>
+
+              <SheetFooter>
+                <ButtonFull
+                  $variant="secondary"
+                  onClick={() => {
+                    onClearAll();
+                    setIsFilterSheetOpen(false);
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  {t("legacy:filters.reset")}
+                </ButtonFull>
+                <ButtonFull
+                  $variant="primary"
+                  onClick={handleApply}
+                  style={{ flex: 2 }}
+                >
+                  {t("legacy:filters.apply")}
+                </ButtonFull>
+              </SheetFooter>
+            </Sheet>
+          </Overlay>,
+          document.body,
+        )}
     </MobileToolbarContainer>
   );
 };
 
-const ButtonFull = styled.button<{ $variant: 'primary' | 'secondary' }>`
+const ButtonFull = styled.button<{ $variant: "primary" | "secondary" }>`
   height: 50px;
   border-radius: 14px;
   font-size: 16px;
   font-weight: 700;
   border: none;
   cursor: pointer;
-  
-  background-color: ${props => props.$variant === 'primary' ? 'var(--color-brand-600)' : 'var(--color-bg-surface)'};
-  color: ${props => props.$variant === 'primary' ? 'white' : 'var(--color-text-main)'};
-  border: ${props => props.$variant === 'secondary' ? '1px solid var(--color-border)' : 'none'};
+
+  background-color: ${(props) =>
+    props.$variant === "primary"
+      ? "var(--color-brand-600)"
+      : "var(--color-bg-surface)"};
+  color: ${(props) =>
+    props.$variant === "primary" ? "white" : "var(--color-text-main)"};
+  border: ${(props) =>
+    props.$variant === "secondary" ? "1px solid var(--color-border)" : "none"};
 `;

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCounterpartyData } from "../Counterparties/useCounterpartyData"; // Перевір шлях
 import { useDebtFilters } from "./useDebtFilters"; // Перевір шлях
 import { useHeader } from "../../context/HeaderContext"; // Перевір шлях
-import type { Counterparty } from "../../types";
+import type { Counterparty, CounterpartyBalance } from "../../types";
 
 export type DebtTotals = Record<string, number>;
 
@@ -52,7 +52,7 @@ export const useDebtsPage = () => {
     if (!counterparties) return [];
     const currencies = new Set<string>();
     counterparties.forEach((cp) => {
-      cp.balances?.forEach((b: any) => {
+      cp.balances?.forEach((b: CounterpartyBalance) => {
         if (Math.abs(b.balance) > 0.01) currencies.add(b.currency);
       });
     });

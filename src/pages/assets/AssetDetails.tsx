@@ -25,7 +25,6 @@ import {
 } from "react-icons/hi2";
 
 import { Button } from "../../components/ui/Button";
-import Spinner from "../../components/ui/Spinner";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
@@ -39,6 +38,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import * as S from "./AssetDetails.styles";
+import type { Transaction } from "../../types";
 
 import { getUploadedFileUrl } from "../../utils/helpers"; // Не забудь додати імпорт
 
@@ -119,16 +119,24 @@ export default function AssetDetails() {
       <Modal>
         {/* ХЕДЕР */}
         {isMobile && asset ? (
-          <MobilePageHeader 
-            title={asset.name} 
+          <MobilePageHeader
+            title={asset.name}
             rightAction={
               <Button
                 variation="secondary"
                 size="small"
                 onClick={() => actions.navigate(`/assets`)}
-                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+                style={{
+                  border: "none",
+                  boxShadow: "none",
+                  background: "transparent",
+                  padding: "8px",
+                }}
               >
-                <HiOutlineCube size={24} style={{ color: 'var(--color-brand-600)' }} />
+                <HiOutlineCube
+                  size={24}
+                  style={{ color: "var(--color-brand-600)" }}
+                />
               </Button>
             }
           />
@@ -170,7 +178,9 @@ export default function AssetDetails() {
               <h3>{t("assets:assetDetails.financial_info")}</h3>
             </S.CardHeader>
             <S.MainValueBlock>
-              <span className="label">{t("assets:assetDetails.current_value")}</span>
+              <span className="label">
+                {t("assets:assetDetails.current_value")}
+              </span>
               <span className="value">
                 {helpers.formatPrice(
                   asset.current_price || asset.price,
@@ -189,7 +199,8 @@ export default function AssetDetails() {
               </S.MetaItem>
               <S.MetaItem>
                 <div className="icon-label">
-                  <HiOutlineReceiptPercent /> {t("assets:assetDetails.purchase_price")}
+                  <HiOutlineReceiptPercent />{" "}
+                  {t("assets:assetDetails.purchase_price")}
                 </div>
                 <div className="data">
                   {helpers.formatPrice(asset.price, asset.currency)}
@@ -283,7 +294,8 @@ export default function AssetDetails() {
                   </S.MetaItem>
                   <S.MetaItem>
                     <div className="icon-label">
-                      <HiShieldCheck /> {t("assets:assetDetails.insurance_expiry")}
+                      <HiShieldCheck />{" "}
+                      {t("assets:assetDetails.insurance_expiry")}
                     </div>
                     <div className="data">
                       {helpers.formatDate(asset.insurance_expiry)}
@@ -359,7 +371,9 @@ export default function AssetDetails() {
               </S.TCOBreakdown>
 
               <S.TCOTotal>
-                <span className="label">{t("assets:assetDetails.tco_total")}</span>
+                <span className="label">
+                  {t("assets:assetDetails.tco_total")}
+                </span>
                 <span className="value">
                   {helpers.formatPrice(stats.tco, asset.currency)}
                 </span>
@@ -400,7 +414,8 @@ export default function AssetDetails() {
                       <>
                         <HiOutlineCheckCircle size={18} />{" "}
                         {t("assets:assetDetails.warranty_active_label")} (
-                        {warrantyInfo.daysLeft} {t("assets:assetDetails.days_suffix", "дн.")})
+                        {warrantyInfo.daysLeft}{" "}
+                        {t("assets:assetDetails.days_suffix", "дн.")})
                       </>
                     )}
                   </S.WarrantyStatusBadge>
@@ -437,7 +452,10 @@ export default function AssetDetails() {
             <S.CardHeader>
               <HiDocumentText size={24} />
               <h3>
-                {t("assets:assetDetails.documents_title", "Прикріплені документи")}
+                {t(
+                  "assets:assetDetails.documents_title",
+                  "Прикріплені документи",
+                )}
               </h3>
             </S.CardHeader>
 
@@ -478,7 +496,7 @@ export default function AssetDetails() {
 
           {transactions.length > 0 ? (
             <div>
-              {transactions.map((tx: any) => (
+              {transactions.map((tx: Transaction) => (
                 <TransactionItem
                   key={tx.id}
                   transaction={tx}
@@ -505,7 +523,9 @@ export default function AssetDetails() {
 
         <Modal.Window name="delete-asset">
           <ConfirmDelete
-            resourceName={t("assets:assetsPage.resource_name", { name: asset.name })}
+            resourceName={t("assets:assetsPage.resource_name", {
+              name: asset.name,
+            })}
             onConfirm={() => actions.handleDelete(asset.id)}
             disabled={state.isDeleting}
           />

@@ -11,9 +11,9 @@ import CenteredSpinner from "../../../components/ui/CenteredSpinner";
 import { TrendWidget } from "../../../components/stats/widgets/TrendWidget";
 import { TopListWidget } from "../../../components/stats/widgets/TopListWidget";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
-import { 
-  HiOutlineArrowTrendingUp, 
-  HiOutlineArrowTrendingDown, 
+import {
+  HiOutlineArrowTrendingUp,
+  HiOutlineArrowTrendingDown,
   HiOutlineArrowLongRight,
   HiOutlineUser,
   HiOutlineUsers,
@@ -22,9 +22,10 @@ import {
   HiOutlineGift,
   HiOutlineBolt,
   HiOutlineComputerDesktop,
-  } from "react-icons/hi2";
-  import { useUserRole } from "../../../hooks/useUserRole";
-  import { useNavigate, useLocation } from "react-router-dom";
+} from "react-icons/hi2";
+import { useUserRole } from "../../../hooks/useUserRole";
+import { useNavigate } from "react-router-dom";
+import type { Account } from "../../../types";
 const StyledMobileDashboard = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,8 +96,10 @@ const ToggleButton = styled.button<{ $active: boolean }>`
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  background-color: ${props => props.$active ? 'var(--color-brand-600)' : 'transparent'};
-  color: ${props => props.$active ? 'white' : 'var(--color-text-secondary)'};
+  background-color: ${(props) =>
+    props.$active ? "var(--color-brand-600)" : "transparent"};
+  color: ${(props) =>
+    props.$active ? "white" : "var(--color-text-secondary)"};
 
   svg {
     width: 20px;
@@ -117,7 +120,7 @@ const SummaryGrid = styled.div`
   gap: 12px;
 `;
 
-const SummaryCard = styled.div<{ $type: 'income' | 'expense' }>`
+const SummaryCard = styled.div<{ $type: "income" | "expense" }>`
   background-color: var(--color-bg-surface);
   border-radius: 16px;
   padding: 14px;
@@ -136,12 +139,21 @@ const SummaryCard = styled.div<{ $type: 'income' | 'expense' }>`
     width: 26px;
     height: 26px;
     border-radius: 6px;
-    background-color: ${props => props.$type === 'income' ? 'var(--color-green-50)' : 'var(--color-red-50)'};
-    color: ${props => props.$type === 'income' ? 'var(--color-green-600)' : 'var(--color-red-600)'};
+    background-color: ${(props) =>
+      props.$type === "income"
+        ? "var(--color-green-50)"
+        : "var(--color-red-50)"};
+    color: ${(props) =>
+      props.$type === "income"
+        ? "var(--color-green-600)"
+        : "var(--color-red-600)"};
     display: flex;
     align-items: center;
     justify-content: center;
-    svg { width: 16px; height: 16px; }
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   .label {
@@ -193,7 +205,7 @@ const QuickLinkButton = styled.button`
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
-    
+
     svg {
       width: 22px;
       height: 22px;
@@ -259,7 +271,7 @@ const WidgetWrapper = styled.div`
 
 const AnalyticsWrapper = styled(WidgetWrapper)`
   height: 280px;
-  
+
   & > div {
     height: 100%;
     padding: 12px;
@@ -327,39 +339,45 @@ const TransactionList = styled.div`
 
   & > div {
     border-bottom: 1px solid var(--color-border);
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
   }
 `;
 
 function MobileDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, isLoading: isUserLoading } = useUserRole();
-  const [viewScope, setViewScope] = useState<'personal' | 'family'>('personal');
-  
+  const [viewScope, setViewScope] = useState<"personal" | "family">("personal");
+
   usePageTitle(t("navigation:general.dashboard"));
 
   const { accounts, isLoading: isAccLoading } = useAccountsData();
 
   const targetAccountIds = useMemo(() => {
     if (!accounts) return [];
-    if (viewScope === 'personal') {
+    if (viewScope === "personal") {
       if (!user) return [];
-      return accounts.filter((acc: any) => acc.user_id === user?.id).map((acc: any) => acc.id);
+      return accounts
+        .filter((acc: Account) => acc.user_id === user.id)
+        .map((acc: Account) => acc.id);
     }
-    return accounts.map((acc: any) => acc.id);
+    return accounts.map((acc: Account) => acc.id);
   }, [accounts, viewScope, user]);
 
-  const globalFilter = useMemo(() => ({
-    from: subDays(new Date(), 30).getTime(),
-    to: endOfDay(new Date()).getTime(),
-    accountIds: targetAccountIds,
-  }), [targetAccountIds]);
+  const globalFilter = useMemo(
+    () => ({
+      from: subDays(new Date(), 30).getTime(),
+      to: endOfDay(new Date()).getTime(),
+      accountIds: targetAccountIds,
+    }),
+    [targetAccountIds],
+  );
 
   const {
     totals: { balance, income, expense },
-    meta: { currency, language, isLoading: isStatsLoading }
+    meta: { currency, language, isLoading: isStatsLoading },
   } = useSummaryWidget({ globalFilter });
 
   const {
@@ -374,23 +392,29 @@ function MobileDashboard() {
       <StickyHeader>
         <HeaderTop>
           <BalanceInfo>
-            <Greeting>{viewScope === 'personal' ? t("dashboard:mobile.personal_balance") : t("dashboard:mobile.family_balance")}</Greeting>
+            <Greeting>
+              {viewScope === "personal"
+                ? t("dashboard:mobile.personal_balance")
+                : t("dashboard:mobile.family_balance")}
+            </Greeting>
             <TotalBalance>
-              {isStatsLoading && balance === 0 ? '...' : formatMoney(balance, currency, language)}
+              {isStatsLoading && balance === 0
+                ? "..."
+                : formatMoney(balance, currency, language)}
             </TotalBalance>
           </BalanceInfo>
-          
+
           <WorkspaceToggle>
-            <ToggleButton 
-              $active={viewScope === 'personal'} 
-              onClick={() => setViewScope('personal')}
+            <ToggleButton
+              $active={viewScope === "personal"}
+              onClick={() => setViewScope("personal")}
               title={t("dashboard:mobile.personal")}
             >
               <HiOutlineUser />
             </ToggleButton>
-            <ToggleButton 
-              $active={viewScope === 'family'} 
-              onClick={() => setViewScope('family')}
+            <ToggleButton
+              $active={viewScope === "family"}
+              onClick={() => setViewScope("family")}
               title={t("dashboard:mobile.family")}
             >
               <HiOutlineUsers />
@@ -401,52 +425,66 @@ function MobileDashboard() {
 
       <Content>
         <SummaryGrid>
-          <SummaryCard $type="income" onClick={() => navigate('/transactions?type=income')}>
-            <div className="icon-box"><HiOutlineArrowTrendingUp /></div>
+          <SummaryCard
+            $type="income"
+            onClick={() => navigate("/transactions?type=income")}
+          >
+            <div className="icon-box">
+              <HiOutlineArrowTrendingUp />
+            </div>
             <div className="label">{t("dashboard:mobile.income")}</div>
             <div className="value">
-              {isStatsLoading && income === 0 ? '...' : formatMoney(income, currency, language)}
+              {isStatsLoading && income === 0
+                ? "..."
+                : formatMoney(income, currency, language)}
             </div>
           </SummaryCard>
-          <SummaryCard $type="expense" onClick={() => navigate('/transactions?type=expense')}>
-            <div className="icon-box"><HiOutlineArrowTrendingDown /></div>
+          <SummaryCard
+            $type="expense"
+            onClick={() => navigate("/transactions?type=expense")}
+          >
+            <div className="icon-box">
+              <HiOutlineArrowTrendingDown />
+            </div>
             <div className="label">{t("dashboard:mobile.expense")}</div>
             <div className="value">
-              {isStatsLoading && expense === 0 ? '...' : formatMoney(expense, currency, language)}
+              {isStatsLoading && expense === 0
+                ? "..."
+                : formatMoney(expense, currency, language)}
             </div>
           </SummaryCard>
         </SummaryGrid>
 
         <QuickLinks>
-          <QuickLinkButton onClick={() => navigate('/shopping')}>
+          <QuickLinkButton onClick={() => navigate("/shopping")}>
             <div className="icon-box">
               <HiOutlineShoppingCart />
             </div>
             <span className="label">{t("dashboard:mobile.shopping")}</span>
           </QuickLinkButton>
 
-          <QuickLinkButton onClick={() => navigate('/goals')}>
+          <QuickLinkButton onClick={() => navigate("/goals")}>
             <div className="icon-box">
               <HiOutlineTrophy />
             </div>
             <span className="label">{t("dashboard:mobile.goals")}</span>
           </QuickLinkButton>
 
-          <QuickLinkButton onClick={() => navigate('/wishlist')}>
+          <QuickLinkButton onClick={() => navigate("/wishlist")}>
             <div className="icon-box">
               <HiOutlineGift />
             </div>
             <span className="label">{t("dashboard:mobile.wishlist")}</span>
           </QuickLinkButton>
 
-          <QuickLinkButton onClick={() => navigate('/utility')}>
+          <QuickLinkButton onClick={() => navigate("/utility")}>
             <div className="icon-box">
               <HiOutlineBolt />
             </div>
             <span className="label">{t("dashboard:mobile.utility")}</span>
           </QuickLinkButton>
 
-          <QuickLinkButton onClick={() => navigate('/assets')}>
+          <QuickLinkButton onClick={() => navigate("/assets")}>
             <div className="icon-box">
               <HiOutlineComputerDesktop />
             </div>
@@ -456,30 +494,41 @@ function MobileDashboard() {
 
         <Section>
           <SectionHeader>
-            <SectionTitle>{t("dashboard:mobile.recent_operations")}</SectionTitle>
-            <ViewAll onClick={() => navigate('/transactions')}>
+            <SectionTitle>
+              {t("dashboard:mobile.recent_operations")}
+            </SectionTitle>
+            <ViewAll onClick={() => navigate("/transactions")}>
               {t("dashboard:mobile.view_more")} <HiOutlineArrowLongRight />
             </ViewAll>
           </SectionHeader>
           <WidgetWrapper style={{ padding: 0 }}>
             <TransactionList>
               {recentItems.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '24px', color: 'var(--color-text-secondary)', fontSize: '14px' }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "24px",
+                    color: "var(--color-text-secondary)",
+                    fontSize: "14px",
+                  }}
+                >
                   {t("dashboard:mobile.no_operations")}
                 </div>
               ) : (
-                recentItems.slice(0, 5).map(tx => (
-                  <TransactionItem
-                    key={tx.id}
-                    transaction={tx}
-                    categories={categories}
-                    accounts={accounts}
-                    currency={currency}
-                    language={language}
-                    isWidget={true}
-                    onClick={() => navigate(`/transactions/${tx.id}`)}
-                  />
-                ))
+                recentItems
+                  .slice(0, 5)
+                  .map((tx) => (
+                    <TransactionItem
+                      key={tx.id}
+                      transaction={tx}
+                      categories={categories}
+                      accounts={accounts}
+                      currency={currency}
+                      language={language}
+                      isWidget={true}
+                      onClick={() => navigate(`/transactions/${tx.id}`)}
+                    />
+                  ))
               )}
             </TransactionList>
           </WidgetWrapper>
@@ -487,10 +536,12 @@ function MobileDashboard() {
 
         <Section>
           <SectionHeader>
-            <SectionTitle>{t("dashboard:mobile.expense_dynamics")}</SectionTitle>
+            <SectionTitle>
+              {t("dashboard:mobile.expense_dynamics")}
+            </SectionTitle>
           </SectionHeader>
           <AnalyticsWrapper>
-            <TrendWidget 
+            <TrendWidget
               globalFilter={globalFilter}
               type="expense"
               color="#ef4444"
@@ -499,12 +550,12 @@ function MobileDashboard() {
           </AnalyticsWrapper>
         </Section>
 
-        <Section style={{ paddingBottom: '20px' }}>
+        <Section style={{ paddingBottom: "20px" }}>
           <SectionHeader>
             <SectionTitle>{t("dashboard:mobile.top_categories")}</SectionTitle>
           </SectionHeader>
           <TopListWrapper>
-            <TopListWidget 
+            <TopListWidget
               type="expense"
               entity="category"
               title=""

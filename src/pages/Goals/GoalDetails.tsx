@@ -10,10 +10,8 @@ import {
   HiLink,
   HiArchiveBox,
   HiOutlineFlag,
-  HiPhoto,
   HiOutlineChatBubbleLeftEllipsis,
 } from "react-icons/hi2";
-import { useTranslation } from "react-i18next";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
@@ -32,6 +30,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import * as S from "./GoalDetails.styles";
+import type { Account } from "../../types";
 
 function GoalDetails() {
   const { state, actions, t, i18n } = useGoalDetails();
@@ -72,20 +71,31 @@ function GoalDetails() {
       <Modal>
         {/* ХЕДЕР */}
         {isMobile && goal ? (
-          <MobilePageHeader 
-            title={goal.name} 
+          <MobilePageHeader
+            title={goal.name}
             rightAction={
               <Button
                 variation="secondary"
                 size="small"
                 onClick={actions.handleToggleStatus}
                 disabled={isToggling}
-                style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+                style={{
+                  border: "none",
+                  boxShadow: "none",
+                  background: "transparent",
+                  padding: "8px",
+                }}
               >
                 {goal.status === "paused" ? (
-                  <HiChartBar size={24} style={{ color: 'var(--color-brand-600)' }} />
+                  <HiChartBar
+                    size={24}
+                    style={{ color: "var(--color-brand-600)" }}
+                  />
                 ) : (
-                  <HiChartBar size={24} style={{ color: 'var(--color-text-secondary)' }} />
+                  <HiChartBar
+                    size={24}
+                    style={{ color: "var(--color-text-secondary)" }}
+                  />
                 )}
               </Button>
             }
@@ -178,7 +188,8 @@ function GoalDetails() {
             <S.MetaDataGrid>
               <S.MetaItem>
                 <div className="icon-label">
-                  <HiCalendarDays /> {t("goals_debts:goalDetails.meta_deadline")}
+                  <HiCalendarDays />{" "}
+                  {t("goals_debts:goalDetails.meta_deadline")}
                 </div>
                 <div className="data">
                   {goal.date_deadline
@@ -212,7 +223,7 @@ function GoalDetails() {
 
             <S.ScrollableList>
               {goal.accounts && goal.accounts.length > 0 ? (
-                goal.accounts.map((acc: any) => (
+                goal.accounts.map((acc: Account) => (
                   <S.AccountRowItem
                     key={acc.id}
                     onClick={() => actions.handleAccountClick(acc.id)}
@@ -260,7 +271,9 @@ function GoalDetails() {
             <S.ForecastContent>
               <div className="main-info">
                 <S.ForecastStatus $status={forecastStatus}>
-                  {t(`goals_debts:goalDetails.forecast_status_${forecastStatus}`)}
+                  {t(
+                    `goals_debts:goalDetails.forecast_status_${forecastStatus}`,
+                  )}
                 </S.ForecastStatus>
                 <div className="date">
                   {t("goals_debts:goalDetails.forecast_date_label")}{" "}

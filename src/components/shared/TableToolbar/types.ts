@@ -20,3 +20,15 @@ export interface FilterConfig {
 
   options?: FilterOption[]; // Для звичайних списків
 }
+
+export type RangeFilterValue = {
+  min?: string | number;
+  max?: string | number;
+};
+
+export type FilterValue =
+  | string
+  | string[]
+  | boolean
+  | RangeFilterValue
+  | undefined;
