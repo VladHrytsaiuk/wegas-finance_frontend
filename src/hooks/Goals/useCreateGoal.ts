@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AxiosError } from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -10,7 +11,11 @@ import {
 } from "../../services/apiGoals";
 import { createAccountApi } from "../../services/apiAccounts";
 import { getStorageTypesApi } from "../../services/apiStorageTypes";
-import type { Goal } from "../../types";
+import type { Goal, StorageType } from "../../types";
+
+interface ErrorResponse {
+  error?: string;
+}
 
 export interface GoalFormData {
   name: string;
@@ -101,7 +106,7 @@ export const useCreateGoal = (
             await linkAccountToGoalApi(goalId, data.existing_account_id);
           } else if (data.link_mode === "new") {
             const piggyType = storageTypes.find(
-              (st: any) => st.slug === "piggy_bank",
+              (st: StorageType) => st.slug === "piggy_bank",
             );
             const storageTypeId = piggyType
               ? piggyType.id
@@ -136,7 +141,7 @@ export const useCreateGoal = (
       );
       onClose();
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<ErrorResponse>) => {
       console.error(err);
       const msg = err.response?.data?.error || t("common:common.error_occurred");
       toast.error(msg);
