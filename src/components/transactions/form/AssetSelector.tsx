@@ -10,6 +10,17 @@ import { useAssetSelector } from "../../../hooks/Assets/useAssetSelector";
 import { AssetCreationForm } from "./AssetCreationForm";
 import * as S from "./AssetSelector.styles";
 import { BaseSelect } from "../../ui/Select/BaseSelect";
+import type { CreateAssetOnFlyInput } from "../../../services/apiTransactions";
+import type { Asset, TransactionType } from "../../../types";
+
+interface AssetSelectorProps {
+  transactionType: TransactionType | "transfer";
+  assetId: string;
+  setAssetId: (value: string) => void;
+  newAsset: CreateAssetOnFlyInput | null;
+  setNewAsset: (value: CreateAssetOnFlyInput | null) => void;
+  transactionDate?: number;
+}
 
 export const AssetSelector = ({
   transactionType,
@@ -18,7 +29,7 @@ export const AssetSelector = ({
   newAsset,
   setNewAsset,
   transactionDate,
-}: any) => {
+}: AssetSelectorProps) => {
   const { t } = useTranslation();
 
   const { state, actions } = useAssetSelector({
@@ -87,7 +98,7 @@ export const AssetSelector = ({
           </S.SelectItem>
         )}
 
-        {state.filteredAssets.map((asset: any) => (
+        {state.filteredAssets.map((asset: Asset) => (
           <S.SelectItem
             key={asset.id}
             type="button"
@@ -113,7 +124,7 @@ export const AssetSelector = ({
 
         {state.search &&
           !state.filteredAssets.some(
-            (a: any) =>
+            (a: Asset) =>
               a.name.toLowerCase() === state.search.toLowerCase(),
           ) && (
             <S.CreateActionBtn
@@ -130,4 +141,3 @@ export const AssetSelector = ({
     </BaseSelect>
   );
 };
-

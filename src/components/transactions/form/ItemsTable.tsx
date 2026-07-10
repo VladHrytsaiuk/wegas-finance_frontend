@@ -1,21 +1,40 @@
 import { useMemo } from "react";
-import { HiPlus, HiXMark } from "react-icons/hi2";
+import { HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
 import { useSettings } from "../../../context/SettingsContext";
 import { formatMoney } from "../../../utils/helpers";
 import { Button } from "../../ui/Button";
+import type { Category, TransactionItem } from "../../../types";
 
 // 🔥 ВАЖЛИВО: Імпорт має бути у фігурних дужках
 import { ItemRow } from "./ItemRow";
 import * as S from "./styles";
 
+type EditableTransactionItem = Partial<TransactionItem> & {
+  comment?: string;
+  categoryId?: string;
+  category_id?: string | null;
+  tempId?: string;
+};
+
+interface ItemTableActions {
+  addItem: () => void;
+  setIsClearModalOpen: (value: boolean) => void;
+  updateItem: (
+    idx: number,
+    field: "categoryId" | "name" | "quantity" | "price_per_unit" | "comment",
+    value: string | number,
+  ) => void;
+  removeItem: (idx: number) => void;
+}
+
 interface ItemsTableProps {
-  items: any[];
-  actions: any;
+  items: EditableTransactionItem[];
+  actions: ItemTableActions;
   onClose: () => void;
   currencyCode?: string;
-  categories: any[];
+  categories: Category[];
 }
 
 export const ItemsTable = ({
@@ -82,9 +101,13 @@ export const ItemsTable = ({
             <S.ColCenter>#</S.ColCenter>
             <div>{t("transactions:itemsTable.header_item_name")}</div>
             <div>{t("transactions:itemsTable.header_category")}</div>
-            <S.ColRight>{t("transactions:itemsTable.header_quantity")}</S.ColRight>
+            <S.ColRight>
+              {t("transactions:itemsTable.header_quantity")}
+            </S.ColRight>
             <S.ColRight>{t("transactions:itemsTable.header_price")}</S.ColRight>
-            <S.ColRight>{t("transactions:itemsTable.header_amount")}</S.ColRight>
+            <S.ColRight>
+              {t("transactions:itemsTable.header_amount")}
+            </S.ColRight>
             <div>{t("transactions:itemsTable.header_note")}</div>
             <div></div>
           </S.TableHeaderRow>
@@ -100,7 +123,9 @@ export const ItemsTable = ({
               />
             ))
           ) : (
-            <S.EmptyState>{t("transactions:itemsTable.status_empty")}</S.EmptyState>
+            <S.EmptyState>
+              {t("transactions:itemsTable.status_empty")}
+            </S.EmptyState>
           )}
         </S.TableInnerContent>
       </S.TableScrollWrapper>

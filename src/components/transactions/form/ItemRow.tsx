@@ -7,12 +7,29 @@ import { useItemRow } from "../../../hooks/Transactions/useItemRow";
 import { PriceInput } from "./PriceInput";
 import { CategorySelect } from "../../categories/CategorySelect";
 import * as S from "./styles";
+import type { Category, TransactionItem } from "../../../types";
+
+type EditableTransactionItem = Partial<TransactionItem> & {
+  comment?: string;
+  categoryId?: string;
+  category_id?: string | null;
+  tempId?: string;
+};
+
+interface ItemRowActions {
+  updateItem: (
+    idx: number,
+    field: "categoryId" | "name" | "quantity" | "price_per_unit" | "comment",
+    value: string | number,
+  ) => void;
+  removeItem: (idx: number) => void;
+}
 
 interface ItemRowProps {
-  item: any;
+  item: EditableTransactionItem;
   idx: number;
-  actions: any;
-  categories: any[];
+  actions: ItemRowActions;
+  categories: Category[];
 }
 
 export const ItemRow = memo(
