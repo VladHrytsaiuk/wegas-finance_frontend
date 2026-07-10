@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { AxiosError } from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -15,8 +16,14 @@ import { getUsersApi } from "../../services/apiUsers";
 import { getCategoriesApi } from "../../services/apiCategories";
 // 🔥 Додали імпорт сервісу цілей
 import { getGoalApi } from "../../services/apiGoals";
+import type { UserProfile } from "../../services/apiUsers";
+import type { Transaction } from "../../types";
 
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
+
+interface ErrorResponse {
+  error?: string;
+}
 
 export function useAccountDetails() {
   const { t } = useTranslation();
@@ -76,7 +83,7 @@ export function useAccountDetails() {
   // --- 2. PREPARE DISPLAY DATA ---
   const displayAccount = useMemo(() => {
     if (!account) return null;
-    const owner = users?.find((u: any) => u.id === account.user_id);
+    const owner = users?.find((u: UserProfile) => u.id === account.user_id);
     return {
       ...account,
       calculated_balance: account.calculated_balance ?? account.balance ?? 0,
@@ -141,7 +148,7 @@ export function useAccountDetails() {
     let expense = 0;
     let totalTurnover = 0;
 
-    allTxForStats.forEach((tx: any) => {
+    allTxForStats.forEach((tx: Transaction) => {
       const txDate = new Date(tx.date);
       const amount = Number(tx.amount);
 
@@ -172,7 +179,7 @@ export function useAccountDetails() {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       navigate("/");
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<ErrorResponse>) => {
       toast.error(err.message || t("common:common.error_delete"));
     },
   });
