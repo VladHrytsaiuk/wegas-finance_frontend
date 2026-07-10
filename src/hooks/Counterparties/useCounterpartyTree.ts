@@ -3,6 +3,10 @@ import { useTranslation } from "react-i18next";
 import type { Counterparty, CounterpartyCategory } from "../../types";
 import type { TreeNodeData } from "../../components/counterparties/CounterpartyTree"; // Імпорт типу
 
+type CounterpartyWithSubtype = Counterparty & {
+  subtype?: string;
+};
+
 // Types for internal tree structure
 export interface CounterpartyTreeNode {
   id: string;
@@ -14,7 +18,7 @@ export interface CounterpartyTreeNode {
   children: CounterpartyTreeNode[];
   isRoot?: boolean;
   isCategory?: boolean;
-  raw?: any; // Original data object
+  raw?: CounterpartyWithSubtype | CounterpartyCategory; // Original data object
 }
 
 // Helper: shopping-cart -> HiShoppingCart
@@ -50,7 +54,9 @@ export function useCounterpartyTree({
   const { t } = useTranslation();
 
   const treeRoots = useMemo(() => {
-    let cps = Array.isArray(counterparties) ? [...counterparties] : [];
+    let cps = Array.isArray(counterparties)
+      ? ([...counterparties] as CounterpartyWithSubtype[])
+      : [];
     let cats = Array.isArray(categories) ? [...categories] : [];
 
     // 1. Filter by Type
@@ -154,7 +160,7 @@ export function useCounterpartyTree({
     const shopSubtypesMap = new Map<string, CounterpartyTreeNode>();
 
     // 5. Distribute Counterparties
-    cps.forEach((cp) => {
+    cps.forEach((cp: CounterpartyWithSubtype) => {
       // Знаходимо іконку категорії для фолбеку
       const cpCategory =
         cp.category ||

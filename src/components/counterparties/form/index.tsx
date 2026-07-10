@@ -10,11 +10,14 @@ import { CategorySelect } from "../../categories/CategorySelect";
 import { useModal } from "../../ui/Modal";
 
 import * as S from "./styles";
-import { useCounterpartyForm } from "../../../hooks/Counterparties/useCounterpartyForm";
+import {
+  useCounterpartyForm,
+  type CounterpartyFormDefaults,
+} from "../../../hooks/Counterparties/useCounterpartyForm";
 
 interface CounterpartyFormProps {
-  onSubmit: (data: any) => void;
-  defaultValues?: any;
+  onSubmit: (data: CounterpartyFormDefaults) => void;
+  defaultValues?: CounterpartyFormDefaults;
   isLoading?: boolean;
 }
 
@@ -41,7 +44,7 @@ export default function CounterpartyForm({
       logoPreviewSrc,
       title,
     },
-    uiState: { isPerson, showLogoPreview, showIconPicker, availableCategories },
+    uiState: { isPerson, showLogoPreview, availableCategories },
     handlers: {
       handleTypeSelect,
       handleFileSelect,
@@ -69,14 +72,18 @@ export default function CounterpartyForm({
 
       {/* 2. Appearance (Color, Icon, SVG) */}
       <S.FormRow>
-        <S.Label>{t("counterparties:counterpartyForm.label_appearance")}</S.Label>
+        <S.Label>
+          {t("counterparties:counterpartyForm.label_appearance")}
+        </S.Label>
         <S.PickerContainer>
           {isPerson ? (
             <S.PersonStaticBadge>
               <S.IconContainer>
                 <HiUser />
               </S.IconContainer>
-              <span>{t("counterparties:counterpartyForm.person_icon_fixed")}</span>
+              <span>
+                {t("counterparties:counterpartyForm.person_icon_fixed")}
+              </span>
             </S.PersonStaticBadge>
           ) : (
             <>
@@ -102,19 +109,25 @@ export default function CounterpartyForm({
                 <>
                   <ColorPicker
                     color={currentColor}
-                    onColorChange={(c) => setValue("color", c, { shouldDirty: true })}
+                    onColorChange={(c) =>
+                      setValue("color", c, { shouldDirty: true })
+                    }
                     square
                   />
                   <IconPicker
                     icon={currentIcon}
-                    onIconChange={(i) => setValue("icon", i, { shouldDirty: true })}
+                    onIconChange={(i) =>
+                      setValue("icon", i, { shouldDirty: true })
+                    }
                     color={currentColor}
                     square
                   />
-                  
+
                   {(selectedType === "shop" || selectedType === "other") && (
                     <>
-                      <S.DividerText>{t("counterparties:counterpartyForm.divider_or")}</S.DividerText>
+                      <S.DividerText>
+                        {t("counterparties:counterpartyForm.divider_or")}
+                      </S.DividerText>
                       <input
                         type="file"
                         accept=".svg"
@@ -126,7 +139,12 @@ export default function CounterpartyForm({
                         type="button"
                         variation="secondary"
                         onClick={triggerFileUpload}
-                        style={{ flex: 1, height: "44px", justifyContent: "center", gap: "8px" }}
+                        style={{
+                          flex: 1,
+                          height: "44px",
+                          justifyContent: "center",
+                          gap: "8px",
+                        }}
                       >
                         <HiPhoto size={20} />
                         <span>SVG</span>
@@ -145,9 +163,13 @@ export default function CounterpartyForm({
         <S.FieldGroup style={{ flex: 1 }}>
           <S.Label>{t("counterparties:counterpartyForm.label_name")}</S.Label>
           <Input
-            placeholder={t("counterparties:counterpartyForm.placeholder_name_default")}
+            placeholder={t(
+              "counterparties:counterpartyForm.placeholder_name_default",
+            )}
             {...register("name", {
-              required: t("counterparties:counterpartyForm.required_name_error"),
+              required: t(
+                "counterparties:counterpartyForm.required_name_error",
+              ),
             })}
             autoComplete="off"
           />
@@ -157,11 +179,15 @@ export default function CounterpartyForm({
         </S.FieldGroup>
 
         <S.FieldGroup style={{ flex: 1.5 }}>
-          <S.Label>{t("counterparties:counterpartyForm.label_category")}</S.Label>
+          <S.Label>
+            {t("counterparties:counterpartyForm.label_category")}
+          </S.Label>
           <CategorySelect
             categories={availableCategories}
             value={currentCategoryId}
-            onChange={(id) => setValue("category_id", id, { shouldDirty: true })}
+            onChange={(id) =>
+              setValue("category_id", id, { shouldDirty: true })
+            }
           />
         </S.FieldGroup>
       </S.CompactRow>

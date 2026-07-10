@@ -3,12 +3,21 @@ import ConfirmDelete from "../ui/ConfirmDelete";
 import CounterpartyForm from "./form";
 import { CounterpartyCategoryForm } from "./CounterpartyCategoryForm";
 import { useTranslation } from "react-i18next";
+import type { Counterparty, CounterpartyCategory } from "../../types";
+import type { useCounterpartyData } from "../../hooks/Counterparties/useCounterpartyData";
+
+type CounterpartyActions = ReturnType<typeof useCounterpartyData>["actions"];
 
 interface CounterpartyModalsProps {
-  selectedCp: any;
-  selectedCat: any;
-  itemToDelete: { id: string; name: string; isCategory: boolean } | null;
-  actions: any;
+  selectedCp: Counterparty | null;
+  selectedCat: CounterpartyCategory | null;
+  itemToDelete: {
+    id: string;
+    name: string;
+    isCategory: boolean;
+    hasDebt?: boolean;
+  } | null;
+  actions: CounterpartyActions;
   onCloseSelection: () => void;
 }
 

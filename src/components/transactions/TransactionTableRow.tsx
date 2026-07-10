@@ -149,7 +149,7 @@ export const TransactionTableRow = memo(
             {/* Обертаємо ВСЕ мобільне меню в Modal */}
             <Modal>
               <S.MenuToggle
-                ref={triggerRef as any}
+                ref={triggerRef}
                 onClick={() => setOpen((v) => !v)}
               >
                 <HiEllipsisVertical size={20} />

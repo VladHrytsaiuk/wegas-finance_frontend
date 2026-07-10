@@ -17,7 +17,7 @@ type CounterpartyFormValues = {
   category_id: string;
 };
 
-type CounterpartyFormDefaults = Partial<Counterparty> & {
+export type CounterpartyFormDefaults = Partial<Counterparty> & {
   category?: Partial<CounterpartyCategory>;
 };
 
