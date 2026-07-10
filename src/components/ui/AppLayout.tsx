@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -13,6 +13,11 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import DesktopLayout from "../../layouts/DesktopLayout";
 import MobileLayout from "../../layouts/MobileLayout";
 
+interface MemberRemovedMessage {
+  type: "member_removed";
+  user_id?: string;
+}
+
 function AppLayout() {
   const { t } = useTranslation(["common", "accounts", "settings"]);
   const { isLoading: isAccLoading } = useAccountsData();
@@ -22,35 +27,41 @@ function AppLayout() {
   const isMobile = useIsMobile();
 
   // 1. WebSocket logic for global events (like being removed from family)
-  const onWebSocketMessage = useCallback((data: any) => {
-    if (data.type === "member_removed") {
-      if (data.user_id === user?.id) {
-        // This user was removed/kicked
-        toast.error(t("settings:usersPage.alert_kicked", "Вас було видалено з сім'ї"), { 
-          duration: 6000,
-          id: "kicked-notice" 
-        });
+  const onWebSocketMessage = useCallback(
+    (data: MemberRemovedMessage) => {
+      if (data.type === "member_removed") {
+        if (data.user_id === user?.id) {
+          // This user was removed/kicked
+          toast.error(
+            t("settings:usersPage.alert_kicked", "Вас було видалено з сім'ї"),
+            {
+              duration: 6000,
+              id: "kicked-notice",
+            },
+          );
 
-        // 1. Invalidate all cached data
-        queryClient.invalidateQueries();
-        
-        // 2. Clear specific finance data to prevent seeing old family data
-        queryClient.removeQueries({ queryKey: ["accounts"] });
-        queryClient.removeQueries({ queryKey: ["transactions"] });
-        queryClient.removeQueries({ queryKey: ["dashboard"] });
-        
-        // 3. Force re-fetch of current user to get new FamilyID
-        queryClient.refetchQueries({ queryKey: ["me"] });
+          // 1. Invalidate all cached data
+          queryClient.invalidateQueries();
 
-        // 4. Redirect to dashboard and reload to ensure clean state
-        navigate("/dashboard");
-        setTimeout(() => window.location.reload(), 500);
-      } else {
-        // Someone else was removed, just refresh the family member list
-        queryClient.invalidateQueries({ queryKey: ["users"] });
+          // 2. Clear specific finance data to prevent seeing old family data
+          queryClient.removeQueries({ queryKey: ["accounts"] });
+          queryClient.removeQueries({ queryKey: ["transactions"] });
+          queryClient.removeQueries({ queryKey: ["dashboard"] });
+
+          // 3. Force re-fetch of current user to get new FamilyID
+          queryClient.refetchQueries({ queryKey: ["me"] });
+
+          // 4. Redirect to dashboard and reload to ensure clean state
+          navigate("/dashboard");
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          // Someone else was removed, just refresh the family member list
+          queryClient.invalidateQueries({ queryKey: ["users"] });
+        }
       }
-    }
-  }, [user?.id, queryClient, navigate, t]);
+    },
+    [user?.id, queryClient, navigate, t],
+  );
 
   useWebSocketAuth(onWebSocketMessage);
 
