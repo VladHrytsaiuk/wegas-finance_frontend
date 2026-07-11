@@ -88,53 +88,53 @@ export const ActionButton = styled.button<{ $variant?: "danger" }>`
 /* 🔥 НЕЗЛАМНА СІТКА ЧЕРЕЗ GRID AREAS */
 export const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-rows: max-content 1fr;
   grid-template-areas:
     "left right-stats"
     "left right-content";
-  gap: 1.5rem 2rem;
+  gap: 1.25rem 1.5rem;
   align-items: start;
   width: 100%;
 
-  /* 1. Статистика перестрибує наверх, даючи сумам 100% ширини екрана */
-  grid-template-columns: 340px minmax(0, 1fr);
-  grid-template-areas:
-    "top-stats top-stats"
-    "left right-content";
-
-  /* 2. Історія транзакцій більше не стискається — все стає в 1 колонку */
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas:
-    "top-stats"
-    "left"
-    "right-content";
+  /* На планшетах і мобільних усе стає в 1 колонку, картка НАЙПЕРША */
+  @media (max-width: 1024px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+      "left"
+      "right-stats"
+      "right-content";
+    gap: 1rem;
+  }
 `;
 
 export const StatsArea = styled.div`
   grid-area: right-stats;
   width: 100%;
   min-width: 0;
-
-  grid-area: top-stats;
 `;
 
 export const LeftColumn = styled.div`
   grid-area: left;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   position: sticky;
   top: 1rem;
   min-width: 0;
 
-  position: static;
+  @media (max-width: 1024px) {
+    position: static;
+    gap: 1rem;
+  }
 `;
 
 export const RightColumn = styled.div`
   grid-area: right-content;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   min-width: 0;
   width: 100%;
 `;
