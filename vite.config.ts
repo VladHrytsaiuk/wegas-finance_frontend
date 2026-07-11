@@ -65,6 +65,47 @@ export default defineConfig({
           if (!id.includes("node_modules")) return undefined;
 
           if (
+            id.includes("/react/") ||
+            id.includes("/react-dom/") ||
+            id.includes("/scheduler/")
+          ) {
+            return "react-vendors";
+          }
+
+          if (id.includes("/react-router/") || id.includes("/react-router-dom/")) {
+            return "router-vendors";
+          }
+
+          if (
+            id.includes("@tanstack/react-query") ||
+            id.includes("@tanstack/query-core")
+          ) {
+            return "query-vendors";
+          }
+
+          if (
+            id.includes("/i18next/") ||
+            id.includes("/react-i18next/") ||
+            id.includes("/i18next-browser-languagedetector/")
+          ) {
+            return "i18n-vendors";
+          }
+
+          if (
+            id.includes("/styled-components/")
+          ) {
+            return "styled-vendors";
+          }
+
+          if (id.includes("/react-icons/")) {
+            return "icon-vendors";
+          }
+
+          if (id.includes("/react-hot-toast/")) {
+            return "ui-vendors";
+          }
+
+          if (
             id.includes("exceljs") ||
             id.includes("jspdf") ||
             id.includes("jspdf-autotable") ||
