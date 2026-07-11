@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { useTranslation } from "react-i18next";
 import {
@@ -159,16 +159,19 @@ export function SyncWidget() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const { t } = useTranslation();
+  const hasOpenedRef = useRef(false);
 
   useEffect(() => {
     if (isVisible) {
+      hasOpenedRef.current = true;
+
       if (isClosing) {
         const frameId = window.requestAnimationFrame(() => {
           setIsClosing(false);
         });
         return () => window.cancelAnimationFrame(frameId);
       }
-    } else if (!isClosing) {
+    } else if (hasOpenedRef.current && !isClosing) {
       // Починаємо анімацію закриття
       const frameId = window.requestAnimationFrame(() => {
         setIsClosing(true);
