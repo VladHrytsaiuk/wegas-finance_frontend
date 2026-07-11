@@ -111,16 +111,15 @@ function ShoppingContent() {
           onSortChange={setSortValue}
         />
 
-      {!isMobile && (
-        <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              gap: "12px",
-            }}
-          >
+      <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
             <input
               type="text"
               placeholder={t("shopping_wishlist:shopping.new_list", "Створити новий список...")}
@@ -147,8 +146,7 @@ function ShoppingContent() {
               />
             </div>
           </div>
-        </S.CreateNoteCard>
-      )}
+      </S.CreateNoteCard>
 
       {paginatedLists.length === 0 ? (
         <EmptyState
@@ -166,36 +164,14 @@ function ShoppingContent() {
         />
       ) : (
         <S.MasonryGrid>
-          {paginatedLists.map((list) =>
-            isMobile ? (
-              <div key={list.id}>
-                <Modal.Open opens={`edit-list-${list.id}`}>
-                  <ShoppingNoteCard
-                    list={list}
-                    handlers={handlers}
-                    t={t}
-                    isMobileCompact={true}
-                  />
-                </Modal.Open>
-                <Modal.Window name={`edit-list-${list.id}`} padding="0">
-                  <ShoppingNoteCard
-                    list={list}
-                    handlers={handlers}
-                    t={t}
-                    isMobileCompact={false}
-                    isModal={true}
-                  />
-                </Modal.Window>
-              </div>
-            ) : (
-              <ShoppingNoteCard
-                key={list.id}
-                list={list}
-                handlers={handlers}
-                t={t}
-              />
-            )
-          )}
+          {paginatedLists.map((list) => (
+            <ShoppingNoteCard
+              key={list.id}
+              list={list}
+              handlers={handlers}
+              t={t}
+            />
+          ))}
         </S.MasonryGrid>
       )}
 
@@ -208,32 +184,7 @@ function ShoppingContent() {
         />
       </S.PaginationWrapper>
 
-      {isMobile && (
-        <FAB onClick={() => open("create-shopping-list")} />
-      )}
-
-      <Modal.Window name="create-shopping-list" padding="0">
-        <CreateShoppingListModal 
-          onCreate={async (title, color, visibility, hiddenFrom) => {
-            try {
-              const newList = await handlers.createList(
-                title,
-                color,
-                visibility,
-                hiddenFrom
-              );
-              if (newList?.id && isMobile) {
-                open(`edit-list-${newList.id}`);
-                return true;
-              }
-              return false;
-            } catch {
-              return false;
-            }
-          }}
-          onClose={close}
-        />
-      </Modal.Window>
+      {/* No FAB or mobile create modal needed anymore */}
     </S.PageContainer>
   </>
   );

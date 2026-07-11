@@ -10,6 +10,7 @@ import {
   clearCompletedInListApi,
   addShoppingItemApi,
   toggleShoppingItemApi,
+  updateShoppingItemApi,
   deleteShoppingItemApi,
 } from "../../services/apiShopping";
 
@@ -35,6 +36,7 @@ export interface ShoppingHandlers {
   clearCompleted: (listId: string) => void;
   addItem: (listId: string, name: string) => void;
   toggleItem: (id: string, is_bought: boolean) => void;
+  updateItem: (id: string, name: string) => void;
   deleteItem: (id: string) => void;
 }
 
@@ -103,6 +105,13 @@ export const useShopping = () => {
     },
   });
 
+  const updateItem = useMutation({
+    mutationFn: updateShoppingItemApi,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["shopping-lists"] });
+    },
+  });
+
   const deleteItem = useMutation({
     mutationFn: deleteShoppingItemApi,
     onSettled: () => {
@@ -146,6 +155,8 @@ export const useShopping = () => {
         addItem.mutate({ listId, name }),
       toggleItem: (id: string, is_bought: boolean) =>
         toggleItem.mutate({ id, is_bought }),
+      updateItem: (id: string, name: string) =>
+        updateItem.mutate({ id, name }),
       deleteItem: (id: string) => deleteItem.mutate(id),
     } satisfies ShoppingHandlers,
     t,

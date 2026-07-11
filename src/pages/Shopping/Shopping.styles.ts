@@ -23,9 +23,18 @@ export const Header = styled.div`
   }
 `;
 
-export const CreateNoteCard = styled.form`
-  background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
+export const CreateNoteCard = styled.form<{ $color?: string }>`
+  background-color: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? p.$color : "var(--color-bg-surface)"};
   border: none; /* Видалено обводку */
+  
+  --note-text-main: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#1f2937" : "var(--color-text-main)"};
+  --note-text-secondary: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#4b5563" : "var(--color-text-secondary)"};
+  --note-text-tertiary: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#6b7280" : "var(--color-text-tertiary)"};
+
   border-radius: 12px;
   padding: 0.6rem 1rem;
   max-width: 500px;
@@ -46,8 +55,12 @@ export const CreateNoteCard = styled.form`
     border: none;
     background: transparent;
     font-size: 0.95rem;
-    color: var(--color-text-main);
+    color: var(--note-text-main, var(--color-text-main));
     outline: none;
+    
+    &::placeholder {
+      color: var(--note-text-tertiary, var(--color-text-tertiary));
+    }
   }
 `;
 
@@ -69,7 +82,18 @@ export const MasonryGrid = styled.div`
 export const NoteCard = styled.div<{ $color?: string; $isModal?: boolean }>`
   break-inside: avoid;
   margin-bottom: ${(props) => (props.$isModal ? "0" : "1.5rem")};
-  background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
+  background-color: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? p.$color : "var(--color-bg-surface)"};
+  
+  --note-text-main: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#1f2937" : "var(--color-text-main)"};
+  --note-text-secondary: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#4b5563" : "var(--color-text-secondary)"};
+  --note-text-tertiary: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#6b7280" : "var(--color-text-tertiary)"};
+  
+  color: var(--note-text-main);
+
   border: ${(props) =>
     props.$isModal
       ? "none"
@@ -103,7 +127,18 @@ export const NoteHeader = styled.div<{ $isModal?: boolean }>`
 `;
 
 export const CompactNoteCard = styled.div<{ $color?: string }>`
-  background-color: ${(p) => p.$color || "var(--color-bg-surface)"};
+  background-color: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? p.$color : "var(--color-bg-surface)"};
+  
+  --note-text-main: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#1f2937" : "var(--color-text-main)"};
+  --note-text-secondary: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#4b5563" : "var(--color-text-secondary)"};
+  --note-text-tertiary: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#6b7280" : "var(--color-text-tertiary)"};
+
+  color: var(--note-text-main);
+
   border: 1px solid
     ${(p) =>
       p.$color && p.$color !== "#ffffff"
@@ -143,7 +178,7 @@ export const CompactNoteCard = styled.div<{ $color?: string }>`
 export const CompactTitle = styled.h4`
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text-main);
+  color: var(--note-text-main, var(--color-text-main));
   margin: 0;
   word-break: break-word;
   line-height: 1.3;
@@ -155,7 +190,7 @@ export const CompactMeta = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   font-size: 0.75rem;
-  color: var(--color-text-tertiary);
+  color: var(--note-text-tertiary, var(--color-text-tertiary));
   margin-top: 4px;
   padding-left: 6px;
 `;
@@ -180,7 +215,7 @@ export const TitleInput = styled.input`
   border: none;
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--color-text-main);
+  color: var(--note-text-main, var(--color-text-main));
   outline: none;
   padding: 4px 0;
   border-bottom: 1px solid transparent;
@@ -190,7 +225,7 @@ export const TitleInput = styled.input`
   }
 
   &::placeholder {
-    color: var(--color-text-tertiary);
+    color: var(--note-text-tertiary, var(--color-text-tertiary));
   }
 `;
 
@@ -218,12 +253,12 @@ export const MetaData = styled.div`
   display: flex;
   flex-direction: column;
   font-size: 0.65rem;
-  color: var(--color-text-tertiary);
+  color: var(--note-text-tertiary, var(--color-text-tertiary));
   gap: 2px;
 
   span.author {
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: var(--note-text-secondary, var(--color-text-secondary));
   }
 `;
 
@@ -237,7 +272,7 @@ export const ActionsGroup = styled.div`
 export const ActionButton = styled.button`
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: var(--note-text-secondary, var(--color-text-secondary));
   padding: 6px;
   border-radius: 6px;
   cursor: pointer;
@@ -271,8 +306,8 @@ export const ListItem = styled.div<{ $isBought?: boolean; $isInput?: boolean }>`
     font-size: 0.85rem;
     color: ${(props) =>
       props.$isBought
-        ? "var(--color-text-tertiary)"
-        : "var(--color-text-main)"};
+        ? "var(--note-text-tertiary, var(--color-text-tertiary))"
+        : "var(--note-text-main, var(--color-text-main))"};
     text-decoration: ${(props) => (props.$isBought ? "line-through" : "none")};
     cursor: pointer;
     word-break: break-word;
@@ -291,18 +326,18 @@ export const AddItemInput = styled.input`
   border: none;
   background: transparent;
   font-size: 0.85rem;
-  color: var(--color-text-main);
+  color: var(--note-text-main, var(--color-text-main));
   outline: none;
   padding: 4px 0;
   &::placeholder {
-    color: var(--color-text-tertiary);
+    color: var(--note-text-tertiary, var(--color-text-tertiary));
   }
 `;
 
 export const ItemDeleteBtn = styled.button`
   background: none;
   border: none;
-  color: var(--color-text-tertiary);
+  color: var(--note-text-tertiary, var(--color-text-tertiary));
   cursor: pointer;
   opacity: 0;
   padding: 4px;
@@ -334,7 +369,7 @@ export const Checkbox = styled.div<{ $checked?: boolean; $isAdd?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) => (props.$isAdd ? "var(--color-text-tertiary)" : "white")};
+  color: ${(props) => (props.$isAdd ? "var(--note-text-tertiary, var(--color-text-tertiary))" : "white")};
   cursor: ${(props) => (props.$isAdd ? "default" : "pointer")};
   flex-shrink: 0;
 

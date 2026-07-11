@@ -9,7 +9,7 @@ export const Container = styled.div`
 export const IconButton = styled.button<{ $isActive?: boolean }>`
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: var(--note-text-secondary, var(--color-text-secondary));
   padding: 6px;
   border-radius: 6px;
   cursor: pointer;
@@ -20,7 +20,7 @@ export const IconButton = styled.button<{ $isActive?: boolean }>`
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
-    color: var(--color-text-main);
+    color: var(--note-text-main, var(--color-text-main));
   }
   ${(props) =>
     props.$isActive &&

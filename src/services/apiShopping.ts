@@ -80,6 +80,19 @@ export const toggleShoppingItemApi = async ({
   return response.data;
 };
 
+export const updateShoppingItemApi = async ({
+  id,
+  name,
+  is_bought,
+}: {
+  id: string;
+  name?: string;
+  is_bought?: boolean;
+}) => {
+  const response = await api.put(`/shopping-items/${id}`, { name, is_bought });
+  return response.data;
+};
+
 export const deleteShoppingItemApi = async (id: string) => {
   const response = await api.delete(`/shopping-items/${id}`);
   return response.data;

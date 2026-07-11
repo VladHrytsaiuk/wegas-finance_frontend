@@ -30,6 +30,8 @@ export default function ShoppingNoteCard({
 }: ShoppingNoteCardProps) {
   const [newItemName, setNewItemName] = useState("");
   const [title, setTitle] = useState(() => list.title);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editItemName, setEditItemName] = useState("");
   const { users } = useUsers();
 
   const author =
@@ -113,9 +115,37 @@ export default function ShoppingNoteCard({
             >
               <HiCheck />
             </S.Checkbox>
-            <span onClick={() => handlers.toggleItem(item.id, !item.is_bought)}>
-              {item.name}
-            </span>
+            {editingItemId === item.id ? (
+              <S.AddItemInput
+                autoFocus
+                value={editItemName}
+                onChange={(e) => setEditItemName(e.target.value)}
+                onBlur={() => {
+                  if (editItemName.trim() && editItemName !== item.name) {
+                    handlers.updateItem(item.id, editItemName.trim());
+                  }
+                  setEditingItemId(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  } else if (e.key === "Escape") {
+                    setEditingItemId(null);
+                  }
+                }}
+                style={{ flex: 1, padding: "0" }}
+              />
+            ) : (
+              <span 
+                onClick={() => {
+                  setEditingItemId(item.id);
+                  setEditItemName(item.name);
+                }}
+                style={{ cursor: "text", flex: 1 }}
+              >
+                {item.name}
+              </span>
+            )}
             <S.ItemDeleteBtn
               className="item-delete"
               onClick={() => handlers.deleteItem(item.id)}
@@ -148,9 +178,37 @@ export default function ShoppingNoteCard({
             >
               <HiCheck />
             </S.Checkbox>
-            <span onClick={() => handlers.toggleItem(item.id, !item.is_bought)}>
-              {item.name}
-            </span>
+            {editingItemId === item.id ? (
+              <S.AddItemInput
+                autoFocus
+                value={editItemName}
+                onChange={(e) => setEditItemName(e.target.value)}
+                onBlur={() => {
+                  if (editItemName.trim() && editItemName !== item.name) {
+                    handlers.updateItem(item.id, editItemName.trim());
+                  }
+                  setEditingItemId(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  } else if (e.key === "Escape") {
+                    setEditingItemId(null);
+                  }
+                }}
+                style={{ flex: 1, padding: "0" }}
+              />
+            ) : (
+              <span 
+                onClick={() => {
+                  setEditingItemId(item.id);
+                  setEditItemName(item.name);
+                }}
+                style={{ cursor: "text", flex: 1 }}
+              >
+                {item.name}
+              </span>
+            )}
             <S.ItemDeleteBtn
               className="item-delete"
               onClick={() => handlers.deleteItem(item.id)}

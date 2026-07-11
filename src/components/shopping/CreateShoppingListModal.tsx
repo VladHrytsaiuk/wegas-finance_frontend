@@ -8,7 +8,14 @@ import type { ShoppingVisibility } from "../../hooks/Shopping/useShoppingPage";
 
 const StyledModal = styled.div<{ $color: string }>`
   padding: 1.5rem;
-  background-color: ${props => props.$color};
+  background-color: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? p.$color : "var(--color-bg-surface)"};
+    
+  --modal-text-main: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "#1f2937" : "var(--color-text-main)"};
+  --modal-border: ${(p) =>
+    p.$color && p.$color !== "#ffffff" ? "rgba(0,0,0,0.15)" : "var(--color-border)"};
+
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -26,16 +33,16 @@ const ModalHeader = styled.div`
 const ModalTitle = styled.h3`
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text-main);
+  color: var(--modal-text-main, var(--color-text-main));
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-bg-surface);
-  color: var(--color-text-main);
+  border: 1px solid var(--modal-border, var(--color-border));
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--modal-text-main, var(--color-text-main));
   font-size: 1rem;
   outline: none;
 
