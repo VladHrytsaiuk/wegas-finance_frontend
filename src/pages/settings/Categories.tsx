@@ -8,7 +8,6 @@ import { CategoryTree } from "../../components/categories/CategoryTree";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CategoryForm } from "../../components/categories/CategoryForm";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { FAB } from "../../components/ui/FAB";
 
@@ -124,11 +123,11 @@ function CategoriesContent() {
         </S.TreeContainer>
 
         {isMobile && canManageStructure && (
-          <FAB 
+          <FAB
             onClick={() => {
               handleCreateClick();
               open("create-category");
-            }} 
+            }}
           />
         )}
       </S.PageWrapper>

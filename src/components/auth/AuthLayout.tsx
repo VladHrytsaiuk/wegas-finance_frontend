@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactNode } from "react";
+import { useState, ReactNode } from "react";
 import styled from "styled-components";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
 

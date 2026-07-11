@@ -16,7 +16,7 @@ const SkeletonSurface = styled.div`
   animation: ${shimmer} 1.5s ease-in-out infinite;
 `;
 
-export const SkeletonBlock = styled(SkeletonSurface)<{
+export const SkeletonBlock = styled(SkeletonSurface) <{
   $width?: string;
   $height?: string;
   $radius?: string;
@@ -267,9 +267,9 @@ const WidgetSkeletonWrap = styled.div`
   border: 1px solid var(--color-border);
 `;
 
-const SummaryCardSkeletonWrap = styled(WidgetSkeletonWrap)`
-  justify-content: space-between;
-`;
+// const SummaryCardSkeletonWrap = styled(WidgetSkeletonWrap)`
+//   justify-content: space-between;
+// `;
 
 const TransactionListSkeleton = styled.div`
   display: flex;
@@ -327,18 +327,18 @@ const StatsSkeletonRow = styled.div`
   }
 `;
 
-const InfoListSkeleton = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-`;
+// const InfoListSkeleton = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   gap: 0.875rem;
+// `;
 
-const InfoRowSkeleton = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-`;
+// const InfoRowSkeleton = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   gap: 1rem;
+// `;
 
 const ImportModalSkeletonWrap = styled.div`
   display: flex;

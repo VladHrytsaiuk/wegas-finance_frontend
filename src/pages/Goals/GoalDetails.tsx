@@ -15,7 +15,6 @@ import {
 
 // UI Components
 import { Button } from "../../components/ui/Button";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";

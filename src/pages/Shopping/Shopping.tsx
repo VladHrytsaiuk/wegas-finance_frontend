@@ -3,7 +3,6 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlusCircle } from "react-icons/hi2";
 
 import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
-import { Button } from "../../components/ui/Button";
 import { NoteOptions } from "../../components/shopping/NoteOptions";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { Pagination } from "../../components/ui/Pagination";
@@ -104,15 +103,15 @@ function ShoppingContent() {
           onSortChange={setSortValue}
         />
 
-      <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            alignItems: "center",
-            gap: "12px",
-          }}
-        >
+        <S.CreateNoteCard onSubmit={handleCreateList} $color={newListColor}>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
             <input
               type="text"
               placeholder={t("shopping_wishlist:shopping.new_list", "Створити новий список...")}
@@ -139,47 +138,47 @@ function ShoppingContent() {
               </S.SubmitButton>
             </div>
           </div>
-      </S.CreateNoteCard>
+        </S.CreateNoteCard>
 
-      {paginatedLists.length === 0 ? (
-        <EmptyState
-          icon={<HiOutlineQueueList />}
-          title={
-            searchQuery
-              ? t("common:common.no_results")
-              : t("shopping_wishlist:shopping.empty_title")
-          }
-          description={
-            searchQuery
-              ? t("common:common.try_adjusting_search")
-              : t("shopping_wishlist:shopping.empty_desc")
-          }
-        />
-      ) : (
-        <S.MasonryGrid>
-          {paginatedLists.map((list) => (
-            <ShoppingNoteCard
-              key={list.id}
-              list={list}
-              handlers={handlers}
-              t={t}
-            />
-          ))}
-        </S.MasonryGrid>
-      )}
+        {paginatedLists.length === 0 ? (
+          <EmptyState
+            icon={<HiOutlineQueueList />}
+            title={
+              searchQuery
+                ? t("common:common.no_results")
+                : t("shopping_wishlist:shopping.empty_title")
+            }
+            description={
+              searchQuery
+                ? t("common:common.try_adjusting_search")
+                : t("shopping_wishlist:shopping.empty_desc")
+            }
+          />
+        ) : (
+          <S.MasonryGrid>
+            {paginatedLists.map((list) => (
+              <ShoppingNoteCard
+                key={list.id}
+                list={list}
+                handlers={handlers}
+                t={t}
+              />
+            ))}
+          </S.MasonryGrid>
+        )}
 
-      <S.PaginationWrapper>
-        <Pagination
-          currentPage={page}
-          totalCount={totalCount}
-          pageSize={pageSize}
-          onPageChange={setPage}
-        />
-      </S.PaginationWrapper>
+        <S.PaginationWrapper>
+          <Pagination
+            currentPage={page}
+            totalCount={totalCount}
+            pageSize={pageSize}
+            onPageChange={setPage}
+          />
+        </S.PaginationWrapper>
 
-      {/* No FAB or mobile create modal needed anymore */}
-    </S.PageContainer>
-  </>
+        {/* No FAB or mobile create modal needed anymore */}
+      </S.PageContainer>
+    </>
   );
 }
 
