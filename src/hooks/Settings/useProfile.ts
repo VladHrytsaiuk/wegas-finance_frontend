@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import {
   getMeApi,
+  type UserProfile,
   updateProfileApi,
   changePasswordApi,
 } from "../../services/apiUsers";
@@ -38,8 +39,13 @@ export const useProfileForm = () => {
         localStorage.setItem("user_name", data.name);
       }
 
-      // 3. 🔥 ВАЖЛИВО: Оновлюємо кеш, щоб отримати свіжі дані з сервера
-      queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.setQueryData<UserProfile | undefined>(
+        ["me"],
+        (currentUser) => ({
+          ...currentUser,
+          ...data,
+        }),
+      );
     },
     onError: () => {
       toast.error(t("settings:profilePage.alert_profile_error"));

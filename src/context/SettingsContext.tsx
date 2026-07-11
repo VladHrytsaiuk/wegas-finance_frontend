@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "@tanstack/react-query"; // ⬅️ 1. Імпорт
 import { settingsService, type AppSettings } from "../services/apiSettings";
 import { useTheme } from "./ThemeContext";
 
@@ -32,7 +31,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { i18n } = useTranslation();
   const { setTheme } = useTheme();
-  const queryClient = useQueryClient(); // ⬅️ 2. Ініціалізація клієнта
   const token = localStorage.getItem("token");
 
   // Дефолтні налаштування (поки не завантажили з БД)
@@ -86,33 +84,40 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Функція збереження
   const updateSettings = useCallback(
     async (newData: Partial<AppSettings>) => {
-      let updated: AppSettings;
+      const previousSettings = settings;
+      const updated = { ...settings, ...newData };
 
-      // Оновлюємо стейт оптимістично (щоб UI відреагував миттєво)
-      setSettingsState((prev) => {
-        updated = { ...prev, ...newData };
+      setSettingsState(updated);
 
-        // side effects
-        if (newData.language && newData.language !== i18n.language) {
-          i18n.changeLanguage(newData.language);
+      if (newData.language && newData.language !== i18n.language) {
+        await i18n.changeLanguage(newData.language);
+      }
+
+      if (newData.theme) {
+        setTheme(newData.theme as "light" | "dark");
+      }
+
+      try {
+        await settingsService.saveSettings(updated);
+      } catch (error) {
+        console.error("Error saving settings:", error);
+        setSettingsState(previousSettings);
+
+        if (
+          newData.language &&
+          previousSettings.language !== i18n.language
+        ) {
+          await i18n.changeLanguage(previousSettings.language);
         }
+
         if (newData.theme) {
-          setTheme(newData.theme as "light" | "dark");
+          setTheme(previousSettings.theme as "light" | "dark");
         }
 
-        // save to backend
-        settingsService.saveSettings(updated).catch((err) => {
-          console.error("Error saving settings:", err);
-        });
-
-        return updated;
-      });
-
-      // 🔥 3. ГОЛОВНЕ ВИПРАВЛЕННЯ:
-      // Скидаємо весь кеш React Query.
-      await queryClient.invalidateQueries();
+        throw error;
+      }
     },
-    [i18n, queryClient, setTheme],
+    [i18n, setTheme, settings],
   );
 
   const value = React.useMemo(

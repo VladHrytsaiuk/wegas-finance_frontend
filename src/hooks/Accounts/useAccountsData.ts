@@ -20,14 +20,14 @@ export function useAccountsData() {
 
   const {
     data: accounts = [],
-    isLoading,
+    isLoading: isAccountsLoading,
     isError,
   } = useQuery({
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
   });
 
-  const { data: users = [] } = useQuery({
+  const { data: users = [], isLoading: isUsersLoading } = useQuery({
     queryKey: ["users"],
     queryFn: getUsersApi,
   });
@@ -68,7 +68,7 @@ export function useAccountsData() {
   return {
     accounts,
     users,
-    isLoading,
+    isLoading: isAccountsLoading || isUsersLoading,
     isError,
     actions: {
       create: createAccount,
