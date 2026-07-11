@@ -1,6 +1,34 @@
 import { useState, useRef, useEffect } from "react";
-import * as Icons from "react-icons/hi2";
 import type { IconType } from "react-icons";
+import {
+  HiAcademicCap,
+  HiBanknotes,
+  HiBolt,
+  HiBriefcase,
+  HiBuildingStorefront,
+  HiCloud,
+  HiComputerDesktop,
+  HiFire,
+  HiGift,
+  HiGlobeAlt,
+  HiHeart,
+  HiHome,
+  HiLightBulb,
+  HiMapPin,
+  HiMoon,
+  HiPhone,
+  HiShoppingBag,
+  HiShoppingCart,
+  HiStar,
+  HiSun,
+  HiTag,
+  HiTicket,
+  HiTruck,
+  HiUser,
+  HiUsers,
+  HiWifi,
+  HiWrench,
+} from "react-icons/hi2";
 
 // Constants
 export const PRESET_ICONS = [
@@ -58,6 +86,36 @@ export const PRESET_COLORS = [
   "#000000",
 ];
 
+const PRESET_ICON_MAP: Record<string, IconType> = {
+  HiShoppingBag,
+  HiShoppingCart,
+  HiBuildingStorefront,
+  HiTag,
+  HiBanknotes,
+  HiUser,
+  HiUsers,
+  HiHome,
+  HiTruck,
+  HiWrench,
+  HiLightBulb,
+  HiWifi,
+  HiFire,
+  HiHeart,
+  HiAcademicCap,
+  HiBriefcase,
+  HiGlobeAlt,
+  HiGift,
+  HiTicket,
+  HiMapPin,
+  HiPhone,
+  HiComputerDesktop,
+  HiStar,
+  HiSun,
+  HiMoon,
+  HiCloud,
+  HiBolt,
+};
+
 interface UseColorIconPickerProps {
   icon: string;
 }
@@ -69,8 +127,7 @@ export const useColorIconPicker = ({ icon }: UseColorIconPickerProps) => {
   const colorRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
 
-  const iconMap = Icons as Record<string, IconType>;
-  const SelectedIconComponent = iconMap[icon] || iconMap["HiTag"];
+  const SelectedIconComponent = PRESET_ICON_MAP[icon] || HiTag;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -105,6 +162,7 @@ export const useColorIconPicker = ({ icon }: UseColorIconPickerProps) => {
       SelectedIconComponent,
       presetIcons: PRESET_ICONS,
       presetColors: PRESET_COLORS,
+      presetIconMap: PRESET_ICON_MAP,
     },
     refs: {
       colorRef,

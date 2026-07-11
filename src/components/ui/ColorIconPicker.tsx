@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { HiCheck, HiChevronDown } from "react-icons/hi2";
-import * as Icons from "react-icons/hi2";
-import type { IconType } from "react-icons";
 
 import { useColorIconPicker } from "../../hooks/ui/useColorIconPicker";
 import { useDropdownPosition } from "../../hooks/useDropdownPosition";
@@ -148,7 +146,7 @@ export function IconPicker({
   square?: boolean;
 }) {
   const { state } = useColorIconPicker({ icon });
-  const { presetIcons, SelectedIconComponent } = state;
+  const { presetIcons, presetIconMap, SelectedIconComponent } = state;
   const [isOpen, setIsOpen] = useState(false);
 
   const { triggerRef, menuRef, style } = useDropdownPosition(
@@ -161,8 +159,6 @@ export function IconPicker({
   const setTriggerRef = (node: HTMLButtonElement | null) => {
     triggerRef.current = node;
   };
-
-  const iconMap = Icons as Record<string, IconType>;
 
   return (
     <S.Container $square={square}>
@@ -208,7 +204,7 @@ export function IconPicker({
             <S.Section>
               <S.IconGrid>
                 {presetIcons.map((iconName) => {
-                  const CurrentIcon = iconMap[iconName];
+                  const CurrentIcon = presetIconMap[iconName];
                   if (!CurrentIcon) return null;
 
                   return (

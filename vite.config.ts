@@ -106,11 +106,19 @@ export default defineConfig({
           }
 
           if (
-            id.includes("exceljs") ||
-            id.includes("jspdf") ||
-            id.includes("jspdf-autotable") ||
-            id.includes("file-saver")
+            id.includes("exceljs")
           ) {
+            return "excel-vendors";
+          }
+
+          if (
+            id.includes("jspdf") ||
+            id.includes("jspdf-autotable")
+          ) {
+            return "pdf-vendors";
+          }
+
+          if (id.includes("file-saver")) {
             return "export-vendors";
           }
 

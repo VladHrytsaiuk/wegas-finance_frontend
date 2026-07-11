@@ -1,11 +1,11 @@
-import * as Icons from "react-icons/hi2";
-import type { IconType } from "react-icons";
+import { HiArchiveBox, HiPencil, HiTrash } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
 import Modal from "../ui/Modal";
 import ConfirmDelete from "../ui/ConfirmDelete";
 import EditGroupModal from "./EditGroupModal";
 import * as S from "../../pages/wishlist/Wishlist.styles";
+import { CategoryIcon } from "../../utils/IconMap";
 
 import type { WishlistGroup } from "../../types";
 
@@ -33,14 +33,12 @@ export default function WishGroupCard({
   handlers,
 }: WishGroupCardProps) {
   const { t } = useTranslation();
-  const iconMap = Icons as Record<string, IconType>;
-  const IconComponent = iconMap[group.icon] || Icons.HiFolder;
 
   return (
     <S.FolderCard $color={group.color} onClick={onClick}>
       <S.FolderHeader>
         <S.FolderIconWrapper $color={group.color}>
-          <IconComponent />
+          {group.icon ? <CategoryIcon name={group.icon} /> : <HiArchiveBox />}
         </S.FolderIconWrapper>
 
         {isOwner && (
@@ -51,7 +49,7 @@ export default function WishGroupCard({
             <Modal>
               <Modal.Open opens={`edit-${group.id}`}>
                 <S.FolderActionBtn $variant="edit">
-                  <Icons.HiPencil size={16} />
+                  <HiPencil size={16} />
                 </S.FolderActionBtn>
               </Modal.Open>
               <Modal.Window name={`edit-${group.id}`} padding="0" mobileBottomSheet>
@@ -72,7 +70,7 @@ export default function WishGroupCard({
 
               <Modal.Open opens={`delete-${group.id}`}>
                 <S.FolderActionBtn $variant="delete">
-                  <Icons.HiTrash size={16} />
+                  <HiTrash size={16} />
                 </S.FolderActionBtn>
               </Modal.Open>
               <Modal.Window name={`delete-${group.id}`}>
