@@ -134,14 +134,18 @@ function UtilityDetailsContent() {
                 size="small"
                 onClick={() => navigate("analytics")}
                 style={{
-                  border: "none",
-                  boxShadow: "none",
-                  background: "transparent",
-                  padding: "8px",
+                  width: "42px",
+                  height: "42px",
+                  minWidth: "42px",
+                  borderRadius: "12px",
+                  border: "1px solid var(--color-border)",
+                  boxShadow: "var(--shadow-sm)",
+                  background: "var(--color-bg-surface)",
+                  padding: "0",
                 }}
               >
                 <HiChartBar
-                  size={24}
+                  size={20}
                   style={{ color: "var(--color-brand-600)" }}
                 />
               </Button>

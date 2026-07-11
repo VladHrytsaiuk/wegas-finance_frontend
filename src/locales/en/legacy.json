@@ -41,8 +41,8 @@
     "back_button": "Go back"
   },
   "transactionPage": {
-    "header_title": "Transaction details",
-    "header_subtitle": "Transaction from {{date}}",
+    "header_title": "Operation details",
+    "header_subtitle": "Operation from {{date}}",
     "loading": "Loading...",
     "back_to_list": "Back to list",
     "back_button": "Back",

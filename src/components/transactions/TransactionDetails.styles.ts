@@ -99,6 +99,23 @@ export const DateText = styled.div`
   font-size: 0.85rem;
 `;
 
+export const MetaRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+`;
+
+export const MetaChip = styled.div`
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+`;
+
 // --- EXCHANGE & CURRENCY ---
 
 export const ExchangeContainer = styled.div`

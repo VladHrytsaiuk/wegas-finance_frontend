@@ -1,7 +1,7 @@
 import type { Account } from "../../services/apiAccounts";
 import type { Category, Counterparty, TransactionItem, Tag } from "../../types";
 import type { UserProfile } from "../../services/apiUsers";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { uk, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import {
@@ -69,6 +69,7 @@ function TransactionDetails({
     account,
     category,
     counterparty,
+    hasCounterparty,
     config,
     rawType,
     isTransfer,
@@ -86,6 +87,16 @@ function TransactionDetails({
   } = state;
 
   const currentLocale = state.locale === "uk" ? uk : enUS;
+  const accountCurrency = account?.currency || myCurrency;
+  const transactionDate = new Date(transaction.date);
+  const formattedDate = isValid(transactionDate)
+    ? format(transactionDate, "dd MMMM yyyy, HH:mm", {
+        locale: currentLocale,
+      })
+    : t("common:common.not_specified", "Не вказано");
+  const validItems = (transaction.items || []).filter(
+    (item) => item && (item.name || item.total_amount || item.price_per_unit),
+  );
 
   // Визначаємо, чи показувати логотип
   const shouldShowLogo = !!counterparty?.logo;
@@ -146,20 +157,44 @@ function TransactionDetails({
             )}
 
             <S.DateText>
-              {format(new Date(transaction.date), "dd MMMM yyyy, HH:mm", {
-                locale: currentLocale,
-              })}
+              {formattedDate}
             </S.DateText>
+            <S.MetaRow>
+              {hasImages && (
+                <S.MetaChip>
+                  {t("transactions:transactionDetails.photos_count", {
+                    defaultValue: "{{count}} фото",
+                    count: allReceiptUrls.length,
+                  })}
+                </S.MetaChip>
+              )}
+              {validItems.length > 0 && (
+                <S.MetaChip>
+                  {t("transactions:transactionDetails.items_count", {
+                    defaultValue: "{{count}} позицій",
+                    count: validItems.length,
+                  })}
+                </S.MetaChip>
+              )}
+              {transaction.tags && transaction.tags.length > 0 && (
+                <S.MetaChip>
+                  {t("transactions:transactionDetails.tags_count", {
+                    defaultValue: "{{count}} тегів",
+                    count: transaction.tags.length,
+                  })}
+                </S.MetaChip>
+              )}
+            </S.MetaRow>
           </S.Header>
           <S.Section>
             {/* MULTI-CURRENCY BLOCK */}
             {isMultiCurrency && (
               <S.ExchangeContainer>
                 <S.ExchangeRow>
-                  <S.ExchangeBox
+                    <S.ExchangeBox
                     className="out"
                     $isCurrent={
-                      account.currency ===
+                      accountCurrency ===
                       (rawType === "transfer_in" ? partnerCurrency : myCurrency)
                     }
                   >
@@ -167,7 +202,7 @@ function TransactionDetails({
                       {rawType === "transfer_in"
                         ? t("common:common.sender")
                         : t("common:common.you")}
-                      {account.currency ===
+                      {accountCurrency ===
                         (rawType === "transfer_in"
                           ? partnerCurrency
                           : myCurrency) && (
@@ -203,10 +238,10 @@ function TransactionDetails({
                     color="var(--color-text-tertiary)"
                   />
 
-                  <S.ExchangeBox
+                    <S.ExchangeBox
                     className="in"
                     $isCurrent={
-                      account.currency ===
+                      accountCurrency ===
                       (rawType === "transfer_in" ? myCurrency : partnerCurrency)
                     }
                   >
@@ -214,7 +249,7 @@ function TransactionDetails({
                       {rawType === "transfer_in"
                         ? t("common:common.you")
                         : t("common:common.recipient")}
-                      {account.currency ===
+                      {accountCurrency ===
                         (rawType === "transfer_in"
                           ? myCurrency
                           : partnerCurrency) && (
@@ -433,11 +468,11 @@ function TransactionDetails({
             )}
           </S.Section>
           {/* --- ITEMS TABLE --- */}
-          {transaction.items && transaction.items.length > 0 && (
+          {validItems.length > 0 && (
             <S.Section>
               <S.SectionTitle>
                 {t("transactions:transactionDetails.section_items_title", {
-                  count: transaction.items.length,
+                  count: validItems.length,
                 })}
               </S.SectionTitle>
               <S.ItemsTable>
@@ -450,14 +485,19 @@ function TransactionDetails({
                   </tr>
                 </thead>
                 <tbody>
-                  {transaction.items.map((item, idx: number) => (
+                  {validItems.map((item, idx: number) => (
                     <tr key={idx}>
                       <td>
-                        <div style={{ fontWeight: 500 }}>{item.name}</div>
+                        <div style={{ fontWeight: 500 }}>
+                          {item.name || t("common:common.not_specified", "Не вказано")}
+                        </div>
                       </td>
                       <td style={{ textAlign: "right", fontWeight: 600 }}>
                         {formatMoney(
-                          item.quantity * item.price_per_unit,
+                          Number(
+                            item.total_amount ??
+                              (item.quantity || 0) * (item.price_per_unit || 0),
+                          ),
                           myCurrency,
                           state.language,
                         )}

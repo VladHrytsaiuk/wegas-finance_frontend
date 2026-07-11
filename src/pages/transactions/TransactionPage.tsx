@@ -41,7 +41,7 @@ function TransactionPage() {
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  usePageTitle(t("navigation:general.transactions", "Транзакція"));
+  usePageTitle(t("legacy:transactionPage.header_title", "Деталі операції"));
 
   if (isLoading) {
     return (
@@ -67,33 +67,88 @@ function TransactionPage() {
   }
 
   const isBankTx = !!transaction.external_id;
+  const photoCount = Array.isArray(transaction.photos)
+    ? transaction.photos.length
+    : transaction.receipt_img
+      ? 1
+      : 0;
+  const itemCount = Array.isArray(transaction.items) ? transaction.items.length : 0;
+  const pageTitle = t(
+    "legacy:transactionPage.header_title",
+    "Деталі операції",
+  );
 
   return (
     <Modal>
+      {isMobile && (
+        <MobilePageHeader
+          title={pageTitle}
+          rightAction={
+            <Modal.Open opens={isBankTx ? "" : "delete-transaction"}>
+              <S.MobileActionButton
+                disabled={isBankTx}
+                title={
+                  isBankTx
+                    ? t("transactions:transactions.bank_tx_delete_restricted")
+                    : t("common:common.delete")
+                }
+              >
+                <HiTrash size={20} />
+              </S.MobileActionButton>
+            </Modal.Open>
+          }
+        />
+      )}
+
       <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
         {isMobile ? (
-          <MobilePageHeader 
-            title={t("common:common.transaction")} 
-            rightAction={
-              <Modal.Open opens={isBankTx ? "" : "delete-transaction"}>
-                <Button
-                  size="small"
-                  variation="danger"
-                  disabled={isBankTx}
-                  title={isBankTx ? t("transactions:transactions.bank_tx_delete_restricted") : undefined}
-                  style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
-                >
-                  <HiTrash size={24} style={{ color: isBankTx ? 'var(--color-text-secondary)' : 'var(--color-red-600)' }} />
-                </Button>
-              </Modal.Open>
-            }
-          />
+          <S.MobileHeaderSpacer>
+            <S.MobileMeta>
+              {photoCount > 0 && (
+                <S.HeaderMetaChip>
+                  {t("transactions:transactionDetails.photos_count", {
+                    defaultValue: "{{count}} фото",
+                    count: photoCount,
+                  })}
+                </S.HeaderMetaChip>
+              )}
+              {itemCount > 0 && (
+                <S.HeaderMetaChip>
+                  {t("transactions:transactionDetails.items_count", {
+                    defaultValue: "{{count}} позицій",
+                    count: itemCount,
+                  })}
+                </S.HeaderMetaChip>
+              )}
+            </S.MobileMeta>
+          </S.MobileHeaderSpacer>
         ) : (
           <S.Header>
-            <S.BackButton onClick={handleBack}>
-              <HiArrowLeft />
-              {t("legacy:transactionPage.back_to_list")}
-            </S.BackButton>
+            <S.HeaderMain>
+              <S.BackButton onClick={handleBack}>
+                <HiArrowLeft />
+                {t("legacy:transactionPage.back_to_list")}
+              </S.BackButton>
+              <S.HeaderTitle>{pageTitle}</S.HeaderTitle>
+              <S.HeaderMeta>
+                {photoCount > 0 && (
+                  <S.HeaderMetaChip>
+                    {t("transactions:transactionDetails.photos_count", {
+                      defaultValue: "{{count}} фото",
+                      count: photoCount,
+                    })}
+                  </S.HeaderMetaChip>
+                )}
+                {itemCount > 0 && (
+                  <S.HeaderMetaChip>
+                    {t("transactions:transactionDetails.items_count", {
+                      defaultValue: "{{count}} позицій",
+                      count: itemCount,
+                    })}
+                  </S.HeaderMetaChip>
+                )}
+              </S.HeaderMeta>
+            </S.HeaderMain>
 
             <S.ButtonGroup>
               <Button

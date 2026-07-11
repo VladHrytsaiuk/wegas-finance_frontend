@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { format } from "date-fns"; // ✅ Додано
+import { format, isValid } from "date-fns"; // ✅ Додано
 import { uk, enUS } from "date-fns/locale"; // ✅ Додано
 
 import { useHeader } from "../../context/HeaderContext"; // ✅ Додано
@@ -59,10 +59,12 @@ export const useTransactionPage = () => {
     if (transaction) {
       // Визначаємо локаль для дати (укр або англ)
       const dateLocale = i18n.language === "uk" ? uk : enUS;
-
-      const dateStr = format(new Date(transaction.date), "d MMMM yyyy", {
-        locale: dateLocale,
-      });
+      const transactionDate = new Date(transaction.date);
+      const dateStr = isValid(transactionDate)
+        ? format(transactionDate, "d MMMM yyyy", {
+            locale: dateLocale,
+          })
+        : t("common:common.not_specified", "Не вказано");
 
       setPageTitle(
         t("legacy:transactionPage.header_title"), // "Деталі транзакції"
