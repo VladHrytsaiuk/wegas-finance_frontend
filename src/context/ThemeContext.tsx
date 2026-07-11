@@ -21,6 +21,7 @@ const getInitialTheme = (): Theme => {
   const savedTheme = localStorage.getItem("app-theme");
   if (savedTheme === "light" || savedTheme === "dark") {
     document.documentElement.setAttribute("data-theme", savedTheme);
+    document.documentElement.style.colorScheme = savedTheme;
     return savedTheme;
   }
 
@@ -30,6 +31,7 @@ const getInitialTheme = (): Theme => {
   const initialTheme: Theme = systemPrefersDark ? "dark" : "light";
 
   document.documentElement.setAttribute("data-theme", initialTheme);
+  document.documentElement.style.colorScheme = initialTheme;
 
   return initialTheme;
 };
@@ -42,7 +44,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.colorScheme = theme;
     localStorage.setItem("app-theme", theme);
+
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute(
+        "content",
+        theme === "dark" ? "#111827" : "#ffffff",
+      );
+    }
   }, [theme]);
 
   const toggleTheme = useCallback(() => {

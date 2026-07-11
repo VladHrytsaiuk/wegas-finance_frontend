@@ -108,13 +108,34 @@ function RouteStageFallback({
   return null;
 }
 
+function RouteStageReady({ children }: { children: React.ReactNode }) {
+  const { setStage } = useBootstrap();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    window.requestAnimationFrame(() => {
+      if (!cancelled) {
+        setStage("hidden");
+        window.dispatchEvent(new Event("app:ready"));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setStage]);
+
+  return <>{children}</>;
+}
+
 function withRouteSuspense(
   element: React.ReactNode,
   stage: "bootstrap" | "resources",
 ) {
   return (
     <Suspense fallback={<RouteStageFallback stage={stage} />}>
-      {element}
+      <RouteStageReady>{element}</RouteStageReady>
     </Suspense>
   );
 }

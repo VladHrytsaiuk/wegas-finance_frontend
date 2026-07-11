@@ -12,15 +12,49 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="FERP">
+    <script>
+      (function () {
+        try {
+          var savedTheme = localStorage.getItem("app-theme");
+          var theme =
+            savedTheme === "light" || savedTheme === "dark"
+              ? savedTheme
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.colorScheme = theme;
+
+          var themeColorMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeColorMeta) {
+            themeColorMeta.setAttribute(
+              "content",
+              theme === "dark" ? "#111827" : "#ffffff",
+            );
+          }
+        } catch (error) {
+          console.error("Failed to initialize theme before app bootstrap", error);
+        }
+      })();
+    </script>
     <style>
       :root {
-        color-scheme: light;
         --bootstrap-bg: #f6f7fb;
         --bootstrap-surface: rgba(255, 255, 255, 0.88);
         --bootstrap-text: #667085;
         --bootstrap-accent: #0f9f6e;
         --bootstrap-accent-soft: rgba(15, 159, 110, 0.18);
         --bootstrap-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+      }
+
+      html[data-theme="dark"] {
+        --bootstrap-bg: #0f172a;
+        --bootstrap-surface: rgba(17, 24, 39, 0.92);
+        --bootstrap-text: #94a3b8;
+        --bootstrap-accent: #34d399;
+        --bootstrap-accent-soft: rgba(52, 211, 153, 0.18);
+        --bootstrap-shadow: 0 24px 60px rgba(2, 6, 23, 0.42);
       }
 
       * {
@@ -46,6 +80,12 @@
           BlinkMacSystemFont,
           "Segoe UI",
           sans-serif;
+      }
+
+      html[data-theme="dark"] body {
+        background:
+          radial-gradient(circle at top, rgba(52, 211, 153, 0.12), transparent 30%),
+          linear-gradient(180deg, #0b1220 0%, var(--bootstrap-bg) 100%);
       }
 
       #app-bootstrap {
@@ -103,6 +143,10 @@
         font-size: 16px;
         font-weight: 600;
         color: #101828;
+      }
+
+      html[data-theme="dark"] .bootstrap-title {
+        color: #f8fafc;
       }
 
       .bootstrap-subtitle {

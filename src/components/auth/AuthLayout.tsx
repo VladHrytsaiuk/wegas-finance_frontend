@@ -6,7 +6,6 @@ import Logo from "../ui/Logo";
 import { ThemeSwitcher } from "../ui/ThemeSwitcher";
 import { LanguageSwitcher } from "../ui/LanguageSwitcher";
 import FeedbackWidget from "../ui/FeedbackWidget";
-import { useBootstrap } from "../../context/BootstrapContext";
 
 // === Styled Components ===
 
@@ -181,24 +180,6 @@ export function AuthLayout({
   footer,
 }: AuthLayoutProps) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const { setStage } = useBootstrap();
-
-  useEffect(() => {
-    let cancelled = false;
-
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        if (!cancelled) {
-          setStage("hidden");
-          window.dispatchEvent(new Event("app:ready"));
-        }
-      });
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [setStage]);
 
   return (
     <PageContainer>
