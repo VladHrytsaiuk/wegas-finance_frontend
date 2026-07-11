@@ -1,5 +1,3 @@
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
 import type { TFunction } from "i18next";
 
 export interface ExportSheet<T extends Record<string, unknown> = Record<string, unknown>> {
@@ -15,6 +13,10 @@ export const exportToExcel = async (
 ) => {
   if (sheets.length === 0) return;
 
+  const [{ default: ExcelJS }, { saveAs }] = await Promise.all([
+    import("exceljs"),
+    import("file-saver"),
+  ]);
   const workbook = new ExcelJS.Workbook();
 
   sheets.forEach((sheetData) => {
@@ -113,5 +115,7 @@ export const exportToCSV = <T extends Record<string, unknown>>(
   const blob = new Blob(["\ufeff", csvContent], {
     type: "text/csv;charset=utf-8;",
   });
-  saveAs(blob, `${fileName}.csv`);
+  void import("file-saver").then(({ saveAs }) => {
+    saveAs(blob, `${fileName}.csv`);
+  });
 };

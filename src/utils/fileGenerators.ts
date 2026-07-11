@@ -1,11 +1,6 @@
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
 import { format } from "date-fns";
 import type { TFunction } from "i18next";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import type { Transaction } from "../services/apiStats";
-import { fontBase64 } from "./fonts/roboto";
 
 type ExportRow = {
   date: string;
@@ -36,6 +31,10 @@ export const generateXLSX = async (
   fileName: string,
   t: TFunction,
 ) => {
+  const [{ default: ExcelJS }, { saveAs }] = await Promise.all([
+    import("exceljs"),
+    import("file-saver"),
+  ]);
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(t("export_import:exportPage.title"));
 
@@ -90,14 +89,25 @@ export const generateCSV = (
   ].join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  saveAs(blob, `${fileName}.csv`);
+  void import("file-saver").then(({ saveAs }) => {
+    saveAs(blob, `${fileName}.csv`);
+  });
 };
 
-export const generatePDF = (
+export const generatePDF = async (
   data: Transaction[],
   fileName: string,
   t: TFunction,
 ) => {
+  const [
+    { default: jsPDF },
+    { default: autoTable },
+    { fontBase64 },
+  ] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+    import("./fonts/roboto"),
+  ]);
   const doc = new jsPDF();
   const fontName = "Roboto-Regular.ttf";
 

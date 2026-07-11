@@ -58,4 +58,32 @@ export default defineConfig({
     },
     // 👆 КІНЕЦЬ БЛОКУ
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+
+          if (
+            id.includes("exceljs") ||
+            id.includes("jspdf") ||
+            id.includes("jspdf-autotable") ||
+            id.includes("file-saver")
+          ) {
+            return "export-vendors";
+          }
+
+          if (id.includes("recharts")) {
+            return "chart-vendors";
+          }
+
+          if (id.includes("react-grid-layout") || id.includes("react-resizable")) {
+            return "dashboard-vendors";
+          }
+
+          return undefined;
+        },
+      },
+    },
+  },
 });
