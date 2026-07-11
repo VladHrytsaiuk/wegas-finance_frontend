@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import styled from "styled-components";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
 
@@ -6,6 +6,7 @@ import Logo from "../ui/Logo";
 import { ThemeSwitcher } from "../ui/ThemeSwitcher";
 import { LanguageSwitcher } from "../ui/LanguageSwitcher";
 import FeedbackWidget from "../ui/FeedbackWidget";
+import { useBootstrap } from "../../context/BootstrapContext";
 
 // === Styled Components ===
 
@@ -180,6 +181,23 @@ export function AuthLayout({
   footer,
 }: AuthLayoutProps) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const { setStage } = useBootstrap();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        if (!cancelled) {
+          setStage("hidden");
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setStage]);
 
   return (
     <PageContainer>

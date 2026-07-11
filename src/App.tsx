@@ -94,10 +94,10 @@ type ModalLocationState = {
   background?: Location;
 };
 
-function BootStageFallback({
+function RouteStageFallback({
   stage,
 }: {
-  stage: "resources";
+  stage: "bootstrap" | "resources";
 }) {
   const { setStage } = useBootstrap();
 
@@ -108,34 +108,15 @@ function BootStageFallback({
   return null;
 }
 
-function BootStageRelease() {
-  const { stage, setStage } = useBootstrap();
-
-  useEffect(() => {
-    if (stage !== "resources") return;
-
-    let cancelled = false;
-
-    const release = () => {
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          window.setTimeout(() => {
-            if (!cancelled) {
-              setStage("hidden");
-            }
-          }, 120);
-        });
-      });
-    };
-
-    release();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [stage, setStage]);
-
-  return null;
+function withRouteSuspense(
+  element: React.ReactNode,
+  stage: "bootstrap" | "resources",
+) {
+  return (
+    <Suspense fallback={<RouteStageFallback stage={stage} />}>
+      {element}
+    </Suspense>
+  );
 }
 
 function AppRoutes() {
@@ -143,92 +124,210 @@ function AppRoutes() {
   const background = (location.state as ModalLocationState | null)?.background;
 
   return (
-    <Suspense fallback={<BootStageFallback stage="resources" />}>
-      <BootStageRelease />
-
+    <>
       <Routes location={background || location}>
         <Route
           element={
             <ProtectedRoute>
-              <AppLayout />
+              {withRouteSuspense(<AppLayout />, "resources")}
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate replace to="dashboard" />} />
+          <Route
+            index
+            element={withRouteSuspense(
+              <Navigate replace to="dashboard" />,
+              "resources",
+            )}
+          />
           {/* --- FINANCE ROUTES --- */}
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="accounts" element={<Accounts />} />
-          <Route path="accounts/:accountId" element={<AccountDetails />} />
-          <Route path="transactions" element={<Transactions />} />
+          <Route
+            path="dashboard"
+            element={withRouteSuspense(<Dashboard />, "resources")}
+          />
+          <Route
+            path="accounts"
+            element={withRouteSuspense(<Accounts />, "resources")}
+          />
+          <Route
+            path="accounts/:accountId"
+            element={withRouteSuspense(<AccountDetails />, "resources")}
+          />
+          <Route
+            path="transactions"
+            element={withRouteSuspense(<Transactions />, "resources")}
+          />
           <Route
             path="transactions/:transactionId"
-            element={<TransactionPage />}
+            element={withRouteSuspense(<TransactionPage />, "resources")}
           />
-          <Route path="statistics" element={<Statistics />} />
-          <Route path="debts" element={<Debts />} />
-          <Route path="debts/:id" element={<DebtorDetails />} />
-          <Route path="goals" element={<Goals />} />
-          <Route path="goals/:id" element={<GoalDetails />} />
-          <Route path="assets" element={<Assets />} />
-          <Route path="assets/:id" element={<AssetDetails />} />
-          <Route path="utility" element={<Utility />} />
-          <Route path="utility/analytics" element={<UtilityAnalyticsPage />} />
+          <Route
+            path="statistics"
+            element={withRouteSuspense(<Statistics />, "resources")}
+          />
+          <Route
+            path="debts"
+            element={withRouteSuspense(<Debts />, "resources")}
+          />
+          <Route
+            path="debts/:id"
+            element={withRouteSuspense(<DebtorDetails />, "resources")}
+          />
+          <Route
+            path="goals"
+            element={withRouteSuspense(<Goals />, "resources")}
+          />
+          <Route
+            path="goals/:id"
+            element={withRouteSuspense(<GoalDetails />, "resources")}
+          />
+          <Route
+            path="assets"
+            element={withRouteSuspense(<Assets />, "resources")}
+          />
+          <Route
+            path="assets/:id"
+            element={withRouteSuspense(<AssetDetails />, "resources")}
+          />
+          <Route
+            path="utility"
+            element={withRouteSuspense(<Utility />, "resources")}
+          />
+          <Route
+            path="utility/analytics"
+            element={withRouteSuspense(<UtilityAnalyticsPage />, "resources")}
+          />
           {/* 🔥 НОВЕ */}
-          <Route path="utility/:id" element={<UtilityDetails />} />
+          <Route
+            path="utility/:id"
+            element={withRouteSuspense(<UtilityDetails />, "resources")}
+          />
           <Route
             path="utility/:id/analytics"
-            element={<UtilityMeterAnalyticsPage />}
+            element={withRouteSuspense(
+              <UtilityMeterAnalyticsPage />,
+              "resources",
+            )}
           />
-          <Route path="shopping" element={<Shopping />} />
-          <Route path="wishlist" element={<WishlistGroups />} />
-          <Route path="wishlist/:groupId" element={<WishlistItems />} />
+          <Route
+            path="shopping"
+            element={withRouteSuspense(<Shopping />, "resources")}
+          />
+          <Route
+            path="wishlist"
+            element={withRouteSuspense(<WishlistGroups />, "resources")}
+          />
+          <Route
+            path="wishlist/:groupId"
+            element={withRouteSuspense(<WishlistItems />, "resources")}
+          />
           {/* 🔥 НОВЕ */}
           {/* --- INVESTMENTS ROUTES (Поки що ведуть на 404 або дублюють) --- */}
           {/* Ти зможеш додати сюди реальні сторінки пізніше */}
           <Route
             path="investments/dashboard"
-            element={<InvestmentDashboard />}
+            element={withRouteSuspense(<InvestmentDashboard />, "resources")}
           />
           <Route
             path="investments/portfolio"
-            element={<div>Portfolio (Coming Soon)</div>}
+            element={withRouteSuspense(
+              <div>Portfolio (Coming Soon)</div>,
+              "resources",
+            )}
           />
           {/* --- SHARED SETTINGS --- */}
-          <Route path="settings" element={<SettingsLayout />}>
-            <Route index element={<Navigate replace to="general" />} />
-            <Route path="general" element={<General />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="security" element={<Security />} />
-            <Route path="users" element={<FamilySettings />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="tags" element={<Tags />} />
-            <Route path="counterparties" element={<Counterparties />} />
-            <Route path="export" element={<Export />} />
+          <Route
+            path="settings"
+            element={withRouteSuspense(<SettingsLayout />, "resources")}
+          >
+            <Route
+              index
+              element={withRouteSuspense(
+                <Navigate replace to="general" />,
+                "resources",
+              )}
+            />
+            <Route
+              path="general"
+              element={withRouteSuspense(<General />, "resources")}
+            />
+            <Route
+              path="profile"
+              element={withRouteSuspense(<Profile />, "resources")}
+            />
+            <Route
+              path="security"
+              element={withRouteSuspense(<Security />, "resources")}
+            />
+            <Route
+              path="users"
+              element={withRouteSuspense(<FamilySettings />, "resources")}
+            />
+            <Route
+              path="categories"
+              element={withRouteSuspense(<Categories />, "resources")}
+            />
+            <Route
+              path="tags"
+              element={withRouteSuspense(<Tags />, "resources")}
+            />
+            <Route
+              path="counterparties"
+              element={withRouteSuspense(<Counterparties />, "resources")}
+            />
+            <Route
+              path="export"
+              element={withRouteSuspense(<Export />, "resources")}
+            />
           </Route>
         </Route>
 
-        <Route path="login" element={<Login setToken={NOOP_SET_TOKEN} />} />
-        <Route path="pin-login" element={<PinLogin />} />
-        <Route path="register" element={<Register />} />
-        <Route path="*" element={<PageNotFound />} />
+        <Route
+          path="login"
+          element={withRouteSuspense(
+            <Login setToken={NOOP_SET_TOKEN} />,
+            "bootstrap",
+          )}
+        />
+        <Route
+          path="pin-login"
+          element={withRouteSuspense(<PinLogin />, "bootstrap")}
+        />
+        <Route
+          path="register"
+          element={withRouteSuspense(<Register />, "bootstrap")}
+        />
+        <Route
+          path="*"
+          element={withRouteSuspense(<PageNotFound />, "bootstrap")}
+        />
       </Routes>
 
       {background && (
         <Routes>
-          <Route path="transactions/new" element={<CreateTransactionModal />} />
+          <Route
+            path="transactions/new"
+            element={withRouteSuspense(<CreateTransactionModal />, "resources")}
+          />
           <Route
             path="transactions/:transactionId/edit"
-            element={<EditTransactionModal />}
+            element={withRouteSuspense(<EditTransactionModal />, "resources")}
           />
-          <Route path="accounts/new" element={<CreateAccountModal />} />
+          <Route
+            path="accounts/new"
+            element={withRouteSuspense(<CreateAccountModal />, "resources")}
+          />
           <Route
             path="accounts/:accountId/edit"
-            element={<EditAccountModal />}
+            element={withRouteSuspense(<EditAccountModal />, "resources")}
           />
-          <Route path="statistics/export" element={<ExportModal />} />
+          <Route
+            path="statistics/export"
+            element={withRouteSuspense(<ExportModal />, "resources")}
+          />
         </Routes>
       )}
-    </Suspense>
+    </>
   );
 }
 

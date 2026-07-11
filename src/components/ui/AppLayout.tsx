@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useUserRole } from "../../hooks/useUserRole";
 import { useWebSocketAuth } from "../../hooks/useWebSocketAuth";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useBootstrap } from "../../context/BootstrapContext";
 
 import DesktopLayout from "../../layouts/DesktopLayout";
 import MobileLayout from "../../layouts/MobileLayout";
@@ -22,6 +23,23 @@ function AppLayout() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { setStage } = useBootstrap();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        if (!cancelled) {
+          setStage("hidden");
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setStage]);
 
   // 1. WebSocket logic for global events (like being removed from family)
   const onWebSocketMessage = useCallback(

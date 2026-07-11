@@ -9,7 +9,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       devOptions: {
-        enabled: true // Дозволяє тестувати PWA на localhost під час розробки
+        enabled: false,
       },
       includeAssets: ["favicon.svg", "Logo.svg", "Logo_full.svg", "apple-icon-180.png", "icon-512.png"],
       manifest: {

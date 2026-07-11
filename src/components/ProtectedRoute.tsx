@@ -66,17 +66,22 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    if ((isLoading || (isFetching && !user)) && token) {
+    if (!token) {
+      setStage("bootstrap");
+      return;
+    }
+
+    if (isLoading || (isFetching && !user)) {
       setStage("auth");
       return;
     }
 
-    if (token && isAuthenticated) {
+    if (isAuthenticated) {
       setStage("resources");
       return;
     }
 
-    setStage("hidden");
+    setStage("bootstrap");
   }, [isLoading, isFetching, user, token, isAuthenticated, setStage]);
 
   if ((isLoading || (isFetching && !user)) && !!token) {
