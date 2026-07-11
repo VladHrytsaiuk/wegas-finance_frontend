@@ -72,7 +72,8 @@ export default defineConfig({
           if (
             id.includes("/react/") ||
             id.includes("/react-dom/") ||
-            id.includes("/scheduler/")
+            id.includes("/scheduler/") ||
+            id.includes("/react-is/")
           ) {
             return "react-vendors";
           }
@@ -125,10 +126,6 @@ export default defineConfig({
 
           if (id.includes("file-saver")) {
             return "export-vendors";
-          }
-
-          if (id.includes("recharts")) {
-            return "chart-vendors";
           }
 
           if (id.includes("react-grid-layout") || id.includes("react-resizable")) {
