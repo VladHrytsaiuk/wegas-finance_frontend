@@ -1,15 +1,16 @@
+import { lazy, Suspense, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useTransactionsPage } from "../../../hooks/Transactions/useTransactionsPage";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
 import { CenteredSpinner } from "../../../components/ui/CenteredSpinner";
-import { HiArrowLeft, HiPlus, HiArrowDownTray } from "react-icons/hi2";
+import { HiArrowDownTray } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
 import { FAB } from "../../../components/ui/FAB";
 import Modal, { useModal } from "../../../components/ui/Modal";
-import ExportModal from "../../../pages/settings/ExportPage";
+
+const ExportModal = lazy(() => import("../../../pages/settings/ExportPage"));
 
 const StyledHistory = styled.div`
   display: flex;
@@ -100,7 +101,9 @@ function MobileTransactionHistoryContent() {
       />
 
       <Modal.Window name="export-all">
-        <ExportModal />
+        <Suspense fallback={<CenteredSpinner isContainer />}>
+          <ExportModal />
+        </Suspense>
       </Modal.Window>
     </StyledHistory>
   );

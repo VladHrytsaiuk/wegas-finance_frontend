@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { lazy, Suspense, useLayoutEffect, useRef } from "react";
 // Force rebuild after hook rename
 import { Link } from "react-router-dom";
 import { HiArrowDownTray, HiPlus } from "react-icons/hi2";
@@ -13,12 +13,13 @@ import { Pagination } from "../../components/ui/Pagination";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../components/ui/EmptyState";
-import ExportModal from "../settings/ExportPage";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
 // Hook & Styles
 import { useTransactionsPage } from "../../hooks/Transactions/useTransactionsPage";
 import * as S from "./Transactions.styles";
+
+const ExportModal = lazy(() => import("../settings/ExportPage"));
 
 function Transactions() {
   const topRef = useRef<HTMLDivElement>(null);
@@ -211,7 +212,9 @@ function Transactions() {
         )}
 
         <Modal.Window name="export-all">
-          <ExportModal />
+          <Suspense fallback={<CenteredSpinner isContainer />}>
+            <ExportModal />
+          </Suspense>
         </Modal.Window>
       </Modal>
     </S.PageContainer>

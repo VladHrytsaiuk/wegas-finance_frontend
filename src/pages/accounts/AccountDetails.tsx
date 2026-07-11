@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   HiArrowLeft,
   HiOutlinePencil,
@@ -25,7 +25,6 @@ import TransactionsModal from "../../components/transactions/TransactionsModal";
 import { RecentTransactions } from "../../components/accounts/RecentTransactions";
 import { AccountStats } from "../../components/accounts/AccountStats";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
-import ExportModal from "../settings/ExportPage";
 
 import { useAccountDetails } from "../../hooks/Accounts/useAccountDetails";
 import { usePageTitle } from "../../hooks/usePageTitle";
@@ -37,6 +36,8 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import { HiMinus, HiArrowsRightLeft } from "react-icons/hi2";
+
+const ExportModal = lazy(() => import("../settings/ExportPage"));
 
 function AccountDetails() {
   const { t } = useTranslation();
@@ -293,7 +294,9 @@ function AccountDetails() {
           <TransactionsModal accountId={accountId} />
         </Modal.Window>
         <Modal.Window name="export-account">
-          <ExportModal initialAccountIds={[accountId!]} />
+          <Suspense fallback={<CenteredSpinner isContainer />}>
+            <ExportModal initialAccountIds={[accountId!]} />
+          </Suspense>
         </Modal.Window>
         <Modal.Window name="delete-account">
           <ConfirmDelete

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { HiArrowDownTray, HiChartPie } from "react-icons/hi2";
 import { usePageTitle } from "../../hooks/usePageTitle";
 
@@ -5,7 +6,6 @@ import { WidgetControls } from "../../components/stats/widgets/WidgetControls";
 import { TrendWidget } from "../../components/stats/widgets/TrendWidget";
 import { ExpensesPieWidget } from "../../components/stats/widgets/ExpensesPieWidget";
 import { DetailedTable } from "../../components/stats/DetailedTable";
-import ExportPage from "../settings/ExportPage";
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -15,6 +15,8 @@ import { FAB } from "../../components/ui/FAB";
 
 import { useStatistics } from "../../hooks/Stats/useStatistics";
 import * as S from "./Statistics.styles";
+
+const ExportPage = lazy(() => import("../settings/ExportPage"));
 
 export const Statistics = () => {
   const { state, actions, t } = useStatistics();
@@ -146,12 +148,14 @@ export const Statistics = () => {
         )}
 
         <Modal.Window name="export-all">
-          <ExportPage
-            initialFrom={filter.from}
-            initialTo={filter.to}
-            initialAccountIds={filter.accountIds}
-            initialTab="stats"
-          />
+          <Suspense fallback={<CenteredSpinner isContainer />}>
+            <ExportPage
+              initialFrom={filter.from}
+              initialTo={filter.to}
+              initialAccountIds={filter.accountIds}
+              initialTab="stats"
+            />
+          </Suspense>
         </Modal.Window>
       </S.PageContainer>
 
