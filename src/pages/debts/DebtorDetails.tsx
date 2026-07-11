@@ -9,7 +9,7 @@ import {
   HiCheckCircle,
 } from "react-icons/hi2";
 
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
@@ -115,12 +115,7 @@ function DebtorDetails() {
   };
 
   if (isLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("common:ui.loading_details", "Завантаження деталей...")}
-      />
-    );
+    return <DetailPageSkeleton />;
   if (!counterparty) return <div>{t("common:ui.status_not_found")}</div>;
 
   return (

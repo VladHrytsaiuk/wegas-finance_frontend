@@ -25,7 +25,7 @@ import {
 } from "react-icons/hi2";
 
 import { Button } from "../../components/ui/Button";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { TransactionItem } from "../../components/transactions/TransactionItem";
@@ -83,12 +83,7 @@ export default function AssetDetails() {
   usePageTitle(asset?.name);
 
   if (isLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("common:ui.loading_details", "Завантаження деталей...")}
-      />
-    );
+    return <DetailPageSkeleton />;
 
   if (!asset) {
     return (

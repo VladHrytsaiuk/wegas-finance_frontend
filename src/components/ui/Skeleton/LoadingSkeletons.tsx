@@ -116,6 +116,38 @@ const TransactionListSkeleton = styled.div`
   gap: 0.75rem;
 `;
 
+const DetailHeaderWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+`;
+
+const DetailGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 1rem;
+  width: 100%;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const DetailCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1.25rem;
+  border-radius: 18px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+`;
+
+const MobileSectionCard = styled(DetailCard)`
+  padding: 1rem;
+`;
+
 export function PageToolbarSkeleton() {
   return (
     <ToolbarSkeleton>
@@ -239,5 +271,118 @@ export function DashboardChartSkeleton() {
       </div>
       <SkeletonBlock $height="100%" $radius="16px" />
     </WidgetSkeletonWrap>
+  );
+}
+
+export function DetailPageSkeleton() {
+  return (
+    <PageSkeletonContainer>
+      <DetailHeaderWrap>
+        <SkeletonBlock $width="120px" $height="36px" $radius="10px" />
+        <SkeletonBlock $width="260px" $height="2rem" $radius="12px" />
+      </DetailHeaderWrap>
+
+      <DetailGrid>
+        <DetailCard>
+          <SkeletonBlock $height="220px" $radius="18px" />
+          <SkeletonBlock $width="58%" />
+          <SkeletonBlock $width="42%" />
+          <SkeletonBlock $width="74%" />
+        </DetailCard>
+
+        <DetailCard>
+          <SkeletonBlock $width="46%" />
+          {Array.from({ length: 4 }).map((_, index) => (
+            <SkeletonBlock key={index} $height="52px" $radius="12px" />
+          ))}
+        </DetailCard>
+      </DetailGrid>
+
+      <DetailCard>
+        <SkeletonBlock $width="32%" />
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div
+            key={index}
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
+            <SkeletonBlock $width="38px" $height="38px" $radius="12px" />
+            <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: "0.5rem" }}>
+              <SkeletonBlock $width="58%" />
+              <SkeletonBlock $width="38%" $height="0.8rem" />
+            </div>
+            <SkeletonBlock $width="88px" />
+          </div>
+        ))}
+      </DetailCard>
+    </PageSkeletonContainer>
+  );
+}
+
+export function MobileDashboardSkeleton() {
+  return (
+    <PageSkeletonContainer>
+      <DetailCard>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "1rem",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", flex: 1 }}>
+            <SkeletonBlock $width="42%" $height="0.75rem" />
+            <SkeletonBlock $width="68%" $height="2rem" />
+          </div>
+          <SkeletonBlock $width="92px" $height="42px" $radius="12px" />
+        </div>
+      </DetailCard>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <MobileSectionCard>
+          <SkeletonBlock $width="24px" $height="24px" $radius="8px" />
+          <SkeletonBlock $width="46%" $height="0.75rem" />
+          <SkeletonBlock $width="74%" $height="1.2rem" />
+        </MobileSectionCard>
+        <MobileSectionCard>
+          <SkeletonBlock $width="24px" $height="24px" $radius="8px" />
+          <SkeletonBlock $width="46%" $height="0.75rem" />
+          <SkeletonBlock $width="74%" $height="1.2rem" />
+        </MobileSectionCard>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div
+            key={index}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}
+          >
+            <SkeletonBlock $width="44px" $height="44px" $radius="12px" />
+            <SkeletonBlock $width="100%" $height="0.7rem" />
+          </div>
+        ))}
+      </div>
+
+      <MobileSectionCard>
+        <SkeletonBlock $width="34%" />
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div
+            key={index}
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
+            <SkeletonBlock $width="36px" $height="36px" $radius="12px" />
+            <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: "0.45rem" }}>
+              <SkeletonBlock $width="54%" />
+              <SkeletonBlock $width="32%" $height="0.75rem" />
+            </div>
+          </div>
+        ))}
+      </MobileSectionCard>
+
+      <MobileSectionCard>
+        <SkeletonBlock $width="38%" />
+        <SkeletonBlock $height="180px" $radius="16px" />
+      </MobileSectionCard>
+    </PageSkeletonContainer>
   );
 }

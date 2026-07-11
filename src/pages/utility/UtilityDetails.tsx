@@ -16,7 +16,7 @@ import {
 
 // Components
 import { Button } from "../../components/ui/Button";
-import Spinner from "../../components/ui/Spinner";
+import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import Modal, { useModal } from "../../components/ui/Modal";
 import Table from "../../components/ui/Table";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
@@ -73,7 +73,7 @@ function UtilityDetailsContent() {
     null,
   );
 
-  if (state.isLoading) return <Spinner />;
+  if (state.isLoading) return <DetailPageSkeleton />;
   if (!data.meter) return <div>{t("stats_utility:utility.not_found")}</div>;
 
   const { meter, readings, totalDebt, lastReadingDate } = data;

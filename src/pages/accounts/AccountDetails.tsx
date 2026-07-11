@@ -19,6 +19,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import Modal from "../../components/ui/Modal";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { AccountCard } from "../../components/accounts/AccountCard";
 import { AccountActions } from "../../components/accounts/AccountActions";
 import TransactionsModal from "../../components/transactions/TransactionsModal";
@@ -70,12 +71,7 @@ function AccountDetails() {
   }, [account, setPageTitle, resetPageTitle, t]);
 
   if (isLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("accounts:accountDetailsPage.loading_details", "Завантаження деталей рахунку...")}
-      />
-    );
+    return <DetailPageSkeleton />;
 
   if (isError || !account) {
     return (
