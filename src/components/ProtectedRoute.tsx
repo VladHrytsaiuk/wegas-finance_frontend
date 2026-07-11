@@ -77,7 +77,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
 
     if (isAuthenticated) {
-      setStage("resources");
+      setStage("hidden");
       return;
     }
 

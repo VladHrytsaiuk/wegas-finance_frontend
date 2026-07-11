@@ -1,4 +1,5 @@
 import {
+  useCallback,
   createContext,
   useContext,
   useEffect,
@@ -37,7 +38,13 @@ const STAGE_COPY: Record<
 };
 
 export function BootstrapProvider({ children }: { children: ReactNode }) {
-  const [stage, setStage] = useState<BootstrapStage>("bootstrap");
+  const [stage, setStageState] = useState<BootstrapStage>("bootstrap");
+
+  const setStage = useCallback((nextStage: BootstrapStage) => {
+    setStageState((currentStage) =>
+      currentStage === nextStage ? currentStage : nextStage,
+    );
+  }, []);
 
   useEffect(() => {
     const bootstrapElement = document.getElementById("app-bootstrap");
@@ -58,7 +65,7 @@ export function BootstrapProvider({ children }: { children: ReactNode }) {
     bootstrapElement.classList.remove("is-hidden");
   }, [stage]);
 
-  const value = useMemo(() => ({ stage, setStage }), [stage]);
+  const value = useMemo(() => ({ stage, setStage }), [stage, setStage]);
 
   return (
     <BootstrapContext.Provider value={value}>
