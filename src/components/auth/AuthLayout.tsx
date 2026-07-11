@@ -190,6 +190,7 @@ export function AuthLayout({
       window.requestAnimationFrame(() => {
         if (!cancelled) {
           setStage("hidden");
+          window.dispatchEvent(new Event("app:ready"));
         }
       });
     });

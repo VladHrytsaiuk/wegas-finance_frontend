@@ -11,6 +11,11 @@ export default defineConfig({
       devOptions: {
         enabled: false,
       },
+      workbox: {
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+      },
       includeAssets: ["favicon.svg", "Logo.svg", "Logo_full.svg", "apple-icon-180.png", "icon-512.png"],
       manifest: {
         name: "FERP Finance System",
