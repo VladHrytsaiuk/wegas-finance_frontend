@@ -1,8 +1,8 @@
 // Components
 import { WidgetControls } from "./WidgetControls";
-import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { EmptyState } from "../../ui/EmptyState";
 import { HiListBullet } from "react-icons/hi2";
+import { TopListBodySkeleton } from "../../ui/Skeleton/LoadingSkeletons";
 
 // Styles & Logic
 import * as S from "./TopListWidget.styles";
@@ -72,7 +72,7 @@ export const TopListWidget = (props: Props) => {
       )}
 
       {isLoading ? (
-        <CenteredSpinner isContainer size="2.4rem" />
+        <TopListBodySkeleton />
       ) : processedData.length === 0 ? (
         <EmptyState
           compact

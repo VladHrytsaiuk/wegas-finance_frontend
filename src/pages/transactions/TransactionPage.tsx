@@ -3,13 +3,13 @@ import { HiArrowLeft, HiPencil, HiTrash } from "react-icons/hi2";
 
 // Components
 import TransactionDetails from "../../components/transactions/TransactionDetails";
-import Spinner from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
+import { TransactionDetailsSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 
 // Hook & Styles
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
@@ -45,9 +45,9 @@ function TransactionPage() {
 
   if (isLoading) {
     return (
-      <S.LoadingContainer>
-        <Spinner />
-      </S.LoadingContainer>
+      <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
+        <TransactionDetailsSkeleton />
+      </S.PageContainer>
     );
   }
 

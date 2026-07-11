@@ -13,6 +13,7 @@ import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 
 import TariffHistoryChart from "../../components/utility/TariffHistoryChart";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import {
   CHART_COLORS,
@@ -29,7 +30,7 @@ export default function UtilityMeterAnalyticsPage() {
     useMeterAnalytics();
   const { t } = useTranslation();
 
-  if (isLoading) return <CenteredSpinner isContainer />;
+  if (isLoading) return <DetailPageSkeleton />;
   if (!meter) return <div>{t("stats_utility:utility.not_found")}</div>;
 
   return (

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { compressImage } from "../../utils/compressor";
 import { DEFAULT_WISHLIST_GROUP_COLOR } from "../../utils/constants";
 import { getUploadedFileUrl } from "../../utils/helpers";
+import { waitForNextPaint } from "../../utils/render";
 import type { WishlistGroup, WishlistItem } from "../../types";
 
 export type WishlistItemFormData = Partial<WishlistItem> & {
@@ -76,6 +77,8 @@ export const useWishlistItemForm = (
     setIsCompressing(true);
 
     try {
+      await waitForNextPaint();
+
       const compressed = await compressImage(file);
       setPhotoFile(compressed);
       setRemovePhoto(false);

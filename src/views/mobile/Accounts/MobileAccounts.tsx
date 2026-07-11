@@ -1,11 +1,9 @@
 import styled from "styled-components";
-import { Link, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useAccountsPage } from "../../../hooks/Accounts/useAccountsPage";
 import { CenteredSpinner } from "../../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../../components/ui/EmptyState";
-import { HiPlus, HiCreditCard, HiEllipsisVertical } from "react-icons/hi2";
+import { HiCreditCard, HiEllipsisVertical } from "react-icons/hi2";
 import { FAB } from "../../../components/ui/FAB";
 import { formatMoney } from "../../../utils/helpers";
 import Modal from "../../../components/ui/Modal";
@@ -118,7 +116,12 @@ function MobileAccounts() {
   usePageTitle(t("navigation:general.accounts"));
 
   if (isLoading) return <CenteredSpinner fullHeight />;
-  if (isError) return <div style={{ padding: '20px', textAlign: 'center' }}>{t("accounts:accountsPage.status_error")}</div>;
+  if (isError)
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        {t("accounts:accountsPage.status_error")}
+      </div>
+    );
 
   const hasNoAccountsAtAll = accounts.length === 0;
 
@@ -133,22 +136,37 @@ function MobileAccounts() {
           {filteredAccounts.length === 0 ? (
             <EmptyState
               icon={<HiCreditCard />}
-              title={hasNoAccountsAtAll ? t("accounts:accountsPage.status_empty") : t("common:common.no_results")}
-              description={hasNoAccountsAtAll ? t("accounts:accountsPage.status_empty_desc") : t("common:common.try_adjusting_search")}
+              title={
+                hasNoAccountsAtAll
+                  ? t("accounts:accountsPage.status_empty")
+                  : t("common:common.no_results")
+              }
+              description={
+                hasNoAccountsAtAll
+                  ? t("accounts:accountsPage.status_empty_desc")
+                  : t("common:common.try_adjusting_search")
+              }
             />
           ) : (
             filteredAccounts.map((account) => (
-              <AccountCard key={account.id} onClick={() => navigate(`/accounts/${account.id}`)}>
+              <AccountCard
+                key={account.id}
+                onClick={() => navigate(`/accounts/${account.id}`)}
+              >
                 <AccountHeader>
                   <AccountInfo>
-                    <AccountType>{account.type_name || account.type}</AccountType>
+                    <AccountType>
+                      {account.type_name || account.type}
+                    </AccountType>
                     <AccountName>{account.name}</AccountName>
                   </AccountInfo>
                   {canManageStructure && (
-                    <MoreButton onClick={(e) => {
-                      e.stopPropagation();
-                      setIdToDelete(account.id);
-                    }}>
+                    <MoreButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIdToDelete(account.id);
+                      }}
+                    >
                       <HiEllipsisVertical size={20} />
                     </MoreButton>
                   )}
@@ -162,7 +180,9 @@ function MobileAccounts() {
         </Content>
 
         {canManageStructure && (
-          <FAB onClick={() => navigate("new", { state: { background: location } })} />
+          <FAB
+            onClick={() => navigate("new", { state: { background: location } })}
+          />
         )}
 
         <Modal.Window name="delete-confirm">

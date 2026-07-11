@@ -28,10 +28,42 @@ import { getAccountsApi, type Account } from "../../services/apiAccounts";
 import { getMeApi, type UserProfile } from "../../services/apiUsers";
 import type { StatsFilter } from "../../services/apiStats";
 import {
-  DashboardChartSkeleton,
   DashboardSummaryCardSkeleton,
-  DashboardWidgetSkeleton,
+  AccountsWidgetBodySkeleton,
+  PieWidgetBodySkeleton,
+  RecentTransactionsBodySkeleton,
+  TopListBodySkeleton,
+  TrendWidgetBodySkeleton,
+  SkeletonBlock,
 } from "../../components/ui/Skeleton/LoadingSkeletons";
+
+const FullWidgetSkeleton = ({ children, hasHeader = true }: { children: React.ReactNode, hasHeader?: boolean }) => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "1.25rem",
+      width: "100%",
+      height: "100%",
+      padding: "1.25rem",
+      borderRadius: "12px",
+      background: "var(--color-bg-surface)",
+      border: "1px solid var(--color-border)",
+      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.03)",
+      overflow: "hidden"
+    }}
+  >
+    {hasHeader && (
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <SkeletonBlock $width="40%" $height="1.2rem" />
+        <SkeletonBlock $width="92px" $height="32px" $radius="10px" />
+      </div>
+    )}
+    <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+      {children}
+    </div>
+  </div>
+);
 import { useSummaryWidget } from "../../hooks/Stats/useSummaryWidget";
 import { formatMoney } from "../../utils/helpers";
 
@@ -317,7 +349,9 @@ function Dashboard() {
       <GridItem key="accounts">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <DashboardWidgetSkeleton rows={4} showControls={false} />
+            <FullWidgetSkeleton>
+              <AccountsWidgetBodySkeleton />
+            </FullWidgetSkeleton>
           ) : (
             <AccountsWidget />
           )}
@@ -333,7 +367,9 @@ function Dashboard() {
       <GridItem key="recent">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <DashboardWidgetSkeleton rows={5} />
+            <FullWidgetSkeleton>
+              <RecentTransactionsBodySkeleton />
+            </FullWidgetSkeleton>
           ) : (
             <RecentTransactionsWidget
               globalFilter={effectiveGlobalFilter}
@@ -352,7 +388,9 @@ function Dashboard() {
       <GridItem key="trend">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <DashboardChartSkeleton />
+            <FullWidgetSkeleton>
+              <TrendWidgetBodySkeleton />
+            </FullWidgetSkeleton>
           ) : (
             <TrendWidget
               type="expense"
@@ -374,7 +412,9 @@ function Dashboard() {
       <GridItem key="pie">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <DashboardChartSkeleton />
+            <FullWidgetSkeleton>
+              <PieWidgetBodySkeleton />
+            </FullWidgetSkeleton>
           ) : (
             <ExpensesPieWidget
               globalFilter={effectiveGlobalFilter}
@@ -394,7 +434,9 @@ function Dashboard() {
       <GridItem key="top_categories">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <DashboardWidgetSkeleton rows={5} />
+            <FullWidgetSkeleton>
+              <TopListBodySkeleton />
+            </FullWidgetSkeleton>
           ) : (
             <TopListWidget
               type="expense"
@@ -416,7 +458,9 @@ function Dashboard() {
       <GridItem key="top_counterparties">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <DashboardWidgetSkeleton rows={5} />
+            <FullWidgetSkeleton>
+              <TopListBodySkeleton />
+            </FullWidgetSkeleton>
           ) : (
             <TopListWidget
               type="expense"

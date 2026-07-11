@@ -8,6 +8,7 @@ import type { Goal, Account, User } from "../../types";
 import { useModal } from "../../components/ui/Modal";
 import { compressImage } from "../../utils/compressor";
 import { getUploadedFileUrl } from "../../utils/helpers";
+import { waitForNextPaint } from "../../utils/render";
 
 export const useCreateGoalForm = (
   isOpen: boolean,
@@ -134,6 +135,8 @@ export const useCreateGoalForm = (
       const originalFile = e.target.files[0];
       setIsCompressing(true);
       try {
+        await waitForNextPaint();
+
         const compressed = await compressImage(originalFile);
         setPhotoFile(compressed);
         setIsPhotoRemoved(false);

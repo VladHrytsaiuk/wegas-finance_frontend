@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { HiOutlineBanknotes } from "react-icons/hi2";
 
 const LogoWrapper = styled.div`
   padding-bottom: 1rem;
@@ -17,7 +16,8 @@ const Content = styled.div`
   align-items: center;
 
   /* Плавна зміна ширини від розміру іконки до повного лого */
-  width: ${(p) => (p.$collapsed ? "44px" : "111px")}; /* 162 * (44/64) ≈ 111px */
+  width: ${(p) =>
+    p.$collapsed ? "44px" : "111px"}; /* 162 * (44/64) ≈ 111px */
   height: 44px;
 
   /* Центрування самого блоку в батьківському контейнері */
@@ -30,13 +30,13 @@ const Content = styled.div`
   overflow: hidden; /* Обрізаємо текст при звуженні */
 `;
 
-const IconBox = styled.div`
-  min-width: 44px; /* Фіксований розмір іконки */
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+// const IconBox = styled.div`
+//   min-width: 44px; /* Фіксований розмір іконки */
+//   height: 44px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// `;
 
 const IconInner = styled.div<{ $collapsed: boolean }>`
   display: flex;
@@ -56,15 +56,14 @@ function Logo({ isCollapsed }) {
     <LogoWrapper>
       <Content $collapsed={isCollapsed}>
         <IconInner $collapsed={isCollapsed}>
-          <img 
-            src={isCollapsed ? "/Logo.svg" : "/Logo_full.svg"} 
-            alt="WeGaS Logo" 
+          <img
+            src={isCollapsed ? "/Logo.svg" : "/Logo_full.svg"}
+            alt="WeGaS Logo"
           />
         </IconInner>
       </Content>
     </LogoWrapper>
   );
 }
-
 
 export default Logo;

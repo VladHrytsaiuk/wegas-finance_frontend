@@ -1,6 +1,9 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 
-export function useOtpInput(length: number = 6, onComplete?: (code: string) => void) {
+export function useOtpInput(
+  length: number = 6,
+  onComplete?: (code: string) => void,
+) {
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -24,7 +27,10 @@ export function useOtpInput(length: number = 6, onComplete?: (code: string) => v
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     if (e.key === "Backspace") {
       if (!otp[index] && index > 0) {
         // Move to previous and clear it

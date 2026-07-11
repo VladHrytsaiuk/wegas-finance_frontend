@@ -2,7 +2,7 @@ import { HiPlus, HiTag } from "react-icons/hi2";
 
 import Modal, { useModal } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { TagForm } from "../../components/tags/TagForm";
@@ -66,7 +66,7 @@ function TagsContent() {
         {/* CONTENT LIST */}
         <div style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
           {isLoading ? (
-            <CenteredSpinner />
+            <SettingsListSkeleton />
           ) : (
             <S.TagList>
               {tags.length === 0 ? (

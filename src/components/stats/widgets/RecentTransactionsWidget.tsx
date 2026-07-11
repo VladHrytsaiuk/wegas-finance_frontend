@@ -3,8 +3,8 @@ import { EmptyState } from "../../ui/EmptyState";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
-import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { TransactionItem } from "../../transactions/TransactionItem";
+import { RecentTransactionsBodySkeleton } from "../../ui/Skeleton/LoadingSkeletons";
 
 // Styles & Logic
 import * as S from "./RecentTransactionsWidget.styles";
@@ -56,7 +56,7 @@ export const RecentTransactionsWidget = (props: Props) => {
       </S.Header>
 
       {isLoadingTx ? (
-        <CenteredSpinner isContainer />
+        <RecentTransactionsBodySkeleton />
       ) : (
         <S.TableList>
           {recentItems.map((tx) => (

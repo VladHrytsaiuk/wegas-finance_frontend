@@ -12,7 +12,7 @@ import { ViewToggle } from "../../components/ui/ViewToggle";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { AccountsPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { HiCreditCard } from "react-icons/hi2";
 
 // Hook & Styles
@@ -58,7 +58,7 @@ function Accounts() {
   usePageTitle(t("navigation:general.accounts", "Рахунки"));
 
   if (isLoading)
-    return <AccountsPageSkeleton />;
+    return <ListPageSkeleton viewMode={viewMode} />;
   if (isError)
     return <S.ErrorState>{t("accounts:accountsPage.status_error")}</S.ErrorState>;
 

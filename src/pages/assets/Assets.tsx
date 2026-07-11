@@ -9,6 +9,7 @@ import AssetForm from "./AssetForm";
 import AssetsTable from "../../components/assets/AssetsTable";
 import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { HiOutlineCube } from "react-icons/hi2";
 
@@ -38,7 +39,7 @@ export default function Assets() {
     handleClearAll,
   } = useAssetsFilter(assets);
 
-  if (isLoading) return <CenteredSpinner />;
+  if (isLoading) return <ListPageSkeleton viewMode="table" />;
 
   return (
     <>

@@ -17,9 +17,9 @@ import type {
 
 // Components
 import { WidgetControls } from "./WidgetControls";
-import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { EmptyState } from "../../ui/EmptyState";
 import { HiOutlineChartBar } from "react-icons/hi2";
+import { TrendWidgetBodySkeleton } from "../../ui/Skeleton/LoadingSkeletons";
 
 // Styles & Hooks
 import * as S from "./TrendWidget.styles";
@@ -135,7 +135,7 @@ export const TrendWidget = (props: Props) => {
 
       <S.ChartWrapper>
         {isLoading ? (
-          <CenteredSpinner isContainer size="2.4rem" />
+          <TrendWidgetBodySkeleton />
         ) : chartData.length === 0 ? (
           <EmptyState
             compact

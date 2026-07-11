@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "../../components/ui/Button";
-import Spinner from "../../components/ui/Spinner";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import Modal, { useModal } from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
@@ -60,10 +60,10 @@ function UtilityContent() {
   const [activeMeter, setActiveMeter] = useState<UtilityMeter | null>(null);
 
   // Стабілізуємо хендлери для UtilityMeterCard
-  const handleMeterClick = useCallback(
-    (id: string) => navigate(`/utility/${id}`),
-    [navigate],
-  );
+  // const handleMeterClick = useCallback(
+  //   (id: string) => navigate(`/utility/${id}`),
+  //   [navigate],
+  // );
 
   const handleMeterEdit = useCallback(
     (meter: UtilityMeter) => {
@@ -106,7 +106,7 @@ function UtilityContent() {
     return () => resetPageTitle();
   }, [setPageTitle, resetPageTitle, t, meters.length]);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ListPageSkeleton viewMode="grid" />;
 
   const handlePaymentSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
@@ -125,16 +125,24 @@ function UtilityContent() {
   return (
     <>
       {isMobile ? (
-        <MobilePageHeader 
-          title={t("stats_utility:utilityPage.title")} 
+        <MobilePageHeader
+          title={t("stats_utility:utilityPage.title")}
           rightAction={
-            <Button 
-              variation="secondary" 
-              size="small" 
+            <Button
+              variation="secondary"
+              size="small"
               onClick={() => navigate("analytics")}
-              style={{ border: 'none', boxShadow: 'none', background: 'transparent', padding: '8px' }}
+              style={{
+                border: "none",
+                boxShadow: "none",
+                background: "transparent",
+                padding: "8px",
+              }}
             >
-              <HiChartBar size={24} style={{ color: 'var(--color-brand-600)' }} />
+              <HiChartBar
+                size={24}
+                style={{ color: "var(--color-brand-600)" }}
+              />
             </Button>
           }
         />
@@ -247,7 +255,7 @@ function UtilityContent() {
         </S.ModalWrapper>
 
         {isMobile && (
-          <FAB 
+          <FAB
             onClick={() => {
               setActiveMeter(null);
               open("create-meter");

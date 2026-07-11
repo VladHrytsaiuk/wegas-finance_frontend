@@ -3,10 +3,10 @@ import { Button } from "../../ui/Button";
 
 // --- ANIMATIONS ---
 
-const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`;
+// const fadeIn = keyframes`
+//   from { opacity: 0; }
+//   to { opacity: 1; }
+// `;
 
 const slideUp = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -15,15 +15,14 @@ const slideUp = keyframes`
 
 // --- LAYOUT ---
 
-
-
 export const ModalContainer = styled.div`
   width: 90%;
   max-width: 480px;
   background: var(--color-bg-surface);
   border-radius: 16px;
   border: 1px solid var(--color-border);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow-y: auto;
   max-height: 90%;
@@ -114,8 +113,8 @@ export const AmountBox = styled.div<{
       props.$isError
         ? "var(--color-red-600)"
         : props.$isSuccess
-        ? "var(--color-brand-600)"
-        : "var(--color-text-main)"};
+          ? "var(--color-brand-600)"
+          : "var(--color-text-main)"};
   }
 `;
 

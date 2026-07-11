@@ -6,9 +6,9 @@ import {
 } from "react-icons/hi2";
 
 // UI Components
-import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { Button } from "../ui/Button";
 import Checkbox from "../ui/Checkbox";
+import { ImportPreviewSkeleton } from "../ui/Skeleton/LoadingSkeletons";
 
 // Sub-components
 import UploadStep from "./UploadStep";
@@ -57,8 +57,6 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
     t,
   } = useImportModal({ account, onClose: onCloseModal });
 
-  if (isLoading) return <CenteredSpinner isContainer />;
-
   return (
     <S.Container>
       <S.Header>
@@ -71,6 +69,14 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
       </S.Header>
 
       <S.ContentWrapper>
+        {isLoading && (
+          <S.LoadingOverlay>
+            <S.LoadingContent>
+              <ImportPreviewSkeleton />
+            </S.LoadingContent>
+          </S.LoadingOverlay>
+        )}
+
         {step === "upload" ? (
           <UploadStep
             bankType={bankType}
@@ -183,6 +189,7 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
                 <Button
                   disabled={
                     selectedIndices.size === 0 ||
+                    isLoading ||
                     isSaving ||
                     hasInvalidTransactions
                   }

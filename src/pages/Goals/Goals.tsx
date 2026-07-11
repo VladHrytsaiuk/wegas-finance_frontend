@@ -4,6 +4,7 @@ import { HiPlus, HiOutlineFlag } from "react-icons/hi2";
 
 // Components
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
@@ -99,12 +100,7 @@ function Goals() {
   }, [setPageTitle, resetPageTitle, t, goals.length]);
 
   if (isLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("common:ui.loading_goals", "Завантаження цілей...")}
-      />
-    );
+    return <ListPageSkeleton viewMode="grid" />;
 
   return (
     <>

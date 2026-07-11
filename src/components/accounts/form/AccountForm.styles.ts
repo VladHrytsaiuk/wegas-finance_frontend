@@ -338,34 +338,34 @@ export const SkinSelectorFooter = styled.div`
   justify-content: flex-end;
 `;
 
-const CardBase = css`
-  position: relative;
-  width: 100%;
+// const CardBase = css`
+//   position: relative;
+//   width: 100%;
 
-  /* 🔥 FIX 1: Задаємо min-height, щоб картка не була "сплюснутою" */
-  min-height: 180px;
-  /* aspect-ratio залишаємо як рекомендацію, але min-height головніший */
-  aspect-ratio: 1.586;
+//   /* 🔥 FIX 1: Задаємо min-height, щоб картка не була "сплюснутою" */
+//   min-height: 180px;
+//   /* aspect-ratio залишаємо як рекомендацію, але min-height головніший */
+//   aspect-ratio: 1.586;
 
-  border-radius: 12px;
+//   border-radius: 12px;
 
-  /* 🔥 FIX 2: Зменшуємо padding з 1.2rem до 1rem (або 1.1), щоб було більше місця */
-  padding: 1rem;
+//   /* 🔥 FIX 2: Зменшуємо padding з 1.2rem до 1rem (або 1.1), щоб було більше місця */
+//   padding: 1rem;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  cursor: pointer;
-  box-sizing: border-box;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+//   overflow: hidden;
+//   transition:
+//     transform 0.2s ease,
+//     box-shadow 0.2s ease;
+//   cursor: pointer;
+//   box-sizing: border-box;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-  }
-`;
+//   &:hover {
+//     transform: translateY(-4px);
+//     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+//     z-index: 10;
+//   }
+// `;

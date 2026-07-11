@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -18,10 +18,10 @@ import { SettingsProvider } from "./context/SettingsContext";
 import { HeaderProvider } from "./context/HeaderContext";
 import { WorkspaceProvider } from "./context/WorkspaceContext";
 import { SyncProvider } from "./context/SyncContext";
+import { BootstrapProvider, useBootstrap } from "./context/BootstrapContext";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/ui/AppLayout";
-import { CenteredSpinner } from "./components/ui/CenteredSpinner";
 
 // --- LAZY LOADED PAGES ---
 const Login = lazy(() => import("./pages/auth/Login"));
@@ -94,19 +94,58 @@ type ModalLocationState = {
   background?: Location;
 };
 
+function BootStageFallback({
+  stage,
+}: {
+  stage: "resources";
+}) {
+  const { setStage } = useBootstrap();
+
+  useEffect(() => {
+    setStage(stage);
+  }, [setStage, stage]);
+
+  return null;
+}
+
+function BootStageRelease() {
+  const { stage, setStage } = useBootstrap();
+
+  useEffect(() => {
+    if (stage !== "resources") return;
+
+    let cancelled = false;
+
+    const release = () => {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          window.setTimeout(() => {
+            if (!cancelled) {
+              setStage("hidden");
+            }
+          }, 120);
+        });
+      });
+    };
+
+    release();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [stage, setStage]);
+
+  return null;
+}
+
 function AppRoutes() {
   const location = useLocation();
   const background = (location.state as ModalLocationState | null)?.background;
 
   return (
-    <Suspense
-      fallback={
-        <CenteredSpinner
-          fullHeight
-          message="Завантаження ресурсів..."
-        />
-      }
-    >
+    <Suspense fallback={<BootStageFallback stage="resources" />}>
+      <BootStageRelease />
+
       <Routes location={background || location}>
         <Route
           element={
@@ -197,28 +236,30 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-      <AuthProvider>
-        <SyncProvider>
-          <ThemeProvider>
-            <SettingsProvider>
-              <HeaderProvider>
-                <GlobalStyle />
-                <BrowserRouter>
-                  <WorkspaceProvider>
-                    <AppRoutes />
-                  </WorkspaceProvider>
-                </BrowserRouter>
-                <Toaster
-                  position="top-center"
-                  gutter={12}
-                  containerStyle={TOASTER_CONTAINER_STYLE}
-                  toastOptions={TOASTER_OPTIONS}
-                />
-              </HeaderProvider>
-            </SettingsProvider>
-          </ThemeProvider>
-        </SyncProvider>
-      </AuthProvider>
+      <BootstrapProvider>
+        <AuthProvider>
+          <SyncProvider>
+            <ThemeProvider>
+              <SettingsProvider>
+                <HeaderProvider>
+                  <GlobalStyle />
+                  <BrowserRouter>
+                    <WorkspaceProvider>
+                      <AppRoutes />
+                    </WorkspaceProvider>
+                  </BrowserRouter>
+                  <Toaster
+                    position="top-center"
+                    gutter={12}
+                    containerStyle={TOASTER_CONTAINER_STYLE}
+                    toastOptions={TOASTER_OPTIONS}
+                  />
+                </HeaderProvider>
+              </SettingsProvider>
+            </ThemeProvider>
+          </SyncProvider>
+        </AuthProvider>
+      </BootstrapProvider>
     </QueryClientProvider>
   );
 }

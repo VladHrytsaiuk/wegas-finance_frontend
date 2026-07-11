@@ -2,8 +2,8 @@ import React from "react";
 import { HiArrowLongRight, HiCreditCard } from "react-icons/hi2";
 
 // Components
-import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { EmptyState } from "../../ui/EmptyState";
+import { AccountsWidgetBodySkeleton } from "../../ui/Skeleton/LoadingSkeletons";
 
 // Styles & Logic
 import * as S from "./AccountsWidget.styles";
@@ -38,7 +38,7 @@ export const AccountsWidget = React.memo(() => {
       </S.Header>
 
       {isLoading ? (
-        <CenteredSpinner isContainer />
+        <AccountsWidgetBodySkeleton />
       ) : accounts.length === 0 ? (
         <EmptyState
           compact

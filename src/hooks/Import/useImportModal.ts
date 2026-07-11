@@ -9,6 +9,7 @@ import { uploadBankStatementApi } from "../../services/apiImport";
 import { batchCreateTransactionsApi } from "../../services/apiTransactions";
 import { getCategoriesApi } from "../../services/apiCategories";
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
+import { waitForNextPaint } from "../../utils/render";
 
 // Types
 import type {
@@ -112,6 +113,8 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
   const processFile = async (file: File) => {
     setIsLoading(true);
     try {
+      await waitForNextPaint();
+
       // Використовуємо account.id
       const data = await uploadBankStatementApi(account.id, bankType, file);
 

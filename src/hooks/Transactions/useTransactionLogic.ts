@@ -17,6 +17,7 @@ import {
 } from "../../services/apiTransactions";
 import { compressImage } from "../../utils/compressor";
 import { isModifierPressed } from "../../utils/platform";
+import { waitForNextPaint } from "../../utils/render";
 import type { Tag, Transaction, TransactionItem } from "../../types";
 
 type EditableTransactionItem = Partial<TransactionItem> & {
@@ -453,6 +454,8 @@ export const useTransactionLogic = ({
     if (e.target.files?.length) {
       setIsCompressing(true);
       try {
+        await waitForNextPaint();
+
         const newFiles = Array.from(e.target.files);
         const compressedFiles = await Promise.all(
           newFiles.map((file) => compressImage(file)),

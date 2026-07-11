@@ -12,7 +12,7 @@ import Modal, {
 } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { UserCard } from "../../components/users/UserCard";
 import { UserForm } from "../../components/users/UserForms";
@@ -129,7 +129,7 @@ function FamilySettings() {
       <S.FamilyContainer style={{ padding: isMobile ? "0" : undefined }}>
 
         <section style={{ padding: isMobile ? "16px" : undefined }}>
-          {isLoading && <CenteredSpinner />}
+          {isLoading && <SettingsListSkeleton />}
 
           {!isLoading && users.length === 0 && (
             <EmptyState

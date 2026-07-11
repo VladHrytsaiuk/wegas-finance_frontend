@@ -19,6 +19,24 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
+`;
+
+export const LoadingOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: color-mix(in srgb, var(--color-bg-surface) 82%, transparent);
+  backdrop-filter: blur(2px);
+  z-index: 20;
+`;
+
+export const LoadingContent = styled.div`
+  width: 100%;
+  max-width: 1000px;
 `;
 
 export const TableContainer = styled.div`

@@ -12,6 +12,7 @@ import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import {
   CHART_COLORS,
@@ -47,7 +48,7 @@ export default function UtilityAnalyticsPage() {
   } = useUtilityAnalytics();
   const { t } = useTranslation();
 
-  if (isLoading) return <CenteredSpinner isContainer />;
+  if (isLoading) return <DetailPageSkeleton />;
 
   return (
     <PageContainer>

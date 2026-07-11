@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { getMeApi } from "../services/apiUsers";
-import CenteredSpinner from "./ui/CenteredSpinner";
+import { useBootstrap } from "../context/BootstrapContext";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { setStage } = useBootstrap();
 
   const token = localStorage.getItem("token");
 
@@ -66,13 +65,22 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     [isLoading, isFetching, isAuthenticated, navigate],
   );
 
+  useEffect(() => {
+    if ((isLoading || (isFetching && !user)) && token) {
+      setStage("auth");
+      return;
+    }
+
+    if (token && isAuthenticated) {
+      setStage("resources");
+      return;
+    }
+
+    setStage("hidden");
+  }, [isLoading, isFetching, user, token, isAuthenticated, setStage]);
+
   if ((isLoading || (isFetching && !user)) && !!token) {
-    return (
-      <CenteredSpinner
-        fullHeight
-        message={t("common:ui.verifying_auth", "Перевірка авторизації...")}
-      />
-    );
+    return null;
   }
 
   if (isAuthenticated && !isLocked) {

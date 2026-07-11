@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -17,7 +17,10 @@ export const useAccountsPage = () => {
   const { setPageTitle, resetPageTitle } = useHeader();
 
   useEffect(() => {
-    setPageTitle(t("accounts:accountsPage.title"), t("accounts:accountsPage.subtitle"));
+    setPageTitle(
+      t("accounts:accountsPage.title"),
+      t("accounts:accountsPage.subtitle"),
+    );
     return () => resetPageTitle();
   }, [t, setPageTitle, resetPageTitle]);
 

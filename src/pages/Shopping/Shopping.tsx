@@ -3,6 +3,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlusCircle } from "react-icons/hi2";
 
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { Button } from "../../components/ui/Button";
 import { NoteOptions } from "../../components/shopping/NoteOptions";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
@@ -88,12 +89,7 @@ function ShoppingContent() {
   };
 
   if (isLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("common:ui.loading_shopping", "Завантаження списків...")}
-      />
-    );
+    return <ListPageSkeleton viewMode="grid" />;
 
   return (
     <>

@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 // --- GLOBAL MODAL SETTINGS ---
 export const ModalContainerOverrides = {
@@ -82,7 +82,7 @@ export const FormFooter = styled.div`
     font-size: 0.95rem;
     padding: 0 1rem;
     min-width: 100px;
-    
+
     @media (min-width: 768px) {
       min-width: 120px;
     }

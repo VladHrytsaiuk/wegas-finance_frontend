@@ -8,6 +8,7 @@ import Modal, { useModal } from "../../components/ui/Modal";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { FAB } from "../../components/ui/FAB";
 
 import CreateWishModal from "../../components/wishlist/CreateWishModal";
@@ -79,7 +80,7 @@ function WishlistItemsContent() {
     return () => resetPageTitle();
   }, [groupName, setPageTitle, resetPageTitle]);
 
-  if (isLoading) return <CenteredSpinner isContainer />;
+  if (isLoading) return <ListPageSkeleton viewMode="grid" />;
 
   return (
     <>

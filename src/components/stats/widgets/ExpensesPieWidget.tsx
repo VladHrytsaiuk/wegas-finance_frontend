@@ -6,7 +6,7 @@ import { SmartIcon } from "../../../utils/IconMap";
 
 // Components
 import { WidgetControls } from "./WidgetControls";
-import { CenteredSpinner } from "../../ui/CenteredSpinner";
+import { PieWidgetBodySkeleton } from "../../ui/Skeleton/LoadingSkeletons";
 
 // Styles & Logic
 import * as S from "./ExpensesPieWidget.styles";
@@ -152,7 +152,7 @@ export const ExpensesPieWidget = (props: Props) => {
       )}
 
       {isLoading ? (
-        <CenteredSpinner isContainer />
+        <PieWidgetBodySkeleton />
       ) : chartData.length === 0 ? (
         <EmptyState
           compact

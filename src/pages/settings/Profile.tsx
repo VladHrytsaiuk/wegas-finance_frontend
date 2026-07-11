@@ -10,7 +10,7 @@ import axios from "axios";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import Modal from "../../components/ui/Modal";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 
 import {
   useProfileForm,
@@ -132,7 +132,7 @@ function Profile() {
     prevIsSyncing.current = isSyncing;
   }, [isSyncing]);
 
-  if (isLoading) return <CenteredSpinner />;
+  if (isLoading) return <SettingsListSkeleton />;
 
   return (
     <Modal>

@@ -9,6 +9,7 @@ import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar"
 import { CategoryForm } from "../../components/categories/CategoryForm";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { FAB } from "../../components/ui/FAB";
 
 // Styles & Logic
@@ -104,7 +105,7 @@ function CategoriesContent() {
         {/* CONTENT */}
         <S.TreeContainer style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
           {isLoading ? (
-            <CenteredSpinner isContainer />
+            <SettingsListSkeleton />
           ) : categoryTreeRoots.length === 0 ? (
             <EmptyState
               isFullPage={false}

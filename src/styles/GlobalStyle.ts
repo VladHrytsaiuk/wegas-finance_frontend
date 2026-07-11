@@ -6,6 +6,7 @@ export const GlobalStyle = createGlobalStyle`
 /* --- LIGHT THEME --- */
 --color-bg-page: #f3f4f6;
 --color-bg-surface: #ffffff;
+--color-bg-secondary: #f3f4f6;
 --color-text-main: #1f2937;
 --color-text-secondary: #6b7280;
 --color-text-tertiary: #9ca3af;
@@ -59,6 +60,7 @@ export const GlobalStyle = createGlobalStyle`
 [data-theme="dark"] {
 --color-bg-page: #111827;
 --color-bg-surface: #1f2937;
+--color-bg-secondary: #111827;
 --color-text-main: #f9fafb;
 --color-text-secondary: #d1d5db;
 --color-text-tertiary: #9ca3af;

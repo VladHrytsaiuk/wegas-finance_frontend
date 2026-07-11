@@ -3,8 +3,6 @@ import styled, { css } from "styled-components";
 // --- LAYOUT ---
 export const PageContainer = styled.div`
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;

@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { HiExclamationTriangle } from "react-icons/hi2";
 import { Button } from "../ui/Button";

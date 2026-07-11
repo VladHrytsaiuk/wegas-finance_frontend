@@ -6,8 +6,8 @@ import Modal, { useModal } from "../../components/ui/Modal";
 import { CounterpartyTree } from "../../components/counterparties/CounterpartyTree";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CounterpartyModals } from "../../components/counterparties/CounterpartyModals";
+import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 
 // Styles & Logic
 import * as S from "./Counterparties.styles";
@@ -107,7 +107,7 @@ function CounterpartiesContent() {
         {/* --- Tree Content --- */}
         <S.TreeContainer style={{ padding: isMobile ? "0 16px 80px 16px" : undefined }}>
           {isLoading ? (
-            <CenteredSpinner isContainer />
+            <SettingsListSkeleton />
           ) : treeRoots.length === 0 ? (
             <EmptyState
               isFullPage={false}

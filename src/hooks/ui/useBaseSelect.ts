@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, useCallback, RefObject } from "react";
-import { focusNextElement } from "../../utils/focusUtils"; // Перевір шлях
+import { useState, useRef, useEffect, useCallback } from "react";
 
 interface UseBaseSelectProps {
   disabled?: boolean;
@@ -19,7 +18,7 @@ interface DropdownCoords {
 
 export const useBaseSelect = ({
   disabled,
-  menuWidth,
+
   isMulti,
   onSearchChange,
   onClear,
@@ -72,7 +71,7 @@ export const useBaseSelect = ({
 
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
-    
+
     // Dynamic threshold: if space below is less than 280px and there's more space above
     const showAbove = spaceBelow < 280 && spaceAbove > spaceBelow;
 
@@ -113,7 +112,7 @@ export const useBaseSelect = ({
         e.preventDefault();
         // Якщо натиснули Tab або ArrowDown в інпуті - переходимо до списку
         const firstFocusable = dropdownRef.current?.querySelector(
-          "button, [href], [role='button'][tabindex='0']"
+          "button, [href], [role='button'][tabindex='0']",
         ) as HTMLElement;
         firstFocusable?.focus();
         return;
@@ -121,13 +120,15 @@ export const useBaseSelect = ({
       if (e.key === "Enter") {
         e.preventDefault();
         // Пріоритет: шукаємо елемент з атрибутом data-autofocus="true"
-        const autoFocused = dropdownRef.current?.querySelector('[data-autofocus="true"]') as HTMLElement;
+        const autoFocused = dropdownRef.current?.querySelector(
+          '[data-autofocus="true"]',
+        ) as HTMLElement;
         if (autoFocused) {
           autoFocused.click();
         } else {
           // Якщо немає явного авто-фокусу, клікаємо по першому ліпшому
           const firstFocusable = dropdownRef.current?.querySelector(
-            "button, [role='button'][tabindex='0'], [href]"
+            "button, [role='button'][tabindex='0'], [href]",
           ) as HTMLElement;
           if (firstFocusable) firstFocusable.click();
         }
@@ -152,7 +153,8 @@ export const useBaseSelect = ({
   useEffect(() => {
     if (isOpen && onSearchChange && dropdownRef.current) {
       // Видаляємо старі підсвічування
-      const highlighted = dropdownRef.current.querySelectorAll("[data-autofocus]");
+      const highlighted =
+        dropdownRef.current.querySelectorAll("[data-autofocus]");
       highlighted.forEach((el) => el.removeAttribute("data-autofocus"));
 
       if (!searchValue) return;
@@ -161,23 +163,32 @@ export const useBaseSelect = ({
       // 1. Спочатку шукаємо "кінцеві" вузли (без aria-expanded або закриті), які містять текст
       // 2. Якщо таких немає, беремо будь-який перший фокусабельний
       const query = searchValue.toLowerCase();
-      
+
       const allFocusable = Array.from(
-        dropdownRef.current.querySelectorAll("button, [role='button'][tabindex='0'], [href]")
+        dropdownRef.current.querySelectorAll(
+          "button, [role='button'][tabindex='0'], [href]",
+        ),
       ) as HTMLElement[];
 
       // Шукаємо елемент, текст якого максимально відповідає пошуку (пріоритет на підкатегорії)
-      const bestMatch = allFocusable.find(el => {
-        const text = el.textContent?.toLowerCase() || "";
-        // Перевіряємо, чи це кінцевий елемент (не має HiChevronDown або aria-expanded="true")
-        const isLeaf = !el.querySelector('svg') || el.getAttribute('aria-expanded') !== 'true';
-        return isLeaf && text.includes(query);
-      }) || allFocusable.find(el => el.textContent?.toLowerCase().includes(query)) || allFocusable[0];
+      const bestMatch =
+        allFocusable.find((el) => {
+          const text = el.textContent?.toLowerCase() || "";
+          // Перевіряємо, чи це кінцевий елемент (не має HiChevronDown або aria-expanded="true")
+          const isLeaf =
+            !el.querySelector("svg") ||
+            el.getAttribute("aria-expanded") !== "true";
+          return isLeaf && text.includes(query);
+        }) ||
+        allFocusable.find((el) =>
+          el.textContent?.toLowerCase().includes(query),
+        ) ||
+        allFocusable[0];
 
       if (bestMatch) {
         bestMatch.setAttribute("data-autofocus", "true");
         // Scroll to best match if it's not in view
-        bestMatch.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        bestMatch.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     }
   }, [isOpen, onSearchChange, dropdownRef, searchValue]);
@@ -191,7 +202,7 @@ export const useBaseSelect = ({
     }
 
     const focusableElements = dropdownRef.current?.querySelectorAll(
-      "button, [href], input, [role='button'], [tabindex]:not([tabindex='-1'])"
+      "button, [href], input, [role='button'], [tabindex]:not([tabindex='-1'])",
     );
 
     if (!focusableElements || focusableElements.length === 0) return;
@@ -209,14 +220,14 @@ export const useBaseSelect = ({
         searchInputRef.current?.focus();
         return;
       }
-      
+
       // Якщо Tab на останньому елементі - закриваємо
       if (!e.shiftKey && currentIndex === elementsArr.length - 1) {
         setIsOpen(false);
         // Дозволяємо браузеру перейти далі
         return;
       }
-      
+
       // Інакше дозволяємо звичайний Tab між елементами (якщо вони tabIndex=0)
       return;
     }
@@ -231,14 +242,16 @@ export const useBaseSelect = ({
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      const nextIndex = currentIndex + 1 < elementsArr.length ? currentIndex + 1 : 0;
+      const nextIndex =
+        currentIndex + 1 < elementsArr.length ? currentIndex + 1 : 0;
       elementsArr[nextIndex]?.focus();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (currentIndex === 0 && onSearchChange) {
         searchInputRef.current?.focus();
       } else {
-        const nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : elementsArr.length - 1;
+        const nextIndex =
+          currentIndex - 1 >= 0 ? currentIndex - 1 : elementsArr.length - 1;
         elementsArr[nextIndex]?.focus();
       }
     }
@@ -271,7 +284,7 @@ export const useBaseSelect = ({
         searchInputRef.current.focus();
       } else if (dropdownRef.current) {
         const firstFocusable = dropdownRef.current.querySelector(
-          "button, [href], input, [tabindex]:not([tabindex='-1'])"
+          "button, [href], input, [tabindex]:not([tabindex='-1'])",
         ) as HTMLElement;
         if (firstFocusable) firstFocusable.focus();
         else dropdownRef.current.focus();

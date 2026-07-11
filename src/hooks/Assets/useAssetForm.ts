@@ -15,6 +15,7 @@ import {
 } from "../../services/apiAssets";
 import type { Asset, AssetDocument } from "../../types";
 import { compressImage } from "../../utils/compressor";
+import { waitForNextPaint } from "../../utils/render";
 
 const toDateInput = (ts?: number) =>
   ts ? new Date(ts).toISOString().split("T")[0] : "";
@@ -220,6 +221,8 @@ export const useAssetForm = ({
     if (e.target.files && e.target.files.length > 0) {
       setIsCompressing(true);
       try {
+        await waitForNextPaint();
+
         const selectedFiles = Array.from(e.target.files);
         const compressedFiles = await Promise.all(
           selectedFiles.map((file) => compressImage(file)),

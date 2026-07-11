@@ -10,8 +10,8 @@ import {
   HiChevronRight,
 } from "react-icons/hi2";
 
-// UI Components
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { Button } from "../../components/ui/Button";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
@@ -154,7 +154,7 @@ function Debts() {
     );
   };
 
-  if (isLoading) return <CenteredSpinner />;
+  if (isLoading) return <ListPageSkeleton viewMode={viewMode} />;
 
   return (
     <S.PageContainer>

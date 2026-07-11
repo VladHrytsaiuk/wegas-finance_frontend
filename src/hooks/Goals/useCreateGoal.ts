@@ -12,6 +12,7 @@ import {
 import { createAccountApi } from "../../services/apiAccounts";
 import { getStorageTypesApi } from "../../services/apiStorageTypes";
 import type { Goal, StorageType } from "../../types";
+import { waitForNextPaint } from "../../utils/render";
 
 interface ErrorResponse {
   error?: string;
@@ -61,6 +62,8 @@ export const useCreateGoal = (
     mutationFn: async (data: GoalFormData) => {
       setIsLoading(true);
       try {
+        await waitForNextPaint();
+
         // --- 1. Payload ---
         const goalPayload = {
           name: data.name,
