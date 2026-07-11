@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useAccountsPage } from "../../../hooks/Accounts/useAccountsPage";
-import { CenteredSpinner } from "../../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { HiCreditCard, HiEllipsisVertical } from "react-icons/hi2";
 import { FAB } from "../../../components/ui/FAB";
 import { formatMoney } from "../../../utils/helpers";
 import Modal from "../../../components/ui/Modal";
 import ConfirmDelete from "../../../components/ui/ConfirmDelete";
+import { MobileAccountsSkeleton } from "../../../components/ui/Skeleton/LoadingSkeletons";
 
 const StyledMobileAccounts = styled.div`
   display: flex;
@@ -115,7 +115,7 @@ function MobileAccounts() {
 
   usePageTitle(t("navigation:general.accounts"));
 
-  if (isLoading) return <CenteredSpinner fullHeight />;
+  if (isLoading) return <MobileAccountsSkeleton />;
   if (isError)
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>

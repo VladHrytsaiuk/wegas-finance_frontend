@@ -5,10 +5,13 @@ import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useTransactionsPage } from "../../../hooks/Transactions/useTransactionsPage";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
 import { CenteredSpinner } from "../../../components/ui/CenteredSpinner";
+import { MobileTransactionsSkeleton } from "../../../components/ui/Skeleton/LoadingSkeletons";
 import { HiArrowDownTray } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FAB } from "../../../components/ui/FAB";
 import Modal, { useModal } from "../../../components/ui/Modal";
+import { Button } from "../../../components/ui/Button";
+import MobilePageHeader from "../../../components/mobile/MobilePageHeader";
 
 const ExportModal = lazy(() => import("../../../pages/settings/ExportPage"));
 
@@ -63,7 +66,7 @@ function MobileTransactionHistoryContent() {
     }
   }, [accountId, handleFilterChange, handleClearAll]);
 
-  if (isLoading) return <CenteredSpinner fullHeight />;
+  if (isLoading) return <MobileTransactionsSkeleton />;
 
   return (
     <StyledHistory>

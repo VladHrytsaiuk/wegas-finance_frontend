@@ -6,14 +6,16 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 
 // UI Components
 import Modal from "../../components/ui/Modal";
-import Spinner from "../../components/ui/Spinner";
 import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
 import { Pagination } from "../../components/ui/Pagination";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { TransactionsPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
+import {
+  TransactionsLoadingOverlaySkeleton,
+  TransactionsPageSkeleton,
+} from "../../components/ui/Skeleton/LoadingSkeletons";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
 // Hook & Styles
@@ -150,23 +152,7 @@ function Transactions() {
           >
             {/* Шар завантаження поверх таблиці при пошуку/фільтрації */}
             {isFetching && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "rgba(255, 255, 255, 0.6)", // Напівпрозорий фон
-                  zIndex: 10,
-                  display: "flex",
-                  justifyContent: "center",
-                  paddingTop: "50px",
-                  backdropFilter: "blur(1px)", // Легке розмиття (опціонально)
-                }}
-              >
-                <Spinner />
-              </div>
+              <TransactionsLoadingOverlaySkeleton />
             )}
 
             {/* Контент з прозорістю під час пошуку */}
