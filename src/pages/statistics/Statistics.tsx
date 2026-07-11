@@ -9,7 +9,10 @@ import { DetailedTable } from "../../components/stats/DetailedTable";
 import Modal from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import {
+  ExportPageSkeleton,
+  StatisticsPageSkeleton,
+} from "../../components/ui/Skeleton/LoadingSkeletons";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { FAB } from "../../components/ui/FAB";
 
@@ -115,9 +118,7 @@ export const Statistics = () => {
         </div>
 
         {isLoading && enrichedData.length === 0 ? (
-          <div style={{ height: "450px", position: "relative" }}>
-            <CenteredSpinner isContainer />
-          </div>
+          <StatisticsPageSkeleton />
         ) : enrichedData.length === 0 ? (
           <EmptyState
             icon={<HiChartPie />}
@@ -148,7 +149,7 @@ export const Statistics = () => {
         )}
 
         <Modal.Window name="export-all">
-          <Suspense fallback={<CenteredSpinner isContainer />}>
+          <Suspense fallback={<ExportPageSkeleton />}>
             <ExportPage
               initialFrom={filter.from}
               initialTo={filter.to}

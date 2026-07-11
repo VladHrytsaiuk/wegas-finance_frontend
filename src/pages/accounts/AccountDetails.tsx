@@ -18,8 +18,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
 import Modal from "../../components/ui/Modal";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
-import { AccountDetailsSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
+import {
+  AccountDetailsSkeleton,
+  ExportPageSkeleton,
+} from "../../components/ui/Skeleton/LoadingSkeletons";
 import { AccountCard } from "../../components/accounts/AccountCard";
 import { AccountActions } from "../../components/accounts/AccountActions";
 import TransactionsModal from "../../components/transactions/TransactionsModal";
@@ -290,7 +292,7 @@ function AccountDetails() {
           <TransactionsModal accountId={accountId} />
         </Modal.Window>
         <Modal.Window name="export-account">
-          <Suspense fallback={<CenteredSpinner isContainer />}>
+          <Suspense fallback={<ExportPageSkeleton />}>
             <ExportModal initialAccountIds={[accountId!]} />
           </Suspense>
         </Modal.Window>

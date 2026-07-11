@@ -717,6 +717,172 @@ export function TransactionsLoadingOverlaySkeleton() {
   );
 }
 
+export function StatisticsPageSkeleton() {
+  return (
+    <PageSkeletonContainer>
+      <TopActionsRow>
+        <TopActionsLeft>
+          <SkeletonBlock $width="180px" $height="42px" $radius="12px" />
+          <SkeletonBlock $width="220px" $height="40px" $radius="12px" />
+        </TopActionsLeft>
+        <TopActionsRight>
+          <SkeletonBlock $width="136px" $height="40px" $radius="12px" />
+        </TopActionsRight>
+      </TopActionsRow>
+
+      <SkeletonBlock $height="400px" $radius="20px" />
+
+      <FilterPillRow>
+        <SkeletonBlock $width="126px" $height="38px" $radius="12px" />
+        <SkeletonBlock $width="150px" $height="38px" $radius="12px" />
+        <SkeletonBlock $width="102px" $height="38px" $radius="12px" />
+      </FilterPillRow>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "minmax(300px, 4fr) 6fr",
+          gap: "1.5rem",
+          alignItems: "start",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.9rem",
+            height: "450px",
+            padding: "1.25rem",
+            borderRadius: "16px",
+            border: "1px solid var(--color-border)",
+            background: "var(--color-bg-surface)",
+          }}
+        >
+          <SkeletonBlock $width="38%" $height="1rem" $radius="10px" />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(180px, 1fr) minmax(140px, 0.9fr)",
+              alignItems: "center",
+              gap: "1rem",
+              flex: 1,
+            }}
+          >
+            <SkeletonBlock $height="220px" $radius="999px" />
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div
+                  key={index}
+                  style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}
+                >
+                  <SkeletonBlock $width="14px" $height="14px" $radius="999px" />
+                  <SkeletonBlock $width="100%" $height="0.85rem" $radius="10px" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.9rem",
+            height: "450px",
+            padding: "1.25rem",
+            borderRadius: "16px",
+            border: "1px solid var(--color-border)",
+            background: "var(--color-bg-surface)",
+          }}
+        >
+          <SkeletonBlock $width="28%" $height="1rem" $radius="10px" />
+          {Array.from({ length: 7 }).map((_, index) => (
+            <div
+              key={index}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0, 1.3fr) 84px 72px",
+                gap: "0.75rem",
+                alignItems: "center",
+              }}
+            >
+              <SkeletonBlock $width={index % 2 === 0 ? "82%" : "68%"} $radius="10px" />
+              <SkeletonBlock $width="100%" $radius="10px" />
+              <SkeletonBlock $width="100%" $radius="10px" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </PageSkeletonContainer>
+  );
+}
+
+export function ExportPageSkeleton() {
+  return (
+    <PageSkeletonContainer>
+      <ToolbarTopRow>
+        <DetailHeaderWrap>
+          <SkeletonBlock $width="180px" $height="1.8rem" $radius="12px" />
+          <SkeletonBlock $width="320px" $height="0.9rem" $radius="10px" />
+        </DetailHeaderWrap>
+        <SkeletonBlock $width="150px" $height="40px" $radius="12px" />
+      </ToolbarTopRow>
+
+      <FilterPillRow style={{ gap: "1rem", marginBottom: "0.25rem" }}>
+        <SkeletonBlock $width="160px" $height="42px" $radius="10px" />
+        <SkeletonBlock $width="120px" $height="42px" $radius="10px" />
+        <SkeletonBlock $width="120px" $height="42px" $radius="10px" />
+      </FilterPillRow>
+
+      <DetailCard style={{ width: "100%", minHeight: "460px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <SkeletonBlock $width="110px" $height="0.8rem" $radius="8px" />
+          <InlineControlsRow>
+            <SkeletonBlock $width="260px" $height="42px" $radius="12px" />
+            <SkeletonBlock $width="1px" $height="40px" $radius="2px" />
+            <SkeletonBlock $width="220px" $height="42px" $radius="12px" />
+          </InlineControlsRow>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <SkeletonBlock $width="96px" $height="0.8rem" $radius="8px" />
+          <InlineControlsRow>
+            <SkeletonBlock $width="160px" $height="42px" $radius="12px" />
+            <SkeletonBlock $width="200px" $height="42px" $radius="12px" />
+            <SkeletonBlock $width="200px" $height="42px" $radius="12px" />
+            <SkeletonBlock $width="160px" $height="42px" $radius="12px" />
+          </InlineControlsRow>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginTop: "0.25rem" }}>
+          <SkeletonBlock $width="104px" $height="0.8rem" $radius="8px" />
+          <FilterPillRow style={{ gap: "0.75rem" }}>
+            <SkeletonBlock $width="112px" $height="40px" $radius="10px" />
+            <SkeletonBlock $width="112px" $height="40px" $radius="10px" />
+            <SkeletonBlock $width="112px" $height="40px" $radius="10px" />
+          </FilterPillRow>
+        </div>
+
+        <div
+          style={{
+            marginTop: "0.25rem",
+            padding: "1rem",
+            borderRadius: "12px",
+            background: "var(--color-bg-page)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.65rem",
+          }}
+        >
+          <SkeletonBlock $width="82%" $height="0.85rem" $radius="8px" />
+          <SkeletonBlock $width="68%" $height="0.85rem" $radius="8px" />
+          <SkeletonBlock $width="74%" $height="0.85rem" $radius="8px" />
+        </div>
+      </DetailCard>
+    </PageSkeletonContainer>
+  );
+}
+
 export function DashboardSummaryCardSkeleton() {
   return (
     <div

@@ -4,8 +4,10 @@ import { useTranslation } from "react-i18next";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useTransactionsPage } from "../../../hooks/Transactions/useTransactionsPage";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
-import { CenteredSpinner } from "../../../components/ui/CenteredSpinner";
-import { MobileTransactionsSkeleton } from "../../../components/ui/Skeleton/LoadingSkeletons";
+import {
+  ExportPageSkeleton,
+  MobileTransactionsSkeleton,
+} from "../../../components/ui/Skeleton/LoadingSkeletons";
 import { HiArrowDownTray } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FAB } from "../../../components/ui/FAB";
@@ -104,7 +106,7 @@ function MobileTransactionHistoryContent() {
       />
 
       <Modal.Window name="export-all">
-        <Suspense fallback={<CenteredSpinner isContainer />}>
+        <Suspense fallback={<ExportPageSkeleton />}>
           <ExportModal />
         </Suspense>
       </Modal.Window>

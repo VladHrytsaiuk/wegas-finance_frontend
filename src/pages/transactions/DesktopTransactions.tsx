@@ -10,9 +10,9 @@ import { Button } from "../../components/ui/Button";
 import { TransactionsTable } from "../../components/transactions/TransactionsTable";
 import { Pagination } from "../../components/ui/Pagination";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../components/ui/EmptyState";
 import {
+  ExportPageSkeleton,
   TransactionsLoadingOverlaySkeleton,
   TransactionsPageSkeleton,
 } from "../../components/ui/Skeleton/LoadingSkeletons";
@@ -194,7 +194,7 @@ function Transactions() {
         )}
 
         <Modal.Window name="export-all">
-          <Suspense fallback={<CenteredSpinner isContainer />}>
+          <Suspense fallback={<ExportPageSkeleton />}>
             <ExportModal />
           </Suspense>
         </Modal.Window>

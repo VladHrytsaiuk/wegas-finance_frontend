@@ -11,7 +11,6 @@ import {
 import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { EmptyState } from "../../components/ui/EmptyState";
 import {

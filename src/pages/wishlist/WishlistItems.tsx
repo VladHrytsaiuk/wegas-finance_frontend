@@ -7,7 +7,6 @@ import { Button } from "../../components/ui/Button";
 import Modal, { useModal } from "../../components/ui/Modal";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { EmptyState } from "../../components/ui/EmptyState";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { FAB } from "../../components/ui/FAB";
 
