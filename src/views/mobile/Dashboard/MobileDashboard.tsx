@@ -354,6 +354,7 @@ function MobileDashboard() {
   usePageTitle(t("navigation:general.dashboard"));
 
   const { accounts, isLoading: isAccLoading } = useAccountsData();
+  const isBootstrapLoading = isUserLoading || isAccLoading;
 
   const targetAccountIds = useMemo(() => {
     if (!accounts) return [];
@@ -384,9 +385,6 @@ function MobileDashboard() {
     state: { recentItems, categories },
   } = useRecentTransactionsWidget({ globalFilter });
 
-  // Блокуємо екран ТІЛЬКИ при завантаженні критичних даних користувача або рахунків
-  if (isUserLoading || isAccLoading) return <CenteredSpinner fullHeight />;
-
   return (
     <StyledMobileDashboard>
       <StickyHeader>
@@ -398,7 +396,7 @@ function MobileDashboard() {
                 : t("dashboard:mobile.family_balance")}
             </Greeting>
             <TotalBalance>
-              {isStatsLoading && balance === 0
+              {isBootstrapLoading || (isStatsLoading && balance === 0)
                 ? "..."
                 : formatMoney(balance, currency, language)}
             </TotalBalance>
@@ -409,6 +407,7 @@ function MobileDashboard() {
               $active={viewScope === "personal"}
               onClick={() => setViewScope("personal")}
               title={t("dashboard:mobile.personal")}
+              disabled={isBootstrapLoading}
             >
               <HiOutlineUser />
             </ToggleButton>
@@ -416,6 +415,7 @@ function MobileDashboard() {
               $active={viewScope === "family"}
               onClick={() => setViewScope("family")}
               title={t("dashboard:mobile.family")}
+              disabled={isBootstrapLoading}
             >
               <HiOutlineUsers />
             </ToggleButton>
@@ -434,7 +434,7 @@ function MobileDashboard() {
             </div>
             <div className="label">{t("dashboard:mobile.income")}</div>
             <div className="value">
-              {isStatsLoading && income === 0
+              {isBootstrapLoading || (isStatsLoading && income === 0)
                 ? "..."
                 : formatMoney(income, currency, language)}
             </div>
@@ -448,7 +448,7 @@ function MobileDashboard() {
             </div>
             <div className="label">{t("dashboard:mobile.expense")}</div>
             <div className="value">
-              {isStatsLoading && expense === 0
+              {isBootstrapLoading || (isStatsLoading && expense === 0)
                 ? "..."
                 : formatMoney(expense, currency, language)}
             </div>
@@ -502,35 +502,39 @@ function MobileDashboard() {
             </ViewAll>
           </SectionHeader>
           <WidgetWrapper style={{ padding: 0 }}>
-            <TransactionList>
-              {recentItems.length === 0 ? (
-                <div
-                  style={{
-                    textAlign: "center",
-                    padding: "24px",
-                    color: "var(--color-text-secondary)",
-                    fontSize: "14px",
-                  }}
-                >
-                  {t("dashboard:mobile.no_operations")}
-                </div>
-              ) : (
-                recentItems
-                  .slice(0, 5)
-                  .map((tx) => (
-                    <TransactionItem
-                      key={tx.id}
-                      transaction={tx}
-                      categories={categories}
-                      accounts={accounts}
-                      currency={currency}
-                      language={language}
-                      isWidget={true}
-                      onClick={() => navigate(`/transactions/${tx.id}`)}
-                    />
-                  ))
-              )}
-            </TransactionList>
+            {isBootstrapLoading ? (
+              <CenteredSpinner isContainer />
+            ) : (
+              <TransactionList>
+                {recentItems.length === 0 ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "24px",
+                      color: "var(--color-text-secondary)",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {t("dashboard:mobile.no_operations")}
+                  </div>
+                ) : (
+                  recentItems
+                    .slice(0, 5)
+                    .map((tx) => (
+                      <TransactionItem
+                        key={tx.id}
+                        transaction={tx}
+                        categories={categories}
+                        accounts={accounts}
+                        currency={currency}
+                        language={language}
+                        isWidget={true}
+                        onClick={() => navigate(`/transactions/${tx.id}`)}
+                      />
+                    ))
+                )}
+              </TransactionList>
+            )}
           </WidgetWrapper>
         </Section>
 
@@ -541,12 +545,16 @@ function MobileDashboard() {
             </SectionTitle>
           </SectionHeader>
           <AnalyticsWrapper>
-            <TrendWidget
-              globalFilter={globalFilter}
-              type="expense"
-              color="#ef4444"
-              title=""
-            />
+            {isBootstrapLoading ? (
+              <CenteredSpinner isContainer />
+            ) : (
+              <TrendWidget
+                globalFilter={globalFilter}
+                type="expense"
+                color="#ef4444"
+                title=""
+              />
+            )}
           </AnalyticsWrapper>
         </Section>
 
@@ -555,12 +563,16 @@ function MobileDashboard() {
             <SectionTitle>{t("dashboard:mobile.top_categories")}</SectionTitle>
           </SectionHeader>
           <TopListWrapper>
-            <TopListWidget
-              type="expense"
-              entity="category"
-              title=""
-              globalFilter={globalFilter}
-            />
+            {isBootstrapLoading ? (
+              <CenteredSpinner isContainer />
+            ) : (
+              <TopListWidget
+                type="expense"
+                entity="category"
+                title=""
+                globalFilter={globalFilter}
+              />
+            )}
           </TopListWrapper>
         </Section>
       </Content>
