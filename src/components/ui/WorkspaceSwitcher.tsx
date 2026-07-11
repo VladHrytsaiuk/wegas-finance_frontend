@@ -16,8 +16,8 @@ import { ModeTransition } from "./ModeTransition";
 // --- STYLES ---
 const Container = styled.div`
   background-color: var(--color-bg-surface);
-  padding: 4px;
-  border-radius: 12px;
+  padding: 3px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   border: 1px solid var(--color-border);
@@ -27,12 +27,12 @@ const Container = styled.div`
 const OptionButton = styled.button<{ $isActive: boolean }>`
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
+  gap: 6px;
+  padding: 4px 12px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: ${(p) => (p.$isActive ? "600" : "500")};
   background-color: ${(p) =>
     p.$isActive ? "var(--color-brand-100)" : "transparent"};
@@ -40,19 +40,28 @@ const OptionButton = styled.button<{ $isActive: boolean }>`
     p.$isActive ? "var(--color-brand-700)" : "var(--color-text-secondary)"};
   transition: all 0.2s ease;
 
+  & svg {
+    width: 14px;
+    height: 14px;
+  }
+
   &:hover {
     color: var(--color-text-main);
     background-color: ${(p) => (!p.$isActive ? "rgba(0,0,0,0.03)" : "")};
   }
 
   /* 🔥 Змінили брейкпоінт на 1200px */
-  padding: 6px 10px;
-  justify-content: center;
+  @media (max-width: 1280px) {
+    padding: 4px 8px;
+    justify-content: center;
+  }
 `;
 
 const ButtonText = styled.span`
   /* 🔥 Змінили брейкпоінт на 1200px */
-  display: none;
+  @media (max-width: 1280px) {
+    display: none;
+  }
 `;
 
 // --- COMPONENT ---
