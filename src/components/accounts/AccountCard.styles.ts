@@ -238,7 +238,5 @@ export const CardBalance = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  @media (max-width: 1300px) {
-    font-size: 1.1rem;
-  }
+  font-size: 1.1rem;
 `;

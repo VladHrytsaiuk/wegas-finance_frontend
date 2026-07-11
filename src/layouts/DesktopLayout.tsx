@@ -12,9 +12,7 @@ const StyledDesktopLayout = styled.div<{ $collapsed: boolean }>`
   height: 100vh;
   transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  @media (max-width: 1300px) {
-    grid-template-columns: ${(props) => (props.$collapsed ? "5.5rem" : "15rem")} 1fr;
-  }
+  grid-template-columns: ${(props) => (props.$collapsed ? "5.5rem" : "15rem")} 1fr;
 `;
 
 const Main = styled.main`
@@ -36,10 +34,8 @@ const Container = styled.div`
   padding: 2rem;
   box-sizing: border-box;
 
-  @media (max-width: 1300px) {
-    padding: 1.5rem;
-    gap: 1.5rem;
-  }
+  padding: 1.5rem;
+  gap: 1.5rem;
 `;
 
 function DesktopLayout() {

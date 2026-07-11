@@ -13,10 +13,8 @@ export const SectionTitle = styled.h2`
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.75rem;
 
-  @media (max-width: 1300px) {
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-  }
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
 `;
 
 export const FormGroup = styled.div`

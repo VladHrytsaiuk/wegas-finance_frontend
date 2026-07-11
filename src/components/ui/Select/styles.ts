@@ -66,15 +66,13 @@ export const Trigger = styled.div<{
     border-color: var(--color-brand-500);
   }
 
-  @media (max-width: 1300px) {
-    font-size: ${(p) => (p.$size === "small" ? "0.7rem" : "0.85rem")};
-    padding: ${(p) => (p.$size === "small" ? "0.05rem 0.2rem" : "0.3rem 0.5rem")};
-    gap: ${(p) => (p.$size === "small" ? "2px" : "4px")};
+  font-size: ${(p) => (p.$size === "small" ? "0.7rem" : "0.85rem")};
+  padding: ${(p) => (p.$size === "small" ? "0.05rem 0.2rem" : "0.3rem 0.5rem")};
+  gap: ${(p) => (p.$size === "small" ? "2px" : "4px")};
 
-    svg {
-      width: ${(p) => (p.$size === "small" ? "10px" : "14px")};
-      height: ${(p) => (p.$size === "small" ? "10px" : "14px")};
-    }
+  svg {
+    width: ${(p) => (p.$size === "small" ? "10px" : "14px")};
+    height: ${(p) => (p.$size === "small" ? "10px" : "14px")};
   }
 `;
 
@@ -131,9 +129,7 @@ export const TriggerSearchInput = styled.input`
     color: var(--color-text-tertiary);
   }
 
-  @media (max-width: 1300px) {
-    min-width: 30px;
-  }
+  min-width: 30px;
 `;
 
 export const OptionsList = styled.div`
@@ -189,9 +185,7 @@ export const IconWrapper = styled.div`
   color: var(--color-text-secondary, #6b7280);
   flex-shrink: 0;
 
-  @media (max-width: 1300px) {
-    gap: 2px;
-  }
+  gap: 2px;
 `;
 
 export const ClearButton = styled.button`

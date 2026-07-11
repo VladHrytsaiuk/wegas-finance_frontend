@@ -363,9 +363,7 @@ export const DetailsTriggerButton = styled.button`
   padding: 0.5rem 0;
   transition: color 0.2s;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 
   &:hover {
     text-decoration: underline;
@@ -600,10 +598,8 @@ export const TableGridRow = styled.div`
   padding: 0.25rem 0.4rem;
   border-bottom: 1px solid var(--color-border);
 
-  @media (max-width: 1300px) {
-    gap: 4px;
-    padding: 0.2rem 0.3rem;
-  }
+  gap: 4px;
+  padding: 0.2rem 0.3rem;
 `;
 
 export const TableHeaderRow = styled(TableGridRow)`

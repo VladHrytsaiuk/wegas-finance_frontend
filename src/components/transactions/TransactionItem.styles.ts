@@ -25,21 +25,19 @@ export const StyledItem = styled.div<{
         ? "1.5fr 1.5fr 140px" /* Назва, Нотатка, Сума */
         : "1.2fr 1fr 1fr 140px"};
 
-  @media (max-width: 1280px) {
-    ${(props) =>
-      !props.$isWidget &&
-      css`
-        /* В модалці тримаємо 3 колонки */
-        grid-template-columns: ${props.$hideAccount
-          ? "1fr 1fr 120px"
-          : "1.2fr 1fr 120px"};
+  ${(props) =>
+    !props.$isWidget &&
+    css`
+      /* В модалці тримаємо 3 колонки */
+      grid-template-columns: ${props.$hideAccount
+        ? "1fr 1fr 120px"
+        : "1.2fr 1fr 120px"};
 
-        /* 🔥 Ховаємо нотатку ТІЛЬКИ якщо це не модалка */
-        .note-col {
-          display: ${props.$hideAccount ? "block" : "none"};
-        }
-      `}
-  }
+      /* 🔥 Ховаємо нотатку ТІЛЬКИ якщо це не модалка */
+      .note-col {
+        display: ${props.$hideAccount ? "block" : "none"};
+      }
+    `}
 
   @media (max-width: 768px) {
     ${(props) =>
@@ -94,19 +92,17 @@ export const IconBox = styled.div<{
   flex-shrink: 0;
   overflow: hidden;
 
-  @media (max-width: 1300px) {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
 
-    & svg {
-      width: 16px !important;
-      height: 16px !important;
-    }
+  & svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
 
-    & span {
-      font-size: 16px !important;
-    }
+  & span {
+    font-size: 16px !important;
   }
 
   background: ${(p) =>

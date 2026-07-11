@@ -92,18 +92,14 @@ export const ItemLabel = styled.span`
   font-weight: 500;
   font-size: 0.9rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 `;
 
 export const ItemInitials = styled.span`
   font-weight: 700;
   font-size: 0.9rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 `;
 
 export const FooterRow = styled.div`
@@ -131,10 +127,8 @@ export const FooterBtn = styled.button<{ $variant: "primary" | "secondary" }>`
   border: none;
   height: 36px;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    height: 30px;
-  }
+  font-size: 0.7rem;
+  height: 30px;
 
   ${(p) =>
     p.$variant === "primary"
@@ -165,7 +159,5 @@ export const EmptyState = styled.p`
   font-size: 0.85rem;
   padding: 1rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 `;

@@ -91,9 +91,8 @@ export const GoalTitleBlock = styled.div`
     margin: 0;
     line-height: 1.1;
 
-    @media (max-width: 1300px) {
-      font-size: 1.4rem;
-    }
+    font-size: 1.4rem;
+  
   }
 `;
 
@@ -154,12 +153,10 @@ export const IconBox = styled.div<{ $color: string }>`
   font-size: 1.8rem;
   flex-shrink: 0;
 
-  @media (max-width: 1300px) {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 1.4rem;
-  }
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 1.4rem;
 `;
 
 export const HeaderActions = styled.div`
@@ -206,10 +203,8 @@ export const TopGrid = styled.div`
   /* 🔥 ФІКСОВАНА ВИСОТА БЛОКУ (щоб обидва були однакові) */
   height: 420px;
 
-  @media (max-width: 1300px) {
-    height: 360px;
-    gap: 1.25rem;
-  }
+  height: 360px;
+  gap: 1.25rem;
 
   @media (max-width: 1000px) {
     grid-template-columns: 1fr;
@@ -296,9 +291,8 @@ export const MainValueBlock = styled.div`
     letter-spacing: -0.03em;
     line-height: 1;
 
-    @media (max-width: 1300px) {
-      font-size: 1.8rem;
-    }
+    font-size: 1.8rem;
+  
   }
 `;
 
@@ -534,9 +528,7 @@ export const AccountRowItem = styled.div`
   cursor: pointer;
   transition: background-color 0.2s;
 
-  @media (max-width: 1300px) {
-    padding: 0.8rem 1.25rem;
-  }
+  padding: 0.8rem 1.25rem;
 
   &:last-child {
     border-bottom: none;
@@ -561,9 +553,8 @@ export const AccountRowItem = styled.div`
     font-size: 1.05rem;
     color: var(--color-text-main);
 
-    @media (max-width: 1300px) {
-      font-size: 0.95rem;
-    }
+    font-size: 0.95rem;
+  
   }
 `;
 
@@ -591,9 +582,7 @@ export const CardFooter = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media (max-width: 1300px) {
-    padding: 0.8rem 1.25rem;
-  }
+  padding: 0.8rem 1.25rem;
 
   span.label {
     font-size: 0.9rem;
@@ -607,9 +596,8 @@ export const CardFooter = styled.div`
     font-size: 1.1rem;
     color: var(--color-text-main);
 
-    @media (max-width: 1300px) {
-      font-size: 1rem;
-    }
+    font-size: 1rem;
+  
   }
 `;
 

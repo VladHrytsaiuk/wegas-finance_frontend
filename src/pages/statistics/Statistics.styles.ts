@@ -51,10 +51,8 @@ export const ToggleBtn = styled.button<{
   font-size: 0.9rem;
   transition: all 0.2s;
 
-  @media (max-width: 1300px) {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
+  padding: 6px 12px;
+  font-size: 0.8rem;
 
   ${(p) =>
     p.$active
@@ -80,10 +78,8 @@ export const ContentGrid = styled.div`
   gap: 1.5rem;
   align-items: start;
 
-  @media (max-width: 1300px) {
-    /* Дозволяємо лівій колонці стискатись */
-    grid-template-columns: minmax(300px, 4fr) 6fr;
-  }
+  /* Дозволяємо лівій колонці стискатись */
+  grid-template-columns: minmax(300px, 4fr) 6fr;
 
   @media (max-width: 1100px) {
     /* Ставимо в одну колонку */
@@ -127,10 +123,8 @@ export const Tab = styled.button<{ $active: boolean }>`
   transition: all 0.2s;
   font-size: 0.9rem;
 
-  @media (max-width: 1300px) {
-    padding: 6px 14px;
-    font-size: 0.8rem;
-  }
+  padding: 6px 14px;
+  font-size: 0.8rem;
   
   &:hover {
     color: var(--color-text-main);

@@ -18,28 +18,24 @@ export const TableWrapper = styled.div`
   /* ICON */
   .col-icon {
   width: 60px;
-  @media (max-width: 1300px) {
-    width: 50px;
-  }
+  width: 50px;
   }
 
   /* NOTE (Примітки) */
   .col-note {
 
     /* Змінено з 1400px на 1300px за твоїм бажанням */
-    @media (max-width: 1300px) {
-      display: none;
-    }
+    display: none;
+  
   }
 
   /* ACCOUNT */
   .col-account {
-    @media (max-width: 1200px) {
-      max-width: 120px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  
 
     /* Ховаємо окрему колонку на мобільних */
     @media (max-width: 768px) {
@@ -72,10 +68,8 @@ export const DateHeaderCell = styled.td`
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-border);
 
-  @media (max-width: 1300px) {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.6rem;
-  }
+  padding: 0.5rem 0.7rem;
+  font-size: 0.6rem;
 
   @media (max-width: 768px) {
     padding: 0.6rem;
@@ -93,9 +87,8 @@ export const TextStack = styled.div`
     font-size: 0.9rem;
     color: var(--color-text-main);
 
-    @media (max-width: 1300px) {
-      font-size: 0.8rem;
-    }
+    font-size: 0.8rem;
+  
 
     @media (max-width: 768px) {
       font-size: 0.85rem;
@@ -107,9 +100,8 @@ export const TextStack = styled.div`
     font-size: 0.75rem;
     color: var(--color-text-secondary);
 
-    @media (max-width: 1300px) {
-      font-size: 0.65rem;
-    }
+    font-size: 0.65rem;
+  
 
     @media (max-width: 768px) {
       font-size: 0.7rem;
@@ -143,9 +135,7 @@ export const NoteText = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 
   /* На екранах ноутбуків (до 1500px) суттєво зменшуємо ширину примітки */
   @media (max-width: 1500px) {
@@ -172,9 +162,7 @@ export const Amount = styled.div<{ $color: string; $isForgiveness?: boolean }>`
   color: ${(props) => props.$color};
   white-space: nowrap;
 
-  @media (max-width: 1300px) {
-    font-size: 0.8rem;
-  }
+  font-size: 0.8rem;
 
   @media (max-width: 768px) {
     font-size: 0.9rem;
@@ -193,9 +181,7 @@ export const AccountName = styled.span<{ $isDeleted?: boolean }>`
   color: var(--color-text-main);
   font-size: 0.85rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.75rem;
-  }
+  font-size: 0.75rem;
 
   ${(p) =>
     p.$isDeleted &&
@@ -214,19 +200,15 @@ export const DesktopActions = styled.div`
   justify-content: flex-end;
   align-items: center;
 
-  @media (max-width: 1400px) {
-    display: none;
-  }
+  display: none;
 `;
 
 export const MobileActions = styled.div`
   display: none;
   position: relative;
 
-  @media (max-width: 1400px) {
-    display: flex;
-    justify-content: flex-end;
-  }
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export const ActionBtn = styled.button<{ $variant?: "edit" | "delete" }>`

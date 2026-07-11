@@ -19,10 +19,8 @@ export const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 1.5rem;
 
-  @media (max-width: 1300px) {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1rem;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
@@ -148,9 +146,7 @@ export const CardLink = styled.div<{ $isPaused?: boolean }>`
 
   opacity: ${(props) => (props.$isPaused ? 0.8 : 1)};
 
-  @media (max-width: 1300px) {
-    padding: 1rem;
-  }
+  padding: 1rem;
 `;
 
 // --- HEADER ---
@@ -160,9 +156,7 @@ export const CardHeader = styled.div`
   align-items: flex-start;
   margin-bottom: 1.2rem;
 
-  @media (max-width: 1300px) {
-    margin-bottom: 0.75rem;
-  }
+  margin-bottom: 0.75rem;
 `;
 
 export const TitleRow = styled.div`
@@ -184,12 +178,10 @@ export const IconWrapper = styled.div<{ $color: string }>`
   font-size: 1.5rem;
   flex-shrink: 0;
 
-  @media (max-width: 1300px) {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-  }
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 1.2rem;
 `;
 export const Info = styled.div`
   display: flex;
@@ -203,9 +195,7 @@ export const Title = styled.h3`
   margin: 0;
   line-height: 1.3;
 
-  @media (max-width: 1300px) {
-    font-size: 0.95rem;
-  }
+  font-size: 0.95rem;
 `;
 export const Subtitle = styled.div`
   font-size: 0.85rem;
@@ -214,9 +204,7 @@ export const Subtitle = styled.div`
   align-items: center;
   gap: 6px;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 `;
 
 // --- PROGRESS ---
@@ -227,10 +215,8 @@ export const ProgressSection = styled.div`
   margin-bottom: 1.5rem;
   margin-top: 0.5rem;
 
-  @media (max-width: 1300px) {
-    gap: 8px;
-    margin-bottom: 1rem;
-  }
+  gap: 8px;
+  margin-bottom: 1rem;
 `;
 export const AmountsRow = styled.div`
   display: flex;
@@ -248,9 +234,7 @@ export const BigStatusText = styled.div<{
   line-height: 1;
   letter-spacing: -1px;
 
-  @media (max-width: 1300px) {
-    font-size: 1.3rem;
-  }
+  font-size: 1.3rem;
 
   ${(props) => props.$mode === "normal" && `color: var(--color-text-main);`}
   ${(props) =>
@@ -277,9 +261,7 @@ export const AmountLabel = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  @media (max-width: 1300px) {
-    font-size: 0.65rem;
-  }
+  font-size: 0.65rem;
 `;
 
 export const ExtendButton = styled.button`
@@ -333,9 +315,7 @@ export const ProgressMetaRow = styled.div`
   font-weight: 500;
   color: var(--color-text-secondary);
 
-  @media (max-width: 1300px) {
-    font-size: 0.75rem;
-  }
+  font-size: 0.75rem;
 `;
 export const CollectedAmount = styled.span`
   color: var(--color-text-secondary);
@@ -361,10 +341,8 @@ export const SourcesSection = styled.div`
   flex-direction: column;
   gap: 8px;
 
-  @media (max-width: 1300px) {
-    padding-top: 0.75rem;
-    gap: 4px;
-  }
+  padding-top: 0.75rem;
+  gap: 4px;
 `;
 export const SourcesLabel = styled.div`
   font-size: 0.75rem;
@@ -373,18 +351,14 @@ export const SourcesLabel = styled.div`
   font-weight: 600;
   letter-spacing: 0.05em;
 
-  @media (max-width: 1300px) {
-    font-size: 0.6rem;
-  }
+  font-size: 0.6rem;
 `;
 export const SourcesList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 
-  @media (max-width: 1300px) {
-    gap: 6px;
-  }
+  gap: 6px;
 `;
 export const SourceChip = styled(Link)`
   display: flex;
@@ -399,11 +373,9 @@ export const SourceChip = styled(Link)`
   text-decoration: none;
   transition: all 0.2s;
 
-  @media (max-width: 1300px) {
-    padding: 3px 8px;
-    font-size: 0.7rem;
-    border-radius: 6px;
-  }
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  border-radius: 6px;
   &:hover {
     background-color: var(--color-bg-hover);
     border-color: var(--color-brand-300);

@@ -22,10 +22,8 @@ export const WidgetCard = styled.div`
   height: 100%;
   min-height: 0;
 
-  @media (max-width: 1300px) {
-    padding: 0.75rem 1rem;
-    gap: 0.5rem;
-  }
+  padding: 0.75rem 1rem;
+  gap: 0.5rem;
 `;
 
 export const Header = styled.div`
@@ -51,9 +49,7 @@ export const ContentContainer = styled.div`
   min-height: 0;
   width: 100%;
 
-  @media (max-width: 1300px) {
-    gap: 0.5rem;
-  }
+  gap: 0.5rem;
 `;
 
 export const ChartArea = styled.div`
@@ -97,13 +93,9 @@ export const CustomLegend = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px 16px;
-  @media (max-width: 1400px) {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 1fr;
 
-  @media (max-width: 1300px) {
-    gap: 4px;
-  }
+  gap: 4px;
 
   margin-bottom: auto;
 `;
@@ -114,10 +106,8 @@ export const LegendItem = styled.div`
   gap: 8px;
   font-size: 0.85rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.75rem;
-    gap: 4px;
-  }
+  font-size: 0.75rem;
+  gap: 4px;
 `;
 
 export const Dot = styled.div`

@@ -148,9 +148,7 @@ export const AddMemberCard = styled.button`
   height: 100%; /* Ensure it stretches to grid row height */
   min-height: 160px; /* Sensible minimum that aligns with UserCard */
 
-  @media (max-width: 1300px) {
-    padding: 1rem;
-  }
+  padding: 1rem;
 
   &:hover {
     border-color: var(--color-brand-500);
@@ -190,9 +188,7 @@ export const HeaderRow = styled.div`
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--color-border);
 
-  @media (max-width: 1300px) {
-    padding-bottom: 0.5rem;
-  }
+  padding-bottom: 0.5rem;
 `;
 
 export const UserGrid = styled.div`
@@ -201,10 +197,8 @@ export const UserGrid = styled.div`
   gap: 1.5rem;
   align-items: stretch; /* Ensure all items in a row have same height */
 
-  @media (max-width: 1300px) {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
 `;
 
 export const ModalContent = styled.div`

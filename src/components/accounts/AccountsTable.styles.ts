@@ -13,9 +13,7 @@ export const GroupHeaderCell = styled.td`
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-border);
 
-  @media (max-width: 1300px) {
-    font-size: 0.6rem;
-  }
+  font-size: 0.6rem;
 `;
 
 export const BankIndicator = styled.div<{ $color: string }>`
@@ -82,18 +80,14 @@ export const DesktopActions = styled.div`
   display: flex;
   gap: 0.5rem;
 
-  @media (max-width: 1280px) {
-    display: none; /* Ховаємо на планшетах і менше */
-  }
+  display: none; /* Ховаємо на планшетах і менше */
 `;
 
 export const MobileActions = styled.div`
   display: none;
   position: relative; /* Важливо для позиціонування дропдауну */
 
-  @media (max-width: 1280px) {
-    display: block; /* Показуємо три крапки */
-  }
+  display: block; /* Показуємо три крапки */
 `;
 
 export const DropdownMenu = styled.div`

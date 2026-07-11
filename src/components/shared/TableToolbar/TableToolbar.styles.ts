@@ -144,10 +144,8 @@ export const ResetButton = styled.button`
   width: 38px;
   height: 38px;
 
-  @media (max-width: 1300px) {
-    width: 30px;
-    height: 30px;
-  }
+  width: 30px;
+  height: 30px;
 
   padding: 0;
   background: #fee2e2;
@@ -167,10 +165,9 @@ export const ResetButton = styled.button`
     width: 20px;
     height: 20px;
 
-    @media (max-width: 1300px) {
-      width: 13px;
-      height: 13px;
-    }
+    width: 13px;
+    height: 13px;
+  
   }
 
   &::after {
@@ -179,9 +176,8 @@ export const ResetButton = styled.button`
     width: 22px;
     height: 2px;
 
-    @media (max-width: 1300px) {
-      width: 15px;
-    }
+    width: 15px;
+  
 
     background-color: currentColor;
     top: 50%;
@@ -218,11 +214,9 @@ export const FilterButton = styled.button<{
   font-weight: 500;
   transition: all 0.2s;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    padding: 0 0.6rem;
-    height: 30px;
-  }
+  font-size: 0.7rem;
+  padding: 0 0.6rem;
+  height: 30px;
 
   &:hover {
     background: var(--color-bg-hover);
@@ -233,25 +227,20 @@ export const FilterButton = styled.button<{
     height: 18px;
     color: var(--color-text-secondary);
 
-    @media (max-width: 1300px) {
-      width: 13px;
-      height: 13px;
-    }
+    width: 13px;
+    height: 13px;
+  
   }
 `;
 export const SortLabelPrefix = styled.span`
   color: var(--color-text-secondary);
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 `;
 export const SortLabelValue = styled.span`
   font-weight: 600;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
 `;
 export const PortalMenu = styled.div`
   position: fixed;
@@ -309,10 +298,8 @@ export const DateIconButton = styled.button<{ $active?: boolean }>`
   width: 38px;
   height: 38px;
 
-  @media (max-width: 1300px) {
-    width: 30px;
-    height: 30px;
-  }
+  width: 30px;
+  height: 30px;
 
   border-radius: 8px;
   border: none; /* Видалено обводку */
@@ -334,10 +321,9 @@ export const DateIconButton = styled.button<{ $active?: boolean }>`
     width: 20px;
     height: 20px;
 
-    @media (max-width: 1300px) {
-      width: 13px;
-      height: 13px;
-    }
+    width: 13px;
+    height: 13px;
+  
   }
 `;
 export const DatePopupPortal = styled.div`

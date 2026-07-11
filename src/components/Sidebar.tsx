@@ -26,9 +26,7 @@ const StyledSidebar = styled.aside<{ $collapsed: boolean }>`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 
-  @media (max-width: 1300px) {
-    padding: 0.75rem ${(p) => (p.$collapsed ? "0.4rem" : "0.8rem")} 1rem;
-  }
+  padding: 0.75rem ${(p) => (p.$collapsed ? "0.4rem" : "0.8rem")} 1rem;
 `;
 
 const NavContainer = styled.div`
@@ -125,10 +123,8 @@ const ButtonLabel = styled.span<{ $collapsed: boolean }>`
   font-weight: 600;
   font-size: 0.85rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    margin-left: 0.1rem;
-  }
+  font-size: 0.7rem;
+  margin-left: 0.1rem;
 `;
 
 // Стилі кнопки фідбеку
@@ -175,10 +171,8 @@ const FeedbackLabel = styled.span<{ $collapsed: boolean }>`
   opacity: ${(p) => (p.$collapsed ? 0 : 1)};
   transition: opacity 0.2s;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    margin-left: 0.1rem;
-  }
+  font-size: 0.7rem;
+  margin-left: 0.1rem;
 `;
 
 // --- COMPONENT ---

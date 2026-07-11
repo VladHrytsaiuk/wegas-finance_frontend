@@ -27,9 +27,7 @@ export const Tab = styled.button<{ $isActive: boolean; $activeColor: string }>`
   font-size: 0.8rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
   border: none;
   cursor: pointer;
   white-space: nowrap;
@@ -87,9 +85,7 @@ export const SubButton = styled.button<{ $isActive: boolean; $color: string }>`
   font-size: 0.75rem;
   font-weight: 500;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-  }
+  font-size: 0.7rem;
   cursor: pointer;
   transition: all 0.15s;
 

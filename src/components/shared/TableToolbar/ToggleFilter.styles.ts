@@ -6,10 +6,8 @@ export const Container = styled.div`
   gap: 0.8rem;
   padding: 0 0.5rem;
 
-  @media (max-width: 1300px) {
-    gap: 0.4rem;
-    padding: 0;
-  }
+  gap: 0.4rem;
+  padding: 0;
 `;
 
 export const Label = styled.span`
@@ -22,10 +20,8 @@ export const Label = styled.span`
     display: inline;
   }
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    padding: 0;
-  }
+  font-size: 0.7rem;
+  padding: 0;
 `;
 
 export const Group = styled.div`
@@ -53,10 +49,8 @@ export const Button = styled.button<{ $active: boolean }>`
   transition: all 0.2s ease-in-out;
   white-space: nowrap;
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    padding: 0.35rem 0.5rem;
-  }
+  font-size: 0.7rem;
+  padding: 0.35rem 0.5rem;
 
   &:hover {
     color: var(--color-brand-700);

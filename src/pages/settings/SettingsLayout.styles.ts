@@ -11,10 +11,8 @@ export const LayoutGrid = styled.div`
   gap: 2rem;
   align-items: start;
 
-  @media (max-width: 1300px) {
-    grid-template-columns: 220px 1fr;
-    gap: 1.5rem;
-  }
+  grid-template-columns: 220px 1fr;
+  gap: 1.5rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -47,11 +45,9 @@ const ItemStyles = css`
   border: none;
   background: none;
 
-  @media (max-width: 1300px) {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-    gap: 0.6rem;
-  }
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  gap: 0.6rem;
 
   svg {
     width: 1.25rem;
@@ -59,10 +55,9 @@ const ItemStyles = css`
     color: var(--color-text-light);
     transition: color 0.2s;
 
-    @media (max-width: 1300px) {
-      width: 1.1rem;
-      height: 1.1rem;
-    }
+    width: 1.1rem;
+    height: 1.1rem;
+  
   }
 `;
 
@@ -112,7 +107,5 @@ export const ContentCard = styled.div`
   border: 1px solid var(--color-border);
   min-height: 400px;
 
-  @media (max-width: 1300px) {
-    padding: 1.5rem;
-  }
+  padding: 1.5rem;
 `;

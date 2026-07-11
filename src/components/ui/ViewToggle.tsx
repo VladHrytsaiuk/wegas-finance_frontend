@@ -13,10 +13,8 @@ const ToggleContainer = styled.div`
   gap: 4px;
   height: 38px;
 
-  @media (max-width: 1300px) {
-    height: 30px;
-    padding: 2px;
-  }
+  height: 30px;
+  padding: 2px;
 `;
 
 const ToggleButton = styled.button<{ $active: boolean }>`
@@ -45,10 +43,9 @@ const ToggleButton = styled.button<{ $active: boolean }>`
     width: 20px;
     height: 20px;
 
-    @media (max-width: 1300px) {
-      width: 16px;
-      height: 16px;
-    }
+    width: 16px;
+    height: 16px;
+  
   }
 `;
 

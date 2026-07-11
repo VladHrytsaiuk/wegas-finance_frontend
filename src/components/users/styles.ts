@@ -14,10 +14,8 @@ export const Card = styled.div<{ $roleColor: string }>`
   transition: transform 0.2s, border-color 0.2s;
   height: 100%;
 
-  @media (max-width: 1300px) {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
+  padding: 1rem;
+  gap: 0.75rem;
 
   &:hover {
     border-color: ${(props) => props.$roleColor};
@@ -40,9 +38,7 @@ export const UserHeader = styled.div`
   align-items: center;
   gap: 1rem;
 
-  @media (max-width: 1300px) {
-    gap: 0.75rem;
-  }
+  gap: 0.75rem;
 `;
 
 export const Avatar = styled.div`
@@ -57,9 +53,7 @@ export const Avatar = styled.div`
   font-size: 1.5rem;
   color: var(--color-text-secondary);
 
-  @media (max-width: 1300px) {
-    display: none;
-  }
+  display: none;
 
   img {
     width: 100%;
@@ -96,15 +90,13 @@ export const RoleBadge = styled.div<{ $color: string }>`
   background-color: ${(props) => props.$color}15;
   color: ${(props) => props.$color};
 
-  @media (max-width: 1300px) {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.6rem;
-    gap: 0.3rem;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  gap: 0.3rem;
 
-    svg {
-      width: 0.9rem;
-      height: 0.9rem;
-    }
+  svg {
+    width: 0.9rem;
+    height: 0.9rem;
   }
 `;
 

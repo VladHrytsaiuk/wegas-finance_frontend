@@ -46,17 +46,13 @@ const OptionButton = styled.button<{ $isActive: boolean }>`
   }
 
   /* 🔥 Змінили брейкпоінт на 1200px */
-  @media (max-width: 1280px) {
-    padding: 6px 10px;
-    justify-content: center;
-  }
+  padding: 6px 10px;
+  justify-content: center;
 `;
 
 const ButtonText = styled.span`
   /* 🔥 Змінили брейкпоінт на 1200px */
-  @media (max-width: 1280px) {
-    display: none;
-  }
+  display: none;
 `;
 
 // --- COMPONENT ---

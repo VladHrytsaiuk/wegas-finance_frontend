@@ -20,9 +20,7 @@ export const GroupTitle = styled.h3`
   text-transform: uppercase;
   letter-spacing: 0.05em;
 
-  @media (max-width: 1300px) {
-    font-size: 0.6rem;
-  }
+  font-size: 0.6rem;
 `;
 
 export const CardsGrid = styled.div`

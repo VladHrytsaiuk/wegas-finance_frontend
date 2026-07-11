@@ -122,9 +122,7 @@ export const DesktopActions = styled.div`
   }
 
   /* 🔥 Брейкпоінт змінено на 1280px */
-  @media (max-width: 1280px) {
-    display: none;
-  }
+  display: none;
 `;
 
 export const MobileActions = styled.div`
@@ -132,10 +130,8 @@ export const MobileActions = styled.div`
   /* position: relative;  <-- Можеш прибрати, більше не потрібно для Portals */
 
   /* 🔥 Брейкпоінт змінено на 1280px */
-  @media (max-width: 1280px) {
-    display: flex;
-    justify-content: flex-end;
-  }
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export const MenuToggle = styled.button`

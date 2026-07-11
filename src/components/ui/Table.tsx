@@ -20,9 +20,7 @@ const StyledTable = styled.table`
   border-collapse: collapse;
   font-size: 0.9rem;
 
-  @media (max-width: 1300px) {
-    font-size: 0.85rem;
-  }
+  font-size: 0.85rem;
 `;
 
 const StyledHeader = styled.thead`
@@ -38,10 +36,9 @@ const StyledHeader = styled.thead`
     font-size: 0.7rem;
     letter-spacing: 0.05em;
 
-    @media (max-width: 1300px) {
-      padding: 0.6rem 0.8rem;
-      font-size: 0.6rem;
-    }
+    padding: 0.6rem 0.8rem;
+    font-size: 0.6rem;
+  
 
     /* Адаптивні відступи для мобільних */
     @media (max-width: 768px) {
@@ -71,9 +68,7 @@ const StyledCell = styled.td`
   color: var(--color-text-main);
   vertical-align: middle;
 
-  @media (max-width: 1300px) {
-    padding: 0.5rem 0.7rem;
-  }
+  padding: 0.5rem 0.7rem;
 
   /* Адаптивні відступи для мобільних */
   @media (max-width: 768px) {

@@ -35,12 +35,10 @@ export const CardIcon = styled.div<{ $color?: string }>`
   color: ${(p) => p.$color || "var(--color-text-main)"};
   flex-shrink: 0;
 
-  @media (max-width: 1300px) {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    font-size: 1rem;
-  }
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 1rem;
 `;
 
 export const MainCard = styled(BaseCard)<{ $variant?: string }>`
@@ -83,7 +81,5 @@ export const CardValue = styled.span<{ $color?: string }>`
   letter-spacing: -0.5px;
   white-space: nowrap;
 
-  @media (max-width: 1300px) {
-    font-size: 1.1rem;
-  }
+  font-size: 1.1rem;
 `;

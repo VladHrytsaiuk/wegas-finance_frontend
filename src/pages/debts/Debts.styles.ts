@@ -61,9 +61,7 @@ export const SummaryLabel = styled.div`
   align-items: center;
   gap: 6px;
 
-  @media (max-width: 1300px) {
-    font-size: 0.65rem;
-  }
+  font-size: 0.65rem;
 `;
 
 export const CurrencyList = styled.div`
@@ -85,9 +83,7 @@ export const SummaryValue = styled.div<{ $color?: string }>`
   overflow: hidden;
   text-overflow: ellipsis;
 
-  @media (max-width: 1300px) {
-    font-size: 1.05rem;
-  }
+  font-size: 1.05rem;
 `;
 
 export const Section = styled.section`

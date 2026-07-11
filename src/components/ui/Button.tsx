@@ -63,11 +63,10 @@ const sizes = {
     height: 38px;
     font-weight: 600;
 
-    @media (max-width: 1300px) {
-      padding: 0 0.75rem;
-      font-size: 0.7rem;
-      height: 30px;
-    }
+    padding: 0 0.75rem;
+    font-size: 0.7rem;
+    height: 30px;
+  
   `,
   large: css`
     font-size: 1.1rem;
@@ -90,9 +89,7 @@ const StyledButton = styled.button<StyleProps>`
   align-items: center;
   gap: 0.6rem; /* Відступ між іконкою і текстом */
 
-  @media (max-width: 1300px) {
-    gap: 0.2rem;
-  }
+  gap: 0.2rem;
 
   border: none;
   border-radius: 8px; /* Трохи округліше */
@@ -129,10 +126,9 @@ const StyledButton = styled.button<StyleProps>`
     height: 1.2em;
     flex-shrink: 0; /* Щоб іконку не сплющувало */
 
-    @media (max-width: 1300px) {
-      width: 17px;
-      height: 17px;
-    }
+    width: 17px;
+    height: 17px;
+  
   }
 
   /* Контейнер для іконки */

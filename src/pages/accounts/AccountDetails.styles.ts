@@ -97,21 +97,17 @@ export const ContentGrid = styled.div`
   width: 100%;
 
   /* 1. Статистика перестрибує наверх, даючи сумам 100% ширини екрана */
-  @media (max-width: 1400px) {
-    grid-template-columns: 340px minmax(0, 1fr);
-    grid-template-areas:
-      "top-stats top-stats"
-      "left right-content";
-  }
+  grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-areas:
+    "top-stats top-stats"
+    "left right-content";
 
   /* 2. Історія транзакцій більше не стискається — все стає в 1 колонку */
-  @media (max-width: 1200px) {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "top-stats"
-      "left"
-      "right-content";
-  }
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "top-stats"
+    "left"
+    "right-content";
 `;
 
 export const StatsArea = styled.div`
@@ -119,9 +115,7 @@ export const StatsArea = styled.div`
   width: 100%;
   min-width: 0;
 
-  @media (max-width: 1400px) {
-    grid-area: top-stats;
-  }
+  grid-area: top-stats;
 `;
 
 export const LeftColumn = styled.div`
@@ -133,9 +127,7 @@ export const LeftColumn = styled.div`
   top: 1rem;
   min-width: 0;
 
-  @media (max-width: 1200px) {
-    position: static;
-  }
+  position: static;
 `;
 
 export const RightColumn = styled.div`
