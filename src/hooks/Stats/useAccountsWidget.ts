@@ -4,9 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { getAccountsApi, type Account } from "../../services/apiAccounts";
-import api from "../../services/Axios";
 import { useSettings } from "../../context/SettingsContext";
-import type { User } from "../../types";
+import { useUserRole } from "../useUserRole";
 // 🔥 Додаємо скіни
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
 
@@ -18,14 +17,9 @@ export const useAccountsWidget = () => {
   const { t } = useTranslation();
   const { currency, language } = useSettings();
   const navigate = useNavigate();
+  const { user, isLoading: isUserLoading } = useUserRole();
 
-  const { data: user } = useQuery({
-    queryKey: ["me"],
-    queryFn: async () => (await api.get<User>("/users/me")).data,
-    staleTime: Infinity,
-  });
-
-  const { data: accounts = [], isLoading } = useQuery({
+  const { data: accounts = [], isLoading: isAccountsLoading } = useQuery({
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
   });
@@ -60,7 +54,7 @@ export const useAccountsWidget = () => {
 
   return {
     accounts: myAccounts,
-    isLoading,
+    isLoading: isUserLoading || isAccountsLoading,
     currency,
     language,
     t,

@@ -193,6 +193,7 @@ function Dashboard() {
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
   });
+  const isBootstrapLoading = isUserLoading || isAccLoading;
 
   const myAccountIds = useMemo(() => {
     return (
@@ -256,13 +257,17 @@ function Dashboard() {
         <WidgetInnerContainer $isEditMode={isEditMode}>
           <BalanceCard
             label={t("dashboard:dashboard.total_balance")}
-            value={formatMoney(balance, currency, language)}
+            value={
+              isBootstrapLoading
+                ? "..."
+                : formatMoney(balance, currency, language)
+            }
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, balance, currency, language],
+    [isEditMode, t, balance, currency, isBootstrapLoading, language],
   );
 
   const incomeWidget = useMemo(
@@ -271,13 +276,17 @@ function Dashboard() {
         <WidgetInnerContainer $isEditMode={isEditMode}>
           <IncomeCard
             label={t("dashboard:dashboard.income_period")}
-            value={formatMoney(income, currency, language)}
+            value={
+              isBootstrapLoading
+                ? "..."
+                : formatMoney(income, currency, language)
+            }
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, income, currency, language],
+    [isEditMode, t, income, currency, isBootstrapLoading, language],
   );
 
   const expenseWidget = useMemo(
@@ -286,119 +295,135 @@ function Dashboard() {
         <WidgetInnerContainer $isEditMode={isEditMode}>
           <ExpenseCard
             label={t("dashboard:dashboard.expense_period")}
-            value={formatMoney(expense, currency, language)}
+            value={
+              isBootstrapLoading
+                ? "..."
+                : formatMoney(expense, currency, language)
+            }
           />
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, expense, currency, language],
+    [isEditMode, t, expense, currency, isBootstrapLoading, language],
   );
 
   const accountsWidget = useMemo(
     () => (
       <GridItem key="accounts">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <AccountsWidget />
+          {isBootstrapLoading ? <CenteredSpinner isContainer /> : <AccountsWidget />}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode],
+    [isBootstrapLoading, isEditMode],
   );
 
   const recentWidget = useMemo(
     () => (
       <GridItem key="recent">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <RecentTransactionsWidget
-            globalFilter={effectiveGlobalFilter}
-            onDiverge={handleLocalChange}
-          />
+          {isBootstrapLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <RecentTransactionsWidget
+              globalFilter={effectiveGlobalFilter}
+              onDiverge={handleLocalChange}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, effectiveGlobalFilter, handleLocalChange],
+    [isBootstrapLoading, isEditMode, effectiveGlobalFilter, handleLocalChange],
   );
 
   const trendWidget = useMemo(
     () => (
       <GridItem key="trend">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <TrendWidget
-            type="expense"
-            title={t("dashboard:dashboardPage.widget_trend_expenses")}
-            color="#ef4444"
-            globalFilter={effectiveGlobalFilter}
-            onDiverge={handleLocalChange}
-          />
+          {isBootstrapLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <TrendWidget
+              type="expense"
+              title={t("dashboard:dashboardPage.widget_trend_expenses")}
+              color="#ef4444"
+              globalFilter={effectiveGlobalFilter}
+              onDiverge={handleLocalChange}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, effectiveGlobalFilter, handleLocalChange],
+    [isBootstrapLoading, isEditMode, t, effectiveGlobalFilter, handleLocalChange],
   );
 
   const pieWidget = useMemo(
     () => (
       <GridItem key="pie">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <ExpensesPieWidget
-            globalFilter={effectiveGlobalFilter}
-            onDiverge={handleLocalChange}
-            type="expense"
-          />
+          {isBootstrapLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <ExpensesPieWidget
+              globalFilter={effectiveGlobalFilter}
+              onDiverge={handleLocalChange}
+              type="expense"
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, effectiveGlobalFilter, handleLocalChange],
+    [isBootstrapLoading, isEditMode, effectiveGlobalFilter, handleLocalChange],
   );
 
   const topCategoriesWidget = useMemo(
     () => (
       <GridItem key="top_categories">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <TopListWidget
-            type="expense"
-            entity="category"
-            title={t("dashboard:dashboardPage.widget_top_categories")}
-            globalFilter={effectiveGlobalFilter}
-            onDiverge={handleLocalChange}
-          />
+          {isBootstrapLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <TopListWidget
+              type="expense"
+              entity="category"
+              title={t("dashboard:dashboardPage.widget_top_categories")}
+              globalFilter={effectiveGlobalFilter}
+              onDiverge={handleLocalChange}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, effectiveGlobalFilter, handleLocalChange],
+    [isBootstrapLoading, isEditMode, t, effectiveGlobalFilter, handleLocalChange],
   );
 
   const topCounterpartiesWidget = useMemo(
     () => (
       <GridItem key="top_counterparties">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <TopListWidget
-            type="expense"
-            entity="counterparty"
-            title={t("dashboard:dashboardPage.widget_top_shops")}
-            globalFilter={effectiveGlobalFilter}
-            onDiverge={handleLocalChange}
-          />
+          {isBootstrapLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <TopListWidget
+              type="expense"
+              entity="counterparty"
+              title={t("dashboard:dashboardPage.widget_top_shops")}
+              globalFilter={effectiveGlobalFilter}
+              onDiverge={handleLocalChange}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
     ),
-    [isEditMode, t, effectiveGlobalFilter, handleLocalChange],
+    [isBootstrapLoading, isEditMode, t, effectiveGlobalFilter, handleLocalChange],
   );
-
-  if (isUserLoading || isAccLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("common:ui.loading_finances", "Завантаження фінансів...")}
-      />
-    );
 
   return (
     <DashboardContainer $isEditMode={isEditMode} $isMounted={isMounted}>
@@ -434,7 +459,7 @@ function Dashboard() {
           currentFrom={effectiveGlobalFilter.from}
           currentTo={effectiveGlobalFilter.to}
           restrictedAccountIds={myAccountIds}
-          disabled={isEditMode}
+          disabled={isEditMode || isBootstrapLoading}
         />
       </FilterBar>
 

@@ -63,14 +63,14 @@ export const useRecentTransactionsWidget = ({
   });
 
   // 2. Categories (Needed for Item display)
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategoriesApi,
     staleTime: 10 * 60 * 1000,
   });
 
   // 3. Accounts (Needed for Item display)
-  const { data: accounts = [] } = useQuery({
+  const { data: accounts = [], isLoading: isAccountsLoading } = useQuery({
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
     staleTime: 10 * 60 * 1000,
@@ -93,7 +93,7 @@ export const useRecentTransactionsWidget = ({
   return {
     state: {
       recentItems,
-      isLoadingTx,
+      isLoadingTx: isLoadingTx || isCategoriesLoading || isAccountsLoading,
       categories,
       accounts,
       localFilter,
