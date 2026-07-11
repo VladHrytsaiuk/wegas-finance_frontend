@@ -13,6 +13,7 @@ import { Pagination } from "../../components/ui/Pagination";
 import { TableToolbar } from "../../components/shared/TableToolbar/TableToolbar";
 import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { TransactionsPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
 // Hook & Styles
@@ -72,12 +73,7 @@ function Transactions() {
 
   // Перше завантаження - повний спінер
   if (isLoading)
-    return (
-      <CenteredSpinner
-        isContainer
-        message={t("common:ui.loading_transactions", "Завантаження транзакцій...")}
-      />
-    );
+    return <TransactionsPageSkeleton />;
 
   return (
     <S.PageContainer>

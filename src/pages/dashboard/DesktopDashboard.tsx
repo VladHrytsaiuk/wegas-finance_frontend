@@ -27,7 +27,11 @@ import { useHeader } from "../../context/HeaderContext";
 import { getAccountsApi, type Account } from "../../services/apiAccounts";
 import { getMeApi, type UserProfile } from "../../services/apiUsers";
 import type { StatsFilter } from "../../services/apiStats";
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
+import {
+  DashboardChartSkeleton,
+  DashboardSummaryCardSkeleton,
+  DashboardWidgetSkeleton,
+} from "../../components/ui/Skeleton/LoadingSkeletons";
 import { useSummaryWidget } from "../../hooks/Stats/useSummaryWidget";
 import { formatMoney } from "../../utils/helpers";
 
@@ -255,14 +259,14 @@ function Dashboard() {
     () => (
       <GridItem key="balance">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <BalanceCard
-            label={t("dashboard:dashboard.total_balance")}
-            value={
-              isBootstrapLoading
-                ? "..."
-                : formatMoney(balance, currency, language)
-            }
-          />
+          {isBootstrapLoading ? (
+            <DashboardSummaryCardSkeleton />
+          ) : (
+            <BalanceCard
+              label={t("dashboard:dashboard.total_balance")}
+              value={formatMoney(balance, currency, language)}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
@@ -274,14 +278,14 @@ function Dashboard() {
     () => (
       <GridItem key="income">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <IncomeCard
-            label={t("dashboard:dashboard.income_period")}
-            value={
-              isBootstrapLoading
-                ? "..."
-                : formatMoney(income, currency, language)
-            }
-          />
+          {isBootstrapLoading ? (
+            <DashboardSummaryCardSkeleton />
+          ) : (
+            <IncomeCard
+              label={t("dashboard:dashboard.income_period")}
+              value={formatMoney(income, currency, language)}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
@@ -293,14 +297,14 @@ function Dashboard() {
     () => (
       <GridItem key="expense">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          <ExpenseCard
-            label={t("dashboard:dashboard.expense_period")}
-            value={
-              isBootstrapLoading
-                ? "..."
-                : formatMoney(expense, currency, language)
-            }
-          />
+          {isBootstrapLoading ? (
+            <DashboardSummaryCardSkeleton />
+          ) : (
+            <ExpenseCard
+              label={t("dashboard:dashboard.expense_period")}
+              value={formatMoney(expense, currency, language)}
+            />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
@@ -312,7 +316,11 @@ function Dashboard() {
     () => (
       <GridItem key="accounts">
         <WidgetInnerContainer $isEditMode={isEditMode}>
-          {isBootstrapLoading ? <CenteredSpinner isContainer /> : <AccountsWidget />}
+          {isBootstrapLoading ? (
+            <DashboardWidgetSkeleton rows={4} showControls={false} />
+          ) : (
+            <AccountsWidget />
+          )}
           {isEditMode && <DragOverlay className="drag-overlay" />}
         </WidgetInnerContainer>
       </GridItem>
@@ -325,7 +333,7 @@ function Dashboard() {
       <GridItem key="recent">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <CenteredSpinner isContainer />
+            <DashboardWidgetSkeleton rows={5} />
           ) : (
             <RecentTransactionsWidget
               globalFilter={effectiveGlobalFilter}
@@ -344,7 +352,7 @@ function Dashboard() {
       <GridItem key="trend">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <CenteredSpinner isContainer />
+            <DashboardChartSkeleton />
           ) : (
             <TrendWidget
               type="expense"
@@ -366,7 +374,7 @@ function Dashboard() {
       <GridItem key="pie">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <CenteredSpinner isContainer />
+            <DashboardChartSkeleton />
           ) : (
             <ExpensesPieWidget
               globalFilter={effectiveGlobalFilter}
@@ -386,7 +394,7 @@ function Dashboard() {
       <GridItem key="top_categories">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <CenteredSpinner isContainer />
+            <DashboardWidgetSkeleton rows={5} />
           ) : (
             <TopListWidget
               type="expense"
@@ -408,7 +416,7 @@ function Dashboard() {
       <GridItem key="top_counterparties">
         <WidgetInnerContainer $isEditMode={isEditMode}>
           {isBootstrapLoading ? (
-            <CenteredSpinner isContainer />
+            <DashboardWidgetSkeleton rows={5} />
           ) : (
             <TopListWidget
               type="expense"
