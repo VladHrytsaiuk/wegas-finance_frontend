@@ -33,6 +33,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const { i18n } = useTranslation();
   const { setTheme } = useTheme();
   const queryClient = useQueryClient(); // ⬅️ 2. Ініціалізація клієнта
+  const token = localStorage.getItem("token");
 
   // Дефолтні налаштування (поки не завантажили з БД)
   const [settings, setSettingsState] = useState<AppSettings>({
@@ -43,6 +44,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
     const load = async () => {
       try {
         const data = await settingsService.getSettings();
@@ -75,7 +81,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     load();
-  }, [i18n, setTheme]); // Додав залежності для лінтера
+  }, [i18n, setTheme, token]); // Додав залежності для лінтера
 
   // Функція збереження
   const updateSettings = useCallback(

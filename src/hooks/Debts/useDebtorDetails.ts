@@ -61,24 +61,18 @@ export function useDebtorDetails() {
     try {
       setIsLoading(true);
 
-      // 1. Отримуємо дані контрагента
-      const cpData = await getCounterpartyApi(id!);
+      const [cpData, txResponse, accData] = await Promise.all([
+        getCounterpartyApi(id),
+        getTransactionsApi({
+          counterparty_id: [id],
+          limit: 100,
+        }) as Promise<TransactionsResponse>,
+        getAccountsApi(),
+      ]);
 
-      // 2. Отримуємо транзакції через фільтр (твоя існуюча функція)
-      // В інтерфейсі ти вказав counterparty_id?: string[], тому передаємо масив
-      const txResponse = (await getTransactionsApi({
-        counterparty_id: [id!],
-        limit: 100, // Можна збільшити ліміт, щоб бачити всю історію
-      })) as TransactionsResponse;
-
-      // Перевірка: якщо бекенд повертає об'єкт { data: [...] }, беремо .data
-      // Якщо повертає просто масив [...], беремо його
       const txList = Array.isArray(txResponse)
         ? txResponse
         : txResponse.data || [];
-
-      // 3. Отримуємо рахунки
-      const accData = await getAccountsApi();
 
       setCounterparty(cpData);
       setTransactions(txList);

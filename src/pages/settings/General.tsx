@@ -39,16 +39,13 @@ function General() {
     currencyOptions,
     languageOptions,
   } = state;
-
-  if (isLoading) {
-    return <S.Container>{t("common:shared.loading")}</S.Container>;
-  }
+  const isBusy = isLoading || isPending;
 
   return (
     <>
       {isMobile && <MobilePageHeader title={t("settings:settingsPage.title")} />}
       <S.Container style={{ 
-        opacity: isPending ? 0.7 : 1, 
+        opacity: isBusy ? 0.7 : 1, 
         transition: "opacity 0.2s",
         padding: isMobile ? "20px 16px" : undefined 
       }}>
@@ -66,7 +63,7 @@ function General() {
             <S.SwitchButton
               $isActive={theme === "dark"}
               onClick={actions.toggleTheme}
-              disabled={isPending}
+              disabled={isBusy}
               aria-label="Toggle Dark Mode"
             />
           </S.SettingRow>
@@ -78,14 +75,14 @@ function General() {
           <BaseSelect
             triggerLabel={getTriggerLabel(languageOptions, localLanguage)}
             placeholder={t("common:ui.select_placeholder_default")}
-            disabled={isPending}
+            disabled={isBusy}
           >
             {languageOptions.map((opt) => (
               <S.OptionItem
                 key={opt.value}
                 $isActive={opt.value === localLanguage}
                 onClick={() => actions.setLocalLanguage(opt.value)}
-                tabIndex={isPending ? -1 : 0}
+                tabIndex={isBusy ? -1 : 0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") actions.setLocalLanguage(opt.value);
                 }}
@@ -106,14 +103,14 @@ function General() {
           <BaseSelect
             triggerLabel={getTriggerLabel(currencyOptions, localCurrency)}
             placeholder={t("common:ui.select_placeholder_default")}
-            disabled={isPending}
+            disabled={isBusy}
           >
             {currencyOptions.map((opt) => (
               <S.OptionItem
                 key={opt.value}
                 $isActive={opt.value === localCurrency}
                 onClick={() => actions.setLocalCurrency(opt.value)}
-                tabIndex={isPending ? -1 : 0}
+                tabIndex={isBusy ? -1 : 0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") actions.setLocalCurrency(opt.value);
                 }}

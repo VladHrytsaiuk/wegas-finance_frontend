@@ -4,10 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-import { useAccountsData } from "../../hooks/Accounts/useAccountsData";
 import { useUserRole } from "../../hooks/useUserRole";
 import { useWebSocketAuth } from "../../hooks/useWebSocketAuth";
-import CenteredSpinner from "./CenteredSpinner";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
 import DesktopLayout from "../../layouts/DesktopLayout";
@@ -20,7 +18,6 @@ interface MemberRemovedMessage {
 
 function AppLayout() {
   const { t } = useTranslation(["common", "accounts", "settings"]);
-  const { isLoading: isAccLoading } = useAccountsData();
   const { user } = useUserRole();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -65,20 +62,7 @@ function AppLayout() {
 
   useWebSocketAuth(onWebSocketMessage);
 
-  // 5. Loading state
-  if (isAccLoading) {
-    return (
-      <CenteredSpinner
-        fullHeight
-        message={t(
-          "accounts:accountsPage.status_loading",
-          "Завантаження фінансів...",
-        )}
-      />
-    );
-  }
-
-  // 6. Switch Layouts
+  // 5. Switch Layouts
   if (isMobile) {
     return <MobileLayout />;
   }
