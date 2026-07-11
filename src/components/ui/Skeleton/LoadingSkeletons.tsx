@@ -34,7 +34,7 @@ const PageSkeletonContainer = styled.div`
   width: 100%;
 `;
 
-const ToolbarSkeleton = styled.div`
+const TopActionsRow = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -42,18 +42,18 @@ const ToolbarSkeleton = styled.div`
   flex-wrap: wrap;
 `;
 
-const ToolbarLeft = styled.div`
+const TopActionsLeft = styled.div`
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  flex: 1;
-  min-width: 260px;
+  min-width: 220px;
 `;
 
-const ToolbarRight = styled.div`
+const TopActionsRight = styled.div`
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 `;
 
 const CardGrid = styled.div`
@@ -79,7 +79,7 @@ const TableSkeletonWrap = styled.div`
   width: 100%;
 `;
 
-const TableRow = styled.div`
+const TableCardRow = styled.div`
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr 1fr 120px;
   gap: 0.75rem;
@@ -92,6 +92,92 @@ const TableRow = styled.div`
   @media (max-width: 960px) {
     grid-template-columns: 1.4fr 1fr 1fr;
   }
+`;
+
+const ToolbarShell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+`;
+
+const InlineControlsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.125rem 0;
+`;
+
+const BottomBarRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const SearchSkeleton = styled(SkeletonBlock)`
+  min-width: 260px;
+  flex: 1;
+`;
+
+const FilterPillRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const TableShell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+  overflow: hidden;
+`;
+
+const TableHeaderRow = styled.div`
+  display: grid;
+  grid-template-columns: 54px 1.6fr 1fr 1fr 120px 52px;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+
+  @media (max-width: 960px) {
+    grid-template-columns: 54px 1.6fr 1fr 120px;
+  }
+`;
+
+const GroupHeaderSkeleton = styled.div`
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+`;
+
+const AccountsGridShell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+`;
+
+const AccountsGroupShell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+`;
+
+const PaginationShell = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  flex-wrap: wrap;
 `;
 
 const WidgetSkeletonWrap = styled.div`
@@ -148,37 +234,81 @@ const MobileSectionCard = styled(DetailCard)`
   padding: 1rem;
 `;
 
-export function PageToolbarSkeleton() {
+export function PageToolbarSkeleton({
+  withViewToggle = false,
+  actionButtonWidths = ["110px", "140px"],
+}: {
+  withViewToggle?: boolean;
+  actionButtonWidths?: string[];
+}) {
   return (
-    <ToolbarSkeleton>
-      <ToolbarLeft>
-        <SkeletonBlock $height="44px" $radius="12px" />
-        <SkeletonBlock $width="140px" $height="44px" $radius="12px" />
-      </ToolbarLeft>
-      <ToolbarRight>
-        <SkeletonBlock $width="110px" $height="40px" $radius="10px" />
-        <SkeletonBlock $width="140px" $height="40px" $radius="10px" />
-      </ToolbarRight>
-    </ToolbarSkeleton>
+    <ToolbarShell>
+      <TopActionsRow>
+        <TopActionsLeft>
+          {withViewToggle && (
+            <SkeletonBlock $width="76px" $height="38px" $radius="10px" />
+          )}
+        </TopActionsLeft>
+        <TopActionsRight>
+          {actionButtonWidths.map((width, index) => (
+            <SkeletonBlock
+              key={`${width}-${index}`}
+              $width={width}
+              $height="40px"
+              $radius="10px"
+            />
+          ))}
+        </TopActionsRight>
+      </TopActionsRow>
+
+      <InlineControlsRow>
+        <FilterPillRow>
+          <SkeletonBlock $width="120px" $height="38px" $radius="10px" />
+          <SkeletonBlock $width="44px" $height="38px" $radius="10px" />
+          <SkeletonBlock $width="44px" $height="38px" $radius="10px" />
+          <SkeletonBlock $width="44px" $height="38px" $radius="10px" />
+        </FilterPillRow>
+      </InlineControlsRow>
+
+      <BottomBarRow>
+        <SearchSkeleton $height="44px" $radius="12px" />
+        <SkeletonBlock $width="180px" $height="40px" $radius="10px" />
+      </BottomBarRow>
+    </ToolbarShell>
   );
 }
 
 export function AccountsPageSkeleton() {
   return (
     <PageSkeletonContainer>
-      <PageToolbarSkeleton />
-      <CardGrid>
-        {Array.from({ length: 6 }).map((_, index) => (
-          <CardSkeleton key={index}>
-            <SkeletonBlock $width="48px" $height="48px" $radius="14px" />
-            <div style={{ display: "flex", flex: 1, flexDirection: "column", gap: "0.5rem" }}>
-              <SkeletonBlock $width="58%" />
-              <SkeletonBlock $width="36%" $height="0.875rem" />
-            </div>
-            <SkeletonBlock $width="92px" $height="1.1rem" />
-          </CardSkeleton>
+      <PageToolbarSkeleton withViewToggle actionButtonWidths={["140px"]} />
+
+      <AccountsGridShell>
+        {Array.from({ length: 2 }).map((_, groupIndex) => (
+          <AccountsGroupShell key={groupIndex}>
+            <SkeletonBlock $width="180px" $height="1rem" />
+            <CardGrid>
+              {Array.from({ length: 3 }).map((__, index) => (
+                <CardSkeleton key={`${groupIndex}-${index}`}>
+                  <SkeletonBlock $width="48px" $height="48px" $radius="14px" />
+                  <div
+                    style={{
+                      display: "flex",
+                      flex: 1,
+                      flexDirection: "column",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    <SkeletonBlock $width="58%" />
+                    <SkeletonBlock $width="36%" $height="0.875rem" />
+                  </div>
+                  <SkeletonBlock $width="92px" $height="1.1rem" />
+                </CardSkeleton>
+              ))}
+            </CardGrid>
+          </AccountsGroupShell>
         ))}
-      </CardGrid>
+      </AccountsGridShell>
     </PageSkeletonContainer>
   );
 }
@@ -186,19 +316,54 @@ export function AccountsPageSkeleton() {
 export function TransactionsPageSkeleton() {
   return (
     <PageSkeletonContainer>
-      <PageToolbarSkeleton />
+      <PageToolbarSkeleton actionButtonWidths={["120px", "140px"]} />
       <TableSkeletonWrap>
-        <SkeletonBlock $width="180px" $height="34px" $radius="10px" />
-        {Array.from({ length: 8 }).map((_, index) => (
-          <TableRow key={index}>
-            <SkeletonBlock />
-            <SkeletonBlock />
-            <SkeletonBlock />
-            <SkeletonBlock />
-            <SkeletonBlock $height="36px" $radius="10px" />
-          </TableRow>
-        ))}
-        <SkeletonBlock $width="220px" $height="34px" $radius="10px" />
+        <PaginationShell>
+          <SkeletonBlock $width="220px" $height="18px" />
+          <FilterPillRow>
+            <SkeletonBlock $width="40px" $height="36px" $radius="10px" />
+            <SkeletonBlock $width="40px" $height="36px" $radius="10px" />
+            <SkeletonBlock $width="40px" $height="36px" $radius="10px" />
+          </FilterPillRow>
+        </PaginationShell>
+
+        <TableShell>
+          <TableHeaderRow>
+            <SkeletonBlock $height="0.9rem" />
+            <SkeletonBlock $height="0.9rem" />
+            <SkeletonBlock $height="0.9rem" />
+            <SkeletonBlock $height="0.9rem" />
+            <SkeletonBlock $height="0.9rem" />
+            <SkeletonBlock $height="0.9rem" />
+          </TableHeaderRow>
+
+          {Array.from({ length: 2 }).map((_, groupIndex) => (
+            <div key={groupIndex}>
+              <GroupHeaderSkeleton>
+                <SkeletonBlock $width="160px" $height="0.95rem" />
+              </GroupHeaderSkeleton>
+
+              {Array.from({ length: 3 }).map((__, rowIndex) => (
+                <TableCardRow key={`${groupIndex}-${rowIndex}`}>
+                  <SkeletonBlock $width="32px" $height="32px" $radius="10px" />
+                  <SkeletonBlock />
+                  <SkeletonBlock />
+                  <SkeletonBlock />
+                  <SkeletonBlock />
+                </TableCardRow>
+              ))}
+            </div>
+          ))}
+        </TableShell>
+
+        <PaginationShell>
+          <SkeletonBlock $width="220px" $height="18px" />
+          <FilterPillRow>
+            <SkeletonBlock $width="40px" $height="36px" $radius="10px" />
+            <SkeletonBlock $width="40px" $height="36px" $radius="10px" />
+            <SkeletonBlock $width="40px" $height="36px" $radius="10px" />
+          </FilterPillRow>
+        </PaginationShell>
       </TableSkeletonWrap>
     </PageSkeletonContainer>
   );
