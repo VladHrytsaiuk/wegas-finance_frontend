@@ -40,13 +40,13 @@ export const CreateNoteCard = styled.form<{ $color?: string }>`
   max-width: 500px;
   margin: 0 auto;
   width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* М'яка тінь */
+  box-shadow: var(--shadow-sm); /* М'яка системна тінь */
   display: flex;
   gap: 12px;
   transition: all 0.2s;
 
   &:focus-within {
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
   }
 
@@ -61,6 +61,28 @@ export const CreateNoteCard = styled.form<{ $color?: string }>`
     &::placeholder {
       color: var(--note-text-tertiary, var(--color-text-tertiary));
     }
+  }
+`;
+
+export const SubmitButton = styled.button`
+  background: none;
+  border: none;
+  color: var(--color-brand-600);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-brand-50);
+  }
+
+  &:disabled {
+    color: var(--note-text-tertiary, var(--color-text-tertiary));
+    cursor: not-allowed;
   }
 `;
 

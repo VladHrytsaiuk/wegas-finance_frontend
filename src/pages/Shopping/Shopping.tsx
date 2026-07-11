@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlusCircle } from "react-icons/hi2";
 
-import { CenteredSpinner } from "../../components/ui/CenteredSpinner";
 import { ListPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { Button } from "../../components/ui/Button";
 import { NoteOptions } from "../../components/shopping/NoteOptions";
@@ -19,22 +18,16 @@ import { useHeader } from "../../context/HeaderContext"; // Імпорт кон�
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Shopping.styles";
-import Modal, { useModal } from "../../components/ui/Modal";
-import { FAB } from "../../components/ui/FAB";
-import { CreateShoppingListModal } from "../../components/shopping/CreateShoppingListModal";
 import type { ShoppingVisibility } from "../../hooks/Shopping/useShoppingPage";
 
 function Shopping() {
   return (
-    <Modal>
-      <ShoppingContent />
-    </Modal>
+    <ShoppingContent />
   );
 }
 
 function ShoppingContent() {
   const { lists, isLoading, handlers, t } = useShopping();
-  const { open, close } = useModal();
   const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.shoppingList", "Покупки"));
   const { setPageTitle, resetPageTitle } = useHeader();
@@ -137,13 +130,13 @@ function ShoppingContent() {
                   setNewListHiddenFrom(hidden);
                 }}
               />
-              <Button
-                variation="soft"
+              <S.SubmitButton
                 type="submit"
                 disabled={!newListTitle.trim()}
-                size="small"
-                icon={<HiPlusCircle size={18} />}
-              />
+                title={t("common:common.add")}
+              >
+                <HiPlusCircle size={22} />
+              </S.SubmitButton>
             </div>
           </div>
       </S.CreateNoteCard>
