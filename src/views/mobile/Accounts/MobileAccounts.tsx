@@ -14,6 +14,7 @@ import {
   HiOutlineBanknotes,
   HiOutlineUser,
   HiOutlineUsers,
+  HiDocumentArrowUp,
 } from "react-icons/hi2";
 import { FAB } from "../../../components/ui/FAB";
 import { formatMoney } from "../../../utils/helpers";
@@ -21,11 +22,16 @@ import Modal from "../../../components/ui/Modal";
 import ConfirmDelete from "../../../components/ui/ConfirmDelete";
 import { MobileAccountsSkeleton } from "../../../components/ui/Skeleton/LoadingSkeletons";
 import CardSlider from "../../../components/mobile/CardSlider";
+import ImportModal from "../../../components/import/ImportModal";
 import { useUserRole } from "../../../hooks/useUserRole";
 import { getTransactionsApi } from "../../../services/apiTransactions";
+import { getCategoriesApi } from "../../../services/apiCategories";
 import type { Account } from "../../../services/apiAccounts";
+import type { Category } from "../../../types";
 import type { Transaction } from "../../../types";
 import MobilePageHeader from "../../../components/mobile/MobilePageHeader";
+import { TransactionItem } from "../../../components/transactions/TransactionItem";
+import { useSettings } from "../../../context/SettingsContext";
 
 type Scope = "personal" | "family";
 type AccountTypeFilter = "all" | "card" | "cash" | "savings";
@@ -162,13 +168,13 @@ const GhostButton = styled.button`
   cursor: pointer;
 `;
 
-const QuickActionsGrid = styled.div`
+const QuickActionsGrid = styled.div<{ $cols?: number }>`
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(${(props) => props.$cols || 3}, minmax(0, 1fr));
   gap: 8px;
 `;
 
-const QuickAction = styled.button<{ $tone: "income" | "expense" | "transfer" }>`
+const QuickAction = styled.button<{ $tone: "income" | "expense" | "transfer" | "import" }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -198,13 +204,19 @@ const QuickAction = styled.button<{ $tone: "income" | "expense" | "transfer" }>`
           ? "var(--color-red-100)"
           : props.$tone === "transfer"
             ? "var(--color-blue-50)"
-            : "rgba(148, 163, 184, 0.14)"};
+            : props.$tone === "import"
+              ? "var(--color-purple-50)"
+              : "rgba(148, 163, 184, 0.14)"};
     color: ${(props) =>
       props.$tone === "income"
         ? "var(--color-brand-700)"
         : props.$tone === "expense"
           ? "var(--color-red-700)"
-          : "var(--color-blue-700)"};
+          : props.$tone === "transfer"
+            ? "var(--color-blue-700)"
+            : props.$tone === "import"
+              ? "var(--color-purple-600)"
+              : "var(--color-text-secondary)"};
   }
 
   .title {
@@ -321,10 +333,17 @@ function MobileAccounts() {
     isDeleting,
   } = useAccountsPage();
   const { user, isStartupper } = useUserRole();
+  const { currency, language } = useSettings();
   const [scope, setScope] = useState<Scope>("personal");
   const [selectedOwnerId, setSelectedOwnerId] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<AccountTypeFilter>("all");
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
+
+  const { data: categories = [] } = useQuery<Category[]>({
+    queryKey: ["categories"],
+    queryFn: getCategoriesApi,
+    staleTime: 5 * 60 * 1000,
+  });
 
   usePageTitle(t("navigation:general.accounts"));
 
@@ -402,10 +421,29 @@ function MobileAccounts() {
     }
   }, [scopedAccounts, selectedAccountId]);
 
+  // Force reset to first account when filters change
+  useEffect(() => {
+    if (scopedAccounts.length > 0) {
+      setSelectedAccountId(scopedAccounts[0].id);
+    } else {
+      setSelectedAccountId(null);
+    }
+  }, [typeFilter, scope, selectedOwnerId]);
+
   const selectedAccount = useMemo(
     () => scopedAccounts.find((account) => account.id === selectedAccountId) || null,
     [scopedAccounts, selectedAccountId],
   );
+
+  const isImportSupported = useMemo(() => {
+    if (!selectedAccount || selectedAccount.type !== "card") return false;
+    const name = selectedAccount.name?.toLowerCase() || "";
+    const icon = selectedAccount.icon?.toLowerCase() || "";
+    const bankName = selectedAccount.bank_name?.toLowerCase() || "";
+    return ["privat", "monobank"].some((bank) =>
+      name.includes(bank) || icon.includes(bank) || bankName.includes(bank)
+    );
+  }, [selectedAccount]);
 
   const sliderAccounts = useMemo(
     () =>
@@ -417,19 +455,25 @@ function MobileAccounts() {
     [scopedAccounts, users],
   );
 
-  const { data: recentTxResponse, isLoading: isRecentLoading } = useQuery({
-    queryKey: ["transactions", selectedAccount?.id, "mobile-preview"],
+  const {
+    data: recentRes,
+    isLoading: isRecentLoading,
+    isError: isRecentError,
+  } = useQuery({
+    queryKey: ["transactions", selectedAccount?.id, "recent-mobile"],
     queryFn: () =>
       getTransactionsApi({
         account_id: selectedAccount!.id,
-        limit: 4,
+        limit: 5,
+        page: 1,
+        sort: "date-desc",
       }),
     enabled: !!selectedAccount?.id,
   });
 
-  const recentTransactions = Array.isArray(recentTxResponse)
-    ? recentTxResponse
-    : recentTxResponse?.data || [];
+  const recentTransactions = Array.isArray(recentRes)
+    ? recentRes
+    : recentRes?.data || [];
 
   const recentItems = useMemo(
     () => (recentTransactions as Transaction[]).slice(0, 3),
@@ -566,7 +610,7 @@ function MobileAccounts() {
 
                   {selectedAccount && (
                     <Section>
-                      <QuickActionsGrid>
+                      <QuickActionsGrid $cols={isImportSupported && !selectedAccount.is_synced ? 4 : 3}>
                         <QuickAction $tone="income" onClick={() => openTransactionModal("income")}>
                           <div className="icon">
                             <HiArrowDownTray size={20} />
@@ -596,6 +640,19 @@ function MobileAccounts() {
                             {t("accounts:accountDetailsPage.action_transfer", "Переказ")}
                           </div>
                         </QuickAction>
+                        
+                        {isImportSupported && !selectedAccount.is_synced && (
+                          <Modal.Open opens="import-modal">
+                            <QuickAction $tone="import">
+                              <div className="icon">
+                                <HiDocumentArrowUp size={20} />
+                              </div>
+                              <div className="title">
+                                {t("accounts:accountDetailsPage.action_import_button", "Імпорт")}
+                              </div>
+                            </QuickAction>
+                          </Modal.Open>
+                        )}
                       </QuickActionsGrid>
                     </Section>
                   )}
@@ -620,57 +677,31 @@ function MobileAccounts() {
                             <HiOutlineClock />
                             <span>{t("dashboard:recentTransactions.status_loading")}</span>
                           </InlineEmpty>
-                        ) : recentItems.length === 0 ? (
+                        ) : isRecentError || recentItems.length === 0 ? (
                           <InlineEmpty>
                             <HiOutlineClock />
-                            <span>{t("dashboard:recentTransactions.status_empty")}</span>
+                            <span>
+                              {isRecentError
+                                ? t("common:ui.error_loading", "Завантаження не вдалося")
+                                : t("dashboard:recentTransactions.status_empty")}
+                            </span>
                           </InlineEmpty>
                         ) : (
                           <SimpleRecentList>
-                            {recentItems.map((tx) => {
-                              const isNegative = [
-                                "expense",
-                                "transfer_out",
-                                "loan_give",
-                                "debt_repay",
-                                "utility_payment",
-                              ].includes(tx.type || "");
-                              const title =
-                                tx.counterparty?.name ||
-                                tx.category?.name ||
-                                tx.note ||
-                                t("transactions:transactionsTable.default_category");
-                              const meta = new Date(tx.date).toLocaleString("uk-UA", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              });
-
-                              return (
-                                <SimpleRecentRow
-                                  key={tx.id}
-                                  onClick={() => navigate(`/transactions/${tx.id}`)}
-                                >
-                                  <SimpleRecentIcon>
-                                    <HiOutlineBanknotes size={20} />
-                                  </SimpleRecentIcon>
-                                  <SimpleRecentText>
-                                    <span className="title">{title}</span>
-                                    <span className="meta">{meta}</span>
-                                  </SimpleRecentText>
-                                  <SimpleRecentAmount $negative={isNegative}>
-                                    {isNegative ? "- " : "+ "}
-                                    {formatMoney(
-                                      Math.abs(Number(tx.amount) || 0),
-                                      tx.account?.currency ||
-                                        selectedAccount?.currency ||
-                                        "UAH",
-                                    )}
-                                  </SimpleRecentAmount>
-                                </SimpleRecentRow>
-                              );
-                            })}
+                            {recentItems.map((tx) => (
+                              <TransactionItem
+                                key={tx.id}
+                                transaction={tx}
+                                categories={categories}
+                                accounts={accounts}
+                                currency={currency}
+                                language={language}
+                                isWidget={true}
+                                hideAccountColumn={true}
+                                hideCategory={true}
+                                onClick={() => navigate(`/transactions/${tx.id}`)}
+                              />
+                            ))}
                           </SimpleRecentList>
                         )}
                       </RecentCard>
@@ -690,14 +721,21 @@ function MobileAccounts() {
         )}
 
         <Modal.Window name="delete-confirm">
-              <ConfirmDelete
+          <ConfirmDelete
             resourceName={t("accounts:accountsTable.delete_resource_name", {
               name: accountToDeleteName,
             })}
-            onConfirm={handleDeleteConfirm}
             disabled={isDeleting}
+            onConfirm={handleDeleteConfirm}
+            onClose={() => setIdToDelete("")}
           />
         </Modal.Window>
+        
+        {selectedAccount && (
+          <Modal.Window name="import-modal" padding="0">
+            <ImportModal account={selectedAccount} />
+          </Modal.Window>
+        )}
       </StyledMobileAccounts>
     </Modal>
   );

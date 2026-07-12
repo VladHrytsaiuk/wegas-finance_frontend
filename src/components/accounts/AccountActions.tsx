@@ -93,8 +93,9 @@ const SyncBtn = styled(ActionBtn)`
 
 const ImportBtn = styled(ActionBtn)`
   &:hover {
-    background: var(--color-purple-50, #f5f3ff);
-    border-color: var(--color-purple-500, #8b5cf6);
+    background: var(--color-purple-50, #f5f3ff) !important;
+    border-color: var(--color-purple-500, #8b5cf6) !important;
+    color: var(--color-purple-700, #6d28d9) !important;
   }
 `;
 

@@ -253,6 +253,26 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
   const sliderRef = useRef<HTMLDivElement>(null);
   const activeIndex = accounts.findIndex((account) => account.id === activeAccountId);
 
+  const isProgrammaticScroll = useRef(false);
+
+  React.useEffect(() => {
+    if (!sliderRef.current || activeIndex < 0) return;
+    const container = sliderRef.current;
+    const itemWidth = container.offsetWidth * 0.85 + 12;
+    const targetScroll = activeIndex * itemWidth;
+    
+    // Allow a small margin of error for fractional pixels
+    if (Math.abs(container.scrollLeft - targetScroll) > 5) {
+      isProgrammaticScroll.current = true;
+      container.scrollTo({ left: targetScroll, behavior: "smooth" });
+      
+      const timeout = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 400); // 400ms is enough for smooth scroll to finish
+      return () => clearTimeout(timeout);
+    }
+  }, [activeIndex, accounts.length]);
+
   const getSkin = (account: SliderAccount) => {
     if (account.type === "card") {
       const bank = account.bank_name;
@@ -294,7 +314,7 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
   };
 
   const handleScroll = () => {
-    if (!sliderRef.current) return;
+    if (!sliderRef.current || isProgrammaticScroll.current) return;
     const container = sliderRef.current;
     const scrollLeft = container.scrollLeft;
     const itemWidth = container.offsetWidth * 0.85 + 12;

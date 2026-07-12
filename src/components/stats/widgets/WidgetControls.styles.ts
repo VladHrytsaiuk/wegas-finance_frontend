@@ -413,6 +413,7 @@ export const StyledDayPickerWrapper = styled.div`
   .rdp {
     --rdp-cell-size: 40px;
     --rdp-accent-color: var(--color-brand-600);
+    --rdp-today-color: var(--color-green-600);
     --rdp-background-color: var(--color-brand-50);
     --rdp-accent-color-dark: var(--color-brand-700);
     
@@ -528,10 +529,19 @@ export const StyledDayPickerWrapper = styled.div`
   }
 
   .rdp-day_today:not(.rdp-day_selected) .rdp-day_button {
-    border: 2px solid var(--color-brand-200) !important;
-    color: var(--color-brand-600) !important;
+    border: 2px solid var(--color-green-600) !important;
+    color: var(--color-green-600) !important;
     font-weight: bold;
+    background: var(--color-success-50) !important;
     border-radius: 100px !important;
+  }
+
+  .rdp-today:not(.rdp-outside) {
+    color: var(--color-green-600) !important;
+  }
+
+  .rdp-today:not(.rdp-outside) .rdp-day_button {
+    color: var(--color-green-600) !important;
   }
 
   /* Колір назви місяця та днів тижня */
