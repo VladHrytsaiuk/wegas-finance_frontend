@@ -4,7 +4,15 @@ import { BANK_SKINS } from "../accounts/bankSkins";
 import { formatMoney } from "../../utils/helpers";
 import { useSettings } from "../../context/SettingsContext";
 import { BankLogo, PaymentSystemLogo } from "../accounts/form/CardStyles";
-import { HiArrowPath, HiUser } from "react-icons/hi2";
+import {
+  HiArchiveBox,
+  HiArrowPath,
+  HiBanknotes,
+  HiBeaker,
+  HiEnvelope,
+  HiLockClosed,
+  HiUser,
+} from "react-icons/hi2";
 import type { Account } from "../../services/apiAccounts";
 
 const Wrapper = styled.div`
@@ -159,6 +167,55 @@ const CardFooter = styled.div`
   margin-top: auto;
 `;
 
+const CashTopRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+`;
+
+const CashTypeBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(6px);
+`;
+
+const CashNameBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const CashName = styled.div`
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const CashOwner = styled.div`
+  font-size: 11px;
+  opacity: 0.78;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  svg {
+    width: 11px;
+    height: 11px;
+  }
+`;
+
 const CardBalance = styled.div`
   font-size: 22px;
   font-weight: 700;
@@ -216,6 +273,26 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
     };
   };
 
+  const getStorageIcon = (account: SliderAccount) => {
+    if (account.type === "cash") return <HiBanknotes size={20} />;
+
+    switch (account.storage_type?.slug) {
+      case "envelope":
+        return <HiEnvelope size={20} />;
+      case "safe":
+        return <HiLockClosed size={20} />;
+      case "jar":
+        return <HiBeaker size={20} />;
+      default:
+        return <HiArchiveBox size={20} />;
+    }
+  };
+
+  const getTypeLabel = (account: SliderAccount) => {
+    if (account.type === "cash") return "Готівка";
+    return account.storage_type?.name || "Скарбничка";
+  };
+
   const handleScroll = () => {
     if (!sliderRef.current) return;
     const container = sliderRef.current;
@@ -235,6 +312,52 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
           const skin = getSkin(acc);
           const isActive = acc.id === activeAccountId;
           const isPrivat = skin.bankId === "privat";
+
+          if (acc.type !== "card") {
+            return (
+              <Card
+                key={acc.id}
+                $bg={skin.bg}
+                $color={skin.color}
+                $border={skin.border}
+                $active={isActive}
+                $isPrivat={false}
+                onClick={() => onCardClick(acc.id)}
+              >
+                <CashTopRow>
+                  <CashTypeBadge>
+                    {getStorageIcon(acc)}
+                    <span>{getTypeLabel(acc)}</span>
+                  </CashTypeBadge>
+                  {acc.is_synced && (
+                    <SyncBadge>
+                      <HiArrowPath />
+                    </SyncBadge>
+                  )}
+                </CashTopRow>
+
+                <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <CashNameBlock>
+                    <CashName>{acc.name}</CashName>
+                    {acc.owner_name && (
+                      <CashOwner>
+                        <HiUser /> {acc.owner_name}
+                      </CashOwner>
+                    )}
+                  </CashNameBlock>
+                  <CardFooter>
+                    <CardBalance>
+                      {formatMoney(
+                        acc.calculated_balance || acc.balance || 0,
+                        acc.currency || baseCurrency,
+                        language,
+                      )}
+                    </CardBalance>
+                  </CardFooter>
+                </div>
+              </Card>
+            );
+          }
           
           return (
             <Card

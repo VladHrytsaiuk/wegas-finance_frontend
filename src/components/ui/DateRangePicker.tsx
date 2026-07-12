@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 interface ExtendedDatePickerProps extends DatePickerProps {
   staticPicker?: boolean;
   numberOfMonths?: number;
+  hideFooter?: boolean;
 }
 
 // 🔥 ІДЕАЛЬНИЙ СЕЛЕКТ З СИНХРОНІЗАЦІЄЮ ТА ЖОРСТКОЮ ЛОГІКОЮ 🔥
@@ -250,8 +251,9 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
               boxShadow: "none",
               border: "none",
               transform: "none",
-              width: "fit-content",
+              width: "100%",
               display: "flex",
+              justifyContent: "center",
             }
           : {
               ...dropdownStyle,
@@ -320,16 +322,18 @@ export const DateRangePicker = (props: ExtendedDatePickerProps) => {
           </S.StyledDayPickerWrapper>
         </S.CalendarSection>
 
-        <S.Footer>
-          {!props.staticPicker && (
-            <S.FooterBtn type="button" onClick={() => actions.setIsOpen(false)}>
-              {t("transactions:transactionForm.button_cancel")}
-            </S.FooterBtn>
-          )}
-          <S.ApplyBtn type="button" onClick={actions.handleApply}>
-            {t("legacy:filters.apply")}
-          </S.ApplyBtn>
-        </S.Footer>
+        {!props.hideFooter && (
+          <S.Footer>
+            {!props.staticPicker && (
+              <S.FooterBtn type="button" onClick={() => actions.setIsOpen(false)}>
+                {t("transactions:transactionForm.button_cancel")}
+              </S.FooterBtn>
+            )}
+            <S.ApplyBtn type="button" onClick={actions.handleApply}>
+              {t("legacy:filters.apply")}
+            </S.ApplyBtn>
+          </S.Footer>
+        )}
       </S.RightSide>
     </S.PickerContainer>
   );

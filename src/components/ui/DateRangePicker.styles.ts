@@ -21,7 +21,12 @@ export const StyledDayPickerWrapper = styled.div`
   /* Компактний розмір клітинки */
   --rdp-cell-size: 34px;
   --rdp-accent-color: var(--color-brand-600);
-  --rdp-background-color: var(--color-brand-50);
+  --rdp-today-color: var(--color-green-600);
+  --rdp-background-color: color-mix(
+    in srgb,
+    var(--color-brand-500),
+    transparent 88%
+  );
 
   .rdp {
     margin: 0;
@@ -62,10 +67,18 @@ export const StyledDayPickerWrapper = styled.div`
   }
 
   .rdp-day_today:not(.rdp-day_selected) {
-    border: 2px solid var(--color-brand-500);
-    color: var(--color-text-main);
+    border: 2px solid var(--color-green-600);
+    color: var(--color-green-600);
     font-weight: bold;
-    background-color: transparent;
+    background-color: var(--color-success-50);
+  }
+
+  .rdp-today:not(.rdp-outside) {
+    color: var(--color-green-600) !important;
+  }
+
+  .rdp-today:not(.rdp-outside) .rdp-day_button {
+    color: var(--color-green-600) !important;
   }
 
   .rdp-day_selected {
@@ -91,8 +104,12 @@ export const StyledDayPickerWrapper = styled.div`
   }
 
   .rdp-day_range_middle {
-    background-color: var(--color-brand-100) !important;
-    color: var(--color-brand-900) !important;
+    background-color: color-mix(
+      in srgb,
+      var(--color-brand-500),
+      transparent 84%
+    ) !important;
+    color: var(--color-text-main) !important;
     border-radius: 0 !important;
   }
 
@@ -203,6 +220,8 @@ export const RightSide = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0; /* Не даємо йому стискатись */
+  width: 100%;
+  align-items: center;
 `;
 
 export const CalendarSection = styled.div`
@@ -211,6 +230,7 @@ export const CalendarSection = styled.div`
   display: flex;
   justify-content: center;
   flex-shrink: 0; /* Не даємо календарю стискатись */
+  width: 100%;
 `;
 
 export const Footer = styled.div`

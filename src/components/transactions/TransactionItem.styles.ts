@@ -22,16 +22,16 @@ export const StyledItem = styled.div<{
     props.$isWidget
       ? "1fr auto"
       : props.$hideAccount
-        ? "1.5fr 1.5fr 140px" /* Назва, Нотатка, Сума */
-        : "1.2fr 1fr 1fr 140px"};
+        ? "minmax(0, 1.5fr) minmax(0, 1.5fr) 140px" /* Назва, Нотатка, Сума */
+        : "minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) 140px"};
 
   ${(props) =>
     !props.$isWidget &&
     css`
       /* В модалці тримаємо 3 колонки */
       grid-template-columns: ${props.$hideAccount
-        ? "1fr 1fr 120px"
-        : "1.2fr 1fr 120px"};
+        ? "minmax(0, 1fr) minmax(0, 1fr) 120px"
+        : "minmax(0, 1.2fr) minmax(0, 1fr) 120px"};
 
       /* 🔥 Ховаємо нотатку ТІЛЬКИ якщо це не модалка */
       .note-col {
@@ -45,8 +45,8 @@ export const StyledItem = styled.div<{
       css`
         /* Навіть на телефоні в модалці тримаємо 3 колонки */
         grid-template-columns: ${props.$hideAccount
-          ? "1.2fr 1fr 100px"
-          : "1fr 100px"};
+          ? "minmax(0, 1.35fr) minmax(0, 0.95fr) auto"
+          : "minmax(0, 1fr) auto"};
 
         .acc-col {
           display: none;
@@ -154,7 +154,15 @@ export const Subtitle = styled.div`
   .dot {
     margin: 0 4px;
     opacity: 0.4;
+    flex-shrink: 0;
   }
+`;
+
+export const SubtitleText = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 `;
 
 export const Time = styled.span`
@@ -166,6 +174,7 @@ export const Time = styled.span`
 export const TableCol = styled.div<{ $isDeleted?: boolean }>`
   font-size: 0.85rem;
   color: var(--color-text-main);
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -184,9 +193,18 @@ export const Note = styled.div`
   font-size: 0.8rem;
   color: var(--color-text-secondary);
   opacity: 0.7;
-  white-space: nowrap;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.25;
+  }
 `;
 
 export const Amount = styled.div<{ $color: string; $isForgiveness?: boolean }>`

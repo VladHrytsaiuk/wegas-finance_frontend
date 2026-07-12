@@ -16,6 +16,14 @@ export const useTransactionsPage = () => {
   // 1. Отримуємо поточну сторінку з URL
   const currentPageFromUrl = Number(searchParams.get("page")) || 1;
 
+  const resetPageInUrl = useCallback(() => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextParams.get("page") !== "1") {
+      nextParams.set("page", "1");
+      setSearchParams(nextParams);
+    }
+  }, [searchParams, setSearchParams]);
+
   // Setup Title
   useEffect(() => {
     setPageTitle(
@@ -32,6 +40,17 @@ export const useTransactionsPage = () => {
     dateRange,
     filterValues,
     apiParams: originalApiParams,
+    pageSize,
+    categories,
+    accounts,
+    filtersConfig,
+    sortOptions,
+    handleSearchChange: handleSearchChangeBase,
+    handleFilterChange: handleFilterChangeBase,
+    handleSortChange: handleSortChangeBase,
+    handleDateRangeChange: handleDateRangeChangeBase,
+    handleClearAll: handleClearAllBase,
+    sortValue,
   } = filterLogic;
 
   // 2. Формуємо параметри для API (сторінка з URL)
@@ -57,12 +76,50 @@ export const useTransactionsPage = () => {
   // 3. Функція зміни сторінки (URL + Scroll)
   const handlePageChange = useCallback(
     (newPage: number) => {
-      searchParams.set("page", newPage.toString());
-      setSearchParams(searchParams);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set("page", newPage.toString());
+      setSearchParams(nextParams);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
     [searchParams, setSearchParams],
   );
+
+  const handleSearchChange = useCallback(
+    (val: string) => {
+      resetPageInUrl();
+      handleSearchChangeBase(val);
+    },
+    [handleSearchChangeBase, resetPageInUrl],
+  );
+
+  const handleFilterChange = useCallback(
+    (key: string, val: string[] | { min: string; max: string }) => {
+      resetPageInUrl();
+      handleFilterChangeBase(key, val);
+    },
+    [handleFilterChangeBase, resetPageInUrl],
+  );
+
+  const handleSortChange = useCallback(
+    (val: string) => {
+      resetPageInUrl();
+      handleSortChangeBase(val);
+    },
+    [handleSortChangeBase, resetPageInUrl],
+  );
+
+  const handleDateRangeChange = useCallback(
+    (range: { from: Date | undefined; to: Date | undefined }) => {
+      resetPageInUrl();
+      handleDateRangeChangeBase(range);
+    },
+    [handleDateRangeChangeBase, resetPageInUrl],
+  );
+
+  const handleClearAll = useCallback(() => {
+    resetPageInUrl();
+    handleClearAllBase();
+  }, [handleClearAllBase, resetPageInUrl]);
 
   // Handlers
   const handleRowClick = useCallback(
@@ -93,11 +150,18 @@ export const useTransactionsPage = () => {
     isDeleting,
 
     // Logic objects
-    ...filterLogic,
-
     // Overrides
     page: currentPageFromUrl,
     setPage: handlePageChange,
+    searchQuery,
+    sortValue,
+    filterValues,
+    dateRange,
+    filtersConfig,
+    sortOptions,
+    categories,
+    accounts,
+    pageSize,
 
     // Computed
     hasActiveFilters,
@@ -105,5 +169,10 @@ export const useTransactionsPage = () => {
     // Actions
     deleteTransaction,
     handleRowClick,
+    handleSearchChange,
+    handleFilterChange,
+    handleSortChange,
+    handleDateRangeChange,
+    handleClearAll,
   };
 };

@@ -31,6 +31,7 @@ export function useTransactionsData(apiParams: TransactionFilters) {
   const {
     data: responseData,
     isLoading,
+    isFetching,
     isPlaceholderData,
   } = useQuery({
     queryKey: ["transactions", apiParams],
@@ -84,6 +85,7 @@ export function useTransactionsData(apiParams: TransactionFilters) {
     transactions,
     totalCount,
     isLoading,
+    isFetching,
     isPlaceholderData,
     deleteTransaction,
     isDeleting,

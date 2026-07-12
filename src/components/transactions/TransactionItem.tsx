@@ -14,6 +14,7 @@ interface TransactionItemProps {
   onClick?: () => void;
   isWidget?: boolean;
   hideAccountColumn?: boolean;
+  hideCategory?: boolean;
 }
 
 export const TransactionItem = memo(
@@ -26,6 +27,7 @@ export const TransactionItem = memo(
     onClick,
     isWidget = false,
     hideAccountColumn = false,
+    hideCategory = false,
   }: TransactionItemProps) => {
     const data = useTransactionItem({
       transaction,
@@ -54,10 +56,10 @@ export const TransactionItem = memo(
             <S.Title>{data.title}</S.Title>
             <S.Subtitle>
               <S.Time>{data.timeFormatted}</S.Time>
-              {data.subtitle && (
+              {data.subtitle && !hideCategory && (
                 <>
                   <span className="dot">•</span>
-                  {data.subtitle}
+                  <S.SubtitleText>{data.subtitle}</S.SubtitleText>
                 </>
               )}
             </S.Subtitle>
