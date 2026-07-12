@@ -62,58 +62,57 @@ export function SkinSelector({
         {t("accounts:accountForm.title_select_design")}
       </S.SkinSelectorTitle>
 
-      {/* BANK TABS */}
-      <S.BankTabs>
-        {/* 🔥 ПЕРЕБИРАЄМО ГРУПИ БАНКІВ */}
-        {Object.values(BANK_GROUPS).map((group) => (
-          <S.BankTab
-            type="button"
-            key={group.id}
-            $active={activeBankTab === group.id}
-            aria-selected={activeBankTab === group.id}
-            onClick={() => setActiveBankTab(group.id)}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                e.stopPropagation();
-                setActiveBankTab(group.id);
-              }
-            }}
-          >
-            {/* Тут можна додати t() для локалізації назв банків, якщо треба */}
-            {group.label}
-          </S.BankTab>
-        ))}
-      </S.BankTabs>
-
-      {/* SKINS GRID */}
-      <S.SkinGrid>
-        {/* 🔥 ФІЛЬТРУЄМО СКІНИ ПО bankId */}
-        {Object.values(BANK_SKINS)
-          .filter((skin) => skin.bankId === activeBankTab)
-          .map((skin) => (
-            <S.SkinOption
-              key={skin.id}
+      <S.SkinSelectorBody>
+        {/* BANK SIDEBAR */}
+        <S.BankSidebar>
+          {Object.values(BANK_GROUPS).map((group) => (
+            <S.SidebarItem
               type="button"
-              $bg={skin.bg}
-              $textColor={skin.color}
-              $selected={skinKey === skin.id}
-              onClick={() => setSkinKey(skin.id)}
-              title={skin.label}
+              key={group.id}
+              $active={activeBankTab === group.id}
+              aria-selected={activeBankTab === group.id}
+              onClick={() => setActiveBankTab(group.id)}
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
                   e.stopPropagation();
-                  setSkinKey(skin.id);
+                  setActiveBankTab(group.id);
                 }
               }}
             >
-              {skin.label}
-            </S.SkinOption>
+              {group.label}
+            </S.SidebarItem>
           ))}
-      </S.SkinGrid>
+        </S.BankSidebar>
+
+        {/* SKINS GRID */}
+        <S.SkinGrid>
+          {Object.values(BANK_SKINS)
+            .filter((skin) => skin.bankId === activeBankTab)
+            .map((skin) => (
+              <S.SkinOption
+                key={skin.id}
+                type="button"
+                $bg={skin.bg}
+                $textColor={skin.color}
+                $selected={skinKey === skin.id}
+                onClick={() => setSkinKey(skin.id)}
+                title={skin.label}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSkinKey(skin.id);
+                  }
+                }}
+              >
+                {skin.label}
+              </S.SkinOption>
+            ))}
+        </S.SkinGrid>
+      </S.SkinSelectorBody>
 
       {/* FOOTER ACTIONS */}
       <S.SkinSelectorFooter>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Input = styled.input<{ $hasError?: boolean }>`
   width: 100%;
   padding: 0.5rem 0.75rem;
+  min-height: 46px;
 
   background-color: var(--color-bg-surface);
   color: var(--color-text-main);
@@ -12,7 +13,7 @@ export const Input = styled.input<{ $hasError?: boolean }>`
     ${(props) =>
       props.$hasError ? "var(--color-red-600)" : "var(--color-border)"};
 
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.9rem;
   transition: all 0.2s;
 

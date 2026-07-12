@@ -6,11 +6,11 @@ export const FormContainer = styled.div`
   display: flex;
   gap: 2.5rem;
   position: relative;
-  height: 480px;
-  width: 900px;
-  align-items: flex-start;
+  height: 500px;
+  width: 1000px;
+  align-items: stretch;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     flex-direction: column;
     width: 100%;
     gap: 1.5rem;
@@ -22,12 +22,13 @@ export const Form = styled.form`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
   min-width: 400px;
   height: 100%;
   max-height: 100%;
   overflow-y: auto;
   padding-right: 1rem;
+  padding-bottom: 1rem;
 
   @media (max-width: 600px) {
     min-width: 100%;
@@ -54,15 +55,18 @@ export const Row = styled.div`
   }
 `;
 
-export const RightColumn = styled.div`
-  width: 340px;
-  flex-shrink: 0;
+export const LeftColumn = styled.div`
+  flex: 1;
+  min-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1rem;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     width: 100%;
+    min-width: 100%;
     order: -1;
   }
 `;
@@ -73,13 +77,13 @@ export const PreviewSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
   background-color: var(--color-bg-page);
-  padding: 1rem;
-  border-radius: 12px;
+  padding: 2rem;
+  border-radius: 16px;
   border: 1px solid var(--color-border);
   width: 100%;
-  flex-shrink: 0;
+  max-width: 420px;
   box-shadow:
     0 15px 15px -15px rgba(0, 0, 0, 0.6),
     0 2px 4px -1px rgba(0, 0, 0, 0.4);
@@ -213,50 +217,64 @@ export const FooterRow = styled.div`
 
 // --- SKIN SELECTOR STYLES ---
 
-export const BankTabs = styled.div`
+export const SkinSelectorBody = styled.div`
   display: flex;
-  gap: 0.6rem;
-  overflow-x: auto;
-  padding-bottom: 0.8rem;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-  scrollbar-width: none;
+  flex: 1;
+  min-height: 0;
+  gap: 1.5rem;
+`;
+
+export const BankSidebar = styled.div`
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+  border-right: 1px solid var(--color-border);
+  padding-right: 0.5rem;
+  flex-shrink: 0;
+  
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 
-export const BankTab = styled.button<{ $active: boolean }>`
-  padding: 0.4rem 0.8rem;
+export const SidebarItem = styled.button<{ $active: boolean }>`
+  padding: 0.6rem 0.8rem;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 600;
+  text-align: left;
   cursor: pointer;
-  white-space: nowrap;
   transition: all 0.2s ease;
-  border: 1px solid
-    ${(p) => (p.$active ? "var(--color-brand-600)" : "transparent")};
-  background-color: ${(p) =>
-    p.$active ? "var(--color-brand-50)" : "var(--color-bg-page)"};
-  color: ${(p) =>
-    p.$active ? "var(--color-brand-700)" : "var(--color-text-secondary)"};
+  border: none;
+  background-color: ${(p) => (p.$active ? "var(--color-bg-hover)" : "transparent")};
+  color: ${(p) => (p.$active ? "var(--color-text-main)" : "var(--color-text-secondary)")};
 
   &:hover {
-    background-color: ${(p) =>
-      p.$active ? "var(--color-brand-50)" : "var(--color-border)"};
+    background-color: var(--color-bg-hover);
     color: var(--color-text-main);
   }
 `;
 
 export const SkinGrid = styled.div`
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-auto-rows: max-content;
+  gap: 1rem;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 350px;
-  padding: 1rem 1rem 1rem 1rem;
-  margin: 0 -1rem;
+  padding: 6px 0.5rem 6px 6px;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+  }
 `;
 
 export const SkinOption = styled.button<{
@@ -264,9 +282,9 @@ export const SkinOption = styled.button<{
   $textColor: string;
   $selected: boolean;
 }>`
-  aspect-ratio: 1.58;
+  aspect-ratio: 1.586;
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   background: ${(p) => p.$bg};
@@ -275,21 +293,25 @@ export const SkinOption = styled.button<{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.7rem;
+  font-weight: 600;
+  font-size: 0.75rem;
   text-align: center;
-  padding: 0.4rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+  padding: 0.5rem;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   outline: ${(p) =>
-    p.$selected ? "3px solid var(--color-brand-500)" : "2px solid transparent"};
-  outline-offset: 3px;
+    p.$selected ? "2px solid var(--color-brand-500)" : "2px solid transparent"};
+  outline-offset: 2px;
+  opacity: ${(p) => (p.$selected ? 1 : 0.9)};
 
   &:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 
+      inset 0 1px 1px rgba(255, 255, 255, 0.3), 
+      0 8px 16px rgba(0, 0, 0, 0.15);
+    opacity: 1;
     z-index: 10;
   }
 
@@ -299,19 +321,19 @@ export const SkinOption = styled.button<{
       &::after {
         content: "✓";
         position: absolute;
-        top: -10px;
-        right: -10px;
-        width: 24px;
-        height: 24px;
+        top: 6px;
+        right: 6px;
+        width: 18px;
+        height: 18px;
         background-color: var(--color-brand-600);
         color: white;
         border-radius: 50%;
-        border: 2px solid var(--color-bg-surface);
+        font-size: 10px;
+        font-weight: bold;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        z-index: 20;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
     `}
 `;
@@ -320,7 +342,9 @@ export const SkinSelectorContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  outline: none; /* Щоб при фокусі на контейнері не було рамки */
+  width: 650px;
+  height: 480px;
+  outline: none;
 `;
 
 export const SkinSelectorTitle = styled.h3`
@@ -337,35 +361,3 @@ export const SkinSelectorFooter = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-
-// const CardBase = css`
-//   position: relative;
-//   width: 100%;
-
-//   /* 🔥 FIX 1: Задаємо min-height, щоб картка не була "сплюснутою" */
-//   min-height: 180px;
-//   /* aspect-ratio залишаємо як рекомендацію, але min-height головніший */
-//   aspect-ratio: 1.586;
-
-//   border-radius: 12px;
-
-//   /* 🔥 FIX 2: Зменшуємо padding з 1.2rem до 1rem (або 1.1), щоб було більше місця */
-//   padding: 1rem;
-
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-//   overflow: hidden;
-//   transition:
-//     transform 0.2s ease,
-//     box-shadow 0.2s ease;
-//   cursor: pointer;
-//   box-sizing: border-box;
-
-//   &:hover {
-//     transform: translateY(-4px);
-//     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-//     z-index: 10;
-//   }
-// `;

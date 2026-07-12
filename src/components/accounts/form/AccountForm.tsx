@@ -299,6 +299,143 @@ export function AccountFormContent(props: AccountFormProps) {
           document.body,
         )}
 
+      {/* --- LEFT COLUMN: PREVIEW --- */}
+      <S.LeftColumn>
+        <div style={{ width: "100%", maxWidth: "420px", alignSelf: "center" }}>
+          <S.PreviewLabel>{t("accounts:accountForm.label_preview")}</S.PreviewLabel>
+          <S.PreviewSection>
+            <div style={{ width: "100%", pointerEvents: "none" }}>
+              {state.type === "card" ? (
+                <BankCardStyled
+                  $bg={skin.bg}
+                  $color={skin.color}
+                  $border={skin.border}
+                >
+                  <CardHeader>
+                    <BankLogo skin={skin} />
+                  </CardHeader>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                    }}
+                  >
+                    <CardChip />
+                    <FormattedCardNumber number={state.cardNumber} />
+                    <div
+                      style={{
+                        fontSize: "0.75rem",
+                        opacity: 0.7,
+                        fontWeight: 600,
+                        marginTop: "0.4rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      {state.name || t("accounts:accountForm.default_card_name")}
+                    </div>
+                    {ownerName && (
+                      <CardOwner>
+                        <HiUser size={10} style={{ opacity: 0.7 }} />
+                        {ownerName}
+                      </CardOwner>
+                    )}
+                  </div>
+
+                  <CardFooter>
+                    <CardBalance>
+                      {state.currency === "USD"
+                        ? "$"
+                        : state.currency === "EUR"
+                          ? "€"
+                          : "₴"}{" "}
+                      {state.balance || "0.00"}
+                    </CardBalance>
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "0rem",
+                        right: "0rem",
+                        opacity: 0.8,
+                      }}
+                    >
+                      <PaymentSystemLogo
+                        system={state.paymentSystem || "mastercard"}
+                        color={skin.color}
+                      />
+                    </div>
+                  </CardFooter>
+                </BankCardStyled>
+              ) : (
+                <CashCardStyled $color={state.color}>
+                  <CashCardHeader>
+                    <CashName>
+                      {state.name || t("accounts:accountForm.placeholder_name_cash")}
+                    </CashName>
+
+                    <TypeBadge>
+                      {renderPreviewIcon()}
+                      <span>{renderPreviewLabel()}</span>
+                    </TypeBadge>
+                  </CashCardHeader>
+
+                  <div style={{ marginTop: "auto" }}>
+                    <CardBalance style={{ color: "var(--color-text-main)" }}>
+                      {state.currency === "USD" ? "$" : "₴"}{" "}
+                      {state.balance || "0.00"}
+                    </CardBalance>
+                    <div
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "var(--color-text-light)",
+                        marginTop: "0.5rem",
+                        display: "flex",
+                        gap: "0.5rem",
+                        alignItems: "center",
+                      }}
+                    >
+                      <HiUser /> {ownerName}
+                    </div>
+                  </div>
+                </CashCardStyled>
+              )}
+            </div>
+          </S.PreviewSection>
+
+          {state.type === "card" && (
+            <Modal>
+              <Modal.Open opens="skin-selector-modal">
+                <S.ChangeSkinBtn
+                  ref={skinBtnRef}
+                  type="button"
+                  style={{ marginTop: "1rem" }}
+                  onClick={() => {
+                    const currentSkin = BANK_SKINS[state.skinKey];
+                    const targetTab = currentSkin
+                      ? currentSkin.bankId
+                      : "monobank";
+                    actions.setActiveBankTab(targetTab);
+                  }}
+                  title={getShortcutLabel("I")}
+                >
+                  <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
+                </S.ChangeSkinBtn>
+              </Modal.Open>
+              <Modal.Window name="skin-selector-modal" padding="1.5rem 1.5rem">
+                <SkinSelector
+                  activeBankTab={state.activeBankTab}
+                  setActiveBankTab={actions.setActiveBankTab}
+                  skinKey={state.skinKey}
+                  setSkinKey={actions.setSkinKey}
+                />
+              </Modal.Window>
+            </Modal>
+          )}
+        </div>
+      </S.LeftColumn>
+
       <S.Form ref={formRef} onSubmit={actions.handleSubmit} noValidate>
         {/* TYPE SELECTOR */}
         <DisabledWrapper $disabled={isSynced}>
@@ -672,141 +809,7 @@ export function AccountFormContent(props: AccountFormProps) {
         </S.FooterRow>
       </S.Form>
 
-      {/* --- RIGHT COLUMN: PREVIEW --- */}
-      <S.RightColumn>
-        <div>
-          <S.PreviewLabel>{t("accounts:accountForm.label_preview")}</S.PreviewLabel>
-          <S.PreviewSection>
-            <div style={{ width: "100%", pointerEvents: "none" }}>
-              {state.type === "card" ? (
-                <BankCardStyled
-                  $bg={skin.bg}
-                  $color={skin.color}
-                  $border={skin.border}
-                >
-                  <CardHeader>
-                    <BankLogo skin={skin} />
-                  </CardHeader>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2px",
-                    }}
-                  >
-                    <CardChip />
-                    <FormattedCardNumber number={state.cardNumber} />
-                    <div
-                      style={{
-                        fontSize: "0.75rem",
-                        opacity: 0.7,
-                        fontWeight: 600,
-                        marginTop: "0.4rem",
-                        textTransform: "uppercase",
-                        letterSpacing: "1px",
-                      }}
-                    >
-                      {state.name || t("accounts:accountForm.default_card_name")}
-                    </div>
-                    {ownerName && (
-                      <CardOwner>
-                        <HiUser size={10} style={{ opacity: 0.7 }} />
-                        {ownerName}
-                      </CardOwner>
-                    )}
-                  </div>
-
-                  <CardFooter>
-                    <CardBalance>
-                      {state.currency === "USD"
-                        ? "$"
-                        : state.currency === "EUR"
-                          ? "€"
-                          : "₴"}{" "}
-                      {state.balance || "0.00"}
-                    </CardBalance>
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "0rem",
-                        right: "0rem",
-                        opacity: 0.8,
-                      }}
-                    >
-                      <PaymentSystemLogo
-                        system={state.paymentSystem || "mastercard"}
-                        color={skin.color}
-                      />
-                    </div>
-                  </CardFooter>
-                </BankCardStyled>
-              ) : (
-                <CashCardStyled $color={state.color}>
-                  <CashCardHeader>
-                    <CashName>
-                      {state.name || t("accounts:accountForm.placeholder_name_cash")}
-                    </CashName>
-
-                    <TypeBadge>
-                      {renderPreviewIcon()}
-                      <span>{renderPreviewLabel()}</span>
-                    </TypeBadge>
-                  </CashCardHeader>
-
-                  <div style={{ marginTop: "auto" }}>
-                    <CardBalance style={{ color: "var(--color-text-main)" }}>
-                      {state.currency === "USD" ? "$" : "₴"}{" "}
-                      {state.balance || "0.00"}
-                    </CardBalance>
-                    <div
-                      style={{
-                        fontSize: "0.75rem",
-                        color: "var(--color-text-light)",
-                        marginTop: "0.5rem",
-                        display: "flex",
-                        gap: "0.5rem",
-                        alignItems: "center",
-                      }}
-                    >
-                      <HiUser /> {ownerName}
-                    </div>
-                  </div>
-                </CashCardStyled>
-              )}
-            </div>
-          </S.PreviewSection>
-        </div>
-
-        {state.type === "card" && (
-          <Modal>
-            <Modal.Open opens="skin-selector-modal">
-              <S.ChangeSkinBtn
-                ref={skinBtnRef}
-                type="button"
-                onClick={() => {
-                  const currentSkin = BANK_SKINS[state.skinKey];
-                  const targetTab = currentSkin
-                    ? currentSkin.bankId
-                    : "monobank";
-                  actions.setActiveBankTab(targetTab);
-                }}
-                title={getShortcutLabel("I")}
-              >
-                <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
-              </S.ChangeSkinBtn>
-            </Modal.Open>
-            <Modal.Window name="skin-selector-modal">
-              <SkinSelector
-                activeBankTab={state.activeBankTab}
-                setActiveBankTab={actions.setActiveBankTab}
-                skinKey={state.skinKey}
-                setSkinKey={actions.setSkinKey}
-              />
-            </Modal.Window>
-          </Modal>
-        )}
-      </S.RightColumn>
+      
     </S.FormContainer>
   );
 }

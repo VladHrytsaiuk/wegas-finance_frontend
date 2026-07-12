@@ -15,18 +15,18 @@ export const PickerTrigger = styled.button<{ $square?: boolean }>`
   justify-content: ${(props) => (props.$square ? "center" : "space-between")};
   gap: ${(props) => (props.$square ? "0" : "0.75rem")};
   padding: ${(props) => (props.$square ? "0" : "0 0.85rem")};
-  height: 38px;
-  width: ${(props) => (props.$square ? "38px" : "100%")};
+  height: 46px;
+  width: ${(props) => (props.$square ? "46px" : "100%")};
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
 
   @media (max-width: 768px) {
-    width: ${(props) => (props.$square ? "38px" : "100%")} !important;
+    width: ${(props) => (props.$square ? "46px" : "100%")} !important;
     justify-content: ${(props) => (props.$square ? "center" : "center")};
     padding: ${(props) => (props.$square ? "0" : "0 0.85rem")};
   }

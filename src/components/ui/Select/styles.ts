@@ -31,7 +31,7 @@ export const Trigger = styled.div<{
         ? "var(--color-brand-500)"
         : "var(--color-border, #d1d5db)"};
 
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: ${(p) => (p.$size === "small" ? "0.8rem" : "0.9rem")};
   cursor: ${(p) => (p.$disabled ? "not-allowed" : "pointer")};
   opacity: ${(p) => (p.$disabled ? 0.6 : 1)};

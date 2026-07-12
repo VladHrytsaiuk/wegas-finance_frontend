@@ -26,10 +26,11 @@ const PrivatNoiseEffect = css`
 const CardBase = css`
   position: relative;
   width: 100%;
+  aspect-ratio: 1.586;
   border-radius: 14px;
 
-  /* 🔥 Зменшено паддінг */
-  padding: 1rem;
+  /* 🔥 Збільшено паддінг для великої картки */
+  padding: 1.5rem;
 
   display: flex;
   flex-direction: column;
@@ -58,8 +59,6 @@ export const CreditCardContainer = styled.div<{
 }>`
   ${CardBase}
 
-  /* 🔥 ЗМЕНШИЛИ ВИСОТУ: Було 220px, стало 180px */
-  height: 180px;
 
   background: ${(props) => props.$bg};
   color: ${(props) => props.$color};
@@ -70,8 +69,6 @@ export const CreditCardContainer = styled.div<{
 // --- CASH / SAVINGS CARD ---
 export const CashCardStyled = styled.div<{ $color: string }>`
   ${CardBase}
-  /* 🔥 Зменшено зі 150 до 130 */
-  height: 130px;
   background-color: var(--color-bg-surface);
   color: var(--color-text-main);
   border: 1px solid var(--color-border);
