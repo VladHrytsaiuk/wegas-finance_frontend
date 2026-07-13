@@ -63,7 +63,7 @@ export function useAccountDetails() {
 
   const { data: recentRes, isLoading: txLoading } = useQuery({
     queryKey: ["transactions", accountId, "recent"],
-    queryFn: () => getTransactionsApi({ account_id: accountId, limit: 5 }),
+    queryFn: () => getTransactionsApi({ account_id: accountId, limit: 6 }),
     enabled: !!accountId,
   });
 

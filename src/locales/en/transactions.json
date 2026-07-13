@@ -5,9 +5,13 @@
     "search_placeholder": "Search transaction...",
     "button_add": "Add",
     "empty_title": "No transactions found",
-    "empty_button_clear": "Clear filters"
+    "empty_button_clear": "Clear filters",
+    "empty_description_filters": "Try adjusting your search or filters"
   },
   "transactions": {
+    "income": "Income",
+    "expense": "Expense",
+    "transfer": "Transfer",
     "forgiven": "Debt Forgiven",
     "currency_exchange": "Currency Exchange",
     "debt_in": "Borrowing",
@@ -69,6 +73,9 @@
     "type_income": "Income",
     "type_expense": "Expense",
     "type_transfer": "Transfer",
+    "photos_count": "Photos: {{count}}",
+    "items_count": "Items: {{count}}",
+    "tags_count": "Tags: {{count}}",
     "section_details": "Details",
     "account_unknown": "Unknown account",
     "info_transfer_text": "Funds Transfer",
@@ -86,6 +93,7 @@
     "type_expense": "Expense",
     "type_income": "Income",
     "type_transfer": "Transfer",
+    "label_income_account": "To Account",
     "label_from_account": "From Account",
     "label_to_account": "To Account (Recipient)",
     "placeholder_select_account": "Select account...",

@@ -67,6 +67,12 @@ const ListWrapper = styled.div`
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   overflow: hidden;
+
+  @media (max-width: 991px) {
+    margin: 0 -1rem -1rem -1rem;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
 `;
 
 const Empty = styled.div`

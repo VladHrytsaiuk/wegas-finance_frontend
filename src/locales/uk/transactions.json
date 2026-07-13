@@ -5,9 +5,13 @@
     "search_placeholder": "Пошук транзакції...",
     "button_add": "Додати",
     "empty_title": "Транзакцій не знайдено",
-    "empty_button_clear": "Очистити фільтри"
+    "empty_button_clear": "Очистити фільтри",
+    "empty_description_filters": "Спробуйте змінити параметри пошуку або фільтри"
   },
   "transactions": {
+    "income": "Дохід",
+    "expense": "Витрата",
+    "transfer": "Переказ",
     "forgiven": "Списання боргу",
     "currency_exchange": "Обмін валют",
     "debt_in": "Отримання позики",
@@ -71,6 +75,7 @@
     "type_expense": "Витрата",
     "type_income": "Дохід",
     "type_transfer": "Переказ",
+    "label_income_account": "На рахунок",
     "label_from_account": "З рахунку",
     "label_to_account": "На рахунок (Отримувач)",
     "placeholder_select_account": "Оберіть рахунок...",
@@ -136,6 +141,9 @@
     "type_income": "Дохід",
     "type_expense": "Витрата",
     "type_transfer": "Переказ",
+    "photos_count": "Фото: {{count}}",
+    "items_count": "Товари: {{count}}",
+    "tags_count": "Теги: {{count}}",
     "section_details": "Деталі",
     "account_unknown": "Невідомий рахунок",
     "info_transfer_text": "Переказ коштів",

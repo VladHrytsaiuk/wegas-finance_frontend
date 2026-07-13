@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   HiArrowLeft,
   HiOutlinePencil,
@@ -39,6 +40,8 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import { HiMinus, HiArrowsRightLeft } from "react-icons/hi2";
+import { Overlay, StyledModal } from "../../components/ui/Modal";
+import ImportModal from "../../components/import/ImportModal";
 
 const ExportModal = lazy(() => import("../settings/ExportPage"));
 
@@ -65,6 +68,22 @@ function AccountDetails() {
 
   const isMobile = useIsMobile();
   usePageTitle(account?.name);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const isImportSupported =
+    !!account &&
+    account.type === "card" &&
+    !account.is_synced &&
+    ["privat", "monobank"].some((bank) => {
+      const name = account.name?.toLowerCase() || "";
+      const bankName = account.bank_name?.toLowerCase() || "";
+      const icon = account.icon?.toLowerCase() || "";
+      return (
+        name.includes(bank) || bankName.includes(bank) || icon.includes(bank)
+      );
+    });
+  const recentPreviewLimit = isMobile ? 3 : 5;
+  const recentPreviewTransactions = recentTransactions.slice(0, recentPreviewLimit);
+  const hasMoreRecentTransactions = recentTransactions.length > recentPreviewLimit;
 
   useEffect(() => {
     if (account)
@@ -285,15 +304,26 @@ function AccountDetails() {
                 <h2>
                   {t("accounts:accountDetailsPage.history_section_title")}
                 </h2>
-                <Modal.Open opens="history-all">
-                  <S.TextButton>
-                    {t("accounts:accountDetailsPage.history_all_button")}{" "}
-                    <HiChevronRight />
-                  </S.TextButton>
-                </Modal.Open>
+                {hasMoreRecentTransactions && (
+                  isMobile ? (
+                    <S.TextButton
+                      onClick={() => navigate(`/transactions?account=${accountId}`)}
+                    >
+                      {t("accounts:accountDetailsPage.history_all_button")}{" "}
+                      <HiChevronRight />
+                    </S.TextButton>
+                  ) : (
+                    <Modal.Open opens="history-all">
+                      <S.TextButton>
+                        {t("accounts:accountDetailsPage.history_all_button")}{" "}
+                        <HiChevronRight />
+                      </S.TextButton>
+                    </Modal.Open>
+                  )
+                )}
               </S.SectionHeader>
               <RecentTransactions
-                transactions={recentTransactions}
+                transactions={recentPreviewTransactions}
                 categories={categories}
                 currency={account.currency}
                 loading={txLoading}
@@ -316,8 +346,11 @@ function AccountDetails() {
             title={t("accounts:accountStats.expense_history_title")}
           />
         </Modal.Window>
-        <Modal.Window name="history-all">
-          <TransactionsModal accountId={accountId} />
+        <Modal.Window name="history-all" padding="0">
+          <TransactionsModal
+            accountId={accountId}
+            title={t("accounts:accountDetailsPage.history_all_title", "Усі транзакції")}
+          />
         </Modal.Window>
         <Modal.Window name="export-account">
           <Suspense fallback={<ExportPageSkeleton />}>
@@ -334,7 +367,7 @@ function AccountDetails() {
       </S.PageContainer>
 
       {isMobile && (
-        <FAB 
+        <FAB
           actions={[
             {
               icon: <HiPlus />,
@@ -350,10 +383,44 @@ function AccountDetails() {
               icon: <HiArrowsRightLeft />,
               label: t("transactions:transactions.transfer"),
               onClick: () => handleOpenTransaction("transfer")
-            }
+            },
+            ...(isImportSupported
+              ? [
+                  {
+                    icon: <HiArrowDownTray />,
+                    label: t(
+                      "accounts:accountDetailsPage.action_import_button",
+                      "Імпорт виписки",
+                    ),
+                    onClick: () => setIsImportOpen(true),
+                  },
+                ]
+              : []),
           ]}
         />
       )}
+
+      {isMobile && isImportOpen && account &&
+        createPortal(
+          <Overlay onClick={() => setIsImportOpen(false)}>
+            <StyledModal
+              $padding="0"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: "min(100%, 960px)",
+                maxWidth: "100%",
+                maxHeight: "90dvh",
+                overflow: "hidden",
+              }}
+            >
+              <ImportModal
+                account={account}
+                onCloseModal={() => setIsImportOpen(false)}
+              />
+            </StyledModal>
+          </Overlay>,
+          document.body,
+        )}
     </Modal>
   );
 }

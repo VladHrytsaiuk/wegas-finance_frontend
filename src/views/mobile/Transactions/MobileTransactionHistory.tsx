@@ -19,6 +19,7 @@ import {
   MobileTransactionsSkeleton,
 } from "../../../components/ui/Skeleton/LoadingSkeletons";
 import {
+  HiArrowUp,
   HiArrowDownTray,
   HiCalendarDays,
   HiOutlineArrowPath,
@@ -202,6 +203,47 @@ const PickerDismiss = styled.button`
   cursor: pointer;
 `;
 
+const ScrollTopButton = styled.button`
+  position: fixed;
+  right: 4.85rem;
+  bottom: calc(142px + env(safe-area-inset-bottom));
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-surface), white 8%);
+  color: var(--color-text-main);
+  box-shadow: var(--shadow-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1002;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    color: var(--color-brand-700);
+    border-color: var(--color-brand-200);
+    background: var(--color-brand-50);
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.18);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  @media (max-width: 420px) {
+    right: 1.25rem;
+    bottom: calc(142px + env(safe-area-inset-bottom));
+  }
+`;
+
 const findScrollParent = (element: HTMLElement | null): HTMLElement | null => {
   let current = element?.parentElement ?? null;
 
@@ -236,7 +278,9 @@ function MobileTransactionHistoryContent() {
   const accountId = searchParams.get("account");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [pendingJumpDate, setPendingJumpDate] = useState<number | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
   const groupRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const {
@@ -436,6 +480,27 @@ function MobileTransactionHistoryContent() {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, transactions.length]);
 
+  useEffect(() => {
+    const sampleNode =
+      loadMoreRef.current ||
+      groupRefs.current[Object.keys(groupRefs.current)[0] || ""] ||
+      null;
+    const scrollContainer =
+      findScrollParent(sampleNode) ||
+      document.querySelector("main");
+
+    if (!(scrollContainer instanceof HTMLElement)) return;
+    scrollContainerRef.current = scrollContainer;
+
+    const handleScroll = () => {
+      setShowScrollTop(scrollContainer.scrollTop > 480);
+    };
+
+    handleScroll();
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, [transactions.length, groupedEntries.length]);
+
   usePageTitle(accountId ? "Усі транзакції" : "Транзакції");
 
   if (isLoading) return <MobileTransactionsSkeleton />;
@@ -519,6 +584,17 @@ function MobileTransactionHistoryContent() {
       )}
 
       {hasNextPage && <Sentinel ref={loadMoreRef} />}
+
+      {showScrollTop && (
+        <ScrollTopButton
+          onClick={() =>
+            scrollContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" })
+          }
+          aria-label={t("common:common.back_to_top", "Вгору")}
+        >
+          <HiArrowUp size={20} />
+        </ScrollTopButton>
+      )}
 
       <FAB
         onClick={() => navigate("/transactions/new", { state: { background: location } })}

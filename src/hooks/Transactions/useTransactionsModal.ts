@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -12,10 +12,10 @@ import { groupTransactionsByDate } from "../../utils/helpers";
 import { useDebounce } from "../useDebounce";
 import { useSettings } from "../../context/SettingsContext";
 import { type FilterConfig } from "../../components/shared/TableToolbar/types";
+import { useInfiniteTransactionsData } from "./useInfiniteTransactionsData";
 import type {
   Category,
   Counterparty,
-  PaginatedResponse,
   Transaction,
 } from "../../types";
 
@@ -178,26 +178,20 @@ export const useTransactionsModal = ({
         : undefined,
       sort: sortValue.replace("-", "_"), // API зазвичай любить date_desc
       search: debouncedSearch,
-      limit: 100,
+      page: undefined,
+      limit: 50,
     };
   }, [accountId, filters, sortValue, debouncedSearch, categories]);
 
-  // --- TRANSACTIONS QUERY ---
   const {
-    data: responseData,
+    transactions,
+    totalCount,
     isLoading,
     isFetching,
-  } = useQuery<Transaction[] | PaginatedResponse<Transaction>>({
-    queryKey: ["transactions", apiParams],
-    queryFn: () => getTransactionsApi(apiParams),
-    placeholderData: keepPreviousData,
-  });
-
-  const transactions = useMemo(() => {
-    if (!responseData) return [];
-    if (Array.isArray(responseData)) return responseData;
-    return responseData.data || [];
-  }, [responseData]);
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteTransactionsData(apiParams);
 
   // --- GROUPING LOGIC ---
   const shouldGroup = !sortValue.includes("amount");
@@ -290,6 +284,10 @@ export const useTransactionsModal = ({
       dataToRender,
       isLoading,
       isFetching,
+      isFetchingNextPage,
+      hasNextPage,
+      fetchNextPage,
+      totalCount,
       shouldGroup,
       filtersConfig,
       sortOptions,
