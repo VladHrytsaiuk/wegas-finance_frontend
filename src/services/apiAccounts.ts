@@ -87,3 +87,10 @@ export const deleteAccountApi = async (id: string) => {
   const response = await api.delete(`/accounts/${id}`);
   return response.data;
 };
+
+export const updateMobileAccountsOrderApi = async (accountIds: string[]) => {
+  const response = await api.put<{ status: string }>("/accounts/mobile-order", {
+    account_ids: accountIds,
+  });
+  return response.data;
+};

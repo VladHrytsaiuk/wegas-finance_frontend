@@ -10,6 +10,7 @@ export interface UserProfile {
   role_id?: string;
   family_id?: string;
   base_currency?: string;
+  mobile_accounts_order?: string;
   has_password?: boolean;
   has_pin?: boolean;
   has_passkeys?: boolean;

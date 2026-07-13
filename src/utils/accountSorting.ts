@@ -63,3 +63,32 @@ export const compareAccountsByDisplayOrder = (a: Account, b: Account) => {
 
 export const sortAccountsByDisplayOrder = <T extends Account>(accounts: T[]) =>
   [...accounts].sort(compareAccountsByDisplayOrder);
+
+export const sortAccountsByPreferredOrder = <T extends Account>(
+  accounts: T[],
+  orderedIds: string[] = [],
+) => {
+  if (!orderedIds.length) return sortAccountsByDisplayOrder(accounts);
+
+  const fallbackSorted = sortAccountsByDisplayOrder(accounts);
+  const fallbackIndex = new Map(
+    fallbackSorted.map((account, index) => [account.id, index]),
+  );
+  const preferredIndex = new Map(
+    orderedIds.map((accountId, index) => [accountId, index]),
+  );
+
+  return [...accounts].sort((a, b) => {
+    const preferredA = preferredIndex.get(a.id);
+    const preferredB = preferredIndex.get(b.id);
+
+    if (preferredA !== undefined && preferredB !== undefined) {
+      return preferredA - preferredB;
+    }
+
+    if (preferredA !== undefined) return -1;
+    if (preferredB !== undefined) return 1;
+
+    return (fallbackIndex.get(a.id) ?? 0) - (fallbackIndex.get(b.id) ?? 0);
+  });
+};

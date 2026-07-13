@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
+import toast from "react-hot-toast";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useAccountsPage } from "../../../hooks/Accounts/useAccountsPage";
 import { EmptyState } from "../../../components/ui/EmptyState";
@@ -12,6 +13,7 @@ import {
   HiCreditCard,
   HiOutlineClock,
   HiOutlineBanknotes,
+  HiOutlineBars3BottomLeft,
   HiOutlineUser,
   HiOutlineUsers,
   HiDocumentArrowUp,
@@ -26,12 +28,18 @@ import ImportModal from "../../../components/import/ImportModal";
 import { useUserRole } from "../../../hooks/useUserRole";
 import { getTransactionsApi } from "../../../services/apiTransactions";
 import { getCategoriesApi } from "../../../services/apiCategories";
-import type { Account } from "../../../services/apiAccounts";
+import {
+  type Account,
+  updateMobileAccountsOrderApi,
+} from "../../../services/apiAccounts";
 import type { Category } from "../../../types";
 import type { Transaction } from "../../../types";
 import MobilePageHeader from "../../../components/mobile/MobilePageHeader";
 import { TransactionItem } from "../../../components/transactions/TransactionItem";
 import { useSettings } from "../../../context/SettingsContext";
+import { getMeApi } from "../../../services/apiUsers";
+import { sortAccountsByPreferredOrder } from "../../../utils/accountSorting";
+import { MobileAccountsOrderModal } from "./MobileAccountsOrderModal";
 
 type Scope = "personal" | "family";
 type AccountTypeFilter = "all" | "card" | "cash" | "savings";
@@ -130,6 +138,19 @@ const TypeFilterChip = styled.button<{ $active: boolean }>`
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
+  cursor: pointer;
+`;
+
+const HeaderActionButton = styled.button`
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+  color: var(--color-text-main);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 `;
 
@@ -319,6 +340,7 @@ const InlineEmpty = styled.div`
 `;
 
 function MobileAccounts() {
+  const queryClient = useQueryClient();
   const {
     accounts,
     users,
@@ -348,19 +370,59 @@ function MobileAccounts() {
     queryFn: getCategoriesApi,
     staleTime: 5 * 60 * 1000,
   });
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMeApi,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const [draftOrderedAccounts, setDraftOrderedAccounts] = useState<Account[]>([]);
 
   usePageTitle(t("navigation:general.accounts"));
 
-  const hasNoAccountsAtAll = accounts.length === 0;
+  const mobileOrderIds = useMemo(() => {
+    if (!me?.mobile_accounts_order) return [];
+
+    try {
+      const parsed = JSON.parse(me.mobile_accounts_order);
+      return Array.isArray(parsed)
+        ? parsed.filter((value): value is string => typeof value === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  }, [me?.mobile_accounts_order]);
+
+  const orderedAccounts = useMemo(
+    () => sortAccountsByPreferredOrder(accounts, mobileOrderIds),
+    [accounts, mobileOrderIds],
+  );
+
+  const hasNoAccountsAtAll = orderedAccounts.length === 0;
 
   const personalAccounts = useMemo(
-    () => (user ? accounts.filter((account) => account.user_id === user.id) : accounts),
-    [accounts, user],
+    () =>
+      user
+        ? orderedAccounts.filter((account) => account.user_id === user.id)
+        : orderedAccounts,
+    [orderedAccounts, user],
   );
 
   const familyAccounts = useMemo(
-    () => (user ? accounts.filter((account) => account.user_id !== user.id) : []),
-    [accounts, user],
+    () =>
+      user
+        ? orderedAccounts.filter((account) => account.user_id !== user.id)
+        : [],
+    [orderedAccounts, user],
+  );
+
+  const ownerNames = useMemo(
+    () =>
+      users.reduce<Record<string, string>>((acc, candidate) => {
+        acc[candidate.id] = candidate.name;
+        return acc;
+      }, {}),
+    [users],
   );
 
   const familyOwners = useMemo(() => {
@@ -377,8 +439,8 @@ function MobileAccounts() {
     }
 
     if (personalAccounts.length > 0) return personalAccounts;
-    return accounts;
-  }, [accounts, canUseFamilyScope, familyAccounts, personalAccounts, scope, selectedOwnerId]);
+    return orderedAccounts;
+  }, [canUseFamilyScope, familyAccounts, orderedAccounts, personalAccounts, scope, selectedOwnerId]);
 
   const scopedAccounts = useMemo(() => {
     if (typeFilter === "all") return scopedAccountsBase;
@@ -457,11 +519,57 @@ function MobileAccounts() {
     () =>
       scopedAccounts.map((account) => ({
         ...account,
-        owner_name:
-          users.find((candidate) => candidate.id === account.user_id)?.name || undefined,
+        owner_name: ownerNames[account.user_id] || undefined,
       })),
-    [scopedAccounts, users],
+    [ownerNames, scopedAccounts],
   );
+
+  const saveMobileOrder = useMutation({
+    mutationFn: updateMobileAccountsOrderApi,
+    onSuccess: (_, orderedIds) => {
+      queryClient.setQueryData(["me"], (current: { mobile_accounts_order?: string } | undefined) => {
+        if (!current) return current;
+        return {
+          ...current,
+          mobile_accounts_order: JSON.stringify(orderedIds),
+        };
+      });
+      toast.success("Порядок рахунків збережено");
+    },
+    onError: () => {
+      toast.error("Не вдалося зберегти порядок рахунків");
+    },
+  });
+
+  const isOrderDirty = useMemo(() => {
+    if (!draftOrderedAccounts.length || draftOrderedAccounts.length !== scopedAccountsBase.length) {
+      return false;
+    }
+
+    return draftOrderedAccounts.some(
+      (account, index) => account.id !== scopedAccountsBase[index]?.id,
+    );
+  }, [draftOrderedAccounts, scopedAccountsBase]);
+
+  const handleSaveOrder = async () => {
+    const scopeIds = new Set(scopedAccountsBase.map((account) => account.id));
+    const reorderedScopeIds = draftOrderedAccounts.map((account) => account.id);
+    let reorderedIndex = 0;
+
+    const mergedOrderIds = orderedAccounts.map((account) => {
+      if (!scopeIds.has(account.id)) return account.id;
+      const nextId = reorderedScopeIds[reorderedIndex];
+      reorderedIndex += 1;
+      return nextId || account.id;
+    });
+
+    try {
+      await saveMobileOrder.mutateAsync(mergedOrderIds);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   const {
     data: recentRes,
@@ -513,24 +621,38 @@ function MobileAccounts() {
           title={t("navigation:general.accounts")}
           onBack={() => navigate(-1)}
           rightAction={
-            canUseFamilyScope ? (
-              <HeaderScopeToggle>
-                <HeaderScopeButton
-                  $active={scope === "personal"}
-                  onClick={() => setScope("personal")}
-                  title={t("dashboard:mobile.personal", "Мої")}
-                >
-                  <HiOutlineUser size={18} />
-                </HeaderScopeButton>
-                <HeaderScopeButton
-                  $active={scope === "family"}
-                  onClick={() => setScope("family")}
-                  title={t("dashboard:mobile.family", "Родина")}
-                >
-                  <HiOutlineUsers size={18} />
-                </HeaderScopeButton>
-              </HeaderScopeToggle>
-            ) : null
+            <>
+              {scopedAccountsBase.length > 1 && (
+                <Modal.Open opens="accounts-order">
+                  <HeaderActionButton
+                    onClick={() => setDraftOrderedAccounts(scopedAccountsBase)}
+                    aria-label="Порядок рахунків"
+                    title="Порядок рахунків"
+                  >
+                    <HiOutlineBars3BottomLeft size={18} />
+                  </HeaderActionButton>
+                </Modal.Open>
+              )}
+
+              {canUseFamilyScope ? (
+                <HeaderScopeToggle>
+                  <HeaderScopeButton
+                    $active={scope === "personal"}
+                    onClick={() => setScope("personal")}
+                    title={t("dashboard:mobile.personal", "Мої")}
+                  >
+                    <HiOutlineUser size={18} />
+                  </HeaderScopeButton>
+                  <HeaderScopeButton
+                    $active={scope === "family"}
+                    onClick={() => setScope("family")}
+                    title={t("dashboard:mobile.family", "Родина")}
+                  >
+                    <HiOutlineUsers size={18} />
+                  </HeaderScopeButton>
+                </HeaderScopeToggle>
+              ) : null}
+            </>
           }
         />
 
@@ -704,7 +826,7 @@ function MobileAccounts() {
                                 key={tx.id}
                                 transaction={tx}
                                 categories={categories}
-                                accounts={accounts}
+                                accounts={orderedAccounts}
                                 currency={currency}
                                 language={language}
                                 isWidget={true}
@@ -752,6 +874,17 @@ function MobileAccounts() {
             <ImportModal account={selectedAccount} />
           </Modal.Window>
         )}
+
+        <Modal.Window name="accounts-order" mobileBottomSheet padding="1.25rem 1rem 1.5rem">
+          <MobileAccountsOrderModal
+            accounts={draftOrderedAccounts}
+            ownerNames={ownerNames}
+            isDirty={isOrderDirty}
+            isSaving={saveMobileOrder.isPending}
+            onSave={handleSaveOrder}
+            onReorder={setDraftOrderedAccounts}
+          />
+        </Modal.Window>
       </StyledMobileAccounts>
     </Modal>
   );
