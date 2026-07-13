@@ -8,6 +8,7 @@ import type {
 import { getCurrencyOptions } from "../../utils/currency";
 import type { Account } from "../../services/apiAccounts";
 import type { UserProfile } from "../../services/apiUsers";
+import { compareAccountsByDisplayOrder } from "../../utils/accountSorting";
 
 type AccountFilterType = "card" | "cash" | "savings";
 
@@ -238,7 +239,7 @@ export function useAccountsFilter(accounts: Account[], users: UserProfile[]) {
         case "balance-asc":
           return a.calculated_balance - b.calculated_balance;
         default:
-          return 0;
+          return compareAccountsByDisplayOrder(a, b);
       }
     });
 

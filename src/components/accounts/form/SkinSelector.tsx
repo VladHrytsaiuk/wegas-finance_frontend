@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 // Components & Styles
 import { Button } from "../../ui/Button";
+import { BaseSelect } from "../../ui/Select/BaseSelect";
 import * as S from "./AccountForm.styles";
 
 // Utils
@@ -28,6 +29,11 @@ export function SkinSelector({
 }: SkinSelectorProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile =
+    typeof window !== "undefined" ? window.innerWidth <= 700 : false;
+  const selectedBankGroup = Object.values(BANK_GROUPS).find(
+    (group) => group.id === activeBankTab,
+  );
 
   // 1. Auto-focus logic
   useEffect(() => {
@@ -64,27 +70,48 @@ export function SkinSelector({
 
       <S.SkinSelectorBody>
         {/* BANK SIDEBAR */}
-        <S.BankSidebar>
-          {Object.values(BANK_GROUPS).map((group) => (
-            <S.SidebarItem
-              type="button"
-              key={group.id}
-              $active={activeBankTab === group.id}
-              aria-selected={activeBankTab === group.id}
-              onClick={() => setActiveBankTab(group.id)}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setActiveBankTab(group.id);
-                }
-              }}
+        {isMobile ? (
+          <div style={{ width: "100%" }}>
+            <BaseSelect
+              triggerLabel={selectedBankGroup?.label}
+              placeholder={t("accounts:accountForm.label_account_type")}
+              size="medium"
             >
-              {group.label}
-            </S.SidebarItem>
-          ))}
-        </S.BankSidebar>
+              {Object.values(BANK_GROUPS).map((group) => (
+                <S.SelectItem
+                  key={group.id}
+                  type="button"
+                  $isSelected={activeBankTab === group.id}
+                  onClick={() => setActiveBankTab(group.id)}
+                >
+                  {group.label}
+                </S.SelectItem>
+              ))}
+            </BaseSelect>
+          </div>
+        ) : (
+          <S.BankSidebar>
+            {Object.values(BANK_GROUPS).map((group) => (
+              <S.SidebarItem
+                type="button"
+                key={group.id}
+                $active={activeBankTab === group.id}
+                aria-selected={activeBankTab === group.id}
+                onClick={() => setActiveBankTab(group.id)}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveBankTab(group.id);
+                  }
+                }}
+              >
+                {group.label}
+              </S.SidebarItem>
+            ))}
+          </S.BankSidebar>
+        )}
 
         {/* SKINS GRID */}
         <S.SkinGrid>

@@ -9,6 +9,7 @@ import {
   deleteAccountApi,
 } from "../../services/apiAccounts";
 import { getUsersApi } from "../../services/apiUsers";
+import { sortAccountsByDisplayOrder } from "../../utils/accountSorting";
 
 interface ErrorResponse {
   error?: string;
@@ -25,6 +26,7 @@ export function useAccountsData() {
   } = useQuery({
     queryKey: ["accounts"],
     queryFn: getAccountsApi,
+    select: (data) => sortAccountsByDisplayOrder(data),
   });
 
   const { data: users = [], isLoading: isUsersLoading } = useQuery({

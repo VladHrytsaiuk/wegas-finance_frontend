@@ -21,6 +21,7 @@ interface UseAccountFormProps {
     card_design?: string;
   };
   onClose?: () => void;
+  onCloseModal?: () => void;
 }
 
 export interface AccountFormSubmitData {
@@ -92,8 +93,10 @@ function buildInitialFormState(
   let activeBankTab = "monobank";
 
   if (defaultValues.type === "card") {
-    if (defaultValues.bank_name && defaultValues.card_design) {
-      skinKey = `${defaultValues.bank_name}-${defaultValues.card_design}`;
+    const design = defaultValues.card_type || defaultValues.card_design;
+
+    if (defaultValues.bank_name && design) {
+      skinKey = `${defaultValues.bank_name}-${design}`;
     } else if (defaultValues.icon && BANK_SKINS[defaultValues.icon]) {
       skinKey = defaultValues.icon;
     }
@@ -126,6 +129,7 @@ export const useAccountForm = ({
   onSubmit,
   defaultValues,
   onClose,
+  onCloseModal,
 }: UseAccountFormProps) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -334,6 +338,42 @@ export const useAccountForm = ({
     return isValid;
   };
 
+  const validateStep = (step: number): boolean => {
+    const newErrors: FormErrors = { ...errors };
+    let isValid = true;
+    
+    if (step === 1) {
+      delete newErrors.name;
+      delete newErrors.cardNumber;
+      delete newErrors.storageType;
+    }
+    
+    if (step === 2) {
+      if (!name.trim()) {
+        newErrors.name = t("common:formValidation.error_asset_name");
+        isValid = false;
+      }
+      if (type === "savings" && !storageTypeId && !effectiveStorageTypeId) {
+        newErrors.storageType = t("accounts:accountForm.error_select_type");
+        isValid = false;
+      }
+    }
+
+    if (step === 3) {
+      if (balance !== "" && isNaN(Number(balance))) {
+        newErrors.balance = t("common:formValidation.error_enter_amount");
+        isValid = false;
+      }
+      if (type === "card" && cardNumber && cardNumber.length !== 4) {
+        newErrors.cardNumber = t("accounts:accountForm.error_card_digits");
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleCreateStorageType = (typeName: string) => {
     createTypeMutation.mutate({
       name: typeName,
@@ -372,7 +412,7 @@ export const useAccountForm = ({
       user_id: ownerId || undefined,
       id: defaultValues?.id,
     };
-    onSubmit(formData, { onSuccess: onClose });
+    onSubmit(formData, { onSuccess: onClose ?? onCloseModal });
   };
 
   const clearError = (field: keyof FormErrors) => {
@@ -420,6 +460,10 @@ export const useAccountForm = ({
       setActiveBankTab,
       setStorageTypeId,
       setGoalId,
+      errors,
+      setErrors,
+      validateForm,
+      validateStep,
       handleCreateStorageType,
       clearError,
       handleSubmit,

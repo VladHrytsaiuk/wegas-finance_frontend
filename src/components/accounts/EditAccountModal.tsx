@@ -1,16 +1,17 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
 import { HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next"; // ✅ Додано
 
-import { Overlay, StyledModal, ModalCloseButton } from "../ui/Modal";
+import Modal, { useModal } from "../ui/Modal";
 import { AccountForm } from "./form/AccountForm";
 import { CenteredSpinner } from "../ui/CenteredSpinner";
 
 import { useAccountsData } from "../../hooks/Accounts/useAccountsData";
 import { getAccountApi } from "../../services/apiAccounts";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 function EditAccountModal() {
   const { t } = useTranslation(); // ✅ Додано
@@ -26,45 +27,48 @@ function EditAccountModal() {
     enabled: !!accountId,
   });
 
-  const handleClose = useCallback(() => navigate(-1), [navigate]);
+  const { open, openName, close } = useModal();
+  const previousOpenName = useRef(openName);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleClose();
-    };
-    document.addEventListener("keydown", handleEsc);
-    return () => document.removeEventListener("keydown", handleEsc);
-  }, [handleClose]);
+    open("edit-account");
+  }, [open]);
 
-  return createPortal(
-    <Overlay onClick={handleClose}>
-      <StyledModal onClick={(e) => e.stopPropagation()}>
-        <ModalCloseButton onClick={handleClose}>
-          <HiXMark />
-        </ModalCloseButton>
+  useEffect(() => {
+    if (previousOpenName.current === "edit-account" && openName === "") {
+      navigate("/accounts");
+    }
+    previousOpenName.current = openName;
+  }, [openName, navigate]);
 
-        <div style={{ width: "900px", maxWidth: "95vw" }}>
-          {/* ✅ Локалізовано заголовок */}
-          <h3 style={{ marginBottom: "1.5rem" }}>
-            {t("accounts:accountsPage.modal_edit_title")}
-          </h3>
+  return (
+    <Modal.Window name="edit-account" mobileBottomSheet padding="1.5rem">
+      <div style={{ width: isMobile ? "100%" : "fit-content", maxWidth: isMobile ? "none" : "95vw" }}>
+        <h3 style={{ marginBottom: "1.5rem" }}>
+          {t("accounts:accountsPage.modal_edit_title")}
+        </h3>
 
-          {isLoading ? (
-            <CenteredSpinner isContainer />
-          ) : (
-            <AccountForm
-              defaultValues={account}
-              onSubmit={(data, options) => updateAccount(data, options)}
-              isLoading={isUpdating}
-              users={users || []}
-              onClose={handleClose}
-            />
-          )}
-        </div>
-      </StyledModal>
-    </Overlay>,
-    document.body
+        {isLoading ? (
+          <CenteredSpinner isContainer />
+        ) : (
+          <AccountForm
+            defaultValues={account}
+            onSubmit={(data, options) => updateAccount(data, options)}
+            isLoading={isUpdating}
+            users={users || []}
+            onCloseModal={close}
+          />
+        )}
+      </div>
+    </Modal.Window>
   );
 }
 
-export default EditAccountModal;
+export default function EditAccountModalWrapper() {
+  return (
+    <Modal>
+      <EditAccountModal />
+    </Modal>
+  );
+}

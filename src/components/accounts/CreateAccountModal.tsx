@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { HiXMark } from "react-icons/hi2";
@@ -12,6 +12,7 @@ import Modal, { useModal } from "../ui/Modal";
 
 // Hooks
 import { useAccountsData } from "../../hooks/Accounts/useAccountsData";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export default function CreateAccountModal() {
   return (
@@ -24,109 +25,51 @@ export default function CreateAccountModal() {
 function CreateAccountModalContent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isDirty } = useModal();
-  const [showConfirm, setShowConfirm] = useState(false);
+  const isMobile = useIsMobile(1001);
+  const { open, openName, close } = useModal();
 
   const { users, actions } = useAccountsData();
   const { create } = actions;
   const isCreating = create.isPending;
+  const previousOpenName = useRef(openName);
 
-  const handleCloseAttempt = useCallback(() => {
-    if (isDirty) {
-      setShowConfirm(true);
-    } else {
-      navigate(-1);
-    }
-  }, [isDirty, navigate]);
-
-  const forceClose = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
-  // Обробка ESC
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        // Якщо відкрито підтвердження - закриваємо тільки його
-        if (showConfirm) {
-          e.stopPropagation();
-          setShowConfirm(false);
-        } else {
-          // Інакше пробуємо закрити форму
-          handleCloseAttempt();
-        }
-      }
-    };
-    // Використовуємо capture фазу, щоб перехопити подію раніше за інших
-    document.addEventListener("keydown", handleEsc, true);
-    return () => document.removeEventListener("keydown", handleEsc, true);
-  }, [handleCloseAttempt, showConfirm]);
+    open("create-account");
+  }, [open]);
+
+  useEffect(() => {
+    if (previousOpenName.current === "create-account" && openName === "") {
+      navigate("/accounts");
+    }
+    previousOpenName.current = openName;
+  }, [openName, navigate]);
 
   return (
-    <>
-      {/* --- ОСНОВНА МОДАЛКА З ФОРМОЮ --- */}
-      {createPortal(
-        <Overlay onClick={handleCloseAttempt}>
-          <StyledModal
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: "fit-content", padding: "1.5rem" }}
-          >
-            <ModalCloseButton onClick={handleCloseAttempt}>
-              <HiXMark />
-            </ModalCloseButton>
+    <Modal.Window name="create-account" mobileBottomSheet padding="1.5rem">
+      <div style={{ width: isMobile ? "100%" : "fit-content", maxWidth: isMobile ? "none" : "95vw" }}>
+        <h2
+          style={{
+            marginBottom: "1rem",
+            fontSize: "1.25rem",
+            fontWeight: 600,
+          }}
+        >
+          {t("accounts:accountsPage.modal_create_title")}
+        </h2>
 
-            <h2
-              style={{
-                marginBottom: "1rem",
-                fontSize: "1.25rem",
-                fontWeight: 600,
-              }}
-            >
-              {t("accounts:accountsPage.modal_create_title")}
-            </h2>
-
-            <AccountForm
-              onSubmit={(data, options) => {
-                create.mutate(data, {
-                  onSuccess: () => {
-                    options?.onSuccess?.();
-                  },
-                });
-              }}
-              isLoading={isCreating}
-              users={users || []}
-              onCloseModal={handleCloseAttempt}
-              onClose={forceClose}
-            />
-          </StyledModal>
-        </Overlay>,
-        document.body,
-      )}
-
-      {/* --- МОДАЛКА ПІДТВЕРДЖЕННЯ (ОКРЕМИЙ ШАР) --- */}
-      {showConfirm &&
-        createPortal(
-          <Overlay
-            onClick={() => setShowConfirm(false)}
-            style={{ zIndex: 2000 }} // Вищий z-index, щоб перекрити форму
-          >
-            <StyledModal
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                width: "fit-content",
-                padding: "2.4rem",
-                maxWidth: "28rem",
-                zIndex: 2001,
-              }}
-            >
-              <ConfirmCloseModal
-                onConfirm={forceClose}
-                onCloseModal={() => setShowConfirm(false)}
-              />
-            </StyledModal>
-          </Overlay>,
-          document.body,
-        )}
-    </>
+        <AccountForm
+          onSubmit={(data, options) => {
+            create.mutate(data, {
+              onSuccess: () => {
+                options?.onSuccess?.();
+              },
+            });
+          }}
+          isLoading={isCreating}
+          users={users || []}
+          onCloseModal={close}
+        />
+      </div>
+    </Modal.Window>
   );
 }

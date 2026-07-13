@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
+import { validateBankSkinsConfig } from "./components/accounts/bankSkins";
 
 const BOOT_HANG_TIMEOUT_MS = 12000;
 
@@ -75,6 +76,11 @@ if (import.meta.env.DEV && "serviceWorker" in navigator) {
       registration.unregister().catch(() => undefined);
     });
   });
+
+  const bankSkinIssues = validateBankSkinsConfig();
+  if (bankSkinIssues.length > 0) {
+    console.error("BANK_SKINS validation failed:\n" + bankSkinIssues.join("\n"));
+  }
 } else {
   const updateSW = registerSW({
     immediate: true,

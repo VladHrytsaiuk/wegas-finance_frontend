@@ -15,6 +15,33 @@ export interface BankSkin {
   logoWidth?: string; // Ширина для текстових логотипів
 }
 
+export function validateBankSkinsConfig(
+  skins: Record<string, BankSkin> = BANK_SKINS,
+) {
+  const issues: string[] = [];
+  const seenIds = new Set<string>();
+
+  Object.entries(skins).forEach(([key, skin]) => {
+    const expectedKey = `${skin.bankId}-${skin.designId}`;
+
+    if (key !== "default" && key !== expectedKey) {
+      issues.push(`Skin key mismatch: "${key}" should be "${expectedKey}"`);
+    }
+
+    if (skin.id !== key) {
+      issues.push(`Skin id mismatch: "${key}" has id "${skin.id}"`);
+    }
+
+    if (seenIds.has(skin.id)) {
+      issues.push(`Duplicate skin id: "${skin.id}"`);
+    }
+
+    seenIds.add(skin.id);
+  });
+
+  return issues;
+}
+
 export const BANK_SKINS: Record<string, BankSkin> = {
   // ============================================================
   // 🐈 MONOBANK
@@ -67,7 +94,7 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     miniLogoFile: "icon_monobank",
     logoWidth: "90px",
   },
-  "monobank-kids": {
+  "monobank-yellow": {
     id: "monobank-yellow",
     bankId: "monobank",
     designId: "yellow",
@@ -128,8 +155,8 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     logoFile: "card_privatbank",
     miniLogoFile: "icon_privatbank",
   },
-  "privat-premium": {
-    id: "privat-premium",
+  "privat-platinum": {
+    id: "privat-platinum",
     bankId: "privat",
     designId: "platinum",
     label: "Platinum",
@@ -138,8 +165,8 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     logoFile: "card_privatbank",
     miniLogoFile: "icon_privatbank",
   },
-  "privat-for-payments": {
-    id: "privat-for-payments",
+  "privat-payment": {
+    id: "privat-payment",
     bankId: "privat",
     designId: "payment",
     label: "Для виплат",
@@ -178,7 +205,7 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     // Патріотичний градієнт (Синій -> Жовтий)
     bg: "linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #f6d365 100%)",
     color: "#ffffff", // Білий текст (на синьому фоні читається добре)
-    logoFile: "card_privatbank_white", // Біле лого Привату
+    logoFile: "card_privatbank",
     miniLogoFile: "icon_privatbank",
   },
 
@@ -191,15 +218,15 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     // Фірмовий градієнт Дії (м'ятно-блакитний)
     bg: "linear-gradient(135deg, #2af598 0%, #009efd 100%)",
     color: "#ffffff",
-    logoFile: "card_privatbank_white",
+    logoFile: "card_privatbank",
     miniLogoFile: "icon_privatbank",
   },
 
   // ============================================================
   // 🟡 RAIFFEISEN BANK (Aval)
   // ============================================================
-  "raif-yellow": {
-    id: "raif-yellow",
+  "raiffeisen-classic": {
+    id: "raiffeisen-classic",
     bankId: "raiffeisen",
     designId: "classic",
     label: "Raifkarta",
@@ -209,8 +236,8 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     miniLogoFile: "icon_raiffeisen",
     logoWidth: "80px",
   },
-  "raif-fishka": {
-    id: "raif-fishka",
+  "raiffeisen-fishka": {
+    id: "raiffeisen-fishka",
     bankId: "raiffeisen",
     designId: "fishka",
     label: "Fishka",
@@ -220,8 +247,8 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     miniLogoFile: "icon_raiffeisen",
     logoWidth: "80px",
   },
-  "raif-premium": {
-    id: "raif-premium",
+  "raiffeisen-premium": {
+    id: "raiffeisen-premium",
     bankId: "raiffeisen",
     designId: "premium",
     label: "Premium",
@@ -231,8 +258,8 @@ export const BANK_SKINS: Record<string, BankSkin> = {
     miniLogoFile: "icon_raiffeisen",
     logoWidth: "80px",
   },
-  "raif-atb": {
-    id: "raif-atb",
+  "raiffeisen-atb": {
+    id: "raiffeisen-atb",
     bankId: "raiffeisen",
     designId: "atb",
     label: "АТБ",
