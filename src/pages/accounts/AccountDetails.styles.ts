@@ -7,6 +7,11 @@ export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  @media (max-width: 991px) {
+    padding: 0 0 88px 0;
+    gap: 1rem;
+  }
 `;
 
 export const TopNav = styled.div`
@@ -106,6 +111,7 @@ export const ContentGrid = styled.div`
       "right-stats"
       "right-content";
     gap: 1rem;
+    padding: 0 16px;
   }
 `;
 
@@ -150,6 +156,35 @@ export const SectionBox = styled.div`
   /* gap: 1.5rem; */
   min-width: 0;
   width: 100%;
+
+  @media (max-width: 991px) {
+    border-radius: 20px;
+    padding: 1rem;
+  }
+`;
+
+export const MobileHeaderActions = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const MobileHeaderActionButton = styled.button<{ $danger?: boolean }>`
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid
+    ${(props) =>
+      props.$danger ? "var(--color-red-200)" : "var(--color-border)"};
+  background: var(--color-bg-page);
+  color: ${(props) =>
+    props.$danger ? "var(--color-red-600)" : "var(--color-text-secondary)"};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
 `;
 
 export const SectionHeader = styled.div`

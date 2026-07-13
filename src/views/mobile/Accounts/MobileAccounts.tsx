@@ -35,6 +35,7 @@ import { useSettings } from "../../../context/SettingsContext";
 
 type Scope = "personal" | "family";
 type AccountTypeFilter = "all" | "card" | "cash" | "savings";
+const MOBILE_SELECTED_ACCOUNT_KEY = "mobile_accounts_selected_account_id";
 
 const StyledMobileAccounts = styled.div`
   display: flex;
@@ -337,7 +338,10 @@ function MobileAccounts() {
   const [scope, setScope] = useState<Scope>("personal");
   const [selectedOwnerId, setSelectedOwnerId] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<AccountTypeFilter>("all");
-  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return window.sessionStorage.getItem(MOBILE_SELECTED_ACCOUNT_KEY);
+  });
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["categories"],
@@ -421,14 +425,18 @@ function MobileAccounts() {
     }
   }, [scopedAccounts, selectedAccountId]);
 
-  // Force reset to first account when filters change
   useEffect(() => {
-    if (scopedAccounts.length > 0) {
-      setSelectedAccountId(scopedAccounts[0].id);
+    if (typeof window === "undefined") return;
+
+    if (selectedAccountId) {
+      window.sessionStorage.setItem(
+        MOBILE_SELECTED_ACCOUNT_KEY,
+        selectedAccountId,
+      );
     } else {
-      setSelectedAccountId(null);
+      window.sessionStorage.removeItem(MOBILE_SELECTED_ACCOUNT_KEY);
     }
-  }, [typeFilter, scope, selectedOwnerId]);
+  }, [selectedAccountId]);
 
   const selectedAccount = useMemo(
     () => scopedAccounts.find((account) => account.id === selectedAccountId) || null,
@@ -604,7 +612,10 @@ function MobileAccounts() {
                       accounts={sliderAccounts}
                       activeAccountId={selectedAccount?.id || null}
                       onAccountChange={setSelectedAccountId}
-                      onCardClick={(accountId) => navigate(`/accounts/${accountId}`)}
+                      onCardClick={(accountId) => {
+                        setSelectedAccountId(accountId);
+                        navigate(`/accounts/${accountId}`);
+                      }}
                     />
                   </Section>
 
@@ -716,7 +727,12 @@ function MobileAccounts() {
 
         {canManageStructure && (
           <FAB
-            onClick={() => navigate("new", { state: { background: location } })}
+            onClick={() =>
+              navigate("new", {
+                state: { background: location },
+                replace: true,
+              })
+            }
           />
         )}
 

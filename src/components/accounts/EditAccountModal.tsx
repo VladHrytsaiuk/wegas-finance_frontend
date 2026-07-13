@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
 import { HiXMark } from "react-icons/hi2";
@@ -16,6 +16,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 function EditAccountModal() {
   const { t } = useTranslation(); // ✅ Додано
   const navigate = useNavigate();
+  const location = useLocation();
   const { accountId } = useParams();
 
   const { users, actions } = useAccountsData();
@@ -37,10 +38,16 @@ function EditAccountModal() {
 
   useEffect(() => {
     if (previousOpenName.current === "edit-account" && openName === "") {
-      navigate("/accounts");
+      const background = location.state?.background;
+      const fallbackPath = `/accounts/${accountId}`;
+      const targetPath = background
+        ? `${background.pathname}${background.search}${background.hash}`
+        : fallbackPath;
+
+      navigate(targetPath, { replace: true });
     }
     previousOpenName.current = openName;
-  }, [openName, navigate]);
+  }, [accountId, location.state, openName, navigate]);
 
   return (
     <Modal.Window name="edit-account" mobileBottomSheet padding="1.5rem">

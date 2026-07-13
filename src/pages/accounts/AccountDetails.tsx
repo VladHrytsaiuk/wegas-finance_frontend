@@ -140,7 +140,34 @@ function AccountDetails() {
     <Modal>
       <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
         {isMobile && account ? (
-          <MobilePageHeader title={account.name} />
+          <MobilePageHeader
+            title={account.name}
+            rightAction={
+              <S.MobileHeaderActions>
+                <Link
+                  to={`/accounts/${accountId}/edit`}
+                  replace
+                  state={{ background: location }}
+                  style={{ display: "inline-flex", textDecoration: "none" }}
+                  aria-label={t("accounts:accountDetailsPage.edit_button")}
+                >
+                  <S.MobileHeaderActionButton>
+                    <HiOutlinePencil size={18} />
+                  </S.MobileHeaderActionButton>
+                </Link>
+
+                <Modal.Open opens="delete-account">
+                  <S.MobileHeaderActionButton
+                    $danger
+                    aria-label={t("common:common.delete")}
+                    title={t("common:common.delete")}
+                  >
+                    <HiTrash size={18} />
+                  </S.MobileHeaderActionButton>
+                </Modal.Open>
+              </S.MobileHeaderActions>
+            }
+          />
         ) : (
           <S.TopNav>
             <S.BackButton onClick={() => navigate(-1)}>
@@ -157,6 +184,7 @@ function AccountDetails() {
 
             <Link
               to={`/accounts/${accountId}/edit`}
+              replace
               state={{ background: location }}
               style={{ textDecoration: "none" }}
             >

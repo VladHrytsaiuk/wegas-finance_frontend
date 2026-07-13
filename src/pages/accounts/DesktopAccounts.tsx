@@ -88,6 +88,7 @@ function Accounts() {
                 <Button
                   as={Link}
                   to="new"
+                  replace
                   state={{ background: location }}
                   size="medium"
                   icon={<HiPlus />}
@@ -122,6 +123,7 @@ function Accounts() {
                 <Button
                   as={Link}
                   to="new"
+                  replace
                   state={{ background: location }}
                   variation="primary"
                 >

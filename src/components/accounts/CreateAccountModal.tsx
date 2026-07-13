@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +25,7 @@ export default function CreateAccountModal() {
 function CreateAccountModalContent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile(1001);
   const { open, openName, close } = useModal();
 
@@ -39,10 +40,16 @@ function CreateAccountModalContent() {
 
   useEffect(() => {
     if (previousOpenName.current === "create-account" && openName === "") {
-      navigate("/accounts");
+      const background = location.state?.background;
+      const fallbackPath = "/accounts";
+      const targetPath = background
+        ? `${background.pathname}${background.search}${background.hash}`
+        : fallbackPath;
+
+      navigate(targetPath, { replace: true });
     }
     previousOpenName.current = openName;
-  }, [openName, navigate]);
+  }, [location.state, openName, navigate]);
 
   return (
     <Modal.Window name="create-account" mobileBottomSheet padding="1.5rem">

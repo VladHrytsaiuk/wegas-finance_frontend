@@ -196,6 +196,7 @@ export function AccountRow({
               <S.ActionBtn
                 as={Link}
                 to={`${acc.id}/edit`}
+                replace
                 state={{ background: location }}
                 $variant="edit"
               >
@@ -228,6 +229,7 @@ export function AccountRow({
                   <S.DropdownItem
                     as={Link}
                     to={`${acc.id}/edit`}
+                    replace
                     state={{ background: location }}
                     onClick={() => setIsMenuOpen(false)}
                   >

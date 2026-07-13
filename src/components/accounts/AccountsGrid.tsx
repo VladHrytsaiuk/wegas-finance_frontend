@@ -82,6 +82,7 @@ export function AccountsGrid({
                       <S.ActionButton
                         as={Link}
                         to={`${account.id}/edit`}
+                        replace
                         state={{ background: location }}
                         className="edit"
                       >
