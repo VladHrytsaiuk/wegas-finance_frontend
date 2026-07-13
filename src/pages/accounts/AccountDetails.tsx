@@ -224,7 +224,11 @@ function AccountDetails() {
         <S.ContentGrid>
           {/* 🔥 НОВЕ: Статистика тепер має власну Grid Area */}
           <S.StatsArea>
-            <AccountStats stats={monthlyStats} currency={account.currency} />
+            <AccountStats
+              stats={monthlyStats}
+              currency={account.currency}
+              accountId={accountId}
+            />
           </S.StatsArea>
 
           <S.LeftColumn>
@@ -332,14 +336,14 @@ function AccountDetails() {
           </S.RightColumn>
         </S.ContentGrid>
 
-        <Modal.Window name="history-income">
+        <Modal.Window name="history-income" padding="0">
           <TransactionsModal
             accountId={accountId}
             initialFilters={{ type: ["income"] }}
             title={t("accounts:accountStats.income_history_title")}
           />
         </Modal.Window>
-        <Modal.Window name="history-expense">
+        <Modal.Window name="history-expense" padding="0">
           <TransactionsModal
             accountId={accountId}
             initialFilters={{ type: ["expense"] }}

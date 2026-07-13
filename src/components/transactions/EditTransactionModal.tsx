@@ -8,6 +8,7 @@ import { Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { getTransactionApi } from "../../services/apiTransactions";
+import { useScrollLock } from "../../hooks/ui/useScrollLock";
 
 // Просто центрувальник, без обмежень ширини
 const CenteredLayout = styled.div`
@@ -33,12 +34,7 @@ function EditTransactionModal() {
     navigate(-1);
   }, [navigate]);
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
+  useScrollLock(true);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {

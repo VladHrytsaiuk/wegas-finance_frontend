@@ -15,6 +15,7 @@ import { createPortal } from "react-dom";
 import styled, { keyframes, css } from "styled-components";
 import { HiXMark } from "react-icons/hi2";
 import ConfirmCloseModal from "./ConfirmCloseModal";
+import { useScrollLock } from "../../hooks/ui/useScrollLock";
 
 // --- ANIMATIONS ---
 const fadeIn = keyframes`
@@ -290,17 +291,7 @@ function Modal({ children }: { children: ReactNode }) {
     setIsDirty(false);
   };
 
-  // Centralized body scroll lock when modal is open
-  useEffect(() => {
-    if (openName) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [openName]);
+  useScrollLock(Boolean(openName));
 
   return (
     <ModalContext.Provider

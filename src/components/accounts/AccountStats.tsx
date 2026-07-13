@@ -7,6 +7,8 @@ import {
 import Modal from "../ui/Modal";
 import { formatMoney } from "../../utils/helpers";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const StatsRow = styled.div`
   display: grid;
@@ -98,24 +100,32 @@ const StatLabel = styled.span`
     white-space: nowrap;
     line-height: 1.15;
     align-items: center;
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
   }
 `;
 
 interface Props {
   stats: { income: number; expense: number; totalTurnover: number };
   currency: string;
+  accountId?: string;
 }
 
-export const AccountStats = ({ stats, currency }: Props) => {
+export const AccountStats = ({ stats, currency, accountId }: Props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
+  const openMobileHistory = (type: "income" | "expense") => {
+    if (!accountId) return;
+    navigate(`/transactions?account=${accountId}&type=${type}`);
+  };
 
   return (
     <StatsRow>
       <ModalWrapper>
-        <Modal.Open opens="history-income">
-          <StatItem $clickable>
+        {isMobile ? (
+          <StatItem $clickable onClick={() => openMobileHistory("income")}>
             <StatLabel>
               <HiArrowTrendingUp
                 style={{ color: "var(--color-brand-500)" }}
@@ -127,12 +137,27 @@ export const AccountStats = ({ stats, currency }: Props) => {
               +{formatMoney(stats.income, currency)}
             </strong>
           </StatItem>
-        </Modal.Open>
+        ) : (
+          <Modal.Open opens="history-income">
+            <StatItem $clickable>
+              <StatLabel>
+                <HiArrowTrendingUp
+                  style={{ color: "var(--color-brand-500)" }}
+                  size={16}
+                />
+                {t("accounts:accountStats.income_label_short", "Дохід")}
+              </StatLabel>
+              <strong style={{ color: "var(--color-brand-600)" }}>
+                +{formatMoney(stats.income, currency)}
+              </strong>
+            </StatItem>
+          </Modal.Open>
+        )}
       </ModalWrapper>
 
       <ModalWrapper>
-        <Modal.Open opens="history-expense">
-          <StatItem $clickable>
+        {isMobile ? (
+          <StatItem $clickable onClick={() => openMobileHistory("expense")}>
             <StatLabel>
               <HiArrowTrendingDown
                 style={{ color: "var(--color-red-700)" }}
@@ -144,7 +169,22 @@ export const AccountStats = ({ stats, currency }: Props) => {
               -{formatMoney(stats.expense, currency)}
             </strong>
           </StatItem>
-        </Modal.Open>
+        ) : (
+          <Modal.Open opens="history-expense">
+            <StatItem $clickable>
+              <StatLabel>
+                <HiArrowTrendingDown
+                  style={{ color: "var(--color-red-700)" }}
+                  size={16}
+                />
+                {t("accounts:accountStats.expense_label_short", "Витрати")}
+              </StatLabel>
+              <strong style={{ color: "var(--color-red-700)" }}>
+                -{formatMoney(stats.expense, currency)}
+              </strong>
+            </StatItem>
+          </Modal.Open>
+        )}
       </ModalWrapper>
 
       <DesktopOnly>

@@ -276,6 +276,7 @@ function MobileTransactionHistoryContent() {
   const [searchParams] = useSearchParams();
   const { open } = useModal();
   const accountId = searchParams.get("account");
+  const typeParam = searchParams.get("type");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [pendingJumpDate, setPendingJumpDate] = useState<number | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -294,13 +295,20 @@ function MobileTransactionHistoryContent() {
   } = useTransactionFilters();
 
   useEffect(() => {
+    handleClearAll();
+
     if (accountId) {
       handleFilterChange("account", [accountId]);
-      return;
     }
 
-    handleClearAll();
-  }, [accountId, handleClearAll, handleFilterChange]);
+    if (
+      typeParam === "income" ||
+      typeParam === "expense" ||
+      typeParam === "transfer"
+    ) {
+      handleFilterChange("type", [typeParam]);
+    }
+  }, [accountId, typeParam, handleClearAll, handleFilterChange]);
 
   const apiParams = useMemo(
     () => ({

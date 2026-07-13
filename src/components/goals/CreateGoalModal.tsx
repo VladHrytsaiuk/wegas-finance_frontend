@@ -28,6 +28,7 @@ import ConfirmCloseModal from "../ui/ConfirmCloseModal";
 
 import { useCreateGoalForm } from "../../hooks/Goals/useCreateGoalForm";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useScrollLock } from "../../hooks/ui/useScrollLock";
 
 import * as S from "./CreateGoalModal.styles";
 import type { Goal } from "../../types";
@@ -67,17 +68,7 @@ function CreateGoalFormContent({
 
   const isMobile = useIsMobile();
 
-  // 🔥 Lock body scroll when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+  useScrollLock(isOpen);
 
   // Sync ESC key handling
   useEffect(() => {

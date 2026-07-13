@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import type { TransactionType } from "../../types";
+import { useScrollLock } from "../../hooks/ui/useScrollLock";
 
 interface TransactionSuccessResponse {
   id?: string;
@@ -61,16 +62,7 @@ function CreateTransactionModal({
     }
   }, [onClose, navigate]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+  useScrollLock(isOpen);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
