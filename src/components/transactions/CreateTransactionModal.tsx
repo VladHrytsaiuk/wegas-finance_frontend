@@ -3,10 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 
-import { Overlay } from "../ui/Modal";
+import { BottomSheetPanel, DragHandle, Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import type { TransactionType } from "../../types";
 import { useScrollLock } from "../../hooks/ui/useScrollLock";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface TransactionSuccessResponse {
   id?: string;
@@ -48,6 +49,7 @@ function CreateTransactionModal({
 }: CreateTransactionModalProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const isMobile = useIsMobile();
 
   // Отримуємо параметри з URL (якщо модалка відкрита через navigate)
   const typeParam = searchParams.get("type");
@@ -75,24 +77,41 @@ function CreateTransactionModal({
   if (!isOpen) return null;
 
   return createPortal(
-    <Overlay onClick={handleClose}>
-      <CenteredLayout onClick={(e) => e.stopPropagation()}>
-        {/* 🔥 3. Передаємо дані у форму */}
-        <CreateTransactionForm
-          onCloseModal={handleClose}
-          onSuccess={onSuccess}
-          // 🔥 ПЕРЕДАЄМО ДАНІ ДАЛІ
-          initialType={(initialData.type || typeParam || undefined) as TransactionType}
-          initialAccountId={
-            initialData.account_id || accountIdParam || undefined
-          }
-          initialCounterpartyId={
-            initialData.counterparty_id || cpIdParam || undefined
-          }
-          initialAmount={initialData.amount} // <--- ОСЬ ВОНО
-          initialNote={initialData.note} // <--- І ЦЕ
-        />
-      </CenteredLayout>
+    <Overlay $isBottomSheet={isMobile} onClick={handleClose}>
+      {isMobile ? (
+        <BottomSheetPanel onClick={(e) => e.stopPropagation()}>
+          <DragHandle />
+          <CreateTransactionForm
+            onCloseModal={handleClose}
+            onSuccess={onSuccess}
+            initialType={(initialData.type || typeParam || undefined) as TransactionType}
+            initialAccountId={
+              initialData.account_id || accountIdParam || undefined
+            }
+            initialCounterpartyId={
+              initialData.counterparty_id || cpIdParam || undefined
+            }
+            initialAmount={initialData.amount}
+            initialNote={initialData.note}
+          />
+        </BottomSheetPanel>
+      ) : (
+        <CenteredLayout onClick={(e) => e.stopPropagation()}>
+          <CreateTransactionForm
+            onCloseModal={handleClose}
+            onSuccess={onSuccess}
+            initialType={(initialData.type || typeParam || undefined) as TransactionType}
+            initialAccountId={
+              initialData.account_id || accountIdParam || undefined
+            }
+            initialCounterpartyId={
+              initialData.counterparty_id || cpIdParam || undefined
+            }
+            initialAmount={initialData.amount}
+            initialNote={initialData.note}
+          />
+        </CenteredLayout>
+      )}
     </Overlay>,
     document.body,
   );

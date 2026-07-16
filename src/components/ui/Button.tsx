@@ -15,11 +15,12 @@ const variations = {
   secondary: css`
     background-color: var(--color-bg-surface);
     color: var(--color-text-main);
-    border: none;
+    border: 1px solid var(--color-border);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
     &:hover:not(:disabled) {
       background-color: var(--color-bg-page);
+      border-color: var(--color-text-light);
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
   `,
@@ -90,8 +91,6 @@ const StyledButton = styled.button<StyleProps>`
   gap: 0.6rem; /* Відступ між іконкою і текстом */
 
   gap: 0.2rem;
-
-  border: none;
   border-radius: 8px; /* Трохи округліше */
   cursor: pointer;
   letter-spacing: 0.01em;

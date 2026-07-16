@@ -96,6 +96,7 @@ export const useBaseSelect = ({
   };
 
   const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onClear?.();
     if (!isOpen) triggerRef.current?.focus();

@@ -11,7 +11,7 @@ interface StyledInputProps {
 // Reuse existing logic from StyledInput in Transaction Modal for consistency
 const StyledInput = styled.input<StyledInputProps>`
   width: 100%;
-  padding: 0.75rem 0.9rem;
+  padding: 0.65rem 0.85rem;
   border: 1px solid
     ${(props) =>
       props.$hasError ? "var(--color-red-600)" : "var(--color-text-light)"};
@@ -19,7 +19,7 @@ const StyledInput = styled.input<StyledInputProps>`
   background-color: ${(props) =>
     props.$isLocked ? "var(--color-bg-secondary)" : "var(--color-bg-surface)"};
   color: var(--color-text-main);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   transition: all 0.2s;
   cursor: ${(props) => (props.$isLocked ? "not-allowed" : "text")};

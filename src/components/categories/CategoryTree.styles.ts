@@ -52,6 +52,12 @@ export const TreeItem = styled.div<{
       p.$selected ? "var(--color-brand-100)" : "var(--color-bg-hover)"};
   }
 
+  &:focus {
+    outline: none;
+    background-color: var(--color-brand-100);
+    box-shadow: 0 0 0 2px var(--color-brand-200);
+  }
+
   ${(p) =>
     !p.$isSelectable &&
     !p.$hasChildren &&

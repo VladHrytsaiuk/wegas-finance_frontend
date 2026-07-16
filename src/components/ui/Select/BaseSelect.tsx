@@ -52,6 +52,11 @@ export const BaseSelect = ({
     if (!state.isOpen) actions.toggle();
   };
 
+  const handleClearMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <S.Wrapper className={className}>
       <S.Trigger
@@ -93,6 +98,7 @@ export const BaseSelect = ({
         <S.IconWrapper>
           {triggerLabel && onClear && !disabled && !state.isOpen && (
             <S.ClearButton
+              onMouseDown={handleClearMouseDown}
               onClick={actions.handleClear}
               type="button"
               tabIndex={-1}

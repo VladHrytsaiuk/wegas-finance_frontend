@@ -153,7 +153,7 @@ export const OptionsList = styled.div`
 
   /* Авто-фокус при пошуку */
   & [data-autofocus="true"] {
-    background-color: var(--color-bg-hover, #f3f4f6) !important;
+    background-color: var(--color-brand-50) !important;
     outline: 2px solid var(--color-brand-500);
     outline-offset: -2px;
   }
@@ -199,6 +199,9 @@ export const ClearButton = styled.button`
   padding: 2px;
   border-radius: 4px;
   transition: all 0.2s;
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
 
   &:hover {
     background-color: var(--color-bg-page, #f3f4f6);

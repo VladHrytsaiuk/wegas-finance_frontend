@@ -70,6 +70,7 @@
   "common": {
     "delete": "Delete",
     "edit": "Edit",
+    "details": "Additional",
     "transaction": "transaction",
     "sender": "Sender",
     "recipient": "Recipient",

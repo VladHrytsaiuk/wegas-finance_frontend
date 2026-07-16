@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { HiXMark } from "react-icons/hi2";
+import { useEffect, useMemo, useState } from "react";
+import { HiChevronDown, HiPlusCircle, HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 import { useSettings } from "../../../context/SettingsContext";
 import { formatMoney } from "../../../utils/helpers";
@@ -46,6 +47,10 @@ export const ItemsTable = ({
 }: ItemsTableProps) => {
   const { t } = useTranslation();
   const { language, currency: defaultCurrency } = useSettings();
+  const isMobile = useIsMobile();
+  const [expandedMobileItem, setExpandedMobileItem] = useState<number | null>(
+    null,
+  );
 
   const displayCurrency = currencyCode || defaultCurrency;
 
@@ -56,6 +61,19 @@ export const ItemsTable = ({
       return sum + p * q;
     }, 0);
   }, [items]);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    if (items.length === 0) {
+      setExpandedMobileItem(null);
+      return;
+    }
+    setExpandedMobileItem(items.length - 1);
+  }, [items.length, isMobile]);
+
+  const handleAddItem = () => {
+    actions.addItem();
+  };
 
   // 🔥 НОВА ЛОГІКА ЗАКРИТТЯ
   const handleCloseAttempt = () => {
@@ -88,7 +106,7 @@ export const ItemsTable = ({
           size="small"
           variation="soft"
           type="button"
-          onClick={actions.addItem}
+          onClick={handleAddItem}
           icon={<HiPlusCircle size={16} />}
         >
           {t("transactions:itemsTable.button_add")}
@@ -97,20 +115,22 @@ export const ItemsTable = ({
 
       <S.TableScrollWrapper>
         <S.TableInnerContent>
-          <S.TableHeaderRow>
-            <S.ColCenter>#</S.ColCenter>
-            <div>{t("transactions:itemsTable.header_item_name")}</div>
-            <div>{t("transactions:itemsTable.header_category")}</div>
-            <S.ColRight>
-              {t("transactions:itemsTable.header_quantity")}
-            </S.ColRight>
-            <S.ColRight>{t("transactions:itemsTable.header_price")}</S.ColRight>
-            <S.ColRight>
-              {t("transactions:itemsTable.header_amount")}
-            </S.ColRight>
-            <div>{t("transactions:itemsTable.header_note")}</div>
-            <div></div>
-          </S.TableHeaderRow>
+          {!isMobile && (
+            <S.TableHeaderRow>
+              <S.ColCenter>#</S.ColCenter>
+              <div>{t("transactions:itemsTable.header_item_name")}</div>
+              <div>{t("transactions:itemsTable.header_category")}</div>
+              <S.ColRight>
+                {t("transactions:itemsTable.header_quantity")}
+              </S.ColRight>
+              <S.ColRight>{t("transactions:itemsTable.header_price")}</S.ColRight>
+              <S.ColRight>
+                {t("transactions:itemsTable.header_amount")}
+              </S.ColRight>
+              <div>{t("transactions:itemsTable.header_note")}</div>
+              <div></div>
+            </S.TableHeaderRow>
+          )}
 
           {items.length > 0 ? (
             items.map((item, idx) => (
@@ -120,6 +140,16 @@ export const ItemsTable = ({
                 item={item}
                 actions={actions}
                 categories={categories}
+                currencyCode={displayCurrency}
+                isCollapsed={isMobile && expandedMobileItem !== idx}
+                onToggleCollapse={
+                  isMobile
+                    ? () =>
+                        setExpandedMobileItem((prev) =>
+                          prev === idx ? null : idx,
+                        )
+                    : undefined
+                }
               />
             ))
           ) : (

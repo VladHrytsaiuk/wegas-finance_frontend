@@ -84,6 +84,7 @@
     "label_time": "Час",
     "label_category": "Категорія",
     "label_counterparty": "Контрагент",
+    "label_comment": "Коментар",
     "label_tags": "Теги",
     "transfer_details_text": "Переказ коштів між рахунками",
     "details_button_show": "Деталізувати (товари)",

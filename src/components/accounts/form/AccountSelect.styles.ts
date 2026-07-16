@@ -75,7 +75,7 @@ export const OptionItem = styled.div<{ $isActive: boolean; $isSynced?: boolean }
 
   &:focus {
     outline: none;
-    background-color: var(--color-brand-50);
+    background-color: var(--color-brand-100);
     box-shadow: 0 0 0 2px var(--color-brand-200);
   }
 
@@ -108,7 +108,7 @@ export const OwnerRow = styled.div<{ $isExpanded: boolean }>`
 
   &:focus {
     outline: none;
-    background-color: var(--color-brand-50);
+    background-color: var(--color-brand-100);
   }
 `;
 
@@ -137,7 +137,7 @@ export const TypeRow = styled.div<{ $isExpanded: boolean }>`
 
   &:focus {
     outline: none;
-    background-color: var(--color-brand-50);
+    background-color: var(--color-brand-100);
     box-shadow: inset 0 0 0 1px var(--color-brand-200);
   }
 `;

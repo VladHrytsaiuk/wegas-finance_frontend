@@ -102,6 +102,7 @@
     "label_time": "Time",
     "label_category": "Category",
     "label_counterparty": "Counterparty",
+    "label_comment": "Comment",
     "label_tags": "Tags",
     "transfer_details_text": "Transfer funds between accounts",
     "details_button_show": "Detailize (items)",

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
-  HiArrowRight,
+  HiArrowsUpDown,
   HiListBullet,
   HiPhoto,
   HiChevronDown,
@@ -43,6 +43,7 @@ import { TimePicker } from "../../ui/TimePicker";
 import { ItemsTable } from "./ItemsTable";
 import { AssetSelector } from "./AssetSelector";
 import { Overlay, StyledModal } from "../../ui/Modal";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 import * as S from "./styles";
 import toast from "react-hot-toast";
@@ -149,8 +150,10 @@ export const FormContent: React.FC<FormContentProps> = ({
   const { currency: baseCurrency } = useSettings();
   const queryClient = useQueryClient();
   const { form } = state;
+  const isMobile = useIsMobile();
 
   const [showAssetUnlinkModal, setShowAssetUnlinkModal] = useState(false);
+  const [isMobileAdditionalOpen, setIsMobileAdditionalOpen] = useState(false);
 
   const { data: accounts = [], isLoading: loadAcc } = useQuery({
     queryKey: ["accounts"],
@@ -286,9 +289,81 @@ export const FormContent: React.FC<FormContentProps> = ({
     }
   };
 
+  const handleToggleMobileAdditional = () => {
+    setIsMobileAdditionalOpen((prev) => !prev);
+  };
+
+  const handleSwapTransferAccounts = useCallback(() => {
+    if (!form.accountId || !form.targetAccountId || isTransferLocked) return;
+
+    const previousSourceAccountId = form.accountId;
+    const previousSourceAmount = state.localAmount;
+    const previousTargetAmount = state.localTargetAmount;
+
+    actions.setAccountId(form.targetAccountId);
+    actions.setTargetAccountId(previousSourceAccountId);
+    actions.setLocalAmount(previousTargetAmount || previousSourceAmount);
+    actions.setLocalTargetAmount(previousSourceAmount);
+    actions.clearError("accountId");
+    actions.clearError("targetAccountId");
+    actions.clearError("amount");
+    actions.clearError("targetAmount");
+  }, [
+    actions,
+    form.accountId,
+    form.targetAccountId,
+    isTransferLocked,
+    state.localAmount,
+    state.localTargetAmount,
+  ]);
+
   const getTransactionDate = useCallback(() => {
     return form.date ? new Date(form.date).getTime() : Date.now();
   }, [form.date]);
+
+  const additionalSummary = useMemo(() => {
+    const bits: string[] = [];
+
+    bits.push(
+      `${t("transactions:transactionForm.label_date")} ${format(
+        new Date(getTransactionDate()),
+        "dd.MM",
+      )}`,
+    );
+
+    if (state.timeStr) bits.push(state.timeStr);
+    if (form.counterpartyId && !isDebt) {
+      bits.push(t("transactions:transactionForm.label_counterparty"));
+    }
+    if (form.tagIds.length > 0) {
+      bits.push(
+        `${t("transactions:transactionForm.label_tags")}: ${form.tagIds.length}`,
+      );
+    }
+    if (form.items.length > 0) {
+      bits.push(
+        `${t("transactions:itemsTable.title_details")}: ${form.items.length}`,
+      );
+    }
+    if (form.assetId || form.newAsset || form.isAssetPanelOpen) {
+      bits.push(t("transactions:transactionForm.add_asset_option", "Актив"));
+    }
+
+    return bits.join(" • ");
+  }, [
+    form.assetId,
+    form.counterpartyId,
+    form.isAssetPanelOpen,
+    form.items.length,
+    form.newAsset,
+    form.tagIds.length,
+    getTransactionDate,
+    isDebt,
+    state.timeStr,
+    t,
+  ]);
+
+  const hasAdditionalSummary = additionalSummary.trim().length > 0;
 
   if (loadAcc || loadCat || loadCp || loadTags || loadUsers)
     return <CenteredSpinner isContainer />;
@@ -341,113 +416,206 @@ export const FormContent: React.FC<FormContentProps> = ({
           />
         </div>
 
-        <S.RowGroup $columns="6fr 4fr">
-          <div>
-            <S.Label>
-              <LabelWithLock
-                label={
-                  form.type === "income"
-                    ? t(
-                        "transactions:transactionForm.label_income_account",
-                        "На рахунок",
-                      )
-                    : t(
-                        "transactions:transactionForm.label_from_account",
-                        "З рахунку",
-                      )
-                }
-                isLocked={isLocked}
-              />
-            </S.Label>
-            <div style={isLocked ? { pointerEvents: "none", opacity: 0.8 } : {}}>
-              <AccountSelect
-                accounts={accounts}
-                users={users}
-                value={form.accountId}
-                onChange={(val: string) => {
-                  actions.setAccountId(val);
-                  actions.clearError("accountId");
-                }}
-                hasError={!!state.errors.accountId}
-              />
-            </div>
-            {state.errors.accountId && (
-              <S.ErrorText>{state.errors.accountId}</S.ErrorText>
-            )}
-          </div>
+        {isMobile ? (
+          <>
+            <S.InputWrapper>
+              <S.Label>
+                <S.AmountLabelInner>
+                  <span>
+                    {isMultiCurrency
+                      ? t("transactions:transactionForm.label_sent_amount")
+                      : t("transactions:transactionForm.label_amount")}
+                  </span>
+                  <S.RequiredStar> *</S.RequiredStar>
+                  {isLocked && (
+                    <S.LockIconWrapper title="Синхронізовані дані">
+                      <HiLockClosed />
+                    </S.LockIconWrapper>
+                  )}
+                  {sourceCurrency && (
+                    <S.CurrencyHint>({sourceCurrency})</S.CurrencyHint>
+                  )}
+                </S.AmountLabelInner>
+              </S.Label>
 
-          <S.InputWrapper>
-            <S.Label>
-              <S.AmountLabelInner>
-                <span>
-                  {isMultiCurrency
-                    ? t("transactions:transactionForm.label_sent_amount")
-                    : t("transactions:transactionForm.label_amount")}
-                </span>
-                {isLocked && (
-                  <S.LockIconWrapper title="Синхронізовані дані">
-                    <HiLockClosed />
-                  </S.LockIconWrapper>
+              <AmountInput
+                value={state.localAmount}
+                onChange={(val) => actions.setLocalAmount(val)}
+                disabled={isLocked}
+                hasError={!!state.errors.amount}
+                placeholder="0.00"
+              />
+              {state.errors.amount && (
+                <S.ErrorText>{state.errors.amount}</S.ErrorText>
+              )}
+            </S.InputWrapper>
+
+            <div>
+              <S.Label>
+                <LabelWithLock
+                  label={
+                    form.type === "income"
+                      ? t(
+                          "transactions:transactionForm.label_income_account",
+                          "На рахунок",
+                        )
+                      : t(
+                          "transactions:transactionForm.label_from_account",
+                          "З рахунку",
+                        )
+                  }
+                  isLocked={isLocked}
+                />
+                <S.RequiredStar> *</S.RequiredStar>
+              </S.Label>
+              <div
+                style={isLocked ? { pointerEvents: "none", opacity: 0.8 } : {}}
+              >
+                <AccountSelect
+                  accounts={accounts}
+                  users={users}
+                  value={form.accountId}
+                  onChange={(val: string) => {
+                    actions.setAccountId(val);
+                    actions.clearError("accountId");
+                  }}
+                  hasError={!!state.errors.accountId}
+                />
+              </div>
+              {state.errors.accountId && (
+                <S.ErrorText>{state.errors.accountId}</S.ErrorText>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <S.RowGroup $columns="6fr 4fr">
+              <div>
+                <S.Label>
+                  <LabelWithLock
+                    label={
+                      form.type === "income"
+                        ? t(
+                            "transactions:transactionForm.label_income_account",
+                            "На рахунок",
+                          )
+                        : t(
+                            "transactions:transactionForm.label_from_account",
+                            "З рахунку",
+                          )
+                    }
+                    isLocked={isLocked}
+                  />
+                  <S.RequiredStar> *</S.RequiredStar>
+                </S.Label>
+                <div style={isLocked ? { pointerEvents: "none", opacity: 0.8 } : {}}>
+                  <AccountSelect
+                    accounts={accounts}
+                    users={users}
+                    value={form.accountId}
+                    onChange={(val: string) => {
+                      actions.setAccountId(val);
+                      actions.clearError("accountId");
+                    }}
+                    hasError={!!state.errors.accountId}
+                  />
+                </div>
+                {state.errors.accountId && (
+                  <S.ErrorText>{state.errors.accountId}</S.ErrorText>
                 )}
-                {sourceCurrency && (
-                  <S.CurrencyHint>({sourceCurrency})</S.CurrencyHint>
+              </div>
+
+              <S.InputWrapper>
+                <S.Label>
+                  <S.AmountLabelInner>
+                    <span>
+                      {isMultiCurrency
+                        ? t("transactions:transactionForm.label_sent_amount")
+                        : t("transactions:transactionForm.label_amount")}
+                    </span>
+                    <S.RequiredStar> *</S.RequiredStar>
+                    {isLocked && (
+                      <S.LockIconWrapper title="Синхронізовані дані">
+                        <HiLockClosed />
+                      </S.LockIconWrapper>
+                    )}
+                    {sourceCurrency && (
+                      <S.CurrencyHint>({sourceCurrency})</S.CurrencyHint>
+                    )}
+                  </S.AmountLabelInner>
+                </S.Label>
+
+                <AmountInput
+                  value={state.localAmount}
+                  onChange={(val) => actions.setLocalAmount(val)}
+                  disabled={isLocked}
+                  hasError={!!state.errors.amount}
+                  placeholder="0.00"
+                />
+                {state.errors.amount && (
+                  <S.ErrorText>{state.errors.amount}</S.ErrorText>
                 )}
-              </S.AmountLabelInner>
-            </S.Label>
+              </S.InputWrapper>
+            </S.RowGroup>
 
-            <AmountInput
-              value={state.localAmount}
-              onChange={(val) => actions.setLocalAmount(val)}
-              disabled={isLocked}
-              hasError={!!state.errors.amount}
-              placeholder="0.00"
-            />
-            {state.errors.amount && (
-              <S.ErrorText>{state.errors.amount}</S.ErrorText>
-            )}
-          </S.InputWrapper>
-        </S.RowGroup>
-
-        <S.RowGroup $columns="1fr 120px">
-          <div>
-            <S.Label>
-              <LabelWithLock
-                label={t("transactions:transactionForm.label_date")}
-                isLocked={isLocked}
-              />
-            </S.Label>
-            <div style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}>
-              <DateRangePicker
-                mode="single"
-                date={form.date ? new Date(form.date).getTime() : null}
-                onDateChange={(ts) => {
-                  actions.setDate(format(new Date(ts), "yyyy-MM-dd"));
-                  actions.clearError("date");
-                }}
-              />
-            </div>
-            {state.errors.date && <S.ErrorText>{state.errors.date}</S.ErrorText>}
-          </div>
-          <div>
-            <S.Label>
-              <LabelWithLock
-                label={t("transactions:transactionForm.label_time")}
-                isLocked={isLocked}
-              />
-            </S.Label>
-            <div style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}>
-              <TimePicker value={state.timeStr} onChange={actions.setTimeStr} />
-            </div>
-          </div>
-        </S.RowGroup>
+            <S.RowGroup $columns="1fr 120px">
+              <div>
+                <S.Label>
+                  <LabelWithLock
+                    label={t("transactions:transactionForm.label_date")}
+                    isLocked={isLocked}
+                  />
+                  <S.RequiredStar> *</S.RequiredStar>
+                </S.Label>
+                <div style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}>
+                  <DateRangePicker
+                    mode="single"
+                    date={form.date ? new Date(form.date).getTime() : null}
+                    onDateChange={(ts) => {
+                      actions.setDate(format(new Date(ts), "yyyy-MM-dd"));
+                      actions.clearError("date");
+                    }}
+                  />
+                </div>
+                {state.errors.date && <S.ErrorText>{state.errors.date}</S.ErrorText>}
+              </div>
+              <div>
+                <S.Label>
+                  <LabelWithLock
+                    label={t("transactions:transactionForm.label_time")}
+                    isLocked={isLocked}
+                  />
+                </S.Label>
+                <div style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}>
+                  <TimePicker value={state.timeStr} onChange={actions.setTimeStr} />
+                </div>
+              </div>
+            </S.RowGroup>
+          </>
+        )}
 
         <S.ConditionalFieldsContainer>
           {form.type === "transfer" ? (
             <>
-              <S.TransferDetailsHeader>
-                <HiArrowRight />{" "}
-                {t("transactions:transactionForm.transfer_details_text")}
-              </S.TransferDetailsHeader>
+              <S.TransferSwapRow>
+                <S.TransferSwapButton
+                  type="button"
+                  onClick={handleSwapTransferAccounts}
+                  disabled={
+                    isTransferLocked || !form.accountId || !form.targetAccountId
+                  }
+                  aria-label={t(
+                    "transactions:transactionForm.swap_accounts",
+                    "Поміняти рахунки місцями",
+                  )}
+                  title={t(
+                    "transactions:transactionForm.swap_accounts",
+                    "Поміняти рахунки місцями",
+                  )}
+                >
+                  <HiArrowsUpDown />
+                </S.TransferSwapButton>
+              </S.TransferSwapRow>
               <S.RowGroup $columns={isMultiCurrency ? "6fr 4fr" : "1fr"}>
                 <div>
                   <S.Label>
@@ -455,6 +623,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                       label={t("transactions:transactionForm.label_to_account")}
                       isLocked={isTransferLocked}
                     />
+                    <S.RequiredStar> *</S.RequiredStar>
                   </S.Label>
                   <div
                     style={
@@ -493,6 +662,7 @@ export const FormContent: React.FC<FormContentProps> = ({
                             "transactions:transactionForm.label_received_amount",
                           )}
                         </span>
+                        <S.RequiredStar> *</S.RequiredStar>
                         {isTransferLocked && <HiLockClosed />}
                         {targetCurrency && (
                           <S.CurrencyHint>({targetCurrency})</S.CurrencyHint>
@@ -519,11 +689,20 @@ export const FormContent: React.FC<FormContentProps> = ({
               </S.RowGroup>
             </>
           ) : (
-            <S.RowGroup $columns={isDebt ? "2fr 1fr" : "1fr 1fr 1fr"}>
+            <S.RowGroup
+              $columns={
+                isMobile
+                  ? "1fr"
+                  : isDebt
+                    ? "2fr 1fr"
+                    : "1fr 1fr 1fr"
+              }
+            >
               {!isDebt && (
                 <div>
                   <S.Label>
                     {t("transactions:transactionForm.label_category")}
+                    <S.RequiredStar> *</S.RequiredStar>
                   </S.Label>
                   <CategorySelect
                     categories={availableCategories}
@@ -539,39 +718,284 @@ export const FormContent: React.FC<FormContentProps> = ({
                   )}
                 </div>
               )}
-              <div>
-                <S.Label>
-                  {t("transactions:transactionForm.label_counterparty")}
-                  {isDebt && <S.RequiredStar> *</S.RequiredStar>}
-                </S.Label>
-                <CounterpartySelect
-                  counterparties={counterparties}
-                  value={form.counterpartyId}
-                  onChange={(val: string) => {
-                    actions.setCounterpartyId(val);
-                    actions.clearError("counterpartyId");
-                  }}
-                  hasError={!!state.errors.counterpartyId}
-                />
-                {state.errors.counterpartyId && (
-                  <S.ErrorText>{state.errors.counterpartyId}</S.ErrorText>
-                )}
-              </div>
-              <div>
-                <S.Label>{t("transactions:transactionForm.label_tags")}</S.Label>
-                <TagSelect
-                  tags={tags}
-                  value={form.tagIds}
-                  onChange={actions.setTagIds}
-                  onCreate={(name) => createTag({ name, color: "#6366f1" })}
-                  isCreating={isCreatingTag}
-                />
-              </div>
+              {isMobile && form.type !== "transfer" && (
+                <div>
+                  <S.Label>
+                    {t("transactions:transactionForm.label_counterparty")}
+                    {isDebt ? (
+                      <S.RequiredStar> *</S.RequiredStar>
+                    ) : (
+                      <S.OptionalHint>необов'язково</S.OptionalHint>
+                    )}
+                  </S.Label>
+                  <CounterpartySelect
+                    counterparties={counterparties}
+                    value={form.counterpartyId}
+                    onChange={(val: string) => {
+                      actions.setCounterpartyId(val);
+                      actions.clearError("counterpartyId");
+                    }}
+                    hasError={!!state.errors.counterpartyId}
+                  />
+                  {state.errors.counterpartyId && (
+                    <S.ErrorText>{state.errors.counterpartyId}</S.ErrorText>
+                  )}
+                </div>
+              )}
+              {(isDebt || !isMobile) && (
+                <div>
+                  <S.Label>
+                    {t("transactions:transactionForm.label_counterparty")}
+                    {isDebt ? (
+                      <S.RequiredStar> *</S.RequiredStar>
+                    ) : (
+                      <S.OptionalHint>необов'язково</S.OptionalHint>
+                    )}
+                  </S.Label>
+                  <CounterpartySelect
+                    counterparties={counterparties}
+                    value={form.counterpartyId}
+                    onChange={(val: string) => {
+                      actions.setCounterpartyId(val);
+                      actions.clearError("counterpartyId");
+                    }}
+                    hasError={!!state.errors.counterpartyId}
+                  />
+                  {state.errors.counterpartyId && (
+                    <S.ErrorText>{state.errors.counterpartyId}</S.ErrorText>
+                  )}
+                </div>
+              )}
+              {!isMobile && (
+                <div>
+                  <S.Label>{t("transactions:transactionForm.label_tags")}</S.Label>
+                  <TagSelect
+                    tags={tags}
+                    value={form.tagIds}
+                    onChange={actions.setTagIds}
+                    onCreate={(name) => createTag({ name, color: "#6366f1" })}
+                    isCreating={isCreatingTag}
+                  />
+                </div>
+              )}
             </S.RowGroup>
           )}
         </S.ConditionalFieldsContainer>
 
-        {!isDebt && form.type !== "transfer" && (
+        {isMobile && (
+          <div>
+            <S.Label>
+              {t("transactions:transactionForm.label_comment")}
+              <S.OptionalHint>необов'язково</S.OptionalHint>
+            </S.Label>
+            <S.StyledTextarea
+              rows={2}
+              placeholder={t(
+                form.type === "transfer"
+                  ? "transactions:transactionForm.placeholder_note_transfer"
+                  : "transactions:transactionForm.placeholder_note_default",
+              )}
+              value={form.note}
+              onChange={(e) => actions.setNote(e.target.value)}
+            />
+          </div>
+        )}
+
+        {isMobile && (
+          <>
+            <S.MobileDisclosureToggle
+              $open={isMobileAdditionalOpen}
+              role="button"
+              tabIndex={0}
+              aria-expanded={isMobileAdditionalOpen}
+              onClick={handleToggleMobileAdditional}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleToggleMobileAdditional();
+                }
+              }}
+            >
+              <S.MobileDisclosureTitleWrap>
+                <S.MobileDisclosureTitle>
+                  Додатково
+                </S.MobileDisclosureTitle>
+                {hasAdditionalSummary && (
+                  <S.MobileDisclosureSubtitle>
+                    {additionalSummary}
+                  </S.MobileDisclosureSubtitle>
+                )}
+              </S.MobileDisclosureTitleWrap>
+              {isMobileAdditionalOpen ? <HiChevronUp /> : <HiChevronDown />}
+            </S.MobileDisclosureToggle>
+
+            {isMobileAdditionalOpen && (
+              <S.MobileDisclosureContent>
+                <S.MobileDateTimeRow>
+                  <div>
+                    <S.Label>
+                      <LabelWithLock
+                        label={t("transactions:transactionForm.label_date")}
+                        isLocked={isLocked}
+                      />
+                    </S.Label>
+                    <div
+                      style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}
+                    >
+                      <DateRangePicker
+                        mode="single"
+                        date={form.date ? new Date(form.date).getTime() : null}
+                        onDateChange={(ts) => {
+                          actions.setDate(format(new Date(ts), "yyyy-MM-dd"));
+                          actions.clearError("date");
+                        }}
+                      />
+                    </div>
+                    {state.errors.date && (
+                      <S.ErrorText>{state.errors.date}</S.ErrorText>
+                    )}
+                  </div>
+                  <div>
+                    <S.Label>
+                      <LabelWithLock
+                        label={t("transactions:transactionForm.label_time")}
+                        isLocked={isLocked}
+                      />
+                    </S.Label>
+                    <div
+                      style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}
+                    >
+                      <TimePicker
+                        value={state.timeStr}
+                        onChange={actions.setTimeStr}
+                      />
+                    </div>
+                  </div>
+                </S.MobileDateTimeRow>
+                {form.type !== "transfer" && (
+                  <div>
+                    <S.Label>{t("transactions:transactionForm.label_tags")}</S.Label>
+                    <TagSelect
+                      tags={tags}
+                      value={form.tagIds}
+                      onChange={actions.setTagIds}
+                      onCreate={(name) => createTag({ name, color: "#6366f1" })}
+                      isCreating={isCreatingTag}
+                    />
+                  </div>
+                )}
+
+                {!isDebt && form.type !== "transfer" && (
+                  <S.AssetSection>
+                    <S.DetailsTriggerButton
+                      type="button"
+                      onClick={handleToggleAssetPanel}
+                      onKeyDown={actions.createEnterHandler(handleToggleAssetPanel)}
+                    >
+                      <HiCube />
+                      {form.isAssetPanelOpen
+                        ? t(
+                            "transactions:transactionForm.hide_asset_option",
+                            "Прибрати актив",
+                          )
+                        : t(
+                            "transactions:transactionForm.add_asset_option",
+                            "Додати актив",
+                          )}
+                      {form.isAssetPanelOpen ? <HiChevronUp /> : <HiChevronDown />}
+                    </S.DetailsTriggerButton>
+
+                    {form.isAssetPanelOpen && (
+                      <S.AssetContentWrapper>
+                        <AssetSelector
+                          transactionType={form.type}
+                          assetId={form.assetId}
+                          setAssetId={actions.setAssetId}
+                          newAsset={form.newAsset}
+                          setNewAsset={actions.setNewAsset}
+                          transactionDate={getTransactionDate()}
+                        />
+
+                        {isCarSelected && (
+                          <S.AssetMileageContainer>
+                            <S.Label>
+                              <S.AssetMileageLabelInner>
+                                <HiTruck />
+                                {t(
+                                  "transactions:transactionForm.label_mileage",
+                                  "Пробіг (км)",
+                                )}
+                              </S.AssetMileageLabelInner>
+                            </S.Label>
+
+                            <S.AssetMileageInput
+                              type="number"
+                              placeholder={`Поточний: ${selectedAsset?.mileage || 0} км`}
+                              value={form.mileage}
+                              onChange={(e) => actions.setMileage(e.target.value)}
+                            />
+
+                            {form.mileage &&
+                            Number(form.mileage) > (selectedAsset?.mileage || 0) ? (
+                              <S.AssetWarningBlock>
+                                <S.AssetWarningIconWrapper>
+                                  <HiExclamationTriangle size={20} />
+                                </S.AssetWarningIconWrapper>
+                                <div>
+                                  <S.AssetWarningTitle>
+                                    Оновлення даних авто
+                                  </S.AssetWarningTitle>
+                                  <span>
+                                    Ви вказали новий пробіг. Ця транзакція автоматично
+                                    оновить <b>загальний пробіг</b> та{" "}
+                                    <b>дату останнього ТО</b> в картці активу.
+                                  </span>
+                                </div>
+                              </S.AssetWarningBlock>
+                            ) : (
+                              form.mileage && (
+                                <S.AssetHistoryHint>
+                                  ℹ️ Це історичний запис (менше поточного{" "}
+                                  {selectedAsset?.mileage} км)
+                                </S.AssetHistoryHint>
+                              )
+                            )}
+                          </S.AssetMileageContainer>
+                        )}
+                      </S.AssetContentWrapper>
+                    )}
+                  </S.AssetSection>
+                )}
+
+                {form.type === "expense" && (
+                  <S.ItemsTableContainer>
+                    {!state.showDetails ? (
+                      <S.DetailsTriggerButton
+                        type="button"
+                        onClick={() => actions.setShowDetails(true)}
+                      >
+                        <HiListBullet size={18} />
+                        <span>
+                          {t("transactions:transactionForm.details_button_show")}
+                        </span>
+                      </S.DetailsTriggerButton>
+                    ) : (
+                      <ItemsTable
+                        items={form.items}
+                        actions={actions}
+                        onClose={() => actions.setShowDetails(false)}
+                        currencyCode={activeAccount?.currency || baseCurrency}
+                        categories={availableCategories}
+                      />
+                    )}
+                  </S.ItemsTableContainer>
+                )}
+              </S.MobileDisclosureContent>
+            )}
+          </>
+        )}
+
+        {!isMobile && !isDebt && form.type !== "transfer" && (
           <S.AssetSection>
             <S.DetailsTriggerButton
               type="button"
@@ -653,7 +1077,7 @@ export const FormContent: React.FC<FormContentProps> = ({
           </S.AssetSection>
         )}
 
-        {form.type === "expense" && (
+        {!isMobile && form.type === "expense" && (
           <S.ItemsTableContainer>
             {!state.showDetails ? (
               <S.DetailsTriggerButton
@@ -699,40 +1123,30 @@ export const FormContent: React.FC<FormContentProps> = ({
             </S.CompressingState>
           ) : (
             <S.UploadButtonLabel htmlFor="receipt-upload">
-              <Button
-                size="small"
-                variation={
-                  state.allPreviewUrls.length > 0 ? "primary" : "secondary"
-                }
+              <S.UploadIconButton
                 as="span"
-                type="button"
+                $hasFiles={state.allPreviewUrls.length > 0}
+                aria-label={t(
+                  "transactions:transactionForm.add_photo",
+                  "Додати фото",
+                )}
               >
-                <S.UploadButtonInner>
-                  {state.allPreviewUrls.length > 0 ? (
-                    <>
-                      <HiPhoto />
-                      {state.allPreviewUrls.length}
-                    </>
-                  ) : (
-                    <>
-                      <HiPaperClip />
-                      {t(
-                        "transactions:transactionForm.add_photo",
-                        "Додати фото",
-                      )}
-                    </>
-                  )}
-                </S.UploadButtonInner>
-              </Button>
+                {state.allPreviewUrls.length > 0 ? <HiPhoto /> : <HiPaperClip />}
+                {state.allPreviewUrls.length > 0 && (
+                  <S.UploadBadge>{state.allPreviewUrls.length}</S.UploadBadge>
+                )}
+              </S.UploadIconButton>
             </S.UploadButtonLabel>
           )}
         </S.FileUploadWrapper>
 
-        <S.FooterNoteWrapper>
+        <S.FooterNoteWrapper $hiddenOnMobile={isMobile}>
           <S.StyledTextarea
             rows={1}
             placeholder={t(
-              "transactions:transactionForm.placeholder_note_default",
+              form.type === "transfer"
+                ? "transactions:transactionForm.placeholder_note_transfer"
+                : "transactions:transactionForm.placeholder_note_default",
             )}
             value={form.note}
             onChange={(e) => actions.setNote(e.target.value)}

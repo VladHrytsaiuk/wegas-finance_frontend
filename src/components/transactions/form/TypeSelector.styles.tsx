@@ -9,7 +9,7 @@ export const Container = styled.div`
 
 export const MainTabs = styled.div`
   display: flex;
-  background: var(--color-bg-surface-secondary, #f3f4f6);
+  background: var(--color-bg-secondary);
   padding: 3px;
   border-radius: 10px;
   border: 1px solid var(--color-border);
@@ -32,13 +32,16 @@ export const Tab = styled.button<{ $isActive: boolean; $activeColor: string }>`
   cursor: pointer;
   white-space: nowrap;
 
-  background: ${(props) => (props.$isActive ? "white" : "transparent")};
+  background: ${(props) =>
+    props.$isActive ? "var(--color-bg-surface)" : "transparent"};
   color: ${(props) =>
     props.$isActive ? props.$activeColor : "var(--color-text-secondary)"};
   box-shadow: ${(props) =>
-    props.$isActive ? "0 1px 3px rgba(0,0,0,0.1)" : "none"};
+    props.$isActive ? "var(--shadow-sm)" : "none"};
 
   &:hover {
+    background: ${(props) =>
+      props.$isActive ? "var(--color-bg-surface)" : "var(--color-bg-page)"};
     color: ${(props) => props.$activeColor};
   }
 
@@ -80,7 +83,10 @@ export const SubButton = styled.button<{ $isActive: boolean; $color: string }>`
   padding: 6px;
   border-radius: 8px;
   border: 1px solid ${(p) => (p.$isActive ? p.$color : "var(--color-border)")};
-  background-color: ${(p) => (p.$isActive ? `${p.$color}10` : "white")};
+  background-color: ${(p) =>
+    p.$isActive
+      ? `color-mix(in srgb, ${p.$color} 14%, var(--color-bg-surface))`
+      : "var(--color-bg-surface)"};
   color: ${(p) => (p.$isActive ? p.$color : "var(--color-text-secondary)")};
   font-size: 0.75rem;
   font-weight: 500;
@@ -90,6 +96,10 @@ export const SubButton = styled.button<{ $isActive: boolean; $color: string }>`
   transition: all 0.15s;
 
   &:hover {
+    background-color: ${(p) =>
+      p.$isActive
+        ? `color-mix(in srgb, ${p.$color} 20%, var(--color-bg-surface))`
+        : "var(--color-bg-page)"};
     border-color: ${(p) => p.$color};
     color: ${(p) => p.$color};
   }
