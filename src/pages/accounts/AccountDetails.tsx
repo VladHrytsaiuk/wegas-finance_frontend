@@ -14,6 +14,7 @@ import {
   HiExclamationCircle,
   HiChevronLeft,
   HiPlus,
+  HiCreditCard,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -84,6 +85,9 @@ function AccountDetails() {
   const recentPreviewLimit = isMobile ? 3 : 5;
   const recentPreviewTransactions = recentTransactions.slice(0, recentPreviewLimit);
   const hasMoreRecentTransactions = recentTransactions.length > recentPreviewLimit;
+  const additionalCardNumbers = Array.from(
+    new Set(account?.card_numbers ?? []),
+  ).filter((mask) => mask && mask !== account?.card_number);
 
   useEffect(() => {
     if (account)
@@ -233,6 +237,20 @@ function AccountDetails() {
 
           <S.LeftColumn>
             <AccountCard account={account} skin={skin} />
+
+            {account.type === "card" && additionalCardNumbers.length > 0 ? (
+              <S.InfoCard>
+                <S.InfoLabel>Додаткові номери картки</S.InfoLabel>
+                <S.CardMaskList>
+                  {additionalCardNumbers.map((mask) => (
+                    <S.CardMask key={mask}>
+                      <HiCreditCard />
+                      •••• {mask}
+                    </S.CardMask>
+                  ))}
+                </S.CardMaskList>
+              </S.InfoCard>
+            ) : null}
 
             {linkedGoal ? (
               <S.GoalWidgetLink to="/goals">

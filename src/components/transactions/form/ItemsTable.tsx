@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { HiChevronDown, HiPlusCircle, HiXMark } from "react-icons/hi2";
+import { HiMinusCircle, HiPlusCircle, HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 
@@ -10,6 +10,7 @@ import type { Category, TransactionItem } from "../../../types";
 
 // 🔥 ВАЖЛИВО: Імпорт має бути у фігурних дужках
 import { ItemRow } from "./ItemRow";
+import { isDiscountItem } from "./itemUtils";
 import * as S from "./styles";
 
 type EditableTransactionItem = Partial<TransactionItem> & {
@@ -21,6 +22,7 @@ type EditableTransactionItem = Partial<TransactionItem> & {
 
 interface ItemTableActions {
   addItem: () => void;
+  addDiscount: () => void;
   setIsClearModalOpen: (value: boolean) => void;
   updateItem: (
     idx: number,
@@ -53,6 +55,7 @@ export const ItemsTable = ({
   );
 
   const displayCurrency = currencyCode || defaultCurrency;
+  const hasDiscount = items.some(isDiscountItem);
 
   const itemsTotal = useMemo(() => {
     return items.reduce((sum, item) => {
@@ -102,15 +105,27 @@ export const ItemsTable = ({
           </S.CloseTableButton>
         </S.ItemsTitle>
 
-        <Button
-          size="small"
-          variation="soft"
-          type="button"
-          onClick={handleAddItem}
-          icon={<HiPlusCircle size={16} />}
-        >
-          {t("transactions:itemsTable.button_add")}
-        </Button>
+        <S.ItemsActions>
+          <Button
+            size="small"
+            variation="soft"
+            type="button"
+            onClick={handleAddItem}
+            icon={<HiPlusCircle size={16} />}
+          >
+            {t("transactions:itemsTable.button_add")}
+          </Button>
+          <Button
+            size="small"
+            variation="soft"
+            type="button"
+            onClick={actions.addDiscount}
+            disabled={hasDiscount}
+            icon={<HiMinusCircle size={16} />}
+          >
+            {t("transactions:itemsTable.button_add_discount", "Додати знижку")}
+          </Button>
+        </S.ItemsActions>
       </S.ItemsHeader>
 
       <S.TableScrollWrapper>

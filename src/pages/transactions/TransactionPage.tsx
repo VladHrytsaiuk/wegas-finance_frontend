@@ -1,5 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
-import { HiArrowLeft, HiPencil, HiTrash } from "react-icons/hi2";
+import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import {
+  HiArrowLeft,
+  HiMinusCircle,
+  HiOutlineArrowTopRightOnSquare,
+  HiPencil,
+  HiTrash,
+} from "react-icons/hi2";
 
 // Components
 import TransactionDetails from "../../components/transactions/TransactionDetails";
@@ -10,6 +18,8 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import { TransactionDetailsSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
+import { getLinkedReceiptSourcesApi } from "../../services/apiTransactions";
+import { formatMoney } from "../../utils/helpers";
 
 // Hook & Styles
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
@@ -17,6 +27,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import * as S from "./TransactionPage.styles";
 
 function TransactionPage() {
+  const { i18n } = useTranslation();
   const {
     // Data
     transactionId,
@@ -42,6 +53,12 @@ function TransactionPage() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   usePageTitle(t("legacy:transactionPage.header_title", "Деталі операції"));
+
+  const { data: linkedReceiptSources = [] } = useQuery({
+    queryKey: ["transaction", transactionId, "receipt-sources"],
+    queryFn: () => getLinkedReceiptSourcesApi(transactionId!),
+    enabled: Boolean(transactionId && transaction),
+  });
 
   if (isLoading) {
     return (
@@ -76,6 +93,15 @@ function TransactionPage() {
   const pageTitle = t(
     "legacy:transactionPage.header_title",
     "Деталі операції",
+  );
+  const receiptURL = linkedReceiptSources.find(
+    (source) => source.source_type === "url" && source.source_url,
+  )?.source_url;
+  const receiptDiscount = linkedReceiptSources.find(
+    (source) => (source.discount_total || 0) > 0,
+  );
+  const hasItemizedReceiptDiscount = (transaction.items || []).some(
+    (item) => item.name === "Знижка за чеком",
   );
 
   return (
@@ -202,6 +228,34 @@ function TransactionPage() {
             counterparties={counterparties}
           />
         </S.Card>
+
+        {receiptURL || (receiptDiscount && !hasItemizedReceiptDiscount) ? (
+          <S.ReceiptMetaRow>
+            {receiptURL ? (
+              <S.ReceiptSourceCard>
+                <HiOutlineArrowTopRightOnSquare size={19} />
+                <S.ReceiptSourceContent>
+                  <span>Електронний чек</span>
+                  <a href={receiptURL} target="_blank" rel="noreferrer" title={receiptURL}>
+                    {receiptURL}
+                  </a>
+                </S.ReceiptSourceContent>
+              </S.ReceiptSourceCard>
+            ) : null}
+            {receiptDiscount && !hasItemizedReceiptDiscount ? (
+              <S.ReceiptDiscountChip>
+                <HiMinusCircle size={17} />
+                Знижка в чеку: -
+                {formatMoney(
+                  receiptDiscount.discount_total || 0,
+                  receiptDiscount.currency || transaction.currency || "UAH",
+                  i18n.language,
+                )}
+                <small>вже врахована в цінах</small>
+              </S.ReceiptDiscountChip>
+            ) : null}
+          </S.ReceiptMetaRow>
+        ) : null}
       </S.PageContainer>
 
       {isMobile && !isBankTx && (

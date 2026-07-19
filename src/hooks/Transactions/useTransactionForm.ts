@@ -10,6 +10,10 @@ import type {
   TransactionType,
   TransactionItem,
 } from "../../types/index";
+import {
+  DISCOUNT_ITEM_NAME,
+  isDiscountItem,
+} from "../../components/transactions/form/itemUtils";
 
 const INITIAL_ITEM: TransactionItem = {
   name: "",
@@ -349,7 +353,31 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
   };
 
   const setItemsList = (newItems: TransactionItem[]) => setItems(newItems);
-  const addItem = () => setItems([...items, { ...INITIAL_ITEM }]);
+  const addItem = () =>
+    setItems((currentItems) => {
+      const discountIndex = currentItems.findIndex(isDiscountItem);
+      if (discountIndex === -1) return [...currentItems, { ...INITIAL_ITEM }];
+
+      return [
+        ...currentItems.slice(0, discountIndex),
+        { ...INITIAL_ITEM },
+        ...currentItems.slice(discountIndex),
+      ];
+    });
+
+  const addDiscount = () =>
+    setItems((currentItems) => {
+      if (currentItems.some(isDiscountItem)) return currentItems;
+
+      return [
+        ...currentItems,
+        {
+          ...INITIAL_ITEM,
+          name: DISCOUNT_ITEM_NAME,
+          quantity: 1,
+        },
+      ];
+    });
 
   const removeItem = (index: number) => {
     const newItems = items.filter((_, i) => i !== index);
@@ -366,10 +394,14 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
     const item = { ...newItems[index], [field]: value };
     if (field === "quantity" || field === "price_per_unit") {
       const q = field === "quantity" ? Number(value) : Number(item.quantity);
-      const p =
+      let p =
         field === "price_per_unit"
           ? Number(value)
           : Number(item.price_per_unit);
+      if (isDiscountItem(item) && p > 0) {
+        p = -p;
+        item.price_per_unit = p;
+      }
       item.total_amount = q * p;
     }
     newItems[index] = item;
@@ -424,6 +456,7 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
       setTagIds,
       setItems: setItemsList,
       addItem,
+      addDiscount,
       updateItem,
       removeItem,
       resetItems,

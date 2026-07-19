@@ -6,7 +6,7 @@ export const FormContainer = styled.div`
   display: flex;
   gap: 2.5rem;
   position: relative;
-  height: 500px;
+  height: 520px;
   width: 1000px;
   align-items: stretch;
 

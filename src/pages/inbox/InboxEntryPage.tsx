@@ -1,15 +1,12 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import {
   HiArrowLeft,
   HiOutlineArrowTopRightOnSquare,
-  HiOutlineClock,
-  HiOutlineDocumentText,
   HiOutlineFolder,
   HiOutlineLink,
-  HiOutlineReceiptPercent,
   HiOutlineSquares2X2,
   HiOutlineTag,
 } from "react-icons/hi2";
@@ -21,8 +18,11 @@ import CreateTransactionModal from "../../components/transactions/CreateTransact
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import {
+  getInboxAccountCandidatesApi,
   getInboxEntryApi,
+  getInboxTransactionCandidatesApi,
   linkInboxTransactionApi,
+  selectInboxAccountApi,
 } from "../../services/apiInbox";
 import { formatDate, formatMoney } from "../../utils/helpers";
 import * as PageStyles from "../transactions/TransactionPage.styles";
@@ -152,6 +152,157 @@ const CreateActionButton = styled.button`
   }
 `;
 
+const AccountSuggestion = styled(SectionCard)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.8rem 0.9rem;
+  border-color: color-mix(in srgb, var(--color-yellow-500) 34%, var(--color-border));
+  background: color-mix(in srgb, var(--color-yellow-500) 9%, var(--color-bg-surface));
+
+  @media (max-width: 640px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+`;
+
+const AccountSuggestionCopy = styled.div`
+  min-width: 0;
+
+  span,
+  small {
+    display: block;
+  }
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  strong {
+    display: block;
+    margin-top: 0.1rem;
+    color: var(--color-text-main);
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    margin-top: 0.14rem;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+  }
+`;
+
+const ConfirmAccountButton = styled.button`
+  min-height: 36px;
+  padding: 0.5rem 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand-500) 42%, var(--color-border));
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+  color: var(--color-brand-700);
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.65;
+  }
+`;
+
+const TransactionMatches = styled(SectionCard)`
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.8rem 0.9rem;
+`;
+
+const TransactionMatchesTitle = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  strong {
+    color: var(--color-text-main);
+    font-size: 0.9rem;
+  }
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+  }
+`;
+
+const TransactionMatch = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.58rem 0;
+  border-top: 1px solid var(--color-border);
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 0.25rem;
+  }
+`;
+
+const TransactionMatchCopy = styled.div`
+  min-width: 0;
+
+  strong,
+  span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    color: var(--color-text-main);
+    font-size: 0.86rem;
+  }
+
+  span {
+    margin-top: 0.1rem;
+    color: var(--color-text-secondary);
+    font-size: 0.73rem;
+  }
+`;
+
+const TransactionMatchAmount = styled.strong`
+  color: var(--color-text-main);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+`;
+
+const LinkTransactionButton = styled.button`
+  min-height: 34px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand-500) 42%, var(--color-border));
+  border-radius: 9px;
+  background: var(--color-bg-surface);
+  color: var(--color-brand-700);
+  font-size: 0.76rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.65;
+  }
+`;
+
 const SectionTitle = styled(DetailStyles.SectionTitle)`
   margin: 0 0 0.65rem;
 `;
@@ -164,7 +315,7 @@ const MetaList = styled.div`
 
 const MetaRow = styled.div`
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) minmax(96px, auto);
+  grid-template-columns: 36px minmax(0, 1fr) minmax(120px, 1fr);
   align-items: center;
   gap: 0.45rem;
   padding: 0.72rem 0.8rem;
@@ -177,6 +328,20 @@ const MetaRow = styled.div`
     grid-template-columns: 32px minmax(0, 1fr);
     row-gap: 0.18rem;
     column-gap: 0.45rem;
+
+    > :first-child {
+      grid-row: 1 / span 2;
+    }
+
+    > :nth-child(2) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    > :nth-child(3) {
+      grid-column: 2;
+      grid-row: 2;
+    }
   }
 `;
 
@@ -224,18 +389,38 @@ const RowValue = styled.div`
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.25;
-  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   @media (max-width: 640px) {
     grid-column: 2;
+    grid-row: 2;
     text-align: left;
     font-size: 0.9rem;
+  }
+`;
+
+const SourceLink = styled.a`
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-brand-700);
+  font: inherit;
+  text-align: inherit;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
 const ReceiptStats = styled.div`
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 0.75rem;
 
   @media (max-width: 900px) {
@@ -248,6 +433,7 @@ const ReceiptStats = styled.div`
 `;
 
 const ReceiptStat = styled.div`
+  min-width: 0;
   padding: 0.85rem 0.9rem;
   border-radius: 16px;
   background: var(--color-bg-page);
@@ -438,6 +624,56 @@ function InboxEntryPage() {
     enabled: Boolean(inboxId),
   });
 
+  const { data: accountCandidates = [] } = useQuery({
+    queryKey: ["inbox", inboxId, "account-candidates"],
+    queryFn: () => getInboxAccountCandidatesApi(inboxId),
+    enabled: Boolean(
+      inboxId && data?.receipt_source?.payment_mask && !data.selected_account_id,
+    ),
+  });
+
+  const { data: transactionCandidates = [] } = useQuery({
+    queryKey: ["inbox", inboxId, "transaction-candidates"],
+    queryFn: () => getInboxTransactionCandidatesApi(inboxId),
+    enabled: Boolean(
+      inboxId && data?.selected_account_id && data.status !== "linked",
+    ),
+  });
+
+  const selectAccountMutation = useMutation({
+    mutationFn: (accountId: string) => selectInboxAccountApi(inboxId, accountId),
+    onSuccess: (entry) => {
+      queryClient.setQueryData(["inbox", inboxId], entry);
+      queryClient.invalidateQueries({ queryKey: ["inbox"] });
+      queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+      toast.success("Рахунок підтверджено");
+    },
+    onError: () => toast.error("Не вдалося підтвердити рахунок"),
+  });
+
+  const linkCandidateMutation = useMutation({
+    mutationFn: (transactionId: string) =>
+      linkInboxTransactionApi(inboxId, transactionId),
+    onSuccess: (entry, transactionId) => {
+      queryClient.setQueryData(["inbox", inboxId], entry);
+      queryClient.invalidateQueries({ queryKey: ["inbox"] });
+      queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+      queryClient.invalidateQueries({
+        queryKey: ["inbox", inboxId, "transaction-candidates"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["transaction", transactionId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["transaction", transactionId, "receipt-sources"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions-infinite"] });
+      toast.success("Чек зв'язано з операцією");
+    },
+    onError: () => toast.error("Не вдалося зв'язати чек з операцією"),
+  });
+
   const items = useMemo(() => data?.receipt_source?.items ?? [], [data]);
   const occurredAt =
     data?.occurred_at ?? data?.receipt_source?.receipt_date ?? null;
@@ -482,6 +718,12 @@ function InboxEntryPage() {
   const paymentMask = data.receipt_source?.payment_mask?.trim() || null;
   const showReceiptNote = shouldShowReceiptNote(data.note, title);
   const canCreateTransaction = data.status !== "linked";
+  const recommendedAccount = accountCandidates.find(
+    (candidate) => candidate.recommended,
+  );
+  const selectedAccountLabel = data.selected_account
+    ? `${data.selected_account.name} · ${data.selected_account.currency}`
+    : null;
 
   return (
     <PageStyles.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
@@ -518,6 +760,9 @@ function InboxEntryPage() {
               </Badge>
               <Badge>{sourceLabelMap[data.source_type] ?? data.source_type}</Badge>
               {items.length > 0 ? <Badge>{items.length} позицій</Badge> : null}
+              {selectedAccountLabel ? (
+                <Badge $tone="success">Рахунок: {selectedAccountLabel}</Badge>
+              ) : null}
             </BadgeRow>
           </HeaderMain>
 
@@ -557,11 +802,69 @@ function InboxEntryPage() {
         </ReceiptStats>
       </PrimaryCard>
 
+      {recommendedAccount && !data.selected_account_id ? (
+        <AccountSuggestion>
+          <AccountSuggestionCopy>
+            <span>Ймовірний рахунок за ЕПЗ</span>
+            <strong>
+              {recommendedAccount.bank_name || recommendedAccount.account_name}
+              {recommendedAccount.bank_name && recommendedAccount.account_name !== recommendedAccount.bank_name
+                ? ` · ${recommendedAccount.account_name}`
+                : ""}
+              {` ·•••• ${recommendedAccount.matched_card_number}`}
+            </strong>
+            <small>Точний збіг 4 цифр і валюти чека</small>
+          </AccountSuggestionCopy>
+          <ConfirmAccountButton
+            type="button"
+            disabled={selectAccountMutation.isPending}
+            onClick={() => selectAccountMutation.mutate(recommendedAccount.account_id)}
+          >
+            {selectAccountMutation.isPending ? "Збереження..." : "Підтвердити"}
+          </ConfirmAccountButton>
+        </AccountSuggestion>
+      ) : null}
+
+      {data.selected_account_id && transactionCandidates.length > 0 ? (
+        <TransactionMatches>
+          <TransactionMatchesTitle>
+            <strong>Можливі банківські операції</strong>
+            <span>Перевірте перед зв&apos;язуванням</span>
+          </TransactionMatchesTitle>
+          {transactionCandidates.slice(0, 3).map((candidate) => (
+            <TransactionMatch key={candidate.transaction_id}>
+              <TransactionMatchCopy>
+                <strong>
+                  {candidate.counterparty_name || candidate.note || "Банківська операція"}
+                </strong>
+                <span>
+                  {formatDate(candidate.date, i18n.language)} · {candidate.matched_by.join(", ")}
+                </span>
+              </TransactionMatchCopy>
+              <TransactionMatchAmount>
+                {formatMoney(candidate.amount, candidate.currency || data.currency || "UAH", i18n.language)}
+              </TransactionMatchAmount>
+              <LinkTransactionButton
+                type="button"
+                disabled={linkCandidateMutation.isPending}
+                onClick={() => linkCandidateMutation.mutate(candidate.transaction_id)}
+              >
+                {linkCandidateMutation.isPending ? "Зв'язування..." : "Зв'язати чек"}
+              </LinkTransactionButton>
+            </TransactionMatch>
+          ))}
+        </TransactionMatches>
+      ) : null}
+
       {canCreateTransaction ? (
         <ActionCard>
           <ActionCopy>
             <h2>Оформіть транзакцію за цим чеком</h2>
-            <p>Поля чека вже будуть заповнені. Залишиться перевірити дані та обрати рахунок оплати.</p>
+            <p>
+              {selectedAccountLabel
+                ? `Рахунок оплати: ${selectedAccountLabel}. Дані чека вже заповнені.`
+                : "Поля чека вже будуть заповнені. Залишиться перевірити дані та обрати рахунок оплати."}
+            </p>
           </ActionCopy>
           <CreateActionButton type="button" onClick={() => setIsCreateTransactionOpen(true)}>
             Створити транзакцію
@@ -619,7 +922,20 @@ function InboxEntryPage() {
               <RowContent>
                 <span className="label">Посилання</span>
               </RowContent>
-              <RowValue>{data.receipt_source?.source_url || "—"}</RowValue>
+              <RowValue>
+                {data.receipt_source?.source_url ? (
+                  <SourceLink
+                    href={data.receipt_source.source_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={data.receipt_source.source_url}
+                  >
+                    {data.receipt_source.source_url}
+                  </SourceLink>
+                ) : (
+                  "—"
+                )}
+              </RowValue>
             </MetaRow>
           </MetaList>
         </SectionCard>
@@ -725,6 +1041,7 @@ function InboxEntryPage() {
           onClose={() => setIsCreateTransactionOpen(false)}
           initialData={{
             type: "expense",
+            account_id: data.selected_account_id || undefined,
             category_id: data.receipt_source?.category?.id,
             counterparty_id: data.receipt_source?.counterparty?.id,
             amount: total ?? undefined,
@@ -749,6 +1066,14 @@ function InboxEntryPage() {
               queryClient.invalidateQueries({ queryKey: ["inbox"] });
               queryClient.invalidateQueries({ queryKey: ["inbox", inboxId] });
               queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+              queryClient.invalidateQueries({
+                queryKey: ["transaction", transactionId],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ["transaction", transactionId, "receipt-sources"],
+              });
+              queryClient.invalidateQueries({ queryKey: ["transactions"] });
+              queryClient.invalidateQueries({ queryKey: ["transactions-infinite"] });
               toast.success("Чек прив'язано до транзакції");
             } catch {
               toast.error("Транзакцію створено, але чек не вдалося прив'язати. Він залишився в Inbox.");

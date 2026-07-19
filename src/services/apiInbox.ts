@@ -38,6 +38,29 @@ export interface InboxAccountPreview {
   currency: string;
 }
 
+export interface InboxAccountCandidate {
+  account_id: string;
+  account_name: string;
+  bank_name: string;
+  currency: string;
+  matched_card_number: string;
+  matched_digits: number;
+  confidence: "exact" | "partial";
+  score: number;
+  recommended: boolean;
+}
+
+export interface InboxTransactionCandidate {
+  transaction_id: string;
+  amount: number;
+  currency: string;
+  date: number;
+  note: string;
+  counterparty_name: string;
+  score: number;
+  matched_by: string[];
+}
+
 export interface InboxTransactionPreview {
   id: string;
   amount: number;
@@ -110,6 +133,24 @@ export const getInboxApi = async (
 
 export const getInboxEntryApi = async (id: string): Promise<InboxEntry> => {
   const response = await api.get<InboxEntry>(`/inbox/${id}`);
+  return response.data;
+};
+
+export const getInboxAccountCandidatesApi = async (
+  id: string,
+): Promise<InboxAccountCandidate[]> => {
+  const response = await api.get<InboxAccountCandidate[]>(
+    `/inbox/${id}/account-candidates`,
+  );
+  return response.data;
+};
+
+export const getInboxTransactionCandidatesApi = async (
+  id: string,
+): Promise<InboxTransactionCandidate[]> => {
+  const response = await api.get<InboxTransactionCandidate[]>(
+    `/inbox/${id}/transaction-candidates`,
+  );
   return response.data;
 };
 

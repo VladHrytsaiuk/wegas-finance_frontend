@@ -21,6 +21,7 @@ type EditableTransactionItem = Partial<TransactionItem> & {
 
 interface ItemTableActions {
   addItem: () => void;
+  addDiscount: () => void;
   setIsClearModalOpen: (value: boolean) => void;
   updateItem: (
     idx: number,

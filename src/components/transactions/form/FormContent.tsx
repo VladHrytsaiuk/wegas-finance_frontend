@@ -3,12 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
-  HiArrowsUpDown,
-  HiChevronDown,
-  HiChevronUp,
-  HiCube,
   HiLockClosed,
-  HiTruck,
   HiExclamationTriangle,
 } from "react-icons/hi2";
 import { getShortcutLabel } from "../../../utils/platform";
@@ -130,6 +125,15 @@ type FormContentActions = {
   createEnterHandler: (
     action: () => void,
   ) => (e: React.KeyboardEvent) => void;
+  addItem: () => void;
+  addDiscount: () => void;
+  removeItem: (index: number) => void;
+  updateItem: (
+    index: number,
+    field: "categoryId" | "name" | "quantity" | "price_per_unit" | "comment",
+    value: string | number,
+  ) => void;
+  setIsClearModalOpen: (value: boolean) => void;
 };
 
 type FormContentHandlers = {

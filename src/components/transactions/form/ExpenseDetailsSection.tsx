@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { HiListBullet } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "../../ui/Button";
 import { ItemsTable } from "./ItemsTable";
 import * as S from "./styles";
 import type { Category, TransactionItem } from "../../../types";
@@ -16,6 +15,7 @@ type EditableTransactionItem = Partial<TransactionItem> & {
 
 interface ItemTableActions {
   addItem: () => void;
+  addDiscount: () => void;
   setIsClearModalOpen: (value: boolean) => void;
   updateItem: (
     idx: number,

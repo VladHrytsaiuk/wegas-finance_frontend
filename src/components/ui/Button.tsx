@@ -6,6 +6,7 @@ const variations = {
   primary: css`
     background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
     color: white;
+    border: none;
 
     &:hover:not(:disabled) {
       background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-700));

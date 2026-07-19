@@ -173,9 +173,10 @@ const Amount = styled.div`
   color: var(--color-text-main);
 `;
 
-const ContextGrid = styled.div`
+const ContextGrid = styled.div<{ $count: number }>`
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: ${({ $count }) =>
+    $count === 3 ? "repeat(3, minmax(0, 1fr))" : "repeat(2, minmax(0, 1fr))"};
   gap: 0.7rem;
 
   @media (max-width: 640px) {
@@ -375,6 +376,9 @@ function Inbox() {
             const itemCount = entry.receipt_source?.items?.length ?? 0;
             const occurredAt =
               entry.occurred_at ?? entry.receipt_source?.receipt_date ?? null;
+            const showNote = shouldShowNote(entry);
+            const contextCount =
+              2 + Number(Boolean(entry.receipt_source?.source_url)) + Number(showNote);
 
             return (
               <MessageLink key={entry.id} to={`/inbox/${entry.id}`}>
@@ -402,7 +406,7 @@ function Inbox() {
                     </Amount>
                   </MessageHead>
 
-                  <ContextGrid>
+                  <ContextGrid $count={contextCount}>
                     <InfoChip>
                       <InfoIcon>
                         <HiOutlineClock />
@@ -431,16 +435,16 @@ function Inbox() {
                         <InfoText>Є посилання на чек</InfoText>
                       </InfoChip>
                     ) : null}
-                  </ContextGrid>
 
-                  {shouldShowNote(entry) ? (
-                    <InfoChip>
-                      <InfoIcon>
-                        <HiOutlineDocumentText />
-                      </InfoIcon>
-                      <InfoText>{entry.note}</InfoText>
-                    </InfoChip>
-                  ) : null}
+                    {showNote ? (
+                      <InfoChip>
+                        <InfoIcon>
+                          <HiOutlineDocumentText />
+                        </InfoIcon>
+                        <InfoText>{entry.note}</InfoText>
+                      </InfoChip>
+                    ) : null}
+                  </ContextGrid>
 
                   {items.length > 0 ? (
                     <ItemsPreview>

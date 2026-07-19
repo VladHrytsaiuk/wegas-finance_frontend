@@ -910,6 +910,21 @@ export const ItemsHeader = styled.div`
   }
 `;
 
+export const ItemsActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  @media (max-width: 640px) {
+    gap: 0.3rem;
+
+    button {
+      padding-inline: 0.5rem;
+      font-size: 0.75rem;
+    }
+  }
+`;
+
 export const ItemsTitle = styled.div`
   display: flex;
   align-items: center;
