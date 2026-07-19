@@ -12,6 +12,8 @@ import {
   HiBeaker,
   HiNoSymbol,
   HiCheck,
+  HiPlus,
+  HiXMark,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -106,6 +108,70 @@ const DisabledWrapper = styled.div<{ $disabled?: boolean }>`
   `}
 `;
 
+const CardMasksSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-page);
+
+  .hint {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+`;
+
+const CardMasksInputRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+
+  button {
+    width: 36px;
+    flex: 0 0 36px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--color-brand-600);
+    color: white;
+    cursor: pointer;
+  }
+`;
+
+const CardMaskList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+`;
+
+const CardMask = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.34rem 0.42rem 0.34rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand-500) 24%, var(--color-border));
+  border-radius: 999px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-main);
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+`;
+
 const FormattedCardNumber = ({ number }: { number: string }) => (
   <CardNumber>
     <span
@@ -142,6 +208,7 @@ export function AccountFormContent(props: AccountFormProps) {
   const { t } = useTranslation();
   const isMobile = useIsMobile(1001);
   const [mobileStep, setMobileStep] = useState(1);
+  const [newCardMask, setNewCardMask] = useState("");
   const { users, isLoading, onClose, onCloseModal, defaultValues } = props;
   const { state, actions, formRef, initialFocusRef, skinBtnRef } =
     useAccountForm(props);
@@ -156,6 +223,18 @@ export function AccountFormContent(props: AccountFormProps) {
   }, [state.isDirty, setIsDirty]);
 
   const isSynced = defaultValues?.is_synced;
+  const additionalCardMasks = state.cardNumbers.filter(
+    (mask) => mask !== state.cardNumber,
+  );
+
+  const addCardMask = () => {
+    const mask = newCardMask.replace(/\D/g, "").slice(0, 4);
+    if (mask.length !== 4 || state.cardNumbers.includes(mask) || mask === state.cardNumber) {
+      return;
+    }
+    actions.setCardNumbers([...state.cardNumbers, mask]);
+    setNewCardMask("");
+  };
 
   const totalSteps = 3;
 
@@ -837,7 +916,12 @@ export function AccountFormContent(props: AccountFormProps) {
                 <Input
                   value={state.cardNumber}
                   onChange={(e) => {
-                    actions.setCardNumber(e.target.value.slice(0, 4));
+                    const nextCardNumber = e.target.value.replace(/\D/g, "").slice(0, 4);
+                    actions.setCardNumbers([
+                      ...state.cardNumbers.filter((mask) => mask !== state.cardNumber),
+                      ...(nextCardNumber.length === 4 ? [nextCardNumber] : []),
+                    ]);
+                    actions.setCardNumber(nextCardNumber);
                     actions.clearError("cardNumber");
                   }}
                   placeholder="1234"
@@ -893,6 +977,48 @@ export function AccountFormContent(props: AccountFormProps) {
                 </BaseSelect>
               </div>
             </S.Row>
+
+            <CardMasksSection>
+              <label className="label">Додаткові 4 цифри для оплати телефоном</label>
+              <p className="hint">
+                Додайте маски Apple Pay або Google Pay, якщо вони відрізняються від номера фізичної картки.
+              </p>
+              <CardMasksInputRow>
+                <Input
+                  value={newCardMask}
+                  onChange={(e) => setNewCardMask(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addCardMask();
+                    }
+                  }}
+                  placeholder="Наприклад, 5678"
+                  maxLength={4}
+                />
+                <button type="button" onClick={addCardMask} title="Додати номер">
+                  <HiPlus />
+                </button>
+              </CardMasksInputRow>
+              {additionalCardMasks.length > 0 ? (
+                <CardMaskList>
+                  {additionalCardMasks.map((mask) => (
+                    <CardMask key={mask}>
+                      •••• {mask}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          actions.setCardNumbers(state.cardNumbers.filter((item) => item !== mask))
+                        }
+                        title="Прибрати номер"
+                      >
+                        <HiXMark />
+                      </button>
+                    </CardMask>
+                  ))}
+                </CardMaskList>
+              ) : null}
+            </CardMasksSection>
           </>
         )}
 

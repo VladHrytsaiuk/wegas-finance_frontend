@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useEffectEvent } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useTransactionLogic } from "../../../hooks/Transactions/useTransactionLogic";
@@ -11,6 +11,8 @@ import { ReceiptViewer } from "../ReceiptViewer";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import ConfirmCloseModal from "../../ui/ConfirmCloseModal";
 import { useModal, Overlay, StyledModal } from "../../ui/Modal";
+import { useIsMobile } from "../../../hooks/useIsMobile";
+import type { CreateTxItem } from "../../../services/apiTransactions";
 
 // Parts
 import { ImagePanel } from "./ImagePanel";
@@ -25,17 +27,57 @@ interface CreateTransactionFormProps {
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
+  initialCategoryId?: string;
   initialAmount?: number;
   initialNote?: string;
+  initialDate?: number;
+  initialItems?: CreateTxItem[];
+}
+
+interface ConfirmPortalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+function ConfirmPortal({ isOpen, onClose, children }: ConfirmPortalProps) {
+  if (!isOpen) return null;
+
+  return createPortal(
+    <Overlay
+      style={{ zIndex: 11000 }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
+      <StyledModal
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          zIndex: 11001,
+          width: "fit-content",
+          maxWidth: "28rem",
+          padding: "2.4rem",
+        }}
+      >
+        {children}
+      </StyledModal>
+    </Overlay>,
+    document.body,
+  );
 }
 
 function CreateTransactionForm(props: CreateTransactionFormProps) {
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showDeleteCurrentPhotoConfirm, setShowDeleteCurrentPhotoConfirm] =
+    useState(false);
   const { setIsDirty } = useModal();
+  const isMobile = useIsMobile();
 
   const { state, actions, handlers, refs } = useTransactionLogic(props);
   const modalContainerRef = useRef<HTMLDivElement>(null);
+  const hasImage = !isMobile && !!state.allPreviewUrls[state.previewIndex];
 
   // Синхронізуємо dirty-стан
   const isDirty = state.isDirty || false;
@@ -75,37 +117,25 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
   }, []);
 
   // 🔥 ВИПРАВЛЕНИЙ ОБРОБНИК ESCAPE
+  const handleEsc = useEffectEvent((e: KeyboardEvent) => {
+    if (e.key !== "Escape") return;
+
+    if (state.isViewerOpen || state.conflictState || state.isClearModalOpen)
+      return;
+
+    e.stopPropagation();
+
+    if (showConfirm) {
+      setShowConfirm(false);
+    } else {
+      handleCloseAttempt();
+    }
+  });
+
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        // Якщо відкриті інші "верхні" шари — ігноруємо
-        if (state.isViewerOpen || state.conflictState || state.isClearModalOpen)
-          return;
-
-        // Зупиняємо подію, щоб вона не дійшла до батьківської модалки/сторінки
-        // Це виправить проблему "2 кроки назад" при натисканні ESC
-        e.stopPropagation();
-
-        if (showConfirm) {
-          // Якщо підтвердження вже відкрите — закриваємо його
-          setShowConfirm(false);
-        } else {
-          // Якщо ні — пробуємо закрити форму (відкриється підтвердження або закриється форма)
-          handleCloseAttempt();
-        }
-      }
-    };
-
-    // capture: true важливий, щоб перехопити подію раніше за інших
     document.addEventListener("keydown", handleEsc, true);
     return () => document.removeEventListener("keydown", handleEsc, true);
-  }, [
-    showConfirm,
-    handleCloseAttempt,
-    state.isViewerOpen,
-    state.conflictState,
-    state.isClearModalOpen,
-  ]);
+  }, [handleEsc]);
 
   const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -115,49 +145,42 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
     }
   };
 
-  const hasImage = !!state.allPreviewUrls[state.previewIndex];
-
   return (
     <>
       {/* --- LAYER 1: Modals & Overlays --- */}
 
       {/* 1.0 Confirm Close Modal (Portal) */}
-      {showConfirm &&
-        createPortal(
-          <Overlay
-            style={{ zIndex: 11000 }}
-            // 🔥 ВАЖЛИВО: stopPropagation тут запобігає закриттю батьківської модалки
-            // при кліку на затемнений фон цього вікна
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowConfirm(false);
-            }}
-          >
-            <StyledModal
-              // stopPropagation тут запобігає закриттю при кліку на саме вікно
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                zIndex: 11001,
-                width: "fit-content",
-                maxWidth: "28rem",
-                padding: "2.4rem",
-              }}
-            >
-              <ConfirmCloseModal
-                onConfirm={() => {
-                  setIsDirty(false); // Спочатку скидаємо прапорець
-                  setShowConfirm(false); // Закриваємо це вікно
+      <ConfirmPortal isOpen={showConfirm} onClose={() => setShowConfirm(false)}>
+        <ConfirmCloseModal
+          onConfirm={() => {
+            setIsDirty(false);
+            setShowConfirm(false);
+            props.onCloseModal?.();
+          }}
+          onCloseModal={() => setShowConfirm(false)}
+        />
+      </ConfirmPortal>
 
-                  // Робимо невелику затримку або просто викликаємо закриття
-                  // Головне, щоб подія кліку на кнопку "Вийти" не спливла вгору
-                  props.onCloseModal?.();
-                }}
-                onCloseModal={() => setShowConfirm(false)}
-              />
-            </StyledModal>
-          </Overlay>,
-          document.body,
-        )}
+      <ConfirmPortal
+        isOpen={showDeleteCurrentPhotoConfirm}
+        onClose={() => setShowDeleteCurrentPhotoConfirm(false)}
+      >
+        <ConfirmDelete
+          resourceName={t(
+            "transactions:transactionForm.resource_photo",
+            "це фото",
+          )}
+          onConfirm={async () => {
+            await handlers.deleteCurrentPhoto();
+            const remaining = state.allPreviewUrls.length - 1;
+            if (remaining <= 0) {
+              actions.setIsViewerOpen(false);
+            }
+          }}
+          onCloseModal={() => setShowDeleteCurrentPhotoConfirm(false)}
+          disabled={state.isDeleting}
+        />
+      </ConfirmPortal>
 
       {/* 1.1 Conflict Modal */}
       {state.conflictState && (
@@ -242,8 +265,8 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
               }
               onDeleteCurrent={handlers.deleteCurrentPhoto}
               onDeleteAll={handlers.deleteAllPhotos}
-              isDeleting={state.isDeleting}
               onExpand={() => actions.setIsViewerOpen(true)}
+              isDeleting={state.isDeleting}
               transformRef={refs.transformRef}
             />
           )}
@@ -287,8 +310,11 @@ function CreateTransactionForm(props: CreateTransactionFormProps) {
         >
           <ReceiptViewer
             imageUrls={state.allPreviewUrls}
+            currentIndex={state.previewIndex}
             onClose={() => actions.setIsViewerOpen(false)}
             onIndexChange={actions.setPreviewIndex}
+            onDeleteCurrent={() => setShowDeleteCurrentPhotoConfirm(true)}
+            isDeletingCurrent={state.isDeleting}
           />
         </div>
       )}

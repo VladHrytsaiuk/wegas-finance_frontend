@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useEffectEvent } from "react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -14,6 +14,7 @@ import {
   deleteReceiptApi,
   deleteTransactionPhotoApi,
   type CreateTxData,
+  type CreateTxItem,
 } from "../../services/apiTransactions";
 import { compressImage } from "../../utils/compressor";
 import { isModifierPressed } from "../../utils/platform";
@@ -46,10 +47,13 @@ interface UseTransactionLogicProps {
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
+  initialCategoryId?: string;
   initialAmount?: number;
   initialNote?: string;
+  initialDate?: number;
+  initialItems?: CreateTxItem[];
   onCloseModal?: () => void;
-  onSuccess?: (data?: unknown) => void;
+  onSuccess?: (data?: unknown) => void | Promise<void>;
 }
 
 interface FormErrors {
@@ -67,8 +71,11 @@ export const useTransactionLogic = ({
   initialType,
   initialAccountId,
   initialCounterpartyId,
+  initialCategoryId,
   initialAmount,
   initialNote,
+  initialDate,
+  initialItems,
   onCloseModal,
   onSuccess,
 }: UseTransactionLogicProps) => {
@@ -83,14 +90,21 @@ export const useTransactionLogic = ({
     initialType,
     initialAccountId,
     initialCounterpartyId,
+    initialCategoryId,
     initialAmount,
     initialNote,
+    initialDate,
+    initialItems,
   });
 
   // --- 🔥 МИТТЄВА ІНІЦІАЛІЗАЦІЯ ЛОКАЛЬНИХ СТЕЙТІВ ---
   const [timeStr, setTimeStr] = useState(() => {
     if (transactionToEdit && transactionToEdit.date) {
       const d = new Date(transactionToEdit.date);
+      if (!isNaN(d.getTime())) return format(d, "HH:mm");
+    }
+    if (initialDate) {
+      const d = new Date(initialDate);
       if (!isNaN(d.getTime())) return format(d, "HH:mm");
     }
     return format(new Date(), "HH:mm");
@@ -108,8 +122,8 @@ export const useTransactionLogic = ({
 
   const [showDetails, setShowDetails] = useState(
     () =>
-      transactionToEdit?.items?.length > 0 &&
-      transactionToEdit?.type === "expense",
+      (transactionToEdit?.items?.length > 0 || initialItems?.length > 0) &&
+      (transactionToEdit?.type === "expense" || initialType === "expense"),
   );
 
   const [conflictState, setConflictState] = useState<{
@@ -128,77 +142,76 @@ export const useTransactionLogic = ({
   const isDirty = form.isDirty || filesToUpload.length > 0;
 
   // --- HOTKEYS ---
+  const handleGlobalKeyDown = useEffectEvent((e: KeyboardEvent) => {
+    const isMod = isModifierPressed(e);
+
+    if (isMod) {
+      if (e.code === "Equal") {
+        e.preventDefault();
+        transformRef.current?.zoomIn();
+        return;
+      }
+      if (e.code === "Minus") {
+        e.preventDefault();
+        transformRef.current?.zoomOut();
+        return;
+      }
+      if (e.code === "Digit0") {
+        e.preventDefault();
+        transformRef.current?.resetTransform();
+        return;
+      }
+    }
+
+    if (isMod && e.code === "KeyD") {
+      e.preventDefault();
+      if (showDetails) {
+        const hasData = form.items.some(
+          (item) =>
+            (item.name && item.name.trim() !== "") ||
+            Number(item.price_per_unit) > 0 ||
+            Number(item.total_amount) > 0,
+        );
+        if (hasData) {
+          setIsClearModalOpen(true);
+          return;
+        }
+        actions.setItems([]);
+        setShowDetails(false);
+      } else {
+        setShowDetails(true);
+        if (form.items.length === 0) setTimeout(() => actions.addItem(), 0);
+      }
+      return;
+    }
+
+    if (isMod && e.code === "KeyA") {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "TEXTAREA" ||
+        (target.tagName === "INPUT" && target.getAttribute("type") === "text")
+      )
+        return;
+      e.preventDefault();
+      if (!showDetails) {
+        setShowDetails(true);
+        setTimeout(() => actions.addItem(), 0);
+      } else {
+        actions.addItem();
+      }
+      return;
+    }
+
+    if (isMod && e.code === "KeyI") {
+      e.preventDefault();
+      fileInputRef.current?.click();
+    }
+  });
+
   useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      const isMod = isModifierPressed(e);
-
-      if (isMod) {
-        if (e.code === "Equal") {
-          e.preventDefault();
-          transformRef.current?.zoomIn();
-          return;
-        }
-        if (e.code === "Minus") {
-          e.preventDefault();
-          transformRef.current?.zoomOut();
-          return;
-        }
-        if (e.code === "Digit0") {
-          e.preventDefault();
-          transformRef.current?.resetTransform();
-          return;
-        }
-      }
-
-      if (isMod && e.code === "KeyD") {
-        e.preventDefault();
-        if (showDetails) {
-          const hasData = form.items.some(
-            (item) =>
-              (item.name && item.name.trim() !== "") ||
-              Number(item.price_per_unit) > 0 ||
-              Number(item.total_amount) > 0,
-          );
-          if (hasData) {
-            setIsClearModalOpen(true);
-            return;
-          }
-          actions.setItems([]);
-          setShowDetails(false);
-        } else {
-          setShowDetails(true);
-          if (form.items.length === 0) setTimeout(() => actions.addItem(), 0);
-        }
-        return;
-      }
-
-      if (isMod && e.code === "KeyA") {
-        const target = e.target as HTMLElement;
-        if (
-          target.tagName === "TEXTAREA" ||
-          (target.tagName === "INPUT" && target.getAttribute("type") === "text")
-        )
-          return;
-        e.preventDefault();
-        if (!showDetails) {
-          setShowDetails(true);
-          setTimeout(() => actions.addItem(), 0);
-        } else {
-          actions.addItem();
-        }
-        return;
-      }
-
-      if (isMod && e.code === "KeyI") {
-        e.preventDefault();
-        fileInputRef.current?.click();
-        return;
-      }
-    };
-
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
-  }, [showDetails, form.items, actions]);
+  }, [handleGlobalKeyDown]);
 
   // --- Logic Helpers ---
   const invalidationConfig = () => {
@@ -400,7 +413,7 @@ export const useTransactionLogic = ({
       }
 
       invalidationConfig();
-      if (onSuccess) onSuccess(responseData);
+      if (onSuccess) await onSuccess(responseData);
       onCloseModal?.();
 
       if (!isEditSession) {
@@ -485,6 +498,17 @@ export const useTransactionLogic = ({
     }
   };
 
+  const uploadPreviewUrls = useMemo(
+    () => filesToUpload.map((file) => URL.createObjectURL(file)),
+    [filesToUpload],
+  );
+
+  useEffect(() => {
+    return () => {
+      uploadPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [uploadPreviewUrls]);
+
   const allPreviewUrls = useMemo(() => {
     const urls: string[] = [];
     if (transactionToEdit) {
@@ -497,9 +521,9 @@ export const useTransactionLogic = ({
         if (url) urls.push(url);
       }
     }
-    filesToUpload.forEach((file) => urls.push(URL.createObjectURL(file)));
+    urls.push(...uploadPreviewUrls);
     return urls;
-  }, [transactionToEdit, filesToUpload]);
+  }, [transactionToEdit, uploadPreviewUrls]);
 
   const resolveConflict = {
     addRemainder: () => {

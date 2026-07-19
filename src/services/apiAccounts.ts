@@ -35,6 +35,7 @@ export interface Account {
 
   // --- CARD SPECIFIC ---
   card_number?: string; // "1234" (останні 4 цифри)
+  card_numbers?: string[]; // Основна картка та токени Apple Pay / Google Pay
   payment_system?: string; // "visa", "mastercard"
   bank_name?: string; // "monobank", "privatbank" (для скінів)
   card_type?: string; // "black", "platinum" (для скінів)

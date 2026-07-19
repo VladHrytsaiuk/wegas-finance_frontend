@@ -1,19 +1,15 @@
 import React, { useMemo, useEffect, useState, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   HiArrowsUpDown,
-  HiListBullet,
-  HiPhoto,
   HiChevronDown,
   HiChevronUp,
   HiCube,
   HiLockClosed,
   HiTruck,
   HiExclamationTriangle,
-  HiPaperClip,
 } from "react-icons/hi2";
 import { getShortcutLabel } from "../../../utils/platform";
 
@@ -30,7 +26,6 @@ import type { TransactionItem } from "../../../types";
 
 // UI Components
 import { Button } from "../../ui/Button";
-import Spinner from "../../ui/Spinner";
 import { CenteredSpinner } from "../../ui/CenteredSpinner";
 import { TypeSelector } from "./TypeSelector";
 import { AccountSelect } from "../../accounts/form/AccountSelect";
@@ -40,10 +35,13 @@ import CounterpartySelect from "../../counterparties/CounterpartySelect";
 import TagSelect from "../../tags/TagSelect";
 import { DateRangePicker } from "../../ui/DateRangePicker";
 import { TimePicker } from "../../ui/TimePicker";
-import { ItemsTable } from "./ItemsTable";
-import { AssetSelector } from "./AssetSelector";
 import { Overlay, StyledModal } from "../../ui/Modal";
 import { useIsMobile } from "../../../hooks/useIsMobile";
+import { PhotoAttachmentControls } from "./PhotoAttachmentControls";
+import { ExpenseDetailsSection } from "./ExpenseDetailsSection";
+import { AssetSection } from "./AssetSection";
+import { MobileAdditionalSection } from "./MobileAdditionalSection";
+import { TransferSection } from "./TransferSection";
 
 import * as S from "./styles";
 import toast from "react-hot-toast";
@@ -211,9 +209,8 @@ export const FormContent: React.FC<FormContentProps> = ({
     (a) => String(a.id) === String(form.targetAccountId),
   );
 
-  const selectedAsset = assets.find(
-    (a) => String(a.id) === String(form.assetId),
-  );
+  const selectedAsset = assets.find((a) => String(a.id) === String(form.assetId));
+  const selectedAssetMileage = selectedAsset?.mileage;
   const isCarSelected = selectedAsset?.type === "car";
 
   const isSourceSynced = activeAccount?.is_synced;
@@ -293,6 +290,101 @@ export const FormContent: React.FC<FormContentProps> = ({
     setIsMobileAdditionalOpen((prev) => !prev);
   };
 
+  const handleOpenDetails = useCallback(() => {
+    actions.setShowDetails(true);
+  }, [actions]);
+
+  const handleCloseDetails = useCallback(() => {
+    actions.setShowDetails(false);
+  }, [actions]);
+
+  const handleAssetToggleKeyDown = useMemo(
+    () => actions.createEnterHandler(handleToggleAssetPanel),
+    [actions, handleToggleAssetPanel],
+  );
+
+  const getTransactionDate = useCallback(() => {
+    return form.date ? new Date(form.date).getTime() : Date.now();
+  }, [form.date]);
+
+  const assetSectionProps = useMemo(
+    () => ({
+      transactionType: form.type,
+      isOpen: form.isAssetPanelOpen,
+      assetId: form.assetId,
+      newAsset: form.newAsset,
+      setAssetId: actions.setAssetId,
+      setNewAsset: actions.setNewAsset,
+      transactionDate: getTransactionDate(),
+      mileage: form.mileage,
+      setMileage: actions.setMileage,
+      onToggle: handleToggleAssetPanel,
+      onToggleKeyDown: handleAssetToggleKeyDown,
+      isCarSelected,
+      currentMileage: selectedAssetMileage,
+    }),
+    [
+      actions.setAssetId,
+      actions.setMileage,
+      actions.setNewAsset,
+      form.assetId,
+      form.isAssetPanelOpen,
+      form.mileage,
+      form.newAsset,
+      form.type,
+      getTransactionDate,
+      handleAssetToggleKeyDown,
+      handleToggleAssetPanel,
+      isCarSelected,
+      selectedAssetMileage,
+    ],
+  );
+
+  const expenseDetailsProps = useMemo(
+    () => ({
+      showDetails: state.showDetails,
+      items: form.items,
+      actions,
+      currencyCode: activeAccount?.currency || baseCurrency,
+      categories: availableCategories,
+      onOpen: handleOpenDetails,
+      onClose: handleCloseDetails,
+    }),
+    [
+      actions,
+      activeAccount?.currency,
+      availableCategories,
+      baseCurrency,
+      form.items,
+      handleCloseDetails,
+      handleOpenDetails,
+      state.showDetails,
+    ],
+  );
+
+  const handleMobileDateChange = useCallback(
+    (value: string) => {
+      actions.setDate(value);
+      actions.clearError("date");
+    },
+    [actions],
+  );
+
+  const handleTargetAccountChange = useCallback(
+    (val: string) => {
+      actions.setTargetAccountId(val);
+      actions.clearError("targetAccountId");
+    },
+    [actions],
+  );
+
+  const handleTargetAmountChange = useCallback(
+    (val: string) => {
+      actions.setLocalTargetAmount(val);
+    },
+    [actions],
+  );
+
   const handleSwapTransferAccounts = useCallback(() => {
     if (!form.accountId || !form.targetAccountId || isTransferLocked) return;
 
@@ -316,10 +408,6 @@ export const FormContent: React.FC<FormContentProps> = ({
     state.localAmount,
     state.localTargetAmount,
   ]);
-
-  const getTransactionDate = useCallback(() => {
-    return form.date ? new Date(form.date).getTime() : Date.now();
-  }, [form.date]);
 
   const additionalSummary = useMemo(() => {
     const bits: string[] = [];
@@ -596,98 +684,23 @@ export const FormContent: React.FC<FormContentProps> = ({
 
         <S.ConditionalFieldsContainer>
           {form.type === "transfer" ? (
-            <>
-              <S.TransferSwapRow>
-                <S.TransferSwapButton
-                  type="button"
-                  onClick={handleSwapTransferAccounts}
-                  disabled={
-                    isTransferLocked || !form.accountId || !form.targetAccountId
-                  }
-                  aria-label={t(
-                    "transactions:transactionForm.swap_accounts",
-                    "Поміняти рахунки місцями",
-                  )}
-                  title={t(
-                    "transactions:transactionForm.swap_accounts",
-                    "Поміняти рахунки місцями",
-                  )}
-                >
-                  <HiArrowsUpDown />
-                </S.TransferSwapButton>
-              </S.TransferSwapRow>
-              <S.RowGroup $columns={isMultiCurrency ? "6fr 4fr" : "1fr"}>
-                <div>
-                  <S.Label>
-                    <LabelWithLock
-                      label={t("transactions:transactionForm.label_to_account")}
-                      isLocked={isTransferLocked}
-                    />
-                    <S.RequiredStar> *</S.RequiredStar>
-                  </S.Label>
-                  <div
-                    style={
-                      isTransferLocked
-                        ? { pointerEvents: "none", opacity: 0.8 }
-                        : {}
-                    }
-                  >
-                    <AccountSelect
-                      accounts={accounts.filter(
-                        (a) => String(a.id) !== String(form.accountId),
-                      )}
-                      users={users}
-                      value={form.targetAccountId}
-                      onChange={(val: string) => {
-                        actions.setTargetAccountId(val);
-                        actions.clearError("targetAccountId");
-                      }}
-                      placeholder={t(
-                        "transactions:transactionForm.placeholder_select_account",
-                      )}
-                      hasError={!!state.errors.targetAccountId}
-                    />
-                  </div>
-                  {state.errors.targetAccountId && (
-                    <S.ErrorText>{state.errors.targetAccountId}</S.ErrorText>
-                  )}
-                </div>
-
-                {isMultiCurrency && (
-                  <S.InputWrapper>
-                    <S.Label>
-                      <S.AmountLabelInner>
-                        <span>
-                          {t(
-                            "transactions:transactionForm.label_received_amount",
-                          )}
-                        </span>
-                        <S.RequiredStar> *</S.RequiredStar>
-                        {isTransferLocked && <HiLockClosed />}
-                        {targetCurrency && (
-                          <S.CurrencyHint>({targetCurrency})</S.CurrencyHint>
-                        )}
-                      </S.AmountLabelInner>
-                    </S.Label>
-                    <AmountInput
-                      value={state.localTargetAmount}
-                      onChange={(val) => actions.setLocalTargetAmount(val)}
-                      disabled={isTransferLocked}
-                      hasError={!!state.errors.targetAmount}
-                      placeholder="0.00"
-                    />
-                    {state.errors.targetAmount && (
-                      <S.ErrorText>{state.errors.targetAmount}</S.ErrorText>
-                    )}
-                    {exchangeRate && (
-                      <S.ExchangeRateHint>
-                        1 {sourceCurrency} ≈ {exchangeRate} {targetCurrency}
-                      </S.ExchangeRateHint>
-                    )}
-                  </S.InputWrapper>
-                )}
-              </S.RowGroup>
-            </>
+            <TransferSection
+              accounts={accounts}
+              users={users}
+              sourceAccountId={form.accountId}
+              targetAccountId={form.targetAccountId}
+              sourceCurrency={sourceCurrency}
+              targetCurrency={targetCurrency}
+              isTransferLocked={isTransferLocked}
+              isMultiCurrency={isMultiCurrency}
+              localTargetAmount={state.localTargetAmount}
+              targetAmountError={state.errors.targetAmount}
+              targetAccountError={state.errors.targetAccountId}
+              exchangeRate={exchangeRate}
+              onSwap={handleSwapTransferAccounts}
+              onTargetAccountChange={handleTargetAccountChange}
+              onTargetAmountChange={handleTargetAmountChange}
+            />
           ) : (
             <S.RowGroup
               $columns={
@@ -802,343 +815,50 @@ export const FormContent: React.FC<FormContentProps> = ({
         )}
 
         {isMobile && (
-          <>
-            <S.MobileDisclosureToggle
-              $open={isMobileAdditionalOpen}
-              role="button"
-              tabIndex={0}
-              aria-expanded={isMobileAdditionalOpen}
-              onClick={handleToggleMobileAdditional}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleToggleMobileAdditional();
-                }
-              }}
-            >
-              <S.MobileDisclosureTitleWrap>
-                <S.MobileDisclosureTitle>
-                  Додатково
-                </S.MobileDisclosureTitle>
-                {hasAdditionalSummary && (
-                  <S.MobileDisclosureSubtitle>
-                    {additionalSummary}
-                  </S.MobileDisclosureSubtitle>
-                )}
-              </S.MobileDisclosureTitleWrap>
-              {isMobileAdditionalOpen ? <HiChevronUp /> : <HiChevronDown />}
-            </S.MobileDisclosureToggle>
-
-            {isMobileAdditionalOpen && (
-              <S.MobileDisclosureContent>
-                <S.MobileDateTimeRow>
-                  <div>
-                    <S.Label>
-                      <LabelWithLock
-                        label={t("transactions:transactionForm.label_date")}
-                        isLocked={isLocked}
-                      />
-                    </S.Label>
-                    <div
-                      style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}
-                    >
-                      <DateRangePicker
-                        mode="single"
-                        date={form.date ? new Date(form.date).getTime() : null}
-                        onDateChange={(ts) => {
-                          actions.setDate(format(new Date(ts), "yyyy-MM-dd"));
-                          actions.clearError("date");
-                        }}
-                      />
-                    </div>
-                    {state.errors.date && (
-                      <S.ErrorText>{state.errors.date}</S.ErrorText>
-                    )}
-                  </div>
-                  <div>
-                    <S.Label>
-                      <LabelWithLock
-                        label={t("transactions:transactionForm.label_time")}
-                        isLocked={isLocked}
-                      />
-                    </S.Label>
-                    <div
-                      style={isLocked ? { pointerEvents: "none", opacity: 0.7 } : {}}
-                    >
-                      <TimePicker
-                        value={state.timeStr}
-                        onChange={actions.setTimeStr}
-                      />
-                    </div>
-                  </div>
-                </S.MobileDateTimeRow>
-                {form.type !== "transfer" && (
-                  <div>
-                    <S.Label>{t("transactions:transactionForm.label_tags")}</S.Label>
-                    <TagSelect
-                      tags={tags}
-                      value={form.tagIds}
-                      onChange={actions.setTagIds}
-                      onCreate={(name) => createTag({ name, color: "#6366f1" })}
-                      isCreating={isCreatingTag}
-                    />
-                  </div>
-                )}
-
-                {!isDebt && form.type !== "transfer" && (
-                  <S.AssetSection>
-                    <S.DetailsTriggerButton
-                      type="button"
-                      onClick={handleToggleAssetPanel}
-                      onKeyDown={actions.createEnterHandler(handleToggleAssetPanel)}
-                    >
-                      <HiCube />
-                      {form.isAssetPanelOpen
-                        ? t(
-                            "transactions:transactionForm.hide_asset_option",
-                            "Прибрати актив",
-                          )
-                        : t(
-                            "transactions:transactionForm.add_asset_option",
-                            "Додати актив",
-                          )}
-                      {form.isAssetPanelOpen ? <HiChevronUp /> : <HiChevronDown />}
-                    </S.DetailsTriggerButton>
-
-                    {form.isAssetPanelOpen && (
-                      <S.AssetContentWrapper>
-                        <AssetSelector
-                          transactionType={form.type}
-                          assetId={form.assetId}
-                          setAssetId={actions.setAssetId}
-                          newAsset={form.newAsset}
-                          setNewAsset={actions.setNewAsset}
-                          transactionDate={getTransactionDate()}
-                        />
-
-                        {isCarSelected && (
-                          <S.AssetMileageContainer>
-                            <S.Label>
-                              <S.AssetMileageLabelInner>
-                                <HiTruck />
-                                {t(
-                                  "transactions:transactionForm.label_mileage",
-                                  "Пробіг (км)",
-                                )}
-                              </S.AssetMileageLabelInner>
-                            </S.Label>
-
-                            <S.AssetMileageInput
-                              type="number"
-                              placeholder={`Поточний: ${selectedAsset?.mileage || 0} км`}
-                              value={form.mileage}
-                              onChange={(e) => actions.setMileage(e.target.value)}
-                            />
-
-                            {form.mileage &&
-                            Number(form.mileage) > (selectedAsset?.mileage || 0) ? (
-                              <S.AssetWarningBlock>
-                                <S.AssetWarningIconWrapper>
-                                  <HiExclamationTriangle size={20} />
-                                </S.AssetWarningIconWrapper>
-                                <div>
-                                  <S.AssetWarningTitle>
-                                    Оновлення даних авто
-                                  </S.AssetWarningTitle>
-                                  <span>
-                                    Ви вказали новий пробіг. Ця транзакція автоматично
-                                    оновить <b>загальний пробіг</b> та{" "}
-                                    <b>дату останнього ТО</b> в картці активу.
-                                  </span>
-                                </div>
-                              </S.AssetWarningBlock>
-                            ) : (
-                              form.mileage && (
-                                <S.AssetHistoryHint>
-                                  ℹ️ Це історичний запис (менше поточного{" "}
-                                  {selectedAsset?.mileage} км)
-                                </S.AssetHistoryHint>
-                              )
-                            )}
-                          </S.AssetMileageContainer>
-                        )}
-                      </S.AssetContentWrapper>
-                    )}
-                  </S.AssetSection>
-                )}
-
-                {form.type === "expense" && (
-                  <S.ItemsTableContainer>
-                    {!state.showDetails ? (
-                      <S.DetailsTriggerButton
-                        type="button"
-                        onClick={() => actions.setShowDetails(true)}
-                      >
-                        <HiListBullet size={18} />
-                        <span>
-                          {t("transactions:transactionForm.details_button_show")}
-                        </span>
-                      </S.DetailsTriggerButton>
-                    ) : (
-                      <ItemsTable
-                        items={form.items}
-                        actions={actions}
-                        onClose={() => actions.setShowDetails(false)}
-                        currencyCode={activeAccount?.currency || baseCurrency}
-                        categories={availableCategories}
-                      />
-                    )}
-                  </S.ItemsTableContainer>
-                )}
-              </S.MobileDisclosureContent>
-            )}
-          </>
+          <MobileAdditionalSection
+            isOpen={isMobileAdditionalOpen}
+            onToggle={handleToggleMobileAdditional}
+            summary={additionalSummary}
+            hasSummary={hasAdditionalSummary}
+            isLocked={isLocked}
+            date={form.date}
+            timeStr={state.timeStr}
+            onDateChange={handleMobileDateChange}
+            onTimeChange={actions.setTimeStr}
+            dateError={state.errors.date}
+            isTransfer={form.type === "transfer"}
+            tags={tags}
+            tagIds={form.tagIds}
+            onTagIdsChange={actions.setTagIds}
+            onCreateTag={(name) => createTag({ name, color: "#6366f1" })}
+            isCreatingTag={isCreatingTag}
+            showAssetSection={!isDebt && form.type !== "transfer"}
+            assetSectionProps={assetSectionProps}
+            showExpenseDetails={form.type === "expense"}
+            expenseDetailsProps={expenseDetailsProps}
+          />
         )}
 
         {!isMobile && !isDebt && form.type !== "transfer" && (
-          <S.AssetSection>
-            <S.DetailsTriggerButton
-              type="button"
-              onClick={handleToggleAssetPanel}
-              onKeyDown={actions.createEnterHandler(handleToggleAssetPanel)}
-            >
-              <HiCube />
-              {form.isAssetPanelOpen
-                ? t(
-                    "transactions:transactionForm.hide_asset_option",
-                    "Прибрати актив",
-                  )
-                : t(
-                    "transactions:transactionForm.add_asset_option",
-                    "Додати актив",
-                  )}
-              {form.isAssetPanelOpen ? <HiChevronUp /> : <HiChevronDown />}
-            </S.DetailsTriggerButton>
-
-            {form.isAssetPanelOpen && (
-              <S.AssetContentWrapper>
-                <AssetSelector
-                  transactionType={form.type}
-                  assetId={form.assetId}
-                  setAssetId={actions.setAssetId}
-                  newAsset={form.newAsset}
-                  setNewAsset={actions.setNewAsset}
-                  transactionDate={getTransactionDate()}
-                />
-
-                {isCarSelected && (
-                  <S.AssetMileageContainer>
-                    <S.Label>
-                      <S.AssetMileageLabelInner>
-                        <HiTruck />
-                        {t(
-                          "transactions:transactionForm.label_mileage",
-                          "Пробіг (км)",
-                        )}
-                      </S.AssetMileageLabelInner>
-                    </S.Label>
-
-                    <S.AssetMileageInput
-                      type="number"
-                      placeholder={`Поточний: ${selectedAsset?.mileage || 0} км`}
-                      value={form.mileage}
-                      onChange={(e) => actions.setMileage(e.target.value)}
-                    />
-
-                    {form.mileage &&
-                    Number(form.mileage) > (selectedAsset?.mileage || 0) ? (
-                      <S.AssetWarningBlock>
-                        <S.AssetWarningIconWrapper>
-                          <HiExclamationTriangle size={20} />
-                        </S.AssetWarningIconWrapper>
-                        <div>
-                          <S.AssetWarningTitle>
-                            Оновлення даних авто
-                          </S.AssetWarningTitle>
-                          <span>
-                            Ви вказали новий пробіг. Ця транзакція автоматично
-                            оновить <b>загальний пробіг</b> та{" "}
-                            <b>дату останнього ТО</b> в картці активу.
-                          </span>
-                        </div>
-                      </S.AssetWarningBlock>
-                    ) : (
-                      form.mileage && (
-                        <S.AssetHistoryHint>
-                          ℹ️ Це історичний запис (менше поточного{" "}
-                          {selectedAsset?.mileage} км)
-                        </S.AssetHistoryHint>
-                      )
-                    )}
-                  </S.AssetMileageContainer>
-                )}
-              </S.AssetContentWrapper>
-            )}
-          </S.AssetSection>
+          <AssetSection {...assetSectionProps} />
         )}
 
         {!isMobile && form.type === "expense" && (
-          <S.ItemsTableContainer>
-            {!state.showDetails ? (
-              <S.DetailsTriggerButton
-                type="button"
-                onClick={() => actions.setShowDetails(true)}
-              >
-                <HiListBullet size={18} />
-                <span>
-                  {t("transactions:transactionForm.details_button_show")}
-                </span>
-              </S.DetailsTriggerButton>
-            ) : (
-              <ItemsTable
-                items={form.items}
-                actions={actions}
-                onClose={() => actions.setShowDetails(false)}
-                currencyCode={activeAccount?.currency || baseCurrency}
-                categories={availableCategories}
-              />
-            )}
-          </S.ItemsTableContainer>
+          <ExpenseDetailsSection {...expenseDetailsProps} />
         )}
       </S.FormScrollArea>
 
       <S.Footer>
-        <S.FileUploadWrapper>
-          <S.HiddenFileInput
-            ref={fileInputRef}
-            type="file"
-            id="receipt-upload"
-            accept="image/*"
-            multiple
-            onChange={handlers.handleFileUpload}
-            disabled={state.isUploading || state.isCompressing}
-          />
-
-          {state.isCompressing ? (
-            <S.CompressingState>
-              <Spinner size="1.5rem" />
-              <S.CompressingText>
-                {t("common:common.processing", "Обробка фото...")}
-              </S.CompressingText>
-            </S.CompressingState>
-          ) : (
-            <S.UploadButtonLabel htmlFor="receipt-upload">
-              <S.UploadIconButton
-                as="span"
-                $hasFiles={state.allPreviewUrls.length > 0}
-                aria-label={t(
-                  "transactions:transactionForm.add_photo",
-                  "Додати фото",
-                )}
-              >
-                {state.allPreviewUrls.length > 0 ? <HiPhoto /> : <HiPaperClip />}
-                {state.allPreviewUrls.length > 0 && (
-                  <S.UploadBadge>{state.allPreviewUrls.length}</S.UploadBadge>
-                )}
-              </S.UploadIconButton>
-            </S.UploadButtonLabel>
-          )}
-        </S.FileUploadWrapper>
+        <PhotoAttachmentControls
+          fileInputRef={fileInputRef}
+          previewCount={state.allPreviewUrls.length}
+          isCompressing={state.isCompressing}
+          isUploading={state.isUploading}
+          isDeleting={state.isDeleting}
+          onFileUpload={handlers.handleFileUpload}
+          onOpenViewer={() => actions.setIsViewerOpen(true)}
+          onDeleteAll={handlers.deleteAllPhotos}
+        />
 
         <S.FooterNoteWrapper $hiddenOnMobile={isMobile}>
           <S.StyledTextarea

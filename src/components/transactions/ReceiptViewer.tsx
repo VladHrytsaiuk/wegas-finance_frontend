@@ -3,6 +3,7 @@ import {
   HiMagnifyingGlassMinus,
   HiArrowPath,
   HiXMark,
+  HiTrash,
   HiChevronLeft,
   HiChevronRight,
 } from "react-icons/hi2";
@@ -14,6 +15,9 @@ interface ReceiptViewerProps {
   imageUrls: string[];
   onClose?: () => void;
   onIndexChange?: (index: number) => void;
+  currentIndex?: number;
+  onDeleteCurrent?: () => void;
+  isDeletingCurrent?: boolean;
 }
 
 export function ReceiptViewer(props: ReceiptViewerProps) {
@@ -41,6 +45,18 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
           >
             <HiMagnifyingGlassPlus />
           </S.ToolBtn>
+          {props.onDeleteCurrent && (
+            <S.ToolBtn
+              onClick={props.onDeleteCurrent}
+              title={t(
+                "transactions:transactionForm.delete_current_photo",
+                "Видалити це фото",
+              )}
+              disabled={props.isDeletingCurrent}
+            >
+              <HiTrash />
+            </S.ToolBtn>
+          )}
         </S.ToolGroup>
 
         {props.onClose && (

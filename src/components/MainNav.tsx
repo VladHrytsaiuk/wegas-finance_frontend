@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
 import {
   HiOutlineHome,
   HiOutlineCog6Tooth,
@@ -18,9 +19,11 @@ import {
   HiOutlineTrophy,
   HiOutlineShoppingCart,
   HiOutlineGift, // Іконка для майбутнього Вішліста
+  HiOutlineInbox,
 } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "../context/WorkspaceContext";
+import { getInboxPendingCountApi } from "../services/apiInbox";
 
 // --- Styled Components (КОМПАКТНІША ВЕРСІЯ) ---
 
@@ -69,6 +72,7 @@ const StyledNavLink = styled(NavLink)<{ $collapsed: boolean }>`
 `;
 
 const IconBox = styled.div`
+  position: relative;
   min-width: 34px; /* Узгоджено з шириною посилання */
   height: 32px;
   display: flex;
@@ -84,6 +88,23 @@ const IconBox = styled.div`
   ${StyledNavLink}.active & svg {
     color: var(--color-brand-600);
   }
+`;
+
+const CountBadge = styled.span`
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-danger-500, #ef4444);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--color-bg-surface);
 `;
 
 const Label = styled.span<{ $collapsed: boolean }>`
@@ -137,6 +158,12 @@ interface MainNavProps {
 function MainNav({ isCollapsed }: MainNavProps) {
   const { t } = useTranslation();
   const { mode } = useWorkspace();
+  const { data: pendingInboxCount = 0 } = useQuery({
+    queryKey: ["inbox", "pending-count"],
+    queryFn: getInboxPendingCountApi,
+    enabled: mode === "finance",
+    staleTime: 30 * 1000,
+  });
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     analytics: true,
@@ -177,6 +204,11 @@ function MainNav({ isCollapsed }: MainNavProps) {
           to: "/transactions",
           icon: <HiOutlineBanknotes />,
           label: t("navigation:general.transactions"),
+        },
+        {
+          to: "/inbox",
+          icon: <HiOutlineInbox />,
+          label: t("navigation:general.inbox", "Inbox"),
         },
         {
           to: "/accounts",
@@ -308,7 +340,14 @@ function MainNav({ isCollapsed }: MainNavProps) {
                         item.to === "/investments/dashboard"
                       }
                     >
-                      <IconBox>{item.icon}</IconBox>
+                      <IconBox>
+                        {item.icon}
+                        {item.to === "/inbox" && pendingInboxCount > 0 ? (
+                          <CountBadge>
+                            {pendingInboxCount > 99 ? "99+" : pendingInboxCount}
+                          </CountBadge>
+                        ) : null}
+                      </IconBox>
                       <Label $collapsed={isCollapsed}>{item.label}</Label>
                     </StyledNavLink>
                   </li>

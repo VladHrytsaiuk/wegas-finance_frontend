@@ -4,8 +4,12 @@ import {
   HiLinkSlash,
   HiCheck,
   HiArrowPath,
+  HiPaperAirplane,
+  HiArrowTopRightOnSquare,
+  HiBolt,
 } from "react-icons/hi2";
 import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -23,6 +27,7 @@ import MonobankModal from "../../components/sync/MonobankModal";
 import { ConfirmDisconnectModal } from "../../components/sync/ConfirmDisconnectModal";
 import { monobankApi } from "../../services/apiMonobank";
 import { useSync } from "../../context/SyncContext";
+import { telegramReceiptsApi } from "../../services/apiTelegramReceipts";
 
 // --- HELPER COMPONENT ---
 const DisconnectModalAdapter = ({
@@ -52,6 +57,7 @@ function Profile() {
   const { state, actions, t } = useProfileForm();
   const isMobile = useIsMobile();
   const { name, email, isLoading, isUpdating } = state;
+  const queryClient = useQueryClient();
 
   const { statusData, startPolling, stopPolling } = useSync();
   const isSyncing = statusData.is_running;
@@ -61,6 +67,74 @@ function Profile() {
   const [isCheckingMono, setIsCheckingMono] = useState(true);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [isForceSyncing, setIsForceSyncing] = useState(false);
+  const [isWaitingForTelegramStart, setIsWaitingForTelegramStart] = useState(false);
+
+  const {
+    data: telegramStatus,
+    isLoading: isTelegramStatusLoading,
+    refetch: refetchTelegramStatus,
+  } = useQuery({
+    queryKey: ["telegram-receipts-link-status"],
+    queryFn: telegramReceiptsApi.getLinkStatus,
+    refetchInterval: isWaitingForTelegramStart ? 2000 : false,
+  });
+
+  const { data: webhookStatus, isLoading: isWebhookStatusLoading } = useQuery({
+    queryKey: ["telegram-receipts-webhook-status"],
+    queryFn: telegramReceiptsApi.getWebhookStatus,
+  });
+
+  const { mutateAsync: createTelegramLink, isPending: isCreatingTelegramLink } =
+    useMutation({
+      mutationFn: telegramReceiptsApi.createLinkToken,
+      onSuccess: async (data) => {
+        setIsWaitingForTelegramStart(true);
+        try {
+          await navigator.clipboard.writeText(data.deep_link);
+          toast.success(t("settings:integrations.telegram_link_ready"));
+        } catch {
+          toast.success(t("settings:integrations.telegram_link_opening"));
+        }
+
+        window.open(data.deep_link, "_blank", "noopener,noreferrer");
+      },
+      onError: () => {
+        setIsWaitingForTelegramStart(false);
+        toast.error(t("settings:integrations.telegram_link_error"));
+      },
+    });
+
+  const { mutateAsync: revokeTelegramLink, isPending: isRevokingTelegramLink } =
+    useMutation({
+      mutationFn: telegramReceiptsApi.revokeLink,
+      onSuccess: async () => {
+        setIsWaitingForTelegramStart(false);
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["telegram-receipts-link-status"] }),
+          queryClient.invalidateQueries({
+            queryKey: ["telegram-receipts-webhook-status"],
+          }),
+        ]);
+        toast.success(t("settings:integrations.telegram_disconnect_success"));
+      },
+      onError: () => {
+        toast.error(t("settings:integrations.telegram_disconnect_error"));
+      },
+    });
+
+  const { mutateAsync: syncTelegramWebhook, isPending: isSyncingTelegramWebhook } =
+    useMutation({
+      mutationFn: telegramReceiptsApi.syncWebhook,
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ["telegram-receipts-webhook-status"],
+        });
+        toast.success(t("settings:integrations.telegram_webhook_sync_success"));
+      },
+      onError: () => {
+        toast.error(t("settings:integrations.telegram_webhook_sync_error"));
+      },
+    });
 
   // 1. Check connection status
   useEffect(() => {
@@ -132,7 +206,39 @@ function Profile() {
     prevIsSyncing.current = isSyncing;
   }, [isSyncing]);
 
+  useEffect(() => {
+    if (telegramStatus?.is_linked && isWaitingForTelegramStart) {
+      setIsWaitingForTelegramStart(false);
+      toast.success(t("settings:integrations.telegram_connected_after_start"));
+    }
+  }, [isWaitingForTelegramStart, telegramStatus?.is_linked, t]);
+
   if (isLoading) return <SettingsListSkeleton />;
+
+  const isTelegramLinked = telegramStatus?.is_linked ?? false;
+  const isTelegramWebhookConfigured = webhookStatus?.configured ?? false;
+  const isTelegramBusy =
+    isCreatingTelegramLink ||
+    isRevokingTelegramLink ||
+    isSyncingTelegramWebhook ||
+    isWaitingForTelegramStart;
+
+  const handleTelegramConnect = async () => {
+    if (!isTelegramWebhookConfigured) {
+      await syncTelegramWebhook();
+    }
+
+    await createTelegramLink();
+    void refetchTelegramStatus();
+  };
+
+  const handleTelegramDisconnect = async () => {
+    await revokeTelegramLink();
+  };
+
+  const handleTelegramWebhookSync = async () => {
+    await syncTelegramWebhook();
+  };
 
   return (
     <Modal>
@@ -256,6 +362,141 @@ function Profile() {
               </Modal.Open>
             </S.ActionsRight>
           </S.IntegrationCard>
+
+          <S.TelegramCard style={{ marginTop: "0.9rem" }}>
+            <S.IntegrationLeft>
+              <S.IconWrapper>
+                <HiPaperAirplane
+                  size={22}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    padding: 9,
+                    color: "var(--color-brand-600)",
+                  }}
+                />
+              </S.IconWrapper>
+
+              <S.TelegramTextInfo>
+                <S.BankTitleRow>
+                  <S.BankTitle>Telegram Receipts</S.BankTitle>
+                  {!isTelegramStatusLoading && !isWebhookStatusLoading && (
+                    <S.ConnectionStatus
+                      $connected={isTelegramLinked}
+                      $syncing={isTelegramBusy}
+                    >
+                      {isTelegramBusy ? (
+                        <>
+                          <HiArrowPath className="spin" />
+                          {isWaitingForTelegramStart
+                            ? t("settings:integrations.telegram_waiting_start")
+                            : t("settings:integrations.status_syncing")}
+                        </>
+                      ) : isTelegramLinked ? (
+                        <>
+                          <HiCheck size={14} />
+                          {t("settings:integrations.status_connected")}
+                        </>
+                      ) : (
+                        t("settings:integrations.status_not_connected")
+                      )}
+                    </S.ConnectionStatus>
+                  )}
+                </S.BankTitleRow>
+
+                <S.BankDescription>
+                  {t("settings:integrations.telegram_desc")}
+                </S.BankDescription>
+
+                <S.IntegrationMeta>
+                  <S.MetaRow>
+                    <S.MetaLabel>
+                      {t("settings:integrations.telegram_bot_label")}
+                    </S.MetaLabel>
+                    <S.MetaValue>
+                      {telegramStatus?.bot_username
+                        ? `@${telegramStatus.bot_username}`
+                        : t("settings:integrations.telegram_unknown")}
+                    </S.MetaValue>
+                  </S.MetaRow>
+
+                  {isTelegramLinked && telegramStatus?.telegram_username && (
+                    <S.MetaRow>
+                      <S.MetaLabel>
+                        {t("settings:integrations.telegram_account_label")}
+                      </S.MetaLabel>
+                      <S.MetaValue>@{telegramStatus.telegram_username}</S.MetaValue>
+                    </S.MetaRow>
+                  )}
+
+                  {!isWebhookStatusLoading && !isTelegramLinked && (
+                    <S.MetaRow>
+                      <S.MetaLabel>
+                        {t("settings:integrations.telegram_hint_label")}
+                      </S.MetaLabel>
+                      <S.MetaValue>
+                        {isTelegramWebhookConfigured
+                          ? t("settings:integrations.telegram_hint_start")
+                          : t("settings:integrations.telegram_hint_connect")}
+                      </S.MetaValue>
+                    </S.MetaRow>
+                  )}
+                </S.IntegrationMeta>
+              </S.TelegramTextInfo>
+            </S.IntegrationLeft>
+
+            <S.ActionsRight>
+              <S.OpenBotButton
+                style={{ width: isMobile ? "100%" : "auto" }}
+                disabled={isTelegramBusy}
+                onClick={
+                  isTelegramLinked && telegramStatus?.bot_username
+                    ? () =>
+                        window.open(
+                          `https://t.me/${telegramStatus.bot_username}`,
+                          "_blank",
+                          "noopener,noreferrer",
+                        )
+                    : handleTelegramConnect
+                }
+              >
+                <S.ActionLabel>
+                  {isTelegramLinked ? (
+                    <HiArrowTopRightOnSquare size={16} />
+                  ) : (
+                    <HiBolt size={16} />
+                  )}
+                  {isTelegramLinked
+                    ? t("settings:integrations.telegram_open_bot")
+                    : t("settings:integrations.telegram_connect")}
+                </S.ActionLabel>
+              </S.OpenBotButton>
+
+              {(isTelegramLinked || !isTelegramWebhookConfigured) && (
+                <S.SyncButton
+                  variation="secondary"
+                  $isSpinning={isSyncingTelegramWebhook}
+                  onClick={handleTelegramWebhookSync}
+                  title={t("settings:integrations.telegram_sync_webhook")}
+                  disabled={isTelegramBusy}
+                >
+                  <HiArrowPath size={18} />
+                </S.SyncButton>
+              )}
+
+              {isTelegramLinked ? (
+                <S.IconButton
+                  variation="danger"
+                  size="sm"
+                  title={t("settings:integrations.telegram_disconnect")}
+                  disabled={isTelegramBusy}
+                  onClick={handleTelegramDisconnect}
+                >
+                  <HiLinkSlash size={18} />
+                </S.IconButton>
+              ) : null}
+            </S.ActionsRight>
+          </S.TelegramCard>
         </S.IntegrationsSection>
       </div>
 

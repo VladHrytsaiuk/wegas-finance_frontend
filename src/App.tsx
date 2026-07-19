@@ -29,6 +29,8 @@ const Login = lazy(() => import("./pages/auth/Login"));
 const PinLogin = lazy(() => import("./pages/auth/PinLogin"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const Inbox = lazy(() => import("./pages/inbox/Inbox"));
+const InboxEntryPage = lazy(() => import("./pages/inbox/InboxEntryPage"));
 const Accounts = lazy(() => import("./pages/accounts/Accounts"));
 const Transactions = lazy(() => import("./pages/transactions/Transactions"));
 const TransactionPage = lazy(() => import("./pages/transactions/TransactionPage"));
@@ -166,6 +168,14 @@ function AppRoutes() {
             <Route
               path="dashboard"
               element={withRouteSuspense(<Dashboard />, "resources")}
+            />
+            <Route
+              path="inbox"
+              element={withRouteSuspense(<Inbox />, "resources")}
+            />
+            <Route
+              path="inbox/:inboxId"
+              element={withRouteSuspense(<InboxEntryPage />, "resources")}
             />
             <Route
               path="accounts"

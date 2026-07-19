@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { BottomSheetPanel, DragHandle, Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import type { TransactionType } from "../../types";
+import type { CreateTxItem } from "../../services/apiTransactions";
 import { useScrollLock } from "../../hooks/ui/useScrollLock";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
@@ -35,8 +36,11 @@ interface CreateTransactionModalProps {
     type?: TransactionType;
     account_id?: string;
     counterparty_id?: string; // Важливо!
+    category_id?: string;
     amount?: number; // 🔥 ДОДАНО
     note?: string; // 🔥 ДОДАНО
+    date?: number;
+    items?: CreateTxItem[];
   };
 }
 
@@ -91,8 +95,11 @@ function CreateTransactionModal({
             initialCounterpartyId={
               initialData.counterparty_id || cpIdParam || undefined
             }
+            initialCategoryId={initialData.category_id}
             initialAmount={initialData.amount}
             initialNote={initialData.note}
+            initialDate={initialData.date}
+            initialItems={initialData.items}
           />
         </BottomSheetPanel>
       ) : (
@@ -107,8 +114,11 @@ function CreateTransactionModal({
             initialCounterpartyId={
               initialData.counterparty_id || cpIdParam || undefined
             }
+            initialCategoryId={initialData.category_id}
             initialAmount={initialData.amount}
             initialNote={initialData.note}
+            initialDate={initialData.date}
+            initialItems={initialData.items}
           />
         </CenteredLayout>
       )}

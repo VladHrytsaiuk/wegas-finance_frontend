@@ -452,7 +452,10 @@ export const ButtonsGroup = styled.div`
   }
 `;
 
-export const DetailsTriggerButton = styled.button`
+export const DetailsTriggerButton = styled.button<{
+  $desktopVariant?: "default" | "subtle";
+  $desktopFullWidth?: boolean;
+}>`
   background: var(--color-brand-50);
   border: 1px solid var(--color-brand-200);
   border-radius: 12px;
@@ -473,6 +476,67 @@ export const DetailsTriggerButton = styled.button`
     background: var(--color-brand-100);
     color: var(--color-brand-700);
     border-color: var(--color-brand-400);
+  }
+
+  @media (min-width: 769px) {
+    width: ${(props) => (props.$desktopFullWidth ? "100%" : "auto")};
+    min-width: 0;
+    justify-content: ${(props) =>
+      props.$desktopFullWidth ? "center" : "flex-start"};
+    padding: ${(props) =>
+      props.$desktopVariant === "subtle"
+        ? "0.46rem 0.72rem 0.46rem 0.58rem"
+        : "0.58rem 0.9rem"};
+    min-height: ${(props) =>
+      props.$desktopVariant === "subtle" ? "36px" : "40px"};
+    border-radius: ${(props) =>
+      props.$desktopVariant === "subtle" ? "10px" : "12px"};
+    background: ${(props) =>
+      props.$desktopVariant === "subtle"
+        ? "var(--color-bg-surface)"
+        : "var(--color-brand-50)"};
+    border: 1px solid
+      ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "var(--color-border)"
+          : "var(--color-brand-200)"};
+    color: ${(props) =>
+      props.$desktopVariant === "subtle"
+        ? "var(--color-text-secondary)"
+        : "var(--color-brand-700)"};
+    box-shadow: ${(props) =>
+      props.$desktopVariant === "subtle" ? "var(--shadow-sm)" : "none"};
+    font-size: ${(props) =>
+      props.$desktopVariant === "subtle" ? "0.78rem" : "0.82rem"};
+    font-weight: 600;
+    gap: ${(props) =>
+      props.$desktopVariant === "subtle" ? "0.48rem" : "0.55rem"};
+
+    svg {
+      width: ${(props) =>
+        props.$desktopVariant === "subtle" ? "15px" : "16px"};
+      height: ${(props) =>
+        props.$desktopVariant === "subtle" ? "15px" : "16px"};
+      color: var(--color-brand-600);
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "var(--color-brand-50)"
+          : "var(--color-brand-100)"};
+      color: ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "var(--color-text-main)"
+          : "var(--color-brand-800)"};
+      border-color: var(--color-brand-200);
+      box-shadow: ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "0 1px 2px rgba(0, 0, 0, 0.04)"
+          : "none"};
+      text-decoration: none;
+    }
   }
 
   @media (max-width: 768px) {
@@ -531,6 +595,77 @@ export const FileUploadWrapper = styled.div`
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+
+  @media (min-width: 769px) {
+    min-width: 150px;
+  }
+`;
+
+export const PhotoSummaryButton = styled.button`
+  min-width: 84px;
+  height: 32px;
+  padding: 0 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-brand-200);
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: var(--color-brand-100);
+    border-color: var(--color-brand-300);
+  }
+`;
+
+export const PhotoSummaryCount = styled.span`
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+`;
+
+export const PhotoSummaryLabel = styled.span`
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+`;
+
+export const PhotoClearButton = styled.button`
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid var(--color-red-200);
+  background: var(--color-red-50);
+  color: var(--color-red-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    color: var(--color-red-800);
+    border-color: var(--color-red-300);
+    background: var(--color-red-100);
+  }
 `;
 
 export const UploadButtonLabel = styled.label`
@@ -541,6 +676,17 @@ export const UploadButtonInner = styled.span`
   display: flex;
   gap: 6px;
   align-items: center;
+  justify-content: center;
+`;
+
+export const UploadButtonText = styled.span`
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 export const UploadIconButton = styled.span<{ $hasFiles?: boolean }>`
@@ -559,6 +705,13 @@ export const UploadIconButton = styled.span<{ $hasFiles?: boolean }>`
   border: 1px solid
     ${(p) => (p.$hasFiles ? "var(--color-brand-200)" : "var(--color-border)")};
   transition: all 0.2s ease;
+
+  @media (min-width: 769px) {
+    width: auto;
+    min-width: 104px;
+    padding: 0 0.8rem;
+    gap: 0.45rem;
+  }
 
   svg {
     width: 16px;
@@ -600,6 +753,7 @@ export const CompressingState = styled.div`
   align-items: center;
   gap: 8px;
   color: var(--color-text-secondary);
+  min-height: 32px;
 `;
 
 export const CompressingText = styled.span`
@@ -617,6 +771,14 @@ export const AssetContentWrapper = styled.div`
   padding-left: 0.8rem;
   border-left: 2px solid var(--color-border);
   animation: ${fadeIn} 0.2s ease-out;
+
+  @media (min-width: 769px) {
+    margin-top: 0.7rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-bg-surface);
+  }
 `;
 
 export const AssetMileageContainer = styled.div`
@@ -713,6 +875,10 @@ export const UnlinkModalButtons = styled.div`
 
 export const ItemsTableContainer = styled.div`
   margin-top: 0;
+
+  @media (min-width: 769px) {
+    margin-top: 0.1rem;
+  }
 `;
 
 export const ItemsContainer = styled.div`

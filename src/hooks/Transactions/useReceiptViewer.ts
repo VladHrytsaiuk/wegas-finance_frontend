@@ -4,14 +4,16 @@ interface UseReceiptViewerProps {
   imageUrls: string[];
   onClose?: () => void;
   onIndexChange?: (index: number) => void;
+  currentIndex?: number;
 }
 
 export const useReceiptViewer = ({
   imageUrls,
   onClose,
   onIndexChange,
+  currentIndex = 0,
 }: UseReceiptViewerProps) => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(currentIndex);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -22,6 +24,10 @@ export const useReceiptViewer = ({
   const validUrls = useMemo(() => imageUrls.filter((u) => u), [imageUrls]);
   const safeIndex =
     validUrls.length === 0 ? 0 : Math.min(index, validUrls.length - 1);
+
+  useEffect(() => {
+    setIndex(currentIndex);
+  }, [currentIndex]);
 
   // Reset functionality
   const handleReset = useCallback(() => {

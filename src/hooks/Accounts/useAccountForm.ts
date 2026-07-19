@@ -36,6 +36,7 @@ export interface AccountFormSubmitData {
   bank_name?: string;
   card_type?: string;
   card_number: string;
+  card_numbers: string[];
   payment_system: string;
   user_id?: string;
 }
@@ -57,6 +58,7 @@ type InitialFormState = {
   balance: string;
   color: string;
   cardNumber: string;
+  cardNumbers: string[];
   paymentSystem: string;
   goalId: string;
   storageTypeId: string;
@@ -79,6 +81,7 @@ function buildInitialFormState(
       balance: "",
       color: "#10b981",
       cardNumber: "",
+      cardNumbers: [],
       paymentSystem: "",
       goalId: "",
       storageTypeId: "",
@@ -117,6 +120,7 @@ function buildInitialFormState(
         : "",
     color: defaultValues.color || "#10b981",
     cardNumber: defaultValues.card_number || "",
+    cardNumbers: defaultValues.card_numbers || [],
     paymentSystem: defaultValues.payment_system || "",
     goalId: defaultValues.goal_id || "",
     storageTypeId: defaultValues.storage_type_id || "",
@@ -151,6 +155,7 @@ export const useAccountForm = ({
 
   const [name, setName] = useState(initialState.name);
   const [cardNumber, setCardNumber] = useState(initialState.cardNumber);
+  const [cardNumbers, setCardNumbers] = useState(initialState.cardNumbers);
   const [paymentSystem, setPaymentSystem] = useState(initialState.paymentSystem);
 
   const [balance, setBalance] = useState(initialState.balance);
@@ -206,6 +211,7 @@ export const useAccountForm = ({
       balance: balance.toString(),
       currency,
       cardNumber: type === "card" ? cardNumber : "",
+      cardNumbers: type === "card" ? cardNumbers : [],
       paymentSystem: type === "card" ? paymentSystem : "",
       color: type === "card" ? "" : color,
       ownerId,
@@ -408,6 +414,7 @@ export const useAccountForm = ({
       bank_name: type === "card" ? selectedSkin?.bankId : undefined,
       card_type: type === "card" ? selectedSkin?.designId : undefined,
       card_number: cardNumber,
+      card_numbers: cardNumbers,
       payment_system: paymentSystem,
       user_id: ownerId || undefined,
       id: defaultValues?.id,
@@ -431,6 +438,7 @@ export const useAccountForm = ({
       skinKey,
       name,
       cardNumber,
+      cardNumbers,
       paymentSystem,
       balance,
       currency,
@@ -452,6 +460,7 @@ export const useAccountForm = ({
       setSkinKey: handleSkinChange,
       setName,
       setCardNumber,
+      setCardNumbers,
       setPaymentSystem,
       setBalance,
       setCurrency,
