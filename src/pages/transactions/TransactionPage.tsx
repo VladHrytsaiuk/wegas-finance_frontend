@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
   HiArrowLeft,
@@ -18,8 +18,12 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import { TransactionDetailsSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
-import { getLinkedReceiptSourcesApi } from "../../services/apiTransactions";
+import {
+  getLinkedReceiptSourcesApi,
+  unlinkReceiptSourceApi,
+} from "../../services/apiTransactions";
 import { formatMoney } from "../../utils/helpers";
+import toast from "react-hot-toast";
 
 // Hook & Styles
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
@@ -52,12 +56,29 @@ function TransactionPage() {
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
   usePageTitle(t("legacy:transactionPage.header_title", "Деталі операції"));
 
   const { data: linkedReceiptSources = [] } = useQuery({
     queryKey: ["transaction", transactionId, "receipt-sources"],
     queryFn: () => getLinkedReceiptSourcesApi(transactionId!),
     enabled: Boolean(transactionId && transaction),
+  });
+
+  const unlinkReceiptMutation = useMutation({
+    mutationFn: (receiptSourceId: string) =>
+      unlinkReceiptSourceApi(transactionId!, receiptSourceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transaction", transactionId] });
+      queryClient.invalidateQueries({
+        queryKey: ["transaction", transactionId, "receipt-sources"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["inbox"] });
+      queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      toast.success("Чек відкріплено та повернуто до Inbox");
+    },
+    onError: () => toast.error("Не вдалося відкріпити чек"),
   });
 
   if (isLoading) {
@@ -229,7 +250,7 @@ function TransactionPage() {
           />
         </S.Card>
 
-        {receiptURL || (receiptDiscount && !hasItemizedReceiptDiscount) ? (
+        {receiptURL || (receiptDiscount && !hasItemizedReceiptDiscount) || linkedReceiptSources.length > 0 ? (
           <S.ReceiptMetaRow>
             {receiptURL ? (
               <S.ReceiptSourceCard>
@@ -254,7 +275,24 @@ function TransactionPage() {
                 <small>вже врахована в цінах</small>
               </S.ReceiptDiscountChip>
             ) : null}
+            {linkedReceiptSources.length > 0 ? (
+              <Modal.Open opens="unlink-receipt-source">
+                <Button variation="secondary" size="small">
+                  Відкріпити чек
+                </Button>
+              </Modal.Open>
+            ) : null}
           </S.ReceiptMetaRow>
+        ) : null}
+
+        {linkedReceiptSources[0] ? (
+          <Modal.Window name="unlink-receipt-source">
+            <ConfirmDelete
+              resourceName="цей чек"
+              onConfirm={() => unlinkReceiptMutation.mutate(linkedReceiptSources[0].id)}
+              disabled={unlinkReceiptMutation.isPending}
+            />
+          </Modal.Window>
         ) : null}
       </S.PageContainer>
 

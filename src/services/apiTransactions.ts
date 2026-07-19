@@ -126,6 +126,17 @@ export const getLinkedReceiptSourcesApi = async (
   return response.data;
 };
 
+export const unlinkReceiptSourceApi = async (
+  transactionId: string,
+  receiptSourceId: string,
+) => {
+  const response = await api.post(
+    `/transactions/${transactionId}/receipt-sources/unlink`,
+    { receipt_source_id: receiptSourceId },
+  );
+  return response.data;
+};
+
 export const uploadReceiptApi = async ({
   id,
   file,

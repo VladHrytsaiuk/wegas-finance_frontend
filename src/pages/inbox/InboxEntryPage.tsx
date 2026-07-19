@@ -1052,6 +1052,7 @@ function InboxEntryPage() {
               quantity: item.quantity,
               price_per_unit: item.price_per_unit,
               total_amount: item.total_amount,
+              category_id: item.category_id,
             })),
           }}
           onSuccess={async (response) => {
@@ -1062,7 +1063,10 @@ function InboxEntryPage() {
             }
 
             try {
-              await linkInboxTransactionApi(inboxId, transactionId);
+              await linkInboxTransactionApi(inboxId, transactionId, {
+                applyItems: false,
+                learnFromTransaction: true,
+              });
               queryClient.invalidateQueries({ queryKey: ["inbox"] });
               queryClient.invalidateQueries({ queryKey: ["inbox", inboxId] });
               queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });

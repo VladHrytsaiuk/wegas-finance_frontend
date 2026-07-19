@@ -168,11 +168,12 @@ export const selectInboxAccountApi = async (
 export const linkInboxTransactionApi = async (
   id: string,
   transactionId: string,
-  applyItems = true,
+  options: { applyItems?: boolean; learnFromTransaction?: boolean } = {},
 ): Promise<InboxEntry> => {
   const response = await api.post<InboxEntry>(`/inbox/${id}/link`, {
     transaction_id: transactionId,
-    apply_items: applyItems,
+    apply_items: options.applyItems ?? true,
+    ...(options.learnFromTransaction ? { learn_from_transaction: true } : {}),
   });
 
   return response.data;
