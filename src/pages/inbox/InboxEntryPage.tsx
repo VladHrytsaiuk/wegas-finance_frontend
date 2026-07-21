@@ -25,6 +25,8 @@ import {
   selectInboxAccountApi,
 } from "../../services/apiInbox";
 import { formatDate, formatMoney } from "../../utils/helpers";
+import { SmartIcon } from "../../utils/IconMap";
+import { BANK_SKINS } from "../../components/accounts/bankSkins";
 import * as PageStyles from "../transactions/TransactionPage.styles";
 import * as DetailStyles from "../../components/transactions/TransactionDetails.styles";
 import { inboxBadgeStyles } from "./inboxBadgeStyles";
@@ -40,6 +42,8 @@ const HeaderMain = styled(PageStyles.HeaderMain)`
 
 const HeaderTitle = styled(PageStyles.HeaderTitle)`
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 
   @media (max-width: 768px) {
     font-size: 1.2rem;
@@ -57,11 +61,41 @@ const BadgeRow = styled(PageStyles.HeaderMeta)`
   margin-top: 0;
 `;
 
-const Badge = styled(PageStyles.HeaderMetaChip)<{
+const Badge = styled(PageStyles.HeaderMetaChip) <{
   $tone?: "default" | "warning" | "success" | "attention";
   $emphasis?: boolean;
 }>`
   ${inboxBadgeStyles}
+`;
+
+const AccountHighlightBox = styled.div<{ $color: string; $hasImage?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  padding: 2px 0 2px 14px;
+  margin-left: 4px;
+  border-left: 2px solid var(--color-border);
+  color: var(--color-text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  .icon-box {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: ${(p) => (p.$hasImage ? "transparent" : `${p.$color}15`)};
+    color: ${(p) => p.$color};
+    flex-shrink: 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
 `;
 
 const Amount = styled.div`
@@ -492,17 +526,22 @@ const NoteBox = styled(DetailStyles.NoteBox)`
 `;
 
 const ItemsTable = styled(DetailStyles.ItemsTable)`
+  table-layout: fixed;
+
   th:nth-child(2),
   td:nth-child(2),
   th:nth-child(3),
   td:nth-child(3) {
     text-align: right;
     white-space: nowrap;
+    width: 25%;
   }
 
   td:first-child {
     font-weight: 600;
     color: var(--color-text-main);
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   @media (max-width: 640px) {
@@ -543,11 +582,11 @@ const SummaryRow = styled.div<{ $strong?: boolean; $discount?: boolean }>`
   span:last-child {
     font-weight: ${({ $strong }) => ($strong ? 900 : 700)};
     color: ${({ $strong, $discount }) =>
-      $discount
-        ? "var(--color-green-700)"
-        : $strong
-          ? "var(--color-brand-700)"
-          : "var(--color-text-main)"};
+    $discount
+      ? "var(--color-green-700)"
+      : $strong
+        ? "var(--color-brand-700)"
+        : "var(--color-text-main)"};
   }
 `;
 
@@ -715,7 +754,7 @@ function InboxEntryPage() {
   const paymentProvider = formatPaymentProvider(
     data.receipt_source?.payment_provider,
   );
-  const paymentMask = data.receipt_source?.payment_mask?.trim() || null;
+  const paymentMask = data.receipt_source?.payment_mask?.trim()?.slice(-5) || null;
   const showReceiptNote = shouldShowReceiptNote(data.note, title);
   const canCreateTransaction = data.status !== "linked";
   const recommendedAccount = accountCandidates.find(
@@ -725,33 +764,35 @@ function InboxEntryPage() {
     ? `${data.selected_account.name} · ${data.selected_account.currency}`
     : null;
 
+  let bankLogo: string | undefined;
+  if (data.selected_account) {
+    const skinKey =
+      data.selected_account.bank_name && data.selected_account.card_type
+        ? `${data.selected_account.bank_name}-${data.selected_account.card_type}`
+        : data.selected_account.icon;
+    const skin = BANK_SKINS[skinKey as string] || BANK_SKINS["default"];
+    if (skin.miniLogoFile?.startsWith("icon_") && data.selected_account.type === "card") {
+      bankLogo = skin.miniLogoFile;
+    }
+  }
+
+
   return (
-    <PageStyles.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
+    <>
       {isMobile ? (
         <MobilePageHeader title="Деталі чека" />
-      ) : (
-        <PageStyles.BackButton as={Link} to="/inbox">
-          <HiArrowLeft />
-          До Inbox
-        </PageStyles.BackButton>
-      )}
-
-      {isMobile ? (
-        <PageStyles.MobileHeaderSpacer>
-          <PageStyles.MobileMeta>
-            <PageStyles.HeaderMetaChip>
-              {sourceLabelMap[data.source_type] ?? data.source_type}
-            </PageStyles.HeaderMetaChip>
-            {items.length > 0 ? (
-              <PageStyles.HeaderMetaChip>{items.length} позицій</PageStyles.HeaderMetaChip>
-            ) : null}
-          </PageStyles.MobileMeta>
-        </PageStyles.MobileHeaderSpacer>
       ) : null}
+      <PageStyles.PageContainer style={{ paddingBottom: isMobile ? "120px" : undefined }}>
+        {!isMobile ? (
+          <PageStyles.BackButton as={Link} to="/inbox">
+            <HiArrowLeft />
+            До Inbox
+          </PageStyles.BackButton>
+        ) : null}
 
-      <PrimaryCard>
-        <Header>
-          <HeaderMain>
+        <PrimaryCard>
+          <Header>
+            <HeaderMain>
             <HeaderTitle>{title}</HeaderTitle>
             <HeaderSubtitle>Чек очікує підтвердження та прив&apos;язки.</HeaderSubtitle>
             <BadgeRow>
@@ -760,8 +801,18 @@ function InboxEntryPage() {
               </Badge>
               <Badge>{sourceLabelMap[data.source_type] ?? data.source_type}</Badge>
               {items.length > 0 ? <Badge>{items.length} позицій</Badge> : null}
-              {selectedAccountLabel ? (
-                <Badge $tone="success">Рахунок: {selectedAccountLabel}</Badge>
+              {selectedAccountLabel && data.selected_account ? (
+                <AccountHighlightBox $color={data.selected_account.color || "var(--color-brand-600)"} $hasImage={!!bankLogo}>
+                  <div className="icon-box">
+                    <SmartIcon
+                      logo={bankLogo}
+                      iconName={data.selected_account.icon || "HiCreditCard"}
+                      size={bankLogo ? 28 : 16}
+                      color={data.selected_account.color || "var(--color-brand-600)"}
+                    />
+                  </div>
+                  {selectedAccountLabel}
+                </AccountHighlightBox>
               ) : null}
             </BadgeRow>
           </HeaderMain>
@@ -769,10 +820,10 @@ function InboxEntryPage() {
           <Amount>
             {data.total != null
               ? formatMoney(
-                  data.total,
-                  data.currency || data.receipt_source?.currency || "UAH",
-                  i18n.language,
-                )
+                data.total,
+                data.currency || data.receipt_source?.currency || "UAH",
+                i18n.language,
+              )
               : "—"}
           </Amount>
         </Header>
@@ -893,8 +944,8 @@ function InboxEntryPage() {
               <RowContent>
                 <span className="label">Категорія</span>
               </RowContent>
-                <RowValue>{data.receipt_source?.category?.name || "Не визначено"}</RowValue>
-              </MetaRow>
+              <RowValue>{data.receipt_source?.category?.name || "Не визначено"}</RowValue>
+            </MetaRow>
           </MetaList>
         </SectionCard>
 
@@ -1086,6 +1137,7 @@ function InboxEntryPage() {
         />
       ) : null}
     </PageStyles.PageContainer>
+    </>
   );
 }
 

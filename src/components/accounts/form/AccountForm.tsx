@@ -108,67 +108,67 @@ const DisabledWrapper = styled.div<{ $disabled?: boolean }>`
   `}
 `;
 
+const CardMasksSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-page);
+
+  .hint {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+`;
+
 const CardMasksInputRow = styled.div`
   display: flex;
   gap: 0.5rem;
 
   button {
-    width: 42px;
-    flex: 0 0 42px;
-    border: 1px solid var(--color-brand-600);
-    border-radius: 8px;
-    background: var(--color-brand-500);
+    width: 36px;
+    flex: 0 0 36px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--color-brand-600);
     color: white;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-
-    &:hover:not(:disabled) {
-      background: var(--color-brand-600);
-    }
-
-    &:disabled {
-      background: var(--color-border);
-      border-color: var(--color-border);
-      color: var(--color-text-tertiary);
-      cursor: not-allowed;
-    }
   }
+`;
+
+const CardMaskList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
 `;
 
 const CardMask = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.5rem 0.35rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  gap: 0.35rem;
+  padding: 0.34rem 0.42rem 0.34rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand-500) 24%, var(--color-border));
+  border-radius: 999px;
   background: var(--color-bg-surface);
   color: var(--color-text-main);
-  font-size: 0.85rem;
-  font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  font-size: 0.78rem;
+  font-weight: 700;
 
   button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
     padding: 0;
     border: 0;
-    border-radius: 50%;
-    background: var(--color-bg-page);
+    border-radius: 999px;
+    background: transparent;
     color: var(--color-text-secondary);
     cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-      background: var(--color-red-100);
-      color: var(--color-red-600);
-    }
   }
 `;
 
@@ -199,60 +199,6 @@ const handleTabKey = (e: React.KeyboardEvent) => {
   }
 };
 
-function AddCardMaskContent({
-  newCardMask,
-  setNewCardMask,
-  onAdd,
-  disabled,
-  onCloseModal
-}: {
-  newCardMask: string;
-  setNewCardMask: (v: string) => void;
-  onAdd: () => void;
-  disabled: boolean;
-  onCloseModal?: () => void;
-}) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <div>
-        <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 0.5rem 0", color: "var(--color-text-main)" }}>Додаткові картки</h3>
-        <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", margin: 0, lineHeight: 1.4 }}>
-          Додайте останні 4 цифри інших фізичних карток або токенів Apple/Google Pay, які прив'язані до цього рахунку.
-        </p>
-      </div>
-      <CardMasksInputRow>
-        <Input
-          value={newCardMask}
-          onChange={(e) => setNewCardMask(e.target.value.replace(/\D/g, "").slice(0, 4))}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (!disabled) {
-                onAdd();
-                onCloseModal?.();
-              }
-            }
-          }}
-          placeholder="Наприклад, 5678"
-          maxLength={4}
-          autoFocus
-        />
-        <button
-          type="button"
-          onClick={() => {
-            onAdd();
-            onCloseModal?.();
-          }}
-          title="Додати номер"
-          disabled={disabled}
-        >
-          <HiPlus size={20} />
-        </button>
-      </CardMasksInputRow>
-    </div>
-  );
-}
-
 export function AccountForm(props: AccountFormProps) {
   const formKey = props.defaultValues?.id ?? "new-account";
   return <AccountFormContent key={formKey} {...props} />;
@@ -263,7 +209,7 @@ export function AccountFormContent(props: AccountFormProps) {
   const isMobile = useIsMobile(1001);
   const [mobileStep, setMobileStep] = useState(1);
   const [newCardMask, setNewCardMask] = useState("");
-  const { users, isLoading, onCloseModal, defaultValues } = props;
+  const { users, isLoading, onClose, onCloseModal, defaultValues } = props;
   const { state, actions, formRef, initialFocusRef, skinBtnRef } =
     useAccountForm(props);
   const { setIsDirty } = useModal();
@@ -305,7 +251,7 @@ export function AccountFormContent(props: AccountFormProps) {
     }
 
     const syntheticSubmitEvent = {
-      preventDefault: () => {},
+      preventDefault: () => { },
     } as React.FormEvent;
 
     actions.handleSubmit(syntheticSubmitEvent);
@@ -322,7 +268,7 @@ export function AccountFormContent(props: AccountFormProps) {
   const ownerName = state.ownerId
     ? users.find((u) => u.id === state.ownerId)?.name
     : users.find((u) => u.id === currentUserId)?.name ||
-      t("accounts:accountForm.owner_me");
+    t("accounts:accountForm.owner_me");
 
   const selectedPaymentSystem = PAYMENT_SYSTEMS.find(
     (ps) => ps.value === state.paymentSystem,
@@ -609,15 +555,15 @@ export function AccountFormContent(props: AccountFormProps) {
         </div>
       </S.LeftColumn>
 
-      <S.Form 
-        ref={formRef} 
+      <S.Form
+        ref={formRef}
         onSubmit={(e) => {
           e.preventDefault();
           if (!isMobile || mobileStep === totalSteps) {
             actions.handleSubmit(e);
           }
-        }} 
-        noValidate 
+        }}
+        noValidate
         style={{ padding: "2px" }}
       >
         {isMobile && (
@@ -650,223 +596,195 @@ export function AccountFormContent(props: AccountFormProps) {
         )}
 
         <S.StepWrapper $step={1} $currentStep={mobileStep} $isMobile={isMobile}>
-        {/* TYPE SELECTOR */}
-        <DisabledWrapper $disabled={isSynced}>
-          <div style={{ marginBottom: "0.3rem" }}>
-            <label className="label">
-              <LabelWithLock
-                label={t("accounts:accountForm.label_account_type")}
-                isLocked={isSynced}
-              />
-            </label>
-            {isMobile ? (
-              <BaseSelect
-                triggerLabel={
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {selectedTypeOption?.icon} {selectedTypeOption?.label}
-                  </div>
-                }
-              >
-                {typeOptions.map((opt) => (
-                  <S.SelectItem
-                    key={opt.value}
-                    type="button"
-                    $isSelected={state.type === opt.value}
-                    onClick={() => handleTypeClick(opt.value as "card" | "cash" | "savings")}
-                  >
-                    {opt.icon} {opt.label}
-                  </S.SelectItem>
-                ))}
-              </BaseSelect>
-            ) : (
-              <S.SegmentControl>
-                <S.SegmentButton
-                  as="button"
-                  type="button"
-                  ref={initialFocusRef}
-                  $active={state.type === "card"}
-                  onClick={() => handleTypeClick("card")}
-                  disabled={isSynced}
-                >
-                  <HiCreditCard style={{ marginRight: 6 }} />{" "}
-                  {t("accounts:accountForm.type_card")}
-                </S.SegmentButton>
-                <S.SegmentButton
-                  as="button"
-                  type="button"
-                  $active={state.type === "cash"}
-                  onClick={() => handleTypeClick("cash")}
-                  disabled={isSynced}
-                >
-                  <HiOutlineBanknotes style={{ marginRight: 6 }} />{" "}
-                  {t("accounts:accountForm.type_cash")}
-                </S.SegmentButton>
-                <S.SegmentButton
-                  as="button"
-                  type="button"
-                  $active={state.type === "savings"}
-                  onClick={() => handleTypeClick("savings")}
-                  disabled={isSynced}
-                >
-                  <HiCurrencyDollar style={{ marginRight: 6 }} />{" "}
-                  {t("accounts:accountForm.type_savings")}
-                </S.SegmentButton>
-              </S.SegmentControl>
-            )}
-          </div>
-        </DisabledWrapper>
-
-        {isMobile && state.type === "card" && (
-          <div style={{ marginTop: "0.8rem" }}>
-            <Modal>
-              <Modal.Open opens="skin-selector-modal-mobile">
-                <S.ChangeSkinBtn
-                  ref={skinBtnRef}
-                  type="button"
-                  style={{ width: "100%", justifyContent: "center" }}
-                  onClick={() => {
-                    const currentSkin = BANK_SKINS[state.skinKey];
-                    const targetTab = currentSkin
-                      ? currentSkin.bankId
-                      : "monobank";
-                    actions.setActiveBankTab(targetTab);
-                  }}
-                >
-                  <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
-                </S.ChangeSkinBtn>
-              </Modal.Open>
-              <Modal.Window
-                name="skin-selector-modal-mobile"
-                padding="0"
-                mobileBottomSheet
-              >
-                <SkinSelector
-                  activeBankTab={state.activeBankTab}
-                  setActiveBankTab={actions.setActiveBankTab}
-                  skinKey={state.skinKey}
-                  setSkinKey={actions.setSkinKey}
+          {/* TYPE SELECTOR */}
+          <DisabledWrapper $disabled={isSynced}>
+            <div style={{ marginBottom: "0.3rem" }}>
+              <label className="label">
+                <LabelWithLock
+                  label={t("accounts:accountForm.label_account_type")}
+                  isLocked={isSynced}
                 />
-              </Modal.Window>
-            </Modal>
-          </div>
-        )}
+              </label>
+              {isMobile ? (
+                <BaseSelect
+                  triggerLabel={
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {selectedTypeOption?.icon} {selectedTypeOption?.label}
+                    </div>
+                  }
+                >
+                  {typeOptions.map((opt) => (
+                    <S.SelectItem
+                      key={opt.value}
+                      type="button"
+                      $isSelected={state.type === opt.value}
+                      onClick={() => handleTypeClick(opt.value as "card" | "cash" | "savings")}
+                    >
+                      {opt.icon} {opt.label}
+                    </S.SelectItem>
+                  ))}
+                </BaseSelect>
+              ) : (
+                <S.SegmentControl>
+                  <S.SegmentButton
+                    as="button"
+                    type="button"
+                    ref={initialFocusRef}
+                    $active={state.type === "card"}
+                    onClick={() => handleTypeClick("card")}
+                    disabled={isSynced}
+                  >
+                    <HiCreditCard style={{ marginRight: 6 }} />{" "}
+                    {t("accounts:accountForm.type_card")}
+                  </S.SegmentButton>
+                  <S.SegmentButton
+                    as="button"
+                    type="button"
+                    $active={state.type === "cash"}
+                    onClick={() => handleTypeClick("cash")}
+                    disabled={isSynced}
+                  >
+                    <HiOutlineBanknotes style={{ marginRight: 6 }} />{" "}
+                    {t("accounts:accountForm.type_cash")}
+                  </S.SegmentButton>
+                  <S.SegmentButton
+                    as="button"
+                    type="button"
+                    $active={state.type === "savings"}
+                    onClick={() => handleTypeClick("savings")}
+                    disabled={isSynced}
+                  >
+                    <HiCurrencyDollar style={{ marginRight: 6 }} />{" "}
+                    {t("accounts:accountForm.type_savings")}
+                  </S.SegmentButton>
+                </S.SegmentControl>
+              )}
+            </div>
+          </DisabledWrapper>
+
+          {isMobile && state.type === "card" && (
+            <div style={{ marginTop: "0.8rem" }}>
+              <Modal>
+                <Modal.Open opens="skin-selector-modal-mobile">
+                  <S.ChangeSkinBtn
+                    ref={skinBtnRef}
+                    type="button"
+                    style={{ width: "100%", justifyContent: "center" }}
+                    onClick={() => {
+                      const currentSkin = BANK_SKINS[state.skinKey];
+                      const targetTab = currentSkin
+                        ? currentSkin.bankId
+                        : "monobank";
+                      actions.setActiveBankTab(targetTab);
+                    }}
+                  >
+                    <HiOutlineSwatch /> {t("accounts:accountForm.button_change_skin")}
+                  </S.ChangeSkinBtn>
+                </Modal.Open>
+                <Modal.Window
+                  name="skin-selector-modal-mobile"
+                  padding="0"
+                  mobileBottomSheet
+                >
+                  <SkinSelector
+                    activeBankTab={state.activeBankTab}
+                    setActiveBankTab={actions.setActiveBankTab}
+                    skinKey={state.skinKey}
+                    setSkinKey={actions.setSkinKey}
+                  />
+                </Modal.Window>
+              </Modal>
+            </div>
+          )}
 
         </S.StepWrapper>
 
         <S.StepWrapper $step={2} $currentStep={mobileStep} $isMobile={isMobile}>
-        {/* --- NAME & CURRENCY --- */}
-        <S.Row>
-          {/* NAME */}
-          <div style={{ flex: 1 }}>
-            <label className="label">{t("accounts:accountForm.label_name")}</label>
-            <Input
-              value={state.name}
-              onChange={(e) => {
-                actions.setName(e.target.value);
-                actions.clearError("name");
-              }}
-              placeholder={
-                state.type === "card"
-                  ? t("accounts:accountForm.placeholder_name_card")
-                  : t("accounts:accountForm.placeholder_name_cash")
-              }
-              $hasError={!!state.errors.name}
-            />
-            {state.errors.name && (
-              <S.ErrorText>{state.errors.name}</S.ErrorText>
-            )}
-          </div>
-
-          {/* CURRENCY */}
-          <div style={{ flex: "0 0 130px" }}>
-            <label className="label">
-              <LabelWithLock
-                label={t("accounts:accountForm.label_currency")}
-                isLocked={isSynced}
-              />
-            </label>
-            <DisabledWrapper $disabled={isSynced}>
-              <BaseSelect
-                triggerLabel={
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    {selectedCurrencyOption?.icon}{" "}
-                    {selectedCurrencyOption?.label}
-                  </div>
-                }
-              >
-                {currencyOptions.map((opt) => (
-                  <S.SelectItem
-                    key={opt.value}
-                    type="button"
-                    $isSelected={opt.value === state.currency}
-                    onClick={() => actions.setCurrency(opt.value)}
-                  >
-                    {opt.icon} {opt.label}
-                  </S.SelectItem>
-                ))}
-              </BaseSelect>
-            </DisabledWrapper>
-          </div>
-        </S.Row>
-
-        <div style={{ marginBottom: "1rem" }}>
-          <label className="label">{t("accounts:accountForm.label_owner")}</label>
-          <BaseSelect
-            placeholder={t("accounts:accountForm.owner_placeholder")}
-            triggerLabel={
-              selectedOwnerOption ? (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  {selectedOwnerOption.icon} {selectedOwnerOption.label}
-                </div>
-              ) : null
-            }
-          >
-            {ownerOptions.map((opt) => (
-              <S.SelectItem
-                key={opt.value}
-                type="button"
-                $isSelected={opt.value === state.ownerId}
-                onClick={() => actions.setOwnerId(opt.value)}
-              >
-                {opt.icon} {opt.label}
-              </S.SelectItem>
-            ))}
-          </BaseSelect>
-        </div>
-
-        {state.type === "cash" && (
+          {/* --- NAME & CURRENCY --- */}
           <S.Row>
+            {/* NAME */}
             <div style={{ flex: 1 }}>
-              <label className="label">{t("accounts:accountForm.label_color")}</label>
-              <ColorPicker
-                color={state.color}
-                onColorChange={actions.setColor}
+              <label className="label">{t("accounts:accountForm.label_name")}</label>
+              <Input
+                value={state.name}
+                onChange={(e) => {
+                  actions.setName(e.target.value);
+                  actions.clearError("name");
+                }}
+                placeholder={
+                  state.type === "card"
+                    ? t("accounts:accountForm.placeholder_name_card")
+                    : t("accounts:accountForm.placeholder_name_cash")
+                }
+                $hasError={!!state.errors.name}
               />
-            </div>
-          </S.Row>
-        )}
-
-        {state.type === "savings" && (
-          <>
-            <div style={{ marginBottom: "1rem" }}>
-              <label className="label">
-                {t("accounts:accountForm.label_storage_type")}
-              </label>
-              <StorageTypeSelect
-                types={state.storageTypes}
-                value={state.storageTypeId}
-                onChange={actions.setStorageTypeId}
-                onCreate={actions.handleCreateStorageType}
-              />
-              {state.errors.storageType && (
-                <S.ErrorText>{state.errors.storageType}</S.ErrorText>
+              {state.errors.name && (
+                <S.ErrorText>{state.errors.name}</S.ErrorText>
               )}
             </div>
 
+            {/* CURRENCY */}
+            <div style={{ flex: "0 0 130px" }}>
+              <label className="label">
+                <LabelWithLock
+                  label={t("accounts:accountForm.label_currency")}
+                  isLocked={isSynced}
+                />
+              </label>
+              <DisabledWrapper $disabled={isSynced}>
+                <BaseSelect
+                  triggerLabel={
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
+                      {selectedCurrencyOption?.icon}{" "}
+                      {selectedCurrencyOption?.label}
+                    </div>
+                  }
+                >
+                  {currencyOptions.map((opt) => (
+                    <S.SelectItem
+                      key={opt.value}
+                      type="button"
+                      $isSelected={opt.value === state.currency}
+                      onClick={() => actions.setCurrency(opt.value)}
+                    >
+                      {opt.icon} {opt.label}
+                    </S.SelectItem>
+                  ))}
+                </BaseSelect>
+              </DisabledWrapper>
+            </div>
+          </S.Row>
+
+          <div style={{ marginBottom: "1rem" }}>
+            <label className="label">{t("accounts:accountForm.label_owner")}</label>
+            <BaseSelect
+              placeholder={t("accounts:accountForm.owner_placeholder")}
+              triggerLabel={
+                selectedOwnerOption ? (
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    {selectedOwnerOption.icon} {selectedOwnerOption.label}
+                  </div>
+                ) : null
+              }
+            >
+              {ownerOptions.map((opt) => (
+                <S.SelectItem
+                  key={opt.value}
+                  type="button"
+                  $isSelected={opt.value === state.ownerId}
+                  onClick={() => actions.setOwnerId(opt.value)}
+                >
+                  {opt.icon} {opt.label}
+                </S.SelectItem>
+              ))}
+            </BaseSelect>
+          </div>
+
+          {state.type === "cash" && (
             <S.Row>
               <div style={{ flex: 1 }}>
                 <label className="label">{t("accounts:accountForm.label_color")}</label>
@@ -876,60 +794,237 @@ export function AccountFormContent(props: AccountFormProps) {
                 />
               </div>
             </S.Row>
+          )}
 
-            <div style={{ marginBottom: "1rem" }}>
-              <label className="label">
-                {t("accounts:accountForm.label_goal_optional")}
-              </label>
-              <BaseSelect
-                placeholder={t("accounts:accountForm.goal_placeholder")}
-                triggerLabel={
-                  selectedGoal ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <SmartIcon iconName={selectedGoal.icon} color={selectedGoal.color} />
-                      <span>{selectedGoal.name}</span>
-                    </div>
-                  ) : (
-                    <span style={{ opacity: 0.6 }}>
-                      {t("accounts:accountForm.goal_none")}
-                    </span>
-                  )
-                }
-              >
-                <S.SelectItem
-                  type="button"
-                  $isSelected={state.goalId === ""}
-                  onClick={() => actions.setGoalId("")}
+          {state.type === "savings" && (
+            <>
+              <div style={{ marginBottom: "1rem" }}>
+                <label className="label">
+                  {t("accounts:accountForm.label_storage_type")}
+                </label>
+                <StorageTypeSelect
+                  types={state.storageTypes}
+                  value={state.storageTypeId}
+                  onChange={actions.setStorageTypeId}
+                  onCreate={actions.handleCreateStorageType}
+                />
+                {state.errors.storageType && (
+                  <S.ErrorText>{state.errors.storageType}</S.ErrorText>
+                )}
+              </div>
+
+              <S.Row>
+                <div style={{ flex: 1 }}>
+                  <label className="label">{t("accounts:accountForm.label_color")}</label>
+                  <ColorPicker
+                    color={state.color}
+                    onColorChange={actions.setColor}
+                  />
+                </div>
+              </S.Row>
+
+              <div style={{ marginBottom: "1rem" }}>
+                <label className="label">
+                  {t("accounts:accountForm.label_goal_optional")}
+                </label>
+                <BaseSelect
+                  placeholder={t("accounts:accountForm.goal_placeholder")}
+                  triggerLabel={
+                    selectedGoal ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <SmartIcon iconName={selectedGoal.icon} color={selectedGoal.color} />
+                        <span>{selectedGoal.name}</span>
+                      </div>
+                    ) : (
+                      <span style={{ opacity: 0.6 }}>
+                        {t("accounts:accountForm.goal_none")}
+                      </span>
+                    )
+                  }
                 >
-                  <HiNoSymbol /> {t("accounts:accountForm.goal_none")}
-                </S.SelectItem>
-                {state.goals.map((goal: Goal) => (
                   <S.SelectItem
-                    key={goal.id}
                     type="button"
-                    $isSelected={goal.id === state.goalId}
-                    onClick={() => actions.setGoalId(goal.id)}
+                    $isSelected={state.goalId === ""}
+                    onClick={() => actions.setGoalId("")}
                   >
-                    <SmartIcon iconName={goal.icon} color={goal.color} />
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <span>{goal.name}</span>
-                      <small style={{ fontSize: "0.7rem", opacity: 0.6 }}>
-                        {formatMoney(goal.target_amount, goal.currency)}
-                      </small>
-                    </div>
+                    <HiNoSymbol /> {t("accounts:accountForm.goal_none")}
                   </S.SelectItem>
-                ))}
-              </BaseSelect>
-            </div>
-          </>
-        )}
+                  {state.goals.map((goal: Goal) => (
+                    <S.SelectItem
+                      key={goal.id}
+                      type="button"
+                      $isSelected={goal.id === state.goalId}
+                      onClick={() => actions.setGoalId(goal.id)}
+                    >
+                      <SmartIcon iconName={goal.icon} color={goal.color} />
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span>{goal.name}</span>
+                        <small style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+                          {formatMoney(goal.target_amount, goal.currency)}
+                        </small>
+                      </div>
+                    </S.SelectItem>
+                  ))}
+                </BaseSelect>
+              </div>
+            </>
+          )}
         </S.StepWrapper>
 
         <S.StepWrapper $step={3} $currentStep={mobileStep} $isMobile={isMobile}>
-        {state.type === "card" && (
-          <>
+          {state.type === "card" && (
+            <>
+              <S.Row>
+                <div style={{ flex: 1 }}>
+                  <label className="label">
+                    <LabelWithLock
+                      label={
+                        state.isEditing
+                          ? t("accounts:accountForm.label_balance_adjust")
+                          : t("accounts:accountForm.label_balance_initial")
+                      }
+                      isLocked={isSynced}
+                    />
+                  </label>
+                  <Input
+                    type="number"
+                    value={state.balance}
+                    onChange={(e) => {
+                      actions.setBalance(e.target.value);
+                      actions.clearError("balance");
+                    }}
+                    placeholder="0.00"
+                    $hasError={!!state.errors.balance}
+                    disabled={isSynced}
+                    style={isSynced ? { opacity: 0.7, cursor: "not-allowed" } : {}}
+                  />
+                  {state.errors.balance && (
+                    <S.ErrorText>{state.errors.balance}</S.ErrorText>
+                  )}
+                </div>
+              </S.Row>
+
+              <S.Row>
+                <div style={{ flex: 1 }}>
+                  <label
+                    className="label"
+                    style={isMobile ? { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "0.75rem" } : undefined}
+                    title={t("accounts:accountForm.label_card_number")}
+                  >
+                    {t("accounts:accountForm.label_card_number")}
+                  </label>
+                  <Input
+                    value={state.cardNumber}
+                    onChange={(e) => {
+                      const nextCardNumber = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      actions.setCardNumbers([
+                        ...state.cardNumbers.filter((mask) => mask !== state.cardNumber),
+                        ...(nextCardNumber.length === 4 ? [nextCardNumber] : []),
+                      ]);
+                      actions.setCardNumber(nextCardNumber);
+                      actions.clearError("cardNumber");
+                    }}
+                    placeholder="1234"
+                    maxLength={4}
+                    $hasError={!!state.errors.cardNumber}
+                  />
+                  {state.errors.cardNumber && (
+                    <S.ErrorText>{state.errors.cardNumber}</S.ErrorText>
+                  )}
+                </div>
+
+                <div style={{ flex: "0 0 160px" }}>
+                  <label className="label">
+                    {t("accounts:accountForm.label_payment_system")}
+                  </label>
+                  <BaseSelect
+                    triggerLabel={
+                      selectedPaymentSystem ? (
+                        <div
+                          style={{ display: "flex", alignItems: "center", gap: 8 }}
+                        >
+                          <img
+                            src={`/banks/${selectedPaymentSystem.value}.svg`}
+                            alt={selectedPaymentSystem.label}
+                            style={{ height: "18px", width: "auto" }}
+                          />
+                          <span>{selectedPaymentSystem.label}</span>
+                        </div>
+                      ) : (
+                        <span style={{ opacity: 0.6 }}>Auto</span>
+                      )
+                    }
+                  >
+                    {PAYMENT_SYSTEMS.map((sys) => (
+                      <S.SelectItem
+                        key={sys.value}
+                        type="button"
+                        $isSelected={state.paymentSystem === sys.value}
+                        onClick={() =>
+                          actions.setPaymentSystem(
+                            state.paymentSystem === sys.value ? "" : sys.value,
+                          )
+                        }
+                      >
+                        <img
+                          src={`/banks/${sys.value}.svg`}
+                          alt={sys.label}
+                          style={{ height: "20px", width: "auto" }}
+                        />
+                        {sys.label}
+                      </S.SelectItem>
+                    ))}
+                  </BaseSelect>
+                </div>
+              </S.Row>
+
+              <CardMasksSection>
+                <label className="label">Додаткові 4 цифри для оплати телефоном</label>
+                <p className="hint">
+                  Додайте маски Apple Pay або Google Pay, якщо вони відрізняються від номера фізичної картки.
+                </p>
+                <CardMasksInputRow>
+                  <Input
+                    value={newCardMask}
+                    onChange={(e) => setNewCardMask(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addCardMask();
+                      }
+                    }}
+                    placeholder="Наприклад, 5678"
+                    maxLength={4}
+                  />
+                  <button type="button" onClick={addCardMask} title="Додати номер">
+                    <HiPlus />
+                  </button>
+                </CardMasksInputRow>
+                {additionalCardMasks.length > 0 ? (
+                  <CardMaskList>
+                    {additionalCardMasks.map((mask) => (
+                      <CardMask key={mask}>
+                        •••• {mask}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            actions.setCardNumbers(state.cardNumbers.filter((item) => item !== mask))
+                          }
+                          title="Прибрати номер"
+                        >
+                          <HiXMark />
+                        </button>
+                      </CardMask>
+                    ))}
+                  </CardMaskList>
+                ) : null}
+              </CardMasksSection>
+            </>
+          )}
+
+          {(state.type === "cash" || state.type === "savings") && (
             <S.Row>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, position: "relative" }}>
                 <label className="label">
                   <LabelWithLock
                     label={
@@ -957,167 +1052,7 @@ export function AccountFormContent(props: AccountFormProps) {
                 )}
               </div>
             </S.Row>
-
-            <S.Row style={{ alignItems: "flex-start" }}>
-              <div style={{ flex: 1 }}>
-                <label
-                  className="label"
-                  style={isMobile ? { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "0.75rem" } : undefined}
-                  title={t("accounts:accountForm.label_card_number")}
-                >
-                  {t("accounts:accountForm.label_card_number")}
-                </label>
-                <Input
-                  value={state.cardNumber}
-                  onChange={(e) => {
-                    const nextCardNumber = e.target.value.replace(/\D/g, "").slice(0, 4);
-                    actions.setCardNumbers([
-                      ...state.cardNumbers.filter((mask) => mask !== state.cardNumber),
-                      ...(nextCardNumber.length === 4 ? [nextCardNumber] : []),
-                    ]);
-                    actions.setCardNumber(nextCardNumber);
-                    actions.clearError("cardNumber");
-                  }}
-                  placeholder="1234"
-                  maxLength={4}
-                  $hasError={!!state.errors.cardNumber}
-                />
-                {state.errors.cardNumber && (
-                  <S.ErrorText>{state.errors.cardNumber}</S.ErrorText>
-                )}
-
-                <div style={{ marginTop: "0.5rem", display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
-                  {additionalCardMasks.map((mask) => (
-                    <CardMask key={mask}>
-                      •••• {mask}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          actions.setCardNumbers(state.cardNumbers.filter((item) => item !== mask))
-                        }
-                        title="Прибрати номер"
-                      >
-                        <HiXMark size={14} />
-                      </button>
-                    </CardMask>
-                  ))}
-
-                  <Modal>
-                    <Modal.Open opens="add-card-mask-modal">
-                      <button
-                        type="button"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.3rem",
-                          padding: "0.35rem 0.5rem",
-                          border: "1px dashed var(--color-brand-400)",
-                          borderRadius: "8px",
-                          background: "transparent",
-                          color: "var(--color-brand-600)",
-                          fontSize: "0.75rem",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-brand-50)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        <HiPlus /> {additionalCardMasks.length > 0 ? "Додати ще" : "Apple Pay / NFC"}
-                      </button>
-                    </Modal.Open>
-                    <Modal.Window name="add-card-mask-modal" padding="1.5rem" mobileBottomSheet>
-                      <AddCardMaskContent
-                        newCardMask={newCardMask}
-                        setNewCardMask={setNewCardMask}
-                        onAdd={addCardMask}
-                        disabled={newCardMask.length !== 4 || state.cardNumbers.includes(newCardMask) || newCardMask === state.cardNumber}
-                      />
-                    </Modal.Window>
-                  </Modal>
-                </div>
-              </div>
-
-              <div style={{ flex: "0 0 160px" }}>
-                <label className="label">
-                  {t("accounts:accountForm.label_payment_system")}
-                </label>
-                <BaseSelect
-                  triggerLabel={
-                    selectedPaymentSystem ? (
-                      <div
-                        style={{ display: "flex", alignItems: "center", gap: 8 }}
-                      >
-                        <img
-                          src={`/banks/${selectedPaymentSystem.value}.svg`}
-                          alt={selectedPaymentSystem.label}
-                          style={{ height: "18px", width: "auto" }}
-                        />
-                        <span>{selectedPaymentSystem.label}</span>
-                      </div>
-                    ) : (
-                      <span style={{ opacity: 0.6 }}>Auto</span>
-                    )
-                  }
-                >
-                  {PAYMENT_SYSTEMS.map((sys) => (
-                    <S.SelectItem
-                      key={sys.value}
-                      type="button"
-                      $isSelected={state.paymentSystem === sys.value}
-                      onClick={() =>
-                        actions.setPaymentSystem(
-                          state.paymentSystem === sys.value ? "" : sys.value,
-                        )
-                      }
-                    >
-                      <img
-                        src={`/banks/${sys.value}.svg`}
-                        alt={sys.label}
-                        style={{ height: "20px", width: "auto" }}
-                      />
-                      {sys.label}
-                    </S.SelectItem>
-                  ))}
-                </BaseSelect>
-              </div>
-            </S.Row>
-
-
-          </>
-        )}
-
-        {(state.type === "cash" || state.type === "savings") && (
-          <S.Row>
-            <div style={{ flex: 1, position: "relative" }}>
-              <label className="label">
-                <LabelWithLock
-                  label={
-                    state.isEditing
-                      ? t("accounts:accountForm.label_balance_adjust")
-                      : t("accounts:accountForm.label_balance_initial")
-                  }
-                  isLocked={isSynced}
-                />
-              </label>
-              <Input
-                type="number"
-                value={state.balance}
-                onChange={(e) => {
-                  actions.setBalance(e.target.value);
-                  actions.clearError("balance");
-                }}
-                placeholder="0.00"
-                $hasError={!!state.errors.balance}
-                disabled={isSynced}
-                style={isSynced ? { opacity: 0.7, cursor: "not-allowed" } : {}}
-              />
-              {state.errors.balance && (
-                <S.ErrorText>{state.errors.balance}</S.ErrorText>
-              )}
-            </div>
-          </S.Row>
-        )}
+          )}
 
         </S.StepWrapper>
 
@@ -1183,7 +1118,7 @@ export function AccountFormContent(props: AccountFormProps) {
         )}
       </S.Form>
 
-      
+
     </S.FormContainer>
   );
 }

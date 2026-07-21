@@ -907,6 +907,8 @@ export const ItemsHeader = styled.div`
 
   @media (max-width: 768px) {
     padding: 0.85rem 0.95rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 `;
 
@@ -914,6 +916,7 @@ export const ItemsActions = styled.div`
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  flex-wrap: wrap;
 
   @media (max-width: 640px) {
     gap: 0.3rem;
@@ -921,6 +924,7 @@ export const ItemsActions = styled.div`
     button {
       padding-inline: 0.5rem;
       font-size: 0.75rem;
+      flex: 1;
     }
   }
 `;

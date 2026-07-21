@@ -398,10 +398,10 @@ function Inbox() {
                     <Amount>
                       {entry.total != null
                         ? formatMoney(
-                            entry.total,
-                            entry.currency || entry.receipt_source?.currency || "UAH",
-                            i18n.language,
-                          )
+                          entry.total,
+                          entry.currency || entry.receipt_source?.currency || "UAH",
+                          i18n.language,
+                        )
                         : "—"}
                     </Amount>
                   </MessageHead>

@@ -112,9 +112,9 @@ export const ItemsTable = ({
             type="button"
             onClick={handleAddItem}
             icon={<HiPlusCircle size={16} />}
-          >
-            {t("transactions:itemsTable.button_add")}
-          </Button>
+            title={t("transactions:itemsTable.button_add", "Додати")}
+            aria-label={t("transactions:itemsTable.button_add", "Додати")}
+          />
           <Button
             size="small"
             variation="soft"
@@ -123,7 +123,7 @@ export const ItemsTable = ({
             disabled={hasDiscount}
             icon={<HiMinusCircle size={16} />}
           >
-            {t("transactions:itemsTable.button_add_discount", "Додати знижку")}
+            {t("transactions:itemsTable.button_discount", "Знижка")}
           </Button>
         </S.ItemsActions>
       </S.ItemsHeader>

@@ -27,11 +27,10 @@ const CardBase = css`
   position: relative;
   width: 100%;
   aspect-ratio: 1.586;
-  min-height: 190px;
   border-radius: 14px;
 
-  /* 🔥 Зменшено паддінг та додано min-height щоб не обрізало низ */
-  padding: 1.25rem 1.4rem;
+  /* 🔥 Збільшено паддінг для великої картки */
+  padding: 1.5rem;
 
   display: flex;
   flex-direction: column;

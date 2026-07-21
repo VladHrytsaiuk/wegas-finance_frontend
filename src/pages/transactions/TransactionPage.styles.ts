@@ -12,7 +12,7 @@ export const PageContainer = styled.div`
 
   @media (max-width: 768px) {
     gap: 1rem;
-    padding: 0 1rem 2rem;
+    padding: 1rem 1rem 2rem;
   }
 `;
 
@@ -188,7 +188,6 @@ export const MobileHeaderSpacer = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   margin-top: 0.75rem;
-  padding: 0 1rem;
 `;
 
 export const MobileMeta = styled.div`

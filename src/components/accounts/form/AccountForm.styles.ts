@@ -6,7 +6,7 @@ export const FormContainer = styled.div`
   display: flex;
   gap: 2.5rem;
   position: relative;
-  height: 520px;
+  height: 500px;
   width: 1000px;
   align-items: stretch;
 
@@ -388,18 +388,18 @@ export const SkinOption = styled.button<{
   outline: none;
   box-shadow:
     ${(p) =>
-      p.$selected
-        ? "0 0 0 2px var(--color-brand-500), inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)"
-        : "inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)"};
+    p.$selected
+      ? "0 0 0 2px var(--color-brand-500), inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)"
+      : "inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)"};
   opacity: ${(p) => (p.$selected ? 1 : 0.9)};
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 
       ${(p) =>
-        p.$selected
-          ? "0 0 0 2px var(--color-brand-500), inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.15)"
-          : "inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.15)"};
+    p.$selected
+      ? "0 0 0 2px var(--color-brand-500), inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.15)"
+      : "inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.15)"};
     opacity: 1;
     z-index: 10;
   }
@@ -435,8 +435,8 @@ export const SkinOption = styled.button<{
     justify-self: stretch;
 
     ${(p) =>
-      p.$selected &&
-      css`
+    p.$selected &&
+    css`
         &::after {
           top: 4px;
           right: 4px;
@@ -553,9 +553,9 @@ export const StepNumber = styled.div<{ $active: boolean; $completed: boolean }>`
     props.$active || props.$completed ? "white" : "var(--color-text-tertiary)"};
   border: 2px solid
     ${(props) =>
-      props.$active || props.$completed
-        ? "var(--color-brand-600)"
-        : "var(--color-border)"};
+    props.$active || props.$completed
+      ? "var(--color-brand-600)"
+      : "var(--color-border)"};
 `;
 
 export const StepLabel = styled.span<{ $active: boolean; $isMobile?: boolean }>`
