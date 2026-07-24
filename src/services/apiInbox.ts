@@ -179,6 +179,13 @@ export const linkInboxTransactionApi = async (
   return response.data;
 };
 
+export const createInboxPhotoApi = async (data: FormData): Promise<InboxEntry> => {
+  const response = await api.post<InboxEntry>("/inbox/photo", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
 export const getInboxPendingCountApi = async (): Promise<number> => {
   const response = await getInboxApi({
     status: [...PENDING_INBOX_STATUSES],

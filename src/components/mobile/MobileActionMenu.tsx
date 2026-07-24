@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import { HiPlus, HiCamera, HiOutlineDocumentText } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import { setPendingReceiptPhoto } from "../../utils/pendingReceiptPhoto";
 
 const Overlay = styled.div`
   position: fixed;
@@ -96,17 +98,34 @@ function MobileActionMenu({ onClose }: MobileActionMenuProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const handleAction = (path: string) => {
     navigate(path, { state: { background: location } });
     onClose();
   };
 
+  const handleReceiptSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const photo = event.target.files?.[0];
+    event.target.value = "";
+    if (!photo) return;
+
+    setPendingReceiptPhoto(photo);
+    handleAction("/transactions/new?type=expense");
+  };
+
   return (
     <Overlay onClick={onClose}>
       <MenuContainer onClick={(e) => e.stopPropagation()}>
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleReceiptSelected}
+          hidden
+        />
         <MenuHeader>Швидкі дії</MenuHeader>
-        
+
         <ActionItem onClick={() => handleAction("/transactions/new")}>
           <IconBox><HiPlus /></IconBox>
           <ActionLabel>
@@ -115,11 +134,11 @@ function MobileActionMenu({ onClose }: MobileActionMenuProps) {
           </ActionLabel>
         </ActionItem>
 
-        <ActionItem onClick={onClose}>
+        <ActionItem onClick={() => galleryInputRef.current?.click()}>
           <IconBox><HiCamera /></IconBox>
           <ActionLabel>
             <ActionTitle>Сфотографувати чек</ActionTitle>
-            <ActionDesc>Автоматичне розпізнавання</ActionDesc>
+            <ActionDesc>Зробити фото, обрати з галереї або файлів</ActionDesc>
           </ActionLabel>
         </ActionItem>
 

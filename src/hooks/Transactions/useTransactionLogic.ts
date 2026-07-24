@@ -16,9 +16,12 @@ import {
   type CreateTxData,
   type CreateTxItem,
 } from "../../services/apiTransactions";
+import { getAccountsApi } from "../../services/apiAccounts";
+import { createInboxPhotoApi } from "../../services/apiInbox";
 import { compressImage } from "../../utils/compressor";
 import { isModifierPressed } from "../../utils/platform";
 import { waitForNextPaint } from "../../utils/render";
+import { takePendingReceiptPhoto } from "../../utils/pendingReceiptPhoto";
 import type { Tag, Transaction, TransactionItem } from "../../types";
 
 type EditableTransactionItem = Partial<TransactionItem> & {
@@ -387,6 +390,42 @@ export const useTransactionLogic = ({
         responseData = res;
         toast.success(t("transactions:transactionForm.alert_update_success"));
       } else {
+        const accounts = await queryClient.fetchQuery({
+          queryKey: ["accounts"],
+          queryFn: getAccountsApi,
+        });
+        const selectedAccount = accounts.find((account) => account.id === form.accountId);
+        const shouldCreatePhotoInbox =
+          form.type === "expense" &&
+          filesToUpload.length > 0 &&
+          selectedAccount?.is_synced;
+
+        if (shouldCreatePhotoInbox) {
+          if (filesToUpload.length !== 1) {
+            toast.error("Для Inbox поки можна додати лише одне фото чека.");
+            return;
+          }
+
+          const photoFormData = new FormData();
+          photoFormData.append(
+            "json",
+            JSON.stringify({
+              selected_account_id: form.accountId,
+              total: payload.amount,
+              occurred_at: payload.date,
+              note: payload.note,
+              counterparty_id: payload.counterparty_id,
+              category_id: payload.category_id,
+              items: payload.items,
+            }),
+          );
+          photoFormData.append("file", filesToUpload[0]);
+
+          responseData = await createInboxPhotoApi(photoFormData);
+          toast.success("Фото чека додано до Inbox. Очікуємо банківську операцію.");
+          queryClient.invalidateQueries({ queryKey: ["inbox"] });
+          queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+        } else {
         let dataToSend = payload;
         const hasFiles =
           filesToUpload.length > 0 ||
@@ -410,6 +449,7 @@ export const useTransactionLogic = ({
         const res = await createTxAsync(dataToSend);
         responseData = res;
         toast.success(t("transactions:transactionForm.alert_create_success"));
+        }
       }
 
       invalidationConfig();
@@ -497,6 +537,18 @@ export const useTransactionLogic = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (isEditSession) return;
+
+    const capturedPhoto = takePendingReceiptPhoto();
+    if (!capturedPhoto) return;
+
+    // The mobile quick action must be immediate. Some PWA browsers never
+    // resolve image compression for a camera/gallery file.
+    setFilesToUpload([capturedPhoto]);
+    setPreviewIndex(0);
+  }, [isEditSession]);
 
   const uploadPreviewUrls = useMemo(
     () => filesToUpload.map((file) => URL.createObjectURL(file)),
