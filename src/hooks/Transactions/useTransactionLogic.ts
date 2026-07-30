@@ -143,6 +143,15 @@ export const useTransactionLogic = ({
 
   const isEditSession = Boolean(transactionToEdit);
   const isDirty = form.isDirty || filesToUpload.length > 0;
+  const isPhotoOnlyInboxDraft =
+    !isEditSession &&
+    filesToUpload.length > 0 &&
+    !form.accountId &&
+    !localAmount &&
+    !form.categoryId &&
+    !form.counterpartyId &&
+    !form.note &&
+    form.items.length === 0;
 
   // --- HOTKEYS ---
   const handleGlobalKeyDown = useEffectEvent((e: KeyboardEvent) => {
@@ -475,6 +484,23 @@ export const useTransactionLogic = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPhotoOnlyInboxDraft) {
+      setIsSubmitting(true);
+      const photoFormData = new FormData();
+      photoFormData.append("json", JSON.stringify({}));
+      filesToUpload.forEach((file) => photoFormData.append("file", file));
+      createInboxPhotoApi(photoFormData)
+        .then(async (entry) => {
+          queryClient.invalidateQueries({ queryKey: ["inbox"] });
+          queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+          toast.success("Фото чека додано до Inbox");
+          if (onSuccess) await onSuccess(entry);
+          onCloseModal?.();
+        })
+        .catch(() => toast.error("Не вдалося зберегти фото чека"))
+        .finally(() => setIsSubmitting(false));
+      return;
+    }
     if (!validateForm()) {
       toast.error(t("transactions:transactionForm.alert_fix_errors"));
       return;
@@ -619,6 +645,7 @@ export const useTransactionLogic = ({
       isViewerOpen,
       isClearModalOpen,
       isDirty,
+      isPhotoOnlyInboxDraft,
     },
     actions: {
       ...actions,

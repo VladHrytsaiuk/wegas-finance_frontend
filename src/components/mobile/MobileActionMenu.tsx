@@ -92,9 +92,10 @@ const ActionDesc = styled.span`
 
 interface MobileActionMenuProps {
   onClose: () => void;
+  onOpenReceiptImport: () => void;
 }
 
-function MobileActionMenu({ onClose }: MobileActionMenuProps) {
+function MobileActionMenu({ onClose, onOpenReceiptImport }: MobileActionMenuProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -111,7 +112,7 @@ function MobileActionMenu({ onClose }: MobileActionMenuProps) {
     if (!photo) return;
 
     setPendingReceiptPhoto(photo);
-    handleAction("/transactions/new?type=expense");
+    handleAction("/transactions/new?type=expense&photoOnly=1");
   };
 
   return (
@@ -142,11 +143,11 @@ function MobileActionMenu({ onClose }: MobileActionMenuProps) {
           </ActionLabel>
         </ActionItem>
 
-        <ActionItem onClick={() => handleAction("/settings/export")}>
+        <ActionItem onClick={onOpenReceiptImport}>
           <IconBox><HiOutlineDocumentText /></IconBox>
           <ActionLabel>
-            <ActionTitle>Імпортувати</ActionTitle>
-            <ActionDesc>З файлу або банку</ActionDesc>
+            <ActionTitle>Додати електронний чек</ActionTitle>
+            <ActionDesc>XML-файл або посилання на чек</ActionDesc>
           </ActionLabel>
         </ActionItem>
       </MenuContainer>

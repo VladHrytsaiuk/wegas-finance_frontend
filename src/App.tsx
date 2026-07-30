@@ -36,6 +36,7 @@ const Transactions = lazy(() => import("./pages/transactions/Transactions"));
 const TransactionPage = lazy(() => import("./pages/transactions/TransactionPage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
 const General = lazy(() => import("./pages/settings/General"));
+const Finance = lazy(() => import("./pages/settings/Finance"));
 const Profile = lazy(() => import("./pages/settings/Profile"));
 const Security = lazy(() => import("./pages/settings/Security"));
 const Categories = lazy(() => import("./pages/settings/Categories"));
@@ -278,6 +279,7 @@ function AppRoutes() {
                 path="general"
                 element={withRouteSuspense(<General />, "resources")}
               />
+              <Route path="finance" element={withRouteSuspense(<Finance />, "resources")} />
               <Route
                 path="profile"
                 element={withRouteSuspense(<Profile />, "resources")}

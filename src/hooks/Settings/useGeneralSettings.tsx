@@ -51,6 +51,7 @@ export const useGeneralSettings = () => {
   const {
     currency = "UAH",
     language = "uk",
+    requireReceiptReview = true,
     updateSettings,
     isLoading,
   } = useSettings() || {};
@@ -101,6 +102,7 @@ export const useGeneralSettings = () => {
       base_currency?: string;
       language?: string;
       theme?: string;
+      require_receipt_review?: boolean;
     }) => {
       if (!updateSettings) return;
 
@@ -143,11 +145,16 @@ export const useGeneralSettings = () => {
     handleUpdate({ theme: newTheme });
   }, [theme, toggleTheme, handleUpdate]);
 
+  const toggleReceiptReview = useCallback(() => {
+    handleUpdate({ require_receipt_review: !requireReceiptReview });
+  }, [handleUpdate, requireReceiptReview]);
+
   return {
     state: {
       localCurrency: currency,
       localLanguage: language,
       theme,
+      requireReceiptReview,
       isLoading,
       isPending,
       isSeeding,
@@ -158,6 +165,7 @@ export const useGeneralSettings = () => {
       setLocalCurrency,
       setLocalLanguage,
       toggleTheme: handleToggleTheme,
+      toggleReceiptReview,
       seedData: seed,
     },
     t,

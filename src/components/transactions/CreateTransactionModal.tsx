@@ -59,6 +59,7 @@ function CreateTransactionModal({
   const typeParam = searchParams.get("type");
   const accountIdParam = searchParams.get("accountId");
   const cpIdParam = searchParams.get("counterpartyId");
+  const isPhotoOnly = searchParams.get("photoOnly") === "1";
 
   const handleClose = useCallback(() => {
     if (onClose) {
@@ -90,7 +91,7 @@ function CreateTransactionModal({
             onSuccess={onSuccess}
             initialType={(initialData.type || typeParam || undefined) as TransactionType}
             initialAccountId={
-              initialData.account_id || accountIdParam || undefined
+              isPhotoOnly ? "" : initialData.account_id || accountIdParam || undefined
             }
             initialCounterpartyId={
               initialData.counterparty_id || cpIdParam || undefined
@@ -109,7 +110,7 @@ function CreateTransactionModal({
             onSuccess={onSuccess}
             initialType={(initialData.type || typeParam || undefined) as TransactionType}
             initialAccountId={
-              initialData.account_id || accountIdParam || undefined
+              isPhotoOnly ? "" : initialData.account_id || accountIdParam || undefined
             }
             initialCounterpartyId={
               initialData.counterparty_id || cpIdParam || undefined

@@ -101,6 +101,7 @@ type FormContentState = {
   isViewerOpen: boolean;
   isClearModalOpen: boolean;
   isDirty: boolean;
+  isPhotoOnlyInboxDraft: boolean;
 };
 
 type FormContentActions = {
@@ -897,7 +898,13 @@ export const FormContent: React.FC<FormContentProps> = ({
               ? state.isSubmitting
                 ? t("transactions:transactionForm.button_updating")
                 : t("transactions:transactionForm.button_update")
-              : state.isSubmitting
+              : state.isPhotoOnlyInboxDraft
+                ? state.isSubmitting
+                  ? "Збереження..."
+                  : isMobile
+                    ? "У Inbox"
+                    : "Зберегти фото в Inbox"
+                : state.isSubmitting
                 ? t("transactions:transactionForm.button_saving")
                 : t("transactions:transactionForm.button_save")}
           </Button>

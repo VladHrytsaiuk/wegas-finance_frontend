@@ -6,6 +6,7 @@ export interface AppSettings {
   base_currency: string;
   language: string;
   theme: string;
+  require_receipt_review: boolean;
 }
 
 const ENDPOINT = "/settings";

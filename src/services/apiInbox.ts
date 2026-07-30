@@ -18,6 +18,8 @@ export interface InboxReceiptSource {
   origin: string;
   source_type: string;
   source_url: string;
+  file_path: string;
+  file_paths: string;
   merchant: string;
   receipt_number: string;
   receipt_date: number | null;
@@ -58,6 +60,7 @@ export interface InboxTransactionCandidate {
   note: string;
   counterparty_name: string;
   score: number;
+  confidence: "high" | "medium" | "low";
   matched_by: string[];
 }
 
@@ -183,6 +186,18 @@ export const createInboxPhotoApi = async (data: FormData): Promise<InboxEntry> =
   const response = await api.post<InboxEntry>("/inbox/photo", data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  return response.data;
+};
+
+export const ingestReceiptXmlApi = async (file: File): Promise<InboxEntry> => {
+  const data = new FormData();
+  data.append("file", file);
+  const response = await api.post<InboxEntry>("/receipt-ingestion/xml", data);
+  return response.data;
+};
+
+export const ingestReceiptUrlApi = async (url: string): Promise<InboxEntry> => {
+  const response = await api.post<InboxEntry>("/receipt-ingestion/url", { url });
   return response.data;
 };
 

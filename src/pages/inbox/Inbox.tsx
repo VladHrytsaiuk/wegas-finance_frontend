@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -16,6 +16,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { getInboxApi, type InboxEntry } from "../../services/apiInbox";
 import { formatDate, formatMoney } from "../../utils/helpers";
 import { inboxBadgeStyles } from "./inboxBadgeStyles";
+import { ReceiptImportModal } from "../../components/inbox/ReceiptImportModal";
 
 const Page = styled.div`
   display: flex;
@@ -106,6 +107,7 @@ const IntroText = styled.p`
   line-height: 1.4;
   font-size: 0.92rem;
 `;
+const AddReceiptButton = styled.button`padding: 0.55rem 0.8rem; border: 1px solid var(--color-brand-500); border-radius: 10px; background: var(--color-brand-600); color: white; font-weight: 700; cursor: pointer;`;
 
 const Feed = styled.div`
   display: flex;
@@ -329,6 +331,7 @@ function shouldShowNote(entry: InboxEntry) {
 function Inbox() {
   const { t, i18n } = useTranslation();
   const isMobile = useIsMobile();
+  const [isImportOpen, setIsImportOpen] = useState(false);
   usePageTitle(t("navigation:general.inbox", "Inbox"));
 
   const { data, isLoading, isError } = useQuery({
@@ -341,16 +344,18 @@ function Inbox() {
   const needsReviewCount = entries.filter((entry) => entry.status === "needs_review").length;
 
   return (
-    <Page>
-      {isMobile ? (
-        <MobilePageHeader title={t("navigation:general.inbox", "Inbox")} />
-      ) : null}
+    <>
+      {isMobile ? <MobilePageHeader title={t("navigation:general.inbox", "Inbox")} /> : null}
+      <Page>
 
       <IntroCard>
         <IntroMain>
           {!isMobile ? <IntroEyebrow>Inbox</IntroEyebrow> : null}
           <IntroTitle>{t("navigation:general.inbox", "Вхідні чеки")}</IntroTitle>
           <IntroText>Чеки та імпорти, які ще треба підтвердити або дозаповнити.</IntroText>
+          {!isMobile ? (
+            <div><AddReceiptButton onClick={() => setIsImportOpen(true)}>Додати електронний чек</AddReceiptButton></div>
+          ) : null}
         </IntroMain>
         {!isLoading && !isError ? (
           <SummaryRow>
@@ -470,7 +475,9 @@ function Inbox() {
           })}
         </Feed>
       )}
-    </Page>
+        {isImportOpen ? <ReceiptImportModal onClose={() => setIsImportOpen(false)} /> : null}
+      </Page>
+    </>
   );
 }
 

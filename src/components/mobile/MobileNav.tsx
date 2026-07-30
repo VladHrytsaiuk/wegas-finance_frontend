@@ -11,6 +11,7 @@ import {
 } from "react-icons/hi2";
 import MobileActionMenu from "./MobileActionMenu";
 import { getInboxPendingCountApi } from "../../services/apiInbox";
+import { ReceiptImportModal } from "../inbox/ReceiptImportModal";
 
 const Nav = styled.nav`
   position: fixed;
@@ -107,6 +108,7 @@ const ActionButton = styled.button`
 
 function MobileNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReceiptImportOpen, setIsReceiptImportOpen] = useState(false);
   const { data: pendingInboxCount = 0 } = useQuery({
     queryKey: ["inbox", "pending-count"],
     queryFn: getInboxPendingCountApi,
@@ -142,7 +144,18 @@ function MobileNav() {
         </StyledNavLink>
       </Nav>
 
-      {isMenuOpen && <MobileActionMenu onClose={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && (
+        <MobileActionMenu
+          onClose={() => setIsMenuOpen(false)}
+          onOpenReceiptImport={() => {
+            setIsMenuOpen(false);
+            setIsReceiptImportOpen(true);
+          }}
+        />
+      )}
+      {isReceiptImportOpen && (
+        <ReceiptImportModal onClose={() => setIsReceiptImportOpen(false)} />
+      )}
     </>
   );
 }

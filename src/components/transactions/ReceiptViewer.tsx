@@ -2,6 +2,7 @@ import {
   HiMagnifyingGlassPlus,
   HiMagnifyingGlassMinus,
   HiArrowPath,
+  HiArrowUturnRight,
   HiXMark,
   HiTrash,
   HiChevronLeft,
@@ -38,6 +39,9 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
           </S.ToolBtn>
           <S.ToolBtn onClick={handlers.handleReset} title={t("legacy:viewer.reset")}>
             <HiArrowPath />
+          </S.ToolBtn>
+          <S.ToolBtn onClick={handlers.handleRotateRight} title="Повернути фото">
+            <HiArrowUturnRight />
           </S.ToolBtn>
           <S.ToolBtn
             onClick={handlers.handleZoomIn}
@@ -89,6 +93,7 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
         <S.StyledImage
           src={state.currentUrl}
           $scale={state.scale}
+          $rotation={state.rotation}
           $x={state.position.x}
           $y={state.position.y}
           draggable={false}

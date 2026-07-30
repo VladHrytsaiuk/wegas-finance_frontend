@@ -24,12 +24,15 @@ import {
   linkInboxTransactionApi,
   selectInboxAccountApi,
 } from "../../services/apiInbox";
-import { formatDate, formatMoney } from "../../utils/helpers";
+import { formatDate, formatMoney, getUploadedFileUrl } from "../../utils/helpers";
 import { SmartIcon } from "../../utils/IconMap";
 import { BANK_SKINS } from "../../components/accounts/bankSkins";
 import * as PageStyles from "../transactions/TransactionPage.styles";
 import * as DetailStyles from "../../components/transactions/TransactionDetails.styles";
 import { inboxBadgeStyles } from "./inboxBadgeStyles";
+import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
+import { getTransactionsApi } from "../../services/apiTransactions";
+import type { Transaction } from "../../types";
 
 const Header = styled(PageStyles.Header)`
   margin-bottom: 0;
@@ -336,6 +339,20 @@ const LinkTransactionButton = styled.button`
     opacity: 0.65;
   }
 `;
+
+const ShowMoreCandidatesButton = styled.button`
+  align-self: flex-start;
+  padding: 0.2rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand-700);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+`;
+const ManualSearch = styled.div`display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.45rem; padding-top: 0.4rem; border-top: 1px solid var(--color-border);`;
+const ManualSearchInput = styled.input`min-width: 0; padding: 0.5rem 0.6rem; border: 1px solid var(--color-border); border-radius: 9px; background: var(--color-bg-page); color: var(--color-text-main);`;
+const ReceiptPhotoButton = styled.button`padding: 0.65rem 0.8rem; border: 1px solid var(--color-brand-300); border-radius: 10px; background: var(--color-brand-50); color: var(--color-brand-700); font-weight: 800; cursor: pointer;`;
 
 const SectionTitle = styled(DetailStyles.SectionTitle)`
   margin: 0 0 0.65rem;
@@ -654,6 +671,10 @@ function InboxEntryPage() {
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
   const [isCreateTransactionOpen, setIsCreateTransactionOpen] = useState(false);
+  const [showLowConfidenceCandidates, setShowLowConfidenceCandidates] = useState(false);
+  const [isManualSearchOpen, setIsManualSearchOpen] = useState(false);
+  const [manualSearch, setManualSearch] = useState("");
+  const [isReceiptViewerOpen, setIsReceiptViewerOpen] = useState(false);
 
   usePageTitle("Inbox");
 
@@ -677,6 +698,17 @@ function InboxEntryPage() {
     enabled: Boolean(
       inboxId && data?.selected_account_id && data.status !== "linked",
     ),
+  });
+  const { data: manualSearchResponse } = useQuery({
+    queryKey: ["inbox", inboxId, "manual-transactions", manualSearch],
+    queryFn: () => getTransactionsApi({
+      account_id: data?.selected_account_id ?? "",
+      min_amount: data?.total ?? undefined,
+      max_amount: data?.total ?? undefined,
+      search: manualSearch,
+      limit: 10,
+    }) as Promise<{ data: Transaction[] }>,
+    enabled: isManualSearchOpen && Boolean(data?.selected_account_id && data?.total != null),
   });
 
   const selectAccountMutation = useMutation({
@@ -716,8 +748,26 @@ function InboxEntryPage() {
   const items = useMemo(() => data?.receipt_source?.items ?? [], [data]);
   const occurredAt =
     data?.occurred_at ?? data?.receipt_source?.receipt_date ?? null;
+  const visibleTransactionCandidates = transactionCandidates.filter(
+    (candidate) => showLowConfidenceCandidates || candidate.confidence !== "low",
+  );
+  const lowConfidenceCandidateCount = transactionCandidates.filter(
+    (candidate) => candidate.confidence === "low",
+  ).length;
   const title =
     data?.merchant || data?.receipt_source?.merchant || data?.note || "Чек";
+  const receiptPhotoUrls = useMemo(() => {
+    const source = data?.receipt_source;
+    if (!source) return [];
+    let paths = source.file_path ? [source.file_path] : [];
+    try {
+      const extra = source.file_paths ? JSON.parse(source.file_paths) : [];
+      if (Array.isArray(extra)) paths = [...paths, ...extra];
+    } catch { /* Legacy receipt with no photo list. */ }
+    return [...new Set(paths.filter(Boolean))]
+      .map((path) => getUploadedFileUrl(path))
+      .filter((path): path is string => Boolean(path));
+  }, [data?.receipt_source]);
 
   if (isLoading) {
     return (
@@ -851,6 +901,12 @@ function InboxEntryPage() {
             </span>
           </ReceiptStat>
         </ReceiptStats>
+
+        {receiptPhotoUrls.length > 0 ? (
+          <ReceiptPhotoButton type="button" onClick={() => setIsReceiptViewerOpen(true)}>
+            Переглянути фото чека{receiptPhotoUrls.length > 1 ? ` (${receiptPhotoUrls.length})` : ""}
+          </ReceiptPhotoButton>
+        ) : null}
       </PrimaryCard>
 
       {recommendedAccount && !data.selected_account_id ? (
@@ -882,14 +938,26 @@ function InboxEntryPage() {
             <strong>Можливі банківські операції</strong>
             <span>Перевірте перед зв&apos;язуванням</span>
           </TransactionMatchesTitle>
-          {transactionCandidates.slice(0, 3).map((candidate) => (
+          {visibleTransactionCandidates.slice(0, 3).map((candidate) => (
             <TransactionMatch key={candidate.transaction_id}>
               <TransactionMatchCopy>
                 <strong>
                   {candidate.counterparty_name || candidate.note || "Банківська операція"}
                 </strong>
                 <span>
-                  {formatDate(candidate.date, i18n.language)} · {candidate.matched_by.join(", ")}
+                  {new Intl.DateTimeFormat(i18n.language, {
+                    day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
+                  }).format(new Date(candidate.date))} · {candidate.matched_by.join(", ")}
+                </span>
+                <span>
+                  {candidate.confidence === "high"
+                    ? "Висока впевненість"
+                    : candidate.confidence === "medium"
+                      ? "Середня впевненість"
+                      : "Низька впевненість"}
+                  {occurredAt
+                    ? ` · ${Math.round(Math.abs(candidate.date - occurredAt) / 60000)} хв від чека`
+                    : ""}
                 </span>
               </TransactionMatchCopy>
               <TransactionMatchAmount>
@@ -904,6 +972,42 @@ function InboxEntryPage() {
               </LinkTransactionButton>
             </TransactionMatch>
           ))}
+          {!showLowConfidenceCandidates && lowConfidenceCandidateCount > 0 ? (
+            <ShowMoreCandidatesButton
+              type="button"
+              onClick={() => setShowLowConfidenceCandidates(true)}
+            >
+              Показати менш імовірні варіанти ({lowConfidenceCandidateCount})
+            </ShowMoreCandidatesButton>
+          ) : null}
+        </TransactionMatches>
+      ) : null}
+
+      {data.selected_account_id && data.total != null ? (
+        <TransactionMatches>
+          <TransactionMatchesTitle>
+            <strong>Не знайшли потрібну операцію?</strong>
+            <span>Пошук серед усіх операцій з цією сумою</span>
+          </TransactionMatchesTitle>
+          {!isManualSearchOpen ? (
+            <ShowMoreCandidatesButton type="button" onClick={() => setIsManualSearchOpen(true)}>
+              Знайти іншу операцію
+            </ShowMoreCandidatesButton>
+          ) : (
+            <>
+              <ManualSearch>
+                <ManualSearchInput value={manualSearch} onChange={(e) => setManualSearch(e.target.value)} placeholder="Назва, магазин або нотатка" />
+                <ShowMoreCandidatesButton type="button" onClick={() => setIsManualSearchOpen(false)}>Закрити</ShowMoreCandidatesButton>
+              </ManualSearch>
+              {(manualSearchResponse?.data ?? []).slice(0, 5).map((transaction) => (
+                <TransactionMatch key={transaction.id}>
+                  <TransactionMatchCopy><strong>{transaction.counterparty?.name || transaction.note || "Операція"}</strong><span>{formatDate(transaction.date, i18n.language)}</span></TransactionMatchCopy>
+                  <TransactionMatchAmount>{formatMoney(transaction.amount, transaction.currency || data.currency || "UAH", i18n.language)}</TransactionMatchAmount>
+                  <LinkTransactionButton type="button" disabled={linkCandidateMutation.isPending} onClick={() => linkCandidateMutation.mutate(transaction.id)}>Зв'язати чек</LinkTransactionButton>
+                </TransactionMatch>
+              ))}
+            </>
+          )}
         </TransactionMatches>
       ) : null}
 
@@ -1135,6 +1239,11 @@ function InboxEntryPage() {
             }
           }}
         />
+      ) : null}
+      {isReceiptViewerOpen ? (
+        <div style={{ position: "fixed", inset: 0, zIndex: 12000 }}>
+          <ReceiptViewer imageUrls={receiptPhotoUrls} onClose={() => setIsReceiptViewerOpen(false)} />
+        </div>
       ) : null}
     </PageStyles.PageContainer>
     </>
