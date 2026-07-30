@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { HiTag } from "react-icons/hi2";
-import { ICON_MAP, PICKER_ICON_NAMES } from "../../utils/IconMap";
+import { ICON_MAP, PICKER_ICON_NAMES } from "../../utils/IconConstants";
 
 // Constants
 export const PRESET_ICONS = PICKER_ICON_NAMES;

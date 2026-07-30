@@ -67,13 +67,13 @@ const currentItems = [
   { to: "/admin", label: "Огляд", icon: HiOutlineChartBarSquare, end: true },
   { to: "/admin/categories", label: "Категорії", icon: HiOutlineFolder },
   { to: "/admin/counterparties", label: "Контрагенти", icon: HiOutlineBuildingStorefront },
+  { to: "/admin/users", label: "Користувачі", icon: HiOutlineUsers },
+  { to: "/admin/audit", label: "Аудит", icon: HiOutlineClipboardDocumentCheck },
 ];
 
 const futureItems = [
-  { label: "Користувачі", icon: HiOutlineUsers },
   { label: "Банки", icon: HiOutlineBuildingLibrary },
   { label: "Одиниці виміру", icon: HiOutlineScale },
-  { label: "Аудит", icon: HiOutlineClipboardDocumentCheck },
 ];
 
 export function AdminNav({ isCollapsed }: { isCollapsed: boolean }) {
