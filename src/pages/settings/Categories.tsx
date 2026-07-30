@@ -1,4 +1,4 @@
-import { HiPlus, HiTag } from "react-icons/hi2";
+import { HiPlus, HiTag, HiExclamationTriangle } from "react-icons/hi2";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
@@ -32,6 +32,7 @@ function CategoriesContent() {
       categoryTreeRoots,
       flatCategories,
       editingCategory,
+      copyOnWriteCategory,
       searchQuery,
       filters,
       sortValue,
@@ -46,6 +47,7 @@ function CategoriesContent() {
       setFilters,
       setSortValue,
       handleEdit,
+      confirmCopyOnWrite,
       handleDelete,
       handleCreateClick,
       handleSave,
@@ -56,7 +58,7 @@ function CategoriesContent() {
   } = useCategoriesPage();
 
   const isMobile = useIsMobile();
-  const { open } = useModal();
+  const { open, close } = useModal();
 
   return (
     <>
@@ -148,6 +150,19 @@ function CategoriesContent() {
       </Modal.Window>
 
       {/* 2. Edit */}
+      <Modal.Open opens="copy-on-write-category">
+        <span id="trigger-copy-on-write-category" style={{ display: "none" }} />
+      </Modal.Open>
+      <Modal.Window name="copy-on-write-category" padding="1.5rem" mobileBottomSheet>
+        <S.ModalContent>
+          <div style={{ display: "flex", gap: "0.85rem", alignItems: "flex-start" }}><div style={{ width: "2.4rem", height: "2.4rem", display: "grid", placeItems: "center", flex: "0 0 2.4rem", borderRadius: "0.75rem", background: "var(--color-brand-50)", color: "var(--color-brand-700)" }}><HiExclamationTriangle size={20} /></div><div><S.ModalTitle style={{ margin: "0 0 0.35rem" }}>Змінити системну категорію?</S.ModalTitle><p style={{ margin: 0, color: "var(--color-text-secondary)", lineHeight: 1.55 }}>Після збереження «<strong style={{ color: "var(--color-text-main)" }}>{copyOnWriteCategory?.name}</strong>» стане локальною категорією вашої сім’ї.</p></div></div>
+          <div style={{ marginTop: "1rem", padding: ".75rem .9rem", borderRadius: "0.65rem", background: "var(--color-bg-page)", color: "var(--color-text-secondary)", fontSize: ".83rem", lineHeight: 1.45 }}>Вона більше не отримуватиме глобальні оновлення платформи.</div>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
+            <Button variation="secondary" onClick={close}>Скасувати</Button>
+            <Button onClick={() => { close(); confirmCopyOnWrite(); }}>Продовжити</Button>
+          </div>
+        </S.ModalContent>
+      </Modal.Window>
       <Modal.Open opens="edit-category">
         <span id="trigger-edit-category" style={{ display: "none" }} />
       </Modal.Open>

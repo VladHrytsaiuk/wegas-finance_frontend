@@ -46,8 +46,10 @@ export function useAccountsData() {
 
   const updateAccount = useMutation({
     mutationFn: updateAccountApi,
-    onSuccess: () => {
+    onSuccess: (account) => {
       toast.success(t("accounts:accountsDataHook.alert_update_success"));
+      queryClient.setQueryData(["account", account.id], account);
+      queryClient.invalidateQueries({ queryKey: ["account", account.id] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
     },

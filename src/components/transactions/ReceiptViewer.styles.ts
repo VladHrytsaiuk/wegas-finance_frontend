@@ -65,13 +65,14 @@ export const StyledImage = styled.img<{
   $scale: number;
   $x: number;
   $y: number;
+  $rotation: number;
 }>`
   max-width: 90%;
   max-height: 90%;
   object-fit: contain;
   transition: transform 0.1s linear;
   transform: translate(${(props) => props.$x}px, ${(props) => props.$y}px)
-    scale(${(props) => props.$scale});
+    scale(${(props) => props.$scale}) rotate(${(props) => props.$rotation}deg);
   user-select: none;
 `;
 

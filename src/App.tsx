@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -23,17 +23,21 @@ import { BootstrapProvider, useBootstrap } from "./context/BootstrapContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/ui/AppLayout";
 import { AppErrorBoundary } from "./components/ui/AppErrorBoundary";
+import api from "./services/Axios";
 
 // --- LAZY LOADED PAGES ---
 const Login = lazy(() => import("./pages/auth/Login"));
 const PinLogin = lazy(() => import("./pages/auth/PinLogin"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const Inbox = lazy(() => import("./pages/inbox/Inbox"));
+const InboxEntryPage = lazy(() => import("./pages/inbox/InboxEntryPage"));
 const Accounts = lazy(() => import("./pages/accounts/Accounts"));
 const Transactions = lazy(() => import("./pages/transactions/Transactions"));
 const TransactionPage = lazy(() => import("./pages/transactions/TransactionPage"));
 const SettingsLayout = lazy(() => import("./pages/settings/SettingsLayout"));
 const General = lazy(() => import("./pages/settings/General"));
+const Finance = lazy(() => import("./pages/settings/Finance"));
 const Profile = lazy(() => import("./pages/settings/Profile"));
 const Security = lazy(() => import("./pages/settings/Security"));
 const Categories = lazy(() => import("./pages/settings/Categories"));
@@ -58,6 +62,11 @@ const GoalDetails = lazy(() => import("./pages/Goals/GoalDetails"));
 const Shopping = lazy(() => import("./pages/Shopping/Shopping"));
 const WishlistGroups = lazy(() => import("./pages/wishlist/WishlistGroups"));
 const WishlistItems = lazy(() => import("./pages/wishlist/WishlistItems"));
+const AdminCatalog = lazy(() => import("./pages/admin/AdminCatalog"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminAudit = lazy(() => import("./pages/admin/AdminAudit"));
+const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
+const AdminGuard = lazy(() => import("./components/AdminGuard"));
 
 // --- LAZY LOADED MODALS ---
 const CreateTransactionModal = lazy(() => import("./components/transactions/CreateTransactionModal"));
@@ -144,6 +153,56 @@ function withRouteSuspense(
 function AppRoutes() {
   const location = useLocation();
   const background = (location.state as ModalLocationState | null)?.background;
+  const [isMaintenance, setIsMaintenance] = useState(false);
+
+  useEffect(() => {
+    // 1. Initial check for maintenance mode
+    const checkMaintenance = async () => {
+      try {
+        const adminBypass = new URLSearchParams(window.location.search).get("admin") === "true";
+        if (adminBypass) return; // Admins bypass the early check
+
+        // If the user is already logged in (has a token), we let them proceed.
+        // The backend will check if they are an admin. If they are not, it will 
+        // return 503 for their API requests, which Axios will catch and trigger the maintenance screen.
+        if (localStorage.getItem("token")) return;
+
+        const { data } = await api.get("/system/info");
+        if (data.maintenance_mode) {
+          setIsMaintenance(true);
+        }
+      } catch (e) {
+        // Ignore errors, let normal app flow handle it
+      }
+    };
+    checkMaintenance();
+
+    // 2. Listen for 503 intercepts from any other request
+    const handleMaintenance = () => setIsMaintenance(true);
+    window.addEventListener("maintenanceMode", handleMaintenance);
+    return () => window.removeEventListener("maintenanceMode", handleMaintenance);
+  }, []);
+
+  if (isMaintenance) {
+    const bootstrapElement = document.getElementById("app-bootstrap");
+    if (bootstrapElement) bootstrapElement.classList.add("is-hidden");
+    window.dispatchEvent(new Event("app:ready"));
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--color-bg-page)', color: 'var(--color-text-main)', textAlign: 'center', padding: '2rem' }}>
+        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--color-brand-700)' }}>Система в режимі обслуговування</h1>
+        <p style={{ fontSize: '1.1rem', color: 'var(--color-text-secondary)', maxWidth: '500px', lineHeight: 1.5 }}>
+          Зараз проводяться технічні роботи. Ми повернемось до роботи якнайшвидше! Спробуйте оновити сторінку пізніше.
+        </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{ marginTop: '2rem', padding: '0.8rem 1.5rem', borderRadius: '8px', background: 'var(--color-brand-600)', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '1rem' }}
+        >
+          Оновити сторінку
+        </button>
+      </div>
+    );
+  }
 
   return (
     <AppErrorBoundary resetKey={(background || location).key || location.pathname}>
@@ -167,6 +226,21 @@ function AppRoutes() {
               path="dashboard"
               element={withRouteSuspense(<Dashboard />, "resources")}
             />
+            <Route
+              path="inbox"
+              element={withRouteSuspense(<Inbox />, "resources")}
+            />
+            <Route
+              path="inbox/:inboxId"
+              element={withRouteSuspense(<InboxEntryPage />, "resources")}
+            />
+            <Route path="admin" element={withRouteSuspense(<AdminGuard />, "resources")}>
+              <Route index element={withRouteSuspense(<AdminOverview />, "resources")} />
+              <Route path="categories" element={withRouteSuspense(<AdminCatalog />, "resources")} />
+              <Route path="counterparties" element={withRouteSuspense(<AdminCatalog />, "resources")} />
+              <Route path="users" element={withRouteSuspense(<AdminUsers />, "resources")} />
+              <Route path="audit" element={withRouteSuspense(<AdminAudit />, "resources")} />
+            </Route>
             <Route
               path="accounts"
               element={withRouteSuspense(<Accounts />, "resources")}
@@ -268,6 +342,7 @@ function AppRoutes() {
                 path="general"
                 element={withRouteSuspense(<General />, "resources")}
               />
+              <Route path="finance" element={withRouteSuspense(<Finance />, "resources")} />
               <Route
                 path="profile"
                 element={withRouteSuspense(<Profile />, "resources")}

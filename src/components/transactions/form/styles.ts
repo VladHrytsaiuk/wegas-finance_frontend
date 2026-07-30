@@ -168,7 +168,7 @@ export const FormScrollArea = styled.div`
 
   @media (max-width: 768px) {
     padding: 1rem;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
   }
 `;
 
@@ -192,6 +192,85 @@ export const Title = styled.h2`
 
 export const ConditionalFieldsContainer = styled.div`
   margin-bottom: 0;
+`;
+
+export const MobileDisclosureToggle = styled.div<{ $open?: boolean }>`
+  width: 100%;
+  background: ${(p) =>
+    p.$open ? "var(--color-bg-secondary)" : "var(--color-bg-surface)"};
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 0.95rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: var(--color-text-main);
+  min-height: 56px;
+  text-align: left;
+  line-height: 1.2;
+  user-select: none;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+
+  &:active {
+    background: var(--color-bg-hover);
+  }
+`;
+
+export const MobileDisclosureTitleWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+`;
+
+export const MobileDisclosureTitle = styled.span`
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.2;
+  min-height: 1.15rem;
+`;
+
+export const MobileDisclosureSubtitle = styled.span`
+  display: block;
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+`;
+
+export const MobileDisclosureContent = styled.div`
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  background: var(--color-bg-surface);
+`;
+
+export const MobileDateTimeRow = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 108px;
+  gap: 0.75rem;
+  align-items: start;
 `;
 
 export const RowGroup = styled.div<{ $columns?: string }>`
@@ -249,6 +328,13 @@ export const ErrorText = styled.span`
 
 export const RequiredStar = styled.span`
   color: var(--color-red-500);
+`;
+
+export const OptionalHint = styled.span`
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
 `;
 
 export const StyledInput = styled.input<{
@@ -337,48 +423,169 @@ export const Footer = styled.div`
 
   @media (max-width: 768px) {
     padding: 1rem;
-    gap: 1rem;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    align-items: center;
   }
 `;
 
-export const FooterNoteWrapper = styled.div`
+export const FooterNoteWrapper = styled.div<{ $hiddenOnMobile?: boolean }>`
   flex: 1;
+
+  @media (max-width: 768px) {
+    display: ${(p) => (p.$hiddenOnMobile ? "none" : "block")};
+  }
 `;
 
 export const ButtonsGroup = styled.div`
   display: flex;
   gap: 0.8rem;
+
+  @media (max-width: 768px) {
+    flex: 1;
+    min-width: 0;
+
+    & > * {
+      flex: 1;
+      min-width: 0;
+    }
+  }
 `;
 
-export const DetailsTriggerButton = styled.button`
-  background: none;
-  border: none;
+export const DetailsTriggerButton = styled.button<{
+  $desktopVariant?: "default" | "subtle";
+  $desktopFullWidth?: boolean;
+}>`
+  background: var(--color-brand-50);
+  border: 1px solid var(--color-brand-200);
+  border-radius: 12px;
   color: var(--color-brand-600);
   font-size: 0.8rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.55rem;
   cursor: pointer;
-  padding: 0.5rem 0;
-  transition: color 0.2s;
-
-  font-size: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  transition: all 0.2s;
+  width: 100%;
+  min-height: 42px;
 
   &:hover {
-    text-decoration: underline;
+    background: var(--color-brand-100);
     color: var(--color-brand-700);
+    border-color: var(--color-brand-400);
+  }
+
+  @media (min-width: 769px) {
+    width: ${(props) => (props.$desktopFullWidth ? "100%" : "auto")};
+    min-width: 0;
+    justify-content: ${(props) =>
+      props.$desktopFullWidth ? "center" : "flex-start"};
+    padding: ${(props) =>
+      props.$desktopVariant === "subtle"
+        ? "0.46rem 0.72rem 0.46rem 0.58rem"
+        : "0.58rem 0.9rem"};
+    min-height: ${(props) =>
+      props.$desktopVariant === "subtle" ? "36px" : "40px"};
+    border-radius: ${(props) =>
+      props.$desktopVariant === "subtle" ? "10px" : "12px"};
+    background: ${(props) =>
+      props.$desktopVariant === "subtle"
+        ? "var(--color-bg-surface)"
+        : "var(--color-brand-50)"};
+    border: 1px solid
+      ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "var(--color-border)"
+          : "var(--color-brand-200)"};
+    color: ${(props) =>
+      props.$desktopVariant === "subtle"
+        ? "var(--color-text-secondary)"
+        : "var(--color-brand-700)"};
+    box-shadow: ${(props) =>
+      props.$desktopVariant === "subtle" ? "var(--shadow-sm)" : "none"};
+    font-size: ${(props) =>
+      props.$desktopVariant === "subtle" ? "0.78rem" : "0.82rem"};
+    font-weight: 600;
+    gap: ${(props) =>
+      props.$desktopVariant === "subtle" ? "0.48rem" : "0.55rem"};
+
+    svg {
+      width: ${(props) =>
+        props.$desktopVariant === "subtle" ? "15px" : "16px"};
+      height: ${(props) =>
+        props.$desktopVariant === "subtle" ? "15px" : "16px"};
+      color: var(--color-brand-600);
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "var(--color-brand-50)"
+          : "var(--color-brand-100)"};
+      color: ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "var(--color-text-main)"
+          : "var(--color-brand-800)"};
+      border-color: var(--color-brand-200);
+      box-shadow: ${(props) =>
+        props.$desktopVariant === "subtle"
+          ? "0 1px 2px rgba(0, 0, 0, 0.04)"
+          : "none"};
+      text-decoration: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.82rem;
+    min-height: 46px;
   }
 `;
 
-export const TransferDetailsHeader = styled.div`
+export const TransferSwapRow = styled.div`
   display: flex;
+  justify-content: center;
+  margin: 0.15rem 0 0.35rem;
+`;
+
+export const TransferSwapButton = styled.button`
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--color-brand-200);
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+  display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  margin: 0.5rem 0;
-  color: var(--color-brand-600);
-  font-size: 0.9rem;
-  font-weight: 500;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--color-brand-100);
+    border-color: var(--color-brand-300);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 `;
 
 // --- FILE UPLOAD ---
@@ -387,6 +594,78 @@ export const FileUploadWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+
+  @media (min-width: 769px) {
+    min-width: 150px;
+  }
+`;
+
+export const PhotoSummaryButton = styled.button`
+  min-width: 84px;
+  height: 32px;
+  padding: 0 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-brand-200);
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: var(--color-brand-100);
+    border-color: var(--color-brand-300);
+  }
+`;
+
+export const PhotoSummaryCount = styled.span`
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+`;
+
+export const PhotoSummaryLabel = styled.span`
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+`;
+
+export const PhotoClearButton = styled.button`
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid var(--color-red-200);
+  background: var(--color-red-50);
+  color: var(--color-red-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    color: var(--color-red-800);
+    border-color: var(--color-red-300);
+    background: var(--color-red-100);
+  }
 `;
 
 export const UploadButtonLabel = styled.label`
@@ -397,6 +676,72 @@ export const UploadButtonInner = styled.span`
   display: flex;
   gap: 6px;
   align-items: center;
+  justify-content: center;
+`;
+
+export const UploadButtonText = styled.span`
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+export const UploadIconButton = styled.span<{ $hasFiles?: boolean }>`
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: ${(p) =>
+    p.$hasFiles ? "var(--color-brand-50)" : "var(--color-bg-surface)"};
+  color: ${(p) =>
+    p.$hasFiles ? "var(--color-brand-600)" : "var(--color-text-secondary)"};
+  box-shadow: var(--shadow-sm);
+  border: 1px solid
+    ${(p) => (p.$hasFiles ? "var(--color-brand-200)" : "var(--color-border)")};
+  transition: all 0.2s ease;
+
+  @media (min-width: 769px) {
+    width: auto;
+    min-width: 104px;
+    padding: 0 0.8rem;
+    gap: 0.45rem;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: ${(p) =>
+      p.$hasFiles ? "var(--color-brand-100)" : "var(--color-bg-page)"};
+    color: ${(p) =>
+      p.$hasFiles ? "var(--color-brand-700)" : "var(--color-text-main)"};
+  }
+`;
+
+export const UploadBadge = styled.span`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-600);
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
 `;
 
 export const HiddenFileInput = styled.input`
@@ -408,6 +753,7 @@ export const CompressingState = styled.div`
   align-items: center;
   gap: 8px;
   color: var(--color-text-secondary);
+  min-height: 32px;
 `;
 
 export const CompressingText = styled.span`
@@ -425,6 +771,14 @@ export const AssetContentWrapper = styled.div`
   padding-left: 0.8rem;
   border-left: 2px solid var(--color-border);
   animation: ${fadeIn} 0.2s ease-out;
+
+  @media (min-width: 769px) {
+    margin-top: 0.7rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-bg-surface);
+  }
 `;
 
 export const AssetMileageContainer = styled.div`
@@ -521,6 +875,10 @@ export const UnlinkModalButtons = styled.div`
 
 export const ItemsTableContainer = styled.div`
   margin-top: 0;
+
+  @media (min-width: 769px) {
+    margin-top: 0.1rem;
+  }
 `;
 
 export const ItemsContainer = styled.div`
@@ -532,6 +890,11 @@ export const ItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    margin-top: 0.75rem;
+    border-radius: 16px;
+  }
 `;
 
 export const ItemsHeader = styled.div`
@@ -541,6 +904,29 @@ export const ItemsHeader = styled.div`
   padding: 0.5rem 0.8rem;
   background-color: var(--color-bg-surface);
   border-bottom: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    padding: 0.85rem 0.95rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+`;
+
+export const ItemsActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    gap: 0.3rem;
+
+    button {
+      padding-inline: 0.5rem;
+      font-size: 0.75rem;
+      flex: 1;
+    }
+  }
 `;
 
 export const ItemsTitle = styled.div`
@@ -550,6 +936,10 @@ export const ItemsTitle = styled.div`
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-text-main);
+
+  @media (max-width: 768px) {
+    font-size: 0.95rem;
+  }
 `;
 
 export const CloseTableButton = styled.button`
@@ -567,11 +957,29 @@ export const CloseTableButton = styled.button`
   &:hover {
     background-color: var(--color-red-50);
   }
+
+  @media (max-width: 768px) {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    flex-shrink: 0;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
 `;
 
 export const TableScrollWrapper = styled.div`
   overflow-x: auto;
   width: 100%;
+
+  @media (max-width: 768px) {
+    overflow: visible;
+  }
 
   &::-webkit-scrollbar {
     height: 8px;
@@ -586,6 +994,10 @@ export const TableScrollWrapper = styled.div`
 
 export const TableInnerContent = styled.div`
   min-width: 800px;
+
+  @media (max-width: 768px) {
+    min-width: 0;
+  }
 `;
 
 const TABLE_GRID_TEMPLATE = "32px 1.8fr 1.6fr 0.8fr 1fr 1fr 1.2fr 32px";
@@ -649,6 +1061,14 @@ export const TableInput = styled.input`
   &::placeholder {
     color: var(--color-text-tertiary);
     opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    height: 38px;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    border-color: var(--color-border);
+    background: var(--color-bg-surface);
   }
 `;
 
@@ -714,10 +1134,134 @@ export const ItemsFooter = styled.div`
   padding: 0.6rem 1rem;
   background-color: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
+
+  @media (max-width: 768px) {
+    padding: 0.85rem 0.95rem;
+  }
 `;
 
 export const TotalAmount = styled.span`
   font-size: 1.1rem;
+  font-weight: 700;
+  font-family: "Roboto Mono", monospace;
+  color: var(--color-text-main);
+`;
+
+export const MobileItemCard = styled.div`
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+`;
+
+export const MobileItemHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+`;
+
+export const MobileItemIndex = styled.span`
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+`;
+
+export const MobileItemHeaderMain = styled.div`
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+`;
+
+export const MobileItemHeaderTitle = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+`;
+
+export const MobileItemHeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+`;
+
+export const MobileItemHeaderMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 0;
+`;
+
+export const MobileItemHeaderAmount = styled.span`
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-family: "Roboto Mono", monospace;
+  white-space: nowrap;
+`;
+
+export const MobileCollapseIcon = styled.span<{ $collapsed?: boolean }>`
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transform: ${(p) => (p.$collapsed ? "rotate(-90deg)" : "rotate(0deg)")};
+  transition: transform 0.2s ease;
+`;
+
+export const MobileDeleteButton = styled(DeleteButton)`
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border-color: var(--color-border);
+  flex-shrink: 0;
+`;
+
+export const MobileFieldBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+`;
+
+export const MobileFieldLabel = styled.span`
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+`;
+
+export const MobileAmountGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  align-items: start;
+`;
+
+export const MobileTotalValue = styled.div`
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 0.95rem;
   font-weight: 700;
   font-family: "Roboto Mono", monospace;
   color: var(--color-text-main);

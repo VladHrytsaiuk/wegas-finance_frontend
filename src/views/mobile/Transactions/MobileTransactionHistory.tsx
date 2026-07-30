@@ -336,7 +336,6 @@ function MobileTransactionHistoryContent() {
 
   const {
     transactions,
-    totalCount,
     isLoading,
     isFetching,
     isFetchingNextPage,
@@ -345,9 +344,6 @@ function MobileTransactionHistoryContent() {
   } = useInfiniteTransactionsData(apiParams);
 
   const { language } = useSettings();
-  const selectedAccount = accountId
-    ? accounts.find((account) => String(account.id) === String(accountId))
-    : null;
 
   const { dataToRender, shouldGroup, translateDateLabel } = useTransactionsTable({
     transactions,
@@ -365,7 +361,7 @@ function MobileTransactionHistoryContent() {
         dayTs: startOfDay(new Date(Number(txs[0]?.date))).getTime(),
       }))
       .filter((entry) => entry.txs.length > 0 && Number.isFinite(entry.dayTs));
-  }, [dataToRender, shouldGroup, transactions]);
+  }, [dataToRender, shouldGroup]);
 
   const oldestLoadedTimestamp = useMemo(() => {
     if (transactions.length === 0) return null;
@@ -418,6 +414,7 @@ function MobileTransactionHistoryContent() {
 
     if (exactMatch) {
       scrollToGroup(exactMatch.dayTs);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPendingJumpDate(null);
       return;
     }
@@ -440,12 +437,14 @@ function MobileTransactionHistoryContent() {
       oldestLoadedTimestamp <= pendingJumpDate
     ) {
       scrollToGroup(nearestNewerMatch.dayTs);
+       
       setPendingJumpDate(null);
       return;
     }
 
     if (nearestOlderMatch && oldestLoadedTimestamp !== null) {
       scrollToGroup(nearestOlderMatch.dayTs);
+       
       setPendingJumpDate(null);
       return;
     }
@@ -563,7 +562,7 @@ function MobileTransactionHistoryContent() {
                 ))}
               </React.Fragment>
             ))
-          : (dataToRender as any[]).map((tx) => (
+          : (dataToRender as unknown[]).map((tx: any) => (
               <TransactionItem
                 key={tx.id}
                 transaction={tx}

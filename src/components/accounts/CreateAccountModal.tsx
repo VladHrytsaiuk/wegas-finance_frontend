@@ -1,13 +1,9 @@
-import { useCallback, useEffect, useState, useRef } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
 // Components
 import { AccountForm } from "./form/AccountForm";
-import ConfirmCloseModal from "../ui/ConfirmCloseModal"; // Перевір шлях
-import { Overlay, StyledModal, ModalCloseButton } from "../ui/Modal";
 import Modal, { useModal } from "../ui/Modal";
 
 // Hooks
@@ -33,8 +29,11 @@ function CreateAccountModalContent() {
   const { create } = actions;
   const isCreating = create.isPending;
   const previousOpenName = useRef(openName);
+  const hasOpened = useRef(false);
 
   useEffect(() => {
+    if (hasOpened.current) return;
+    hasOpened.current = true;
     open("create-account");
   }, [open]);
 

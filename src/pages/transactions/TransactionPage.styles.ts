@@ -12,7 +12,7 @@ export const PageContainer = styled.div`
 
   @media (max-width: 768px) {
     gap: 1rem;
-    padding: 0 1rem 2rem;
+    padding: 1rem 1rem 2rem;
   }
 `;
 
@@ -87,6 +87,97 @@ export const Card = styled.div`
   }
 `;
 
+export const ReceiptSourceCard = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.52rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-page);
+
+  svg {
+    flex-shrink: 0;
+    color: var(--color-brand-600);
+  }
+`;
+
+export const ReceiptMetaRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+`;
+
+export const ReceiptSourceContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+
+  span {
+    flex-shrink: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  a {
+    min-width: 0;
+    max-width: min(440px, 48vw);
+    overflow: hidden;
+    color: var(--color-brand-700);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  @media (max-width: 640px) {
+    a {
+      max-width: 46vw;
+    }
+  }
+`;
+
+export const ReceiptDiscountChip = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  max-width: 100%;
+  padding: 0.52rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-green-500) 28%, var(--color-border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-green-500) 8%, var(--color-bg-page));
+  color: var(--color-green-700);
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  small {
+    color: var(--color-text-secondary);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+`;
+
 export const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
@@ -97,7 +188,6 @@ export const MobileHeaderSpacer = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   margin-top: 0.75rem;
-  padding: 0 1rem;
 `;
 
 export const MobileMeta = styled.div`

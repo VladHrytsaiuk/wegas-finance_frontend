@@ -1,4 +1,4 @@
-import { HiPlus, HiFolderPlus, HiOutlineUserGroup } from "react-icons/hi2";
+import { HiPlus, HiFolderPlus, HiOutlineUserGroup, HiExclamationTriangle } from "react-icons/hi2";
 
 // UI Components
 import { Button } from "../../components/ui/Button";
@@ -35,6 +35,7 @@ function CounterpartiesContent() {
       selectedCp,
       selectedCat,
       itemToDelete,
+      copyOnWriteItem,
       canManageStructure,
       actions,
     },
@@ -46,13 +47,14 @@ function CounterpartiesContent() {
       handleEditClick,
       handleDeleteClick,
       handleClearFilters,
+      confirmCopyOnWrite,
       handleCloseSelection,
     },
     t,
   } = useCounterpartiesPage();
 
   const isMobile = useIsMobile();
-  const { open } = useModal();
+  const { open, close } = useModal();
 
   return (
     <>
@@ -166,6 +168,14 @@ function CounterpartiesContent() {
           actions={actions}
           onCloseSelection={handleCloseSelection}
         />
+        <Modal.Open opens="copy-on-write"><span id="trigger-copy-on-write" /></Modal.Open>
+        <Modal.Window name="copy-on-write" padding="1.5rem" mobileBottomSheet>
+          <div style={{ padding: 0, maxWidth: "32rem" }}>
+            <div style={{ display: "flex", gap: ".85rem", alignItems: "flex-start" }}><div style={{ width: "2.4rem", height: "2.4rem", display: "grid", placeItems: "center", flex: "0 0 2.4rem", borderRadius: ".75rem", background: "var(--color-brand-50)", color: "var(--color-brand-700)" }}><HiExclamationTriangle size={20} /></div><div><h3 style={{ margin: "0 0 .35rem", color: "var(--color-text-main)" }}>Змінити системний запис?</h3><p style={{ margin: 0, color: "var(--color-text-secondary)", lineHeight: 1.55 }}>Після збереження «<strong style={{ color: "var(--color-text-main)" }}>{copyOnWriteItem?.name}</strong>» стане локальним записом сім’ї.</p></div></div>
+            <div style={{ marginTop: "1rem", padding: ".75rem .9rem", borderRadius: ".65rem", background: "var(--color-bg-page)", color: "var(--color-text-secondary)", fontSize: ".83rem", lineHeight: 1.45 }}>Він більше не отримуватиме глобальні оновлення платформи.</div>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: ".75rem", marginTop: "1rem" }}><Button variation="secondary" onClick={close}>Скасувати</Button><Button onClick={() => { close(); confirmCopyOnWrite(); }}>Продовжити</Button></div>
+          </div>
+        </Modal.Window>
       </S.PageWrapper>
     </>
   );

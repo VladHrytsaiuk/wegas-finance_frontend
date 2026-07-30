@@ -12,6 +12,7 @@ import { isModifierPressed } from "../utils/platform";
 
 import Logo from "./ui/Logo";
 import MainNav from "./MainNav";
+import { AdminNav } from "./AdminNav";
 import FeedbackWidget from "./ui/FeedbackWidget"; // 👈 НЕ ЗАБУДЬ ІМПОРТУВАТИ
 
 // --- STYLES ---
@@ -180,9 +181,13 @@ const FeedbackLabel = styled.span<{ $collapsed: boolean }>`
 function Sidebar({
   isCollapsed,
   onToggle,
+  minimal = false,
+  admin = false,
 }: {
   isCollapsed: boolean;
   onToggle: () => void;
+  minimal?: boolean;
+  admin?: boolean;
 }) {
   const { t } = useTranslation();
   const location = useLocation();
@@ -226,10 +231,10 @@ function Sidebar({
       <Logo isCollapsed={isCollapsed} />
 
       <NavContainer>
-        <MainNav isCollapsed={isCollapsed} />
+        {admin ? <AdminNav isCollapsed={isCollapsed} /> : !minimal ? <MainNav isCollapsed={isCollapsed} /> : null}
       </NavContainer>
 
-      <SidebarFooter>
+      {!minimal ? <SidebarFooter>
         {/* 1. ВІДЖЕТ (Позиціонується абсолютно) */}
         {isFeedbackOpen && (
           <FeedbackWidget
@@ -280,7 +285,7 @@ function Sidebar({
             {t("navigation:sidebar.new_transaction")}
           </ButtonLabel>
         </AnimatedButton>
-      </SidebarFooter>
+      </SidebarFooter> : null}
     </StyledSidebar>
   );
 }

@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { HiXMark } from "react-icons/hi2";
+import { useEffect, useMemo, useState } from "react";
+import { HiMinusCircle, HiPlusCircle, HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 import { useSettings } from "../../../context/SettingsContext";
 import { formatMoney } from "../../../utils/helpers";
@@ -9,6 +10,7 @@ import type { Category, TransactionItem } from "../../../types";
 
 // 🔥 ВАЖЛИВО: Імпорт має бути у фігурних дужках
 import { ItemRow } from "./ItemRow";
+import { isDiscountItem } from "./itemUtils";
 import * as S from "./styles";
 
 type EditableTransactionItem = Partial<TransactionItem> & {
@@ -20,6 +22,7 @@ type EditableTransactionItem = Partial<TransactionItem> & {
 
 interface ItemTableActions {
   addItem: () => void;
+  addDiscount: () => void;
   setIsClearModalOpen: (value: boolean) => void;
   updateItem: (
     idx: number,
@@ -46,8 +49,13 @@ export const ItemsTable = ({
 }: ItemsTableProps) => {
   const { t } = useTranslation();
   const { language, currency: defaultCurrency } = useSettings();
+  const isMobile = useIsMobile();
+  const [expandedMobileItem, setExpandedMobileItem] = useState<number | null>(
+    null,
+  );
 
   const displayCurrency = currencyCode || defaultCurrency;
+  const hasDiscount = items.some(isDiscountItem);
 
   const itemsTotal = useMemo(() => {
     return items.reduce((sum, item) => {
@@ -56,6 +64,19 @@ export const ItemsTable = ({
       return sum + p * q;
     }, 0);
   }, [items]);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    if (items.length === 0) {
+      setExpandedMobileItem(null);
+      return;
+    }
+    setExpandedMobileItem(items.length - 1);
+  }, [items.length, isMobile]);
+
+  const handleAddItem = () => {
+    actions.addItem();
+  };
 
   // 🔥 НОВА ЛОГІКА ЗАКРИТТЯ
   const handleCloseAttempt = () => {
@@ -84,33 +105,47 @@ export const ItemsTable = ({
           </S.CloseTableButton>
         </S.ItemsTitle>
 
-        <Button
-          size="small"
-          variation="soft"
-          type="button"
-          onClick={actions.addItem}
-          icon={<HiPlusCircle size={16} />}
-        >
-          {t("transactions:itemsTable.button_add")}
-        </Button>
+        <S.ItemsActions>
+          <Button
+            size="small"
+            variation="soft"
+            type="button"
+            onClick={handleAddItem}
+            icon={<HiPlusCircle size={16} />}
+            title={t("transactions:itemsTable.button_add", "Додати")}
+            aria-label={t("transactions:itemsTable.button_add", "Додати")}
+          />
+          <Button
+            size="small"
+            variation="soft"
+            type="button"
+            onClick={actions.addDiscount}
+            disabled={hasDiscount}
+            icon={<HiMinusCircle size={16} />}
+          >
+            {t("transactions:itemsTable.button_discount", "Знижка")}
+          </Button>
+        </S.ItemsActions>
       </S.ItemsHeader>
 
       <S.TableScrollWrapper>
         <S.TableInnerContent>
-          <S.TableHeaderRow>
-            <S.ColCenter>#</S.ColCenter>
-            <div>{t("transactions:itemsTable.header_item_name")}</div>
-            <div>{t("transactions:itemsTable.header_category")}</div>
-            <S.ColRight>
-              {t("transactions:itemsTable.header_quantity")}
-            </S.ColRight>
-            <S.ColRight>{t("transactions:itemsTable.header_price")}</S.ColRight>
-            <S.ColRight>
-              {t("transactions:itemsTable.header_amount")}
-            </S.ColRight>
-            <div>{t("transactions:itemsTable.header_note")}</div>
-            <div></div>
-          </S.TableHeaderRow>
+          {!isMobile && (
+            <S.TableHeaderRow>
+              <S.ColCenter>#</S.ColCenter>
+              <div>{t("transactions:itemsTable.header_item_name")}</div>
+              <div>{t("transactions:itemsTable.header_category")}</div>
+              <S.ColRight>
+                {t("transactions:itemsTable.header_quantity")}
+              </S.ColRight>
+              <S.ColRight>{t("transactions:itemsTable.header_price")}</S.ColRight>
+              <S.ColRight>
+                {t("transactions:itemsTable.header_amount")}
+              </S.ColRight>
+              <div>{t("transactions:itemsTable.header_note")}</div>
+              <div></div>
+            </S.TableHeaderRow>
+          )}
 
           {items.length > 0 ? (
             items.map((item, idx) => (
@@ -120,6 +155,16 @@ export const ItemsTable = ({
                 item={item}
                 actions={actions}
                 categories={categories}
+                currencyCode={displayCurrency}
+                isCollapsed={isMobile && expandedMobileItem !== idx}
+                onToggleCollapse={
+                  isMobile
+                    ? () =>
+                        setExpandedMobileItem((prev) =>
+                          prev === idx ? null : idx,
+                        )
+                    : undefined
+                }
               />
             ))
           ) : (

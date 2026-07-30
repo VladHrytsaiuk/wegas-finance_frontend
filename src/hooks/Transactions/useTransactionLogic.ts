@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useEffectEvent } from "react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -14,10 +14,14 @@ import {
   deleteReceiptApi,
   deleteTransactionPhotoApi,
   type CreateTxData,
+  type CreateTxItem,
 } from "../../services/apiTransactions";
+import { getAccountsApi } from "../../services/apiAccounts";
+import { createInboxPhotoApi } from "../../services/apiInbox";
 import { compressImage } from "../../utils/compressor";
 import { isModifierPressed } from "../../utils/platform";
 import { waitForNextPaint } from "../../utils/render";
+import { takePendingReceiptPhoto } from "../../utils/pendingReceiptPhoto";
 import type { Tag, Transaction, TransactionItem } from "../../types";
 
 type EditableTransactionItem = Partial<TransactionItem> & {
@@ -46,10 +50,13 @@ interface UseTransactionLogicProps {
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
+  initialCategoryId?: string;
   initialAmount?: number;
   initialNote?: string;
+  initialDate?: number;
+  initialItems?: CreateTxItem[];
   onCloseModal?: () => void;
-  onSuccess?: (data?: unknown) => void;
+  onSuccess?: (data?: unknown) => void | Promise<void>;
 }
 
 interface FormErrors {
@@ -67,8 +74,11 @@ export const useTransactionLogic = ({
   initialType,
   initialAccountId,
   initialCounterpartyId,
+  initialCategoryId,
   initialAmount,
   initialNote,
+  initialDate,
+  initialItems,
   onCloseModal,
   onSuccess,
 }: UseTransactionLogicProps) => {
@@ -83,14 +93,21 @@ export const useTransactionLogic = ({
     initialType,
     initialAccountId,
     initialCounterpartyId,
+    initialCategoryId,
     initialAmount,
     initialNote,
+    initialDate,
+    initialItems,
   });
 
   // --- 🔥 МИТТЄВА ІНІЦІАЛІЗАЦІЯ ЛОКАЛЬНИХ СТЕЙТІВ ---
   const [timeStr, setTimeStr] = useState(() => {
     if (transactionToEdit && transactionToEdit.date) {
       const d = new Date(transactionToEdit.date);
+      if (!isNaN(d.getTime())) return format(d, "HH:mm");
+    }
+    if (initialDate) {
+      const d = new Date(initialDate);
       if (!isNaN(d.getTime())) return format(d, "HH:mm");
     }
     return format(new Date(), "HH:mm");
@@ -108,8 +125,8 @@ export const useTransactionLogic = ({
 
   const [showDetails, setShowDetails] = useState(
     () =>
-      transactionToEdit?.items?.length > 0 &&
-      transactionToEdit?.type === "expense",
+      (transactionToEdit?.items?.length > 0 || initialItems?.length > 0) &&
+      (transactionToEdit?.type === "expense" || initialType === "expense"),
   );
 
   const [conflictState, setConflictState] = useState<{
@@ -126,79 +143,87 @@ export const useTransactionLogic = ({
 
   const isEditSession = Boolean(transactionToEdit);
   const isDirty = form.isDirty || filesToUpload.length > 0;
+  const isPhotoOnlyInboxDraft =
+    !isEditSession &&
+    filesToUpload.length > 0 &&
+    !form.accountId &&
+    !localAmount &&
+    !form.categoryId &&
+    !form.counterpartyId &&
+    !form.note &&
+    form.items.length === 0;
 
   // --- HOTKEYS ---
+  const handleGlobalKeyDown = useEffectEvent((e: KeyboardEvent) => {
+    const isMod = isModifierPressed(e);
+
+    if (isMod) {
+      if (e.code === "Equal") {
+        e.preventDefault();
+        transformRef.current?.zoomIn();
+        return;
+      }
+      if (e.code === "Minus") {
+        e.preventDefault();
+        transformRef.current?.zoomOut();
+        return;
+      }
+      if (e.code === "Digit0") {
+        e.preventDefault();
+        transformRef.current?.resetTransform();
+        return;
+      }
+    }
+
+    if (isMod && e.code === "KeyD") {
+      e.preventDefault();
+      if (showDetails) {
+        const hasData = form.items.some(
+          (item) =>
+            (item.name && item.name.trim() !== "") ||
+            Number(item.price_per_unit) > 0 ||
+            Number(item.total_amount) > 0,
+        );
+        if (hasData) {
+          setIsClearModalOpen(true);
+          return;
+        }
+        actions.setItems([]);
+        setShowDetails(false);
+      } else {
+        setShowDetails(true);
+        if (form.items.length === 0) setTimeout(() => actions.addItem(), 0);
+      }
+      return;
+    }
+
+    if (isMod && e.code === "KeyA") {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "TEXTAREA" ||
+        (target.tagName === "INPUT" && target.getAttribute("type") === "text")
+      )
+        return;
+      e.preventDefault();
+      if (!showDetails) {
+        setShowDetails(true);
+        setTimeout(() => actions.addItem(), 0);
+      } else {
+        actions.addItem();
+      }
+      return;
+    }
+
+    if (isMod && e.code === "KeyI") {
+      e.preventDefault();
+      fileInputRef.current?.click();
+    }
+  });
+
   useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      const isMod = isModifierPressed(e);
-
-      if (isMod) {
-        if (e.code === "Equal") {
-          e.preventDefault();
-          transformRef.current?.zoomIn();
-          return;
-        }
-        if (e.code === "Minus") {
-          e.preventDefault();
-          transformRef.current?.zoomOut();
-          return;
-        }
-        if (e.code === "Digit0") {
-          e.preventDefault();
-          transformRef.current?.resetTransform();
-          return;
-        }
-      }
-
-      if (isMod && e.code === "KeyD") {
-        e.preventDefault();
-        if (showDetails) {
-          const hasData = form.items.some(
-            (item) =>
-              (item.name && item.name.trim() !== "") ||
-              Number(item.price_per_unit) > 0 ||
-              Number(item.total_amount) > 0,
-          );
-          if (hasData) {
-            setIsClearModalOpen(true);
-            return;
-          }
-          actions.setItems([]);
-          setShowDetails(false);
-        } else {
-          setShowDetails(true);
-          if (form.items.length === 0) setTimeout(() => actions.addItem(), 0);
-        }
-        return;
-      }
-
-      if (isMod && e.code === "KeyA") {
-        const target = e.target as HTMLElement;
-        if (
-          target.tagName === "TEXTAREA" ||
-          (target.tagName === "INPUT" && target.getAttribute("type") === "text")
-        )
-          return;
-        e.preventDefault();
-        if (!showDetails) {
-          setShowDetails(true);
-          setTimeout(() => actions.addItem(), 0);
-        } else {
-          actions.addItem();
-        }
-        return;
-      }
-
-      if (isMod && e.code === "KeyI") {
-        e.preventDefault();
-        fileInputRef.current?.click();
-        return;
-      }
-    };
-
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
-  }, [showDetails, form.items, actions]);
+  }, [handleGlobalKeyDown]);
 
   // --- Logic Helpers ---
   const invalidationConfig = () => {
@@ -374,6 +399,42 @@ export const useTransactionLogic = ({
         responseData = res;
         toast.success(t("transactions:transactionForm.alert_update_success"));
       } else {
+        const accounts = await queryClient.fetchQuery({
+          queryKey: ["accounts"],
+          queryFn: getAccountsApi,
+        });
+        const selectedAccount = accounts.find((account) => account.id === form.accountId);
+        const shouldCreatePhotoInbox =
+          form.type === "expense" &&
+          filesToUpload.length > 0 &&
+          selectedAccount?.is_synced;
+
+        if (shouldCreatePhotoInbox) {
+          if (filesToUpload.length !== 1) {
+            toast.error("Для Inbox поки можна додати лише одне фото чека.");
+            return;
+          }
+
+          const photoFormData = new FormData();
+          photoFormData.append(
+            "json",
+            JSON.stringify({
+              selected_account_id: form.accountId,
+              total: payload.amount,
+              occurred_at: payload.date,
+              note: payload.note,
+              counterparty_id: payload.counterparty_id,
+              category_id: payload.category_id,
+              items: payload.items,
+            }),
+          );
+          photoFormData.append("file", filesToUpload[0]);
+
+          responseData = await createInboxPhotoApi(photoFormData);
+          toast.success("Фото чека додано до Inbox. Очікуємо банківську операцію.");
+          queryClient.invalidateQueries({ queryKey: ["inbox"] });
+          queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+        } else {
         let dataToSend = payload;
         const hasFiles =
           filesToUpload.length > 0 ||
@@ -397,10 +458,11 @@ export const useTransactionLogic = ({
         const res = await createTxAsync(dataToSend);
         responseData = res;
         toast.success(t("transactions:transactionForm.alert_create_success"));
+        }
       }
 
       invalidationConfig();
-      if (onSuccess) onSuccess(responseData);
+      if (onSuccess) await onSuccess(responseData);
       onCloseModal?.();
 
       if (!isEditSession) {
@@ -422,6 +484,23 @@ export const useTransactionLogic = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPhotoOnlyInboxDraft) {
+      setIsSubmitting(true);
+      const photoFormData = new FormData();
+      photoFormData.append("json", JSON.stringify({}));
+      filesToUpload.forEach((file) => photoFormData.append("file", file));
+      createInboxPhotoApi(photoFormData)
+        .then(async (entry) => {
+          queryClient.invalidateQueries({ queryKey: ["inbox"] });
+          queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+          toast.success("Фото чека додано до Inbox");
+          if (onSuccess) await onSuccess(entry);
+          onCloseModal?.();
+        })
+        .catch(() => toast.error("Не вдалося зберегти фото чека"))
+        .finally(() => setIsSubmitting(false));
+      return;
+    }
     if (!validateForm()) {
       toast.error(t("transactions:transactionForm.alert_fix_errors"));
       return;
@@ -485,6 +564,29 @@ export const useTransactionLogic = ({
     }
   };
 
+  useEffect(() => {
+    if (isEditSession) return;
+
+    const capturedPhoto = takePendingReceiptPhoto();
+    if (!capturedPhoto) return;
+
+    // The mobile quick action must be immediate. Some PWA browsers never
+    // resolve image compression for a camera/gallery file.
+    setFilesToUpload([capturedPhoto]);
+    setPreviewIndex(0);
+  }, [isEditSession]);
+
+  const uploadPreviewUrls = useMemo(
+    () => filesToUpload.map((file) => URL.createObjectURL(file)),
+    [filesToUpload],
+  );
+
+  useEffect(() => {
+    return () => {
+      uploadPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [uploadPreviewUrls]);
+
   const allPreviewUrls = useMemo(() => {
     const urls: string[] = [];
     if (transactionToEdit) {
@@ -497,9 +599,9 @@ export const useTransactionLogic = ({
         if (url) urls.push(url);
       }
     }
-    filesToUpload.forEach((file) => urls.push(URL.createObjectURL(file)));
+    urls.push(...uploadPreviewUrls);
     return urls;
-  }, [transactionToEdit, filesToUpload]);
+  }, [transactionToEdit, uploadPreviewUrls]);
 
   const resolveConflict = {
     addRemainder: () => {
@@ -543,6 +645,7 @@ export const useTransactionLogic = ({
       isViewerOpen,
       isClearModalOpen,
       isDirty,
+      isPhotoOnlyInboxDraft,
     },
     actions: {
       ...actions,

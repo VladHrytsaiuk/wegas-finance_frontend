@@ -255,6 +255,30 @@ export const InfoValue = styled.div`
   }
 `;
 
+export const CardMaskList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+`;
+
+export const CardMask = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.38rem 0.58rem;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+  background: var(--color-bg-page);
+  color: var(--color-text-main);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  svg {
+    color: var(--color-brand-600);
+  }
+`;
+
 export const GoalWidgetLink = styled(Link)`
   text-decoration: none;
   display: block;

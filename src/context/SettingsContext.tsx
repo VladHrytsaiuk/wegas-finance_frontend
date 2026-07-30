@@ -18,6 +18,7 @@ interface SettingsContextType {
   currency: string;
   language: string;
   theme: string;
+  requireReceiptReview: boolean;
   isLoading: boolean;
   updateSettings: (newSettings: Partial<AppSettings>) => Promise<void>;
 }
@@ -38,6 +39,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     base_currency: "UAH",
     language: (i18n.resolvedLanguage || i18n.language || "uk").split("-")[0],
     theme: "light",
+    require_receipt_review: true,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -125,6 +127,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       currency: settings.base_currency,
       language: settings.language,
       theme: settings.theme,
+      requireReceiptReview: settings.require_receipt_review,
       isLoading,
       updateSettings,
     }),
@@ -132,6 +135,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       settings.base_currency,
       settings.language,
       settings.theme,
+      settings.require_receipt_review,
       isLoading,
       updateSettings,
     ],

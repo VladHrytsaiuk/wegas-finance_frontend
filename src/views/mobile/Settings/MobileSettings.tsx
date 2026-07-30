@@ -11,6 +11,7 @@ import {
   HiOutlineChevronRight,
   HiOutlineUsers,
   HiOutlineShieldCheck
+  ,HiOutlineBanknotes
 } from "react-icons/hi2";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useSettingsLayout } from "../../../hooks/Settings/useSettingsLayout";
@@ -157,6 +158,16 @@ function MobileSettings() {
         </StickyHeader>
 
         <Content>
+          <Section>
+            <SectionTitle>Фінанси</SectionTitle>
+            <ListGroup>
+              <ListItem to="/settings/finance" $isLast>
+                <LeftSide><IconBox $bg="#10b981"><HiOutlineBanknotes /></IconBox><Label>Фінанси</Label></LeftSide>
+                <RightSide><HiOutlineChevronRight /></RightSide>
+              </ListItem>
+            </ListGroup>
+          </Section>
+
           <Section>
             <SectionTitle>{t("settings:settingsLayout.group_account")}</SectionTitle>
             <ListGroup>

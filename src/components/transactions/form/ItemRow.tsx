@@ -1,6 +1,8 @@
 import React, { memo } from "react";
-import { HiTrash } from "react-icons/hi2";
+import { HiChevronDown, HiTrash } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "../../../hooks/useIsMobile";
+import { CURRENCY_SYMBOLS } from "../../../utils/currency";
 
 // 🔥 ВАЖЛИВО: Перевір, що useItemRow знаходиться в цій же папці
 import { useItemRow } from "../../../hooks/Transactions/useItemRow";
@@ -30,11 +32,23 @@ interface ItemRowProps {
   idx: number;
   actions: ItemRowActions;
   categories: Category[];
+  currencyCode?: string;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 export const ItemRow = memo(
-  ({ item, idx, actions, categories }: ItemRowProps) => {
+  ({
+    item,
+    idx,
+    actions,
+    categories,
+    currencyCode = "UAH",
+    isCollapsed = false,
+    onToggleCollapse,
+  }: ItemRowProps) => {
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
 
     const {
       handleManualCategoryChange,
@@ -46,19 +60,143 @@ export const ItemRow = memo(
       totalDisplay,
     } = useItemRow({ item, idx, actions, categories });
 
+    const unitPriceDisplay = new Intl.NumberFormat("uk-UA", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format((Number(item.price_per_unit) || 0) / 100);
+
+    if (isMobile) {
+      return (
+        <S.MobileItemCard>
+          <S.MobileItemHeader
+            role="button"
+            tabIndex={0}
+            aria-expanded={!isCollapsed}
+            onClick={onToggleCollapse}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && onToggleCollapse) {
+                e.preventDefault();
+                onToggleCollapse();
+              }
+            }}
+          >
+            <S.MobileItemHeaderMain>
+              <S.MobileItemIndex>{idx + 1}</S.MobileItemIndex>
+              <S.MobileItemHeaderTitle>
+                {item.name?.trim() ||
+                  t("transactions:itemsTable.placeholder_name")}
+              </S.MobileItemHeaderTitle>
+            </S.MobileItemHeaderMain>
+            <S.MobileItemHeaderActions>
+              <S.MobileItemHeaderMeta>
+                <S.MobileItemHeaderAmount>
+                  {`${Number(item.quantity) || 0} × ${unitPriceDisplay} ${
+                    CURRENCY_SYMBOLS[currencyCode] || currencyCode
+                  }`}
+                </S.MobileItemHeaderAmount>
+              </S.MobileItemHeaderMeta>
+              <S.MobileCollapseIcon $collapsed={isCollapsed}>
+                <HiChevronDown size={18} />
+              </S.MobileCollapseIcon>
+            <S.MobileDeleteButton
+              type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove();
+                }}
+              title={t("common:common.delete")}
+            >
+              <HiTrash size={18} />
+            </S.MobileDeleteButton>
+            </S.MobileItemHeaderActions>
+          </S.MobileItemHeader>
+
+          {!isCollapsed && (
+            <>
+          <S.MobileFieldBlock>
+            <S.MobileFieldLabel>
+              {t("transactions:itemsTable.header_item_name")}
+            </S.MobileFieldLabel>
+            <S.TableInput
+              placeholder={t("transactions:itemsTable.placeholder_name")}
+              value={item.name}
+              onChange={(e) => handleUpdateName(e.target.value)}
+              autoFocus={!item.name}
+            />
+          </S.MobileFieldBlock>
+
+          <S.MobileFieldBlock>
+            <S.MobileFieldLabel>
+              {t("transactions:itemsTable.header_category")}
+            </S.MobileFieldLabel>
+            <CategorySelect
+              categories={categories}
+              value={item.categoryId}
+              onChange={handleManualCategoryChange}
+              placeholder={t("categories:categorySelect.placeholder_default")}
+            />
+          </S.MobileFieldBlock>
+
+          <S.MobileAmountGrid>
+            <S.MobileFieldBlock>
+              <S.MobileFieldLabel>
+                {t("transactions:itemsTable.header_quantity")}
+              </S.MobileFieldLabel>
+              <PriceInput
+                value={item.quantity || 0}
+                onChange={handleUpdateQty}
+                placeholder="1"
+                style={{ textAlign: "right" }}
+              />
+            </S.MobileFieldBlock>
+
+            <S.MobileFieldBlock>
+              <S.MobileFieldLabel>
+                {t("transactions:itemsTable.header_price")}
+              </S.MobileFieldLabel>
+              <PriceInput
+                value={item.price_per_unit || 0}
+                onChange={handleUpdatePrice}
+                placeholder="0.00"
+                isCurrency={true}
+                style={{ textAlign: "right" }}
+              />
+            </S.MobileFieldBlock>
+
+            <S.MobileFieldBlock>
+              <S.MobileFieldLabel>
+                {t("transactions:itemsTable.header_amount")}
+              </S.MobileFieldLabel>
+              <S.MobileTotalValue>{totalDisplay}</S.MobileTotalValue>
+            </S.MobileFieldBlock>
+          </S.MobileAmountGrid>
+
+          <S.MobileFieldBlock>
+            <S.MobileFieldLabel>
+              {t("transactions:itemsTable.header_note")}
+            </S.MobileFieldLabel>
+            <S.TableInput
+              placeholder={t("transactions:itemsTable.placeholder_comment")}
+              value={item.comment || ""}
+              onChange={(e) => handleUpdateComment(e.target.value)}
+              style={{ fontStyle: "italic", color: "var(--color-text-secondary)" }}
+            />
+          </S.MobileFieldBlock>
+            </>
+          )}
+        </S.MobileItemCard>
+      );
+    }
+
     return (
       <S.TableRow>
         <S.ColIndex>{idx + 1}</S.ColIndex>
-
-        {/* Назва */}
         <S.TableInput
           placeholder={t("transactions:itemsTable.placeholder_name")}
           value={item.name}
           onChange={(e) => handleUpdateName(e.target.value)}
           autoFocus={!item.name}
         />
-
-        {/* Категорія */}
         <div style={{ minWidth: 0 }}>
           <CategorySelect
             categories={categories}
@@ -68,8 +206,6 @@ export const ItemRow = memo(
             size="small"
           />
         </div>
-
-        {/* Кількість */}
         <div style={{ textAlign: "right" }}>
           <PriceInput
             value={item.quantity || 0}
@@ -78,8 +214,6 @@ export const ItemRow = memo(
             style={{ textAlign: "right" }}
           />
         </div>
-
-        {/* Ціна */}
         <div style={{ textAlign: "right" }}>
           <PriceInput
             value={item.price_per_unit || 0}
@@ -89,19 +223,13 @@ export const ItemRow = memo(
             style={{ textAlign: "right" }}
           />
         </div>
-
-        {/* Сума */}
         <S.ColTotal>{totalDisplay}</S.ColTotal>
-
-        {/* Комент */}
         <S.TableInput
           placeholder={t("transactions:itemsTable.placeholder_comment")}
           value={item.comment || ""}
           onChange={(e) => handleUpdateComment(e.target.value)}
           style={{ fontStyle: "italic", color: "var(--color-text-secondary)" }}
         />
-
-        {/* Видалити */}
         <S.ColCenter>
           <S.DeleteButton
             type="button"

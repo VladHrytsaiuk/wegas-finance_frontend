@@ -20,6 +20,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
+  margin-left: -16px;
+  margin-right: -16px;
 `;
 
 const SliderContainer = styled.div`
@@ -36,7 +38,7 @@ const SliderContainer = styled.div`
   &::before,
   &::after {
     content: '';
-    flex: 0 0 7.5%;
+    flex: 0 0 11%;
   }
 `;
 
@@ -63,7 +65,7 @@ const PrivatNoiseEffect = css`
 `;
 
 const Card = styled.div<{ $bg: string; $color: string; $border?: string; $active: boolean; $isPrivat?: boolean }>`
-  flex: 0 0 85%;
+  flex: 0 0 78%;
   scroll-snap-align: center;
   height: 180px;
   background: ${(props) => props.$bg};
@@ -258,7 +260,7 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
   React.useEffect(() => {
     if (!sliderRef.current || activeIndex < 0) return;
     const container = sliderRef.current;
-    const itemWidth = container.offsetWidth * 0.85 + 12;
+    const itemWidth = container.offsetWidth * 0.78 + 12;
     const targetScroll = activeIndex * itemWidth;
     
     // Allow a small margin of error for fractional pixels
@@ -317,7 +319,7 @@ function CardSlider({ accounts, activeAccountId, onAccountChange, onCardClick }:
     if (!sliderRef.current || isProgrammaticScroll.current) return;
     const container = sliderRef.current;
     const scrollLeft = container.scrollLeft;
-    const itemWidth = container.offsetWidth * 0.85 + 12;
+    const itemWidth = container.offsetWidth * 0.78 + 12;
     const index = Math.round(scrollLeft / itemWidth);
     
     if (index !== activeIndex && accounts[index]) {

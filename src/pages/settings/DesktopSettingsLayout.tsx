@@ -4,6 +4,7 @@ import {
   HiOutlineTag,
   HiOutlineRectangleGroup,
   HiOutlineGlobeAlt,
+  HiOutlineBanknotes,
   HiOutlineUserGroup,
   HiArrowRightOnRectangle,
   HiOutlineDocumentArrowDown,
@@ -53,6 +54,10 @@ function SettingsLayout() {
 
             <S.SidebarItem to="general">
               <HiOutlineGlobeAlt /> {t("settings:settingsLayout.menu_general")}
+            </S.SidebarItem>
+
+            <S.SidebarItem to="finance">
+              <HiOutlineBanknotes /> Фінанси
             </S.SidebarItem>
 
             <S.SidebarItem to="security">

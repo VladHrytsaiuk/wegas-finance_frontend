@@ -38,6 +38,7 @@ export const useCounterpartiesPage = () => {
     isCategory: boolean;
     hasDebt?: boolean;
   } | null>(null);
+  const [copyOnWriteItem, setCopyOnWriteItem] = useState<Counterparty | CounterpartyCategory | null>(null);
 
   // Computed Tree
   const treeRoots = useCounterpartyTree({
@@ -63,12 +64,32 @@ export const useCounterpartiesPage = () => {
     if (node.type === "subgroup" || node.type === "group" || node.isCategory) {
       // Якщо це категорія (або підгрупа, яка є категорією)
       // Треба знайти справжню категорію в масиві categories, якщо node.raw неповний
-      setSelectedCat(rawData as CounterpartyCategory);
+      const category = rawData as CounterpartyCategory;
+      if (category.global_template_id) {
+        setCopyOnWriteItem(category);
+        openModal("copy-on-write");
+        return;
+      }
+      setSelectedCat(category);
       openModal("edit-cat");
     } else {
-      setSelectedCp(rawData as Counterparty);
+      const counterparty = rawData as Counterparty;
+      if (counterparty.global_template_id) {
+        setCopyOnWriteItem(counterparty);
+        openModal("copy-on-write");
+        return;
+      }
+      setSelectedCp(counterparty);
       openModal("edit-cp");
     }
+  };
+  const confirmCopyOnWrite = () => {
+    if (!copyOnWriteItem) return;
+    const isCategory = "color" in copyOnWriteItem;
+    if (isCategory) setSelectedCat(copyOnWriteItem as CounterpartyCategory);
+    else setSelectedCp(copyOnWriteItem as Counterparty);
+    setCopyOnWriteItem(null);
+    openModal(isCategory ? "edit-cat" : "edit-cp");
   };
 
   const handleDeleteClick = (id: string, isCategory: boolean = false) => {
@@ -160,6 +181,7 @@ export const useCounterpartiesPage = () => {
       selectedCp,
       selectedCat,
       itemToDelete,
+      copyOnWriteItem,
       canManageStructure,
       actions,
     },
@@ -174,6 +196,7 @@ export const useCounterpartiesPage = () => {
       handleEditClick,
       handleDeleteClick,
       handleClearFilters,
+      confirmCopyOnWrite,
       handleCloseSelection,
     },
     t,

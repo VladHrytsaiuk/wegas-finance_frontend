@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
-import { HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next"; // ✅ Додано
 
 import Modal, { useModal } from "../ui/Modal";
@@ -30,9 +28,12 @@ function EditAccountModal() {
 
   const { open, openName, close } = useModal();
   const previousOpenName = useRef(openName);
+  const hasOpened = useRef(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    if (hasOpened.current) return;
+    hasOpened.current = true;
     open("edit-account");
   }, [open]);
 

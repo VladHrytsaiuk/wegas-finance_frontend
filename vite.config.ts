@@ -63,4 +63,19 @@ export default defineConfig({
     },
     // 👆 КІНЕЦЬ БЛОКУ
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-pdf": ["jspdf", "jspdf-autotable"],
+          "vendor-excel": ["exceljs"],
+          "vendor-html2canvas": ["html2canvas"],
+          "vendor-utils": ["date-fns"],
+          "vendor-ui": ["recharts", "styled-components", "react-icons", "react-hot-toast"],
+          "vendor-data": ["@tanstack/react-query", "axios"],
+        },
+      },
+    },
+  },
 });

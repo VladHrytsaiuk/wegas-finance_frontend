@@ -1,5 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
-import { HiArrowLeft, HiPencil, HiTrash } from "react-icons/hi2";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import {
+  HiArrowLeft,
+  HiMinusCircle,
+  HiOutlineArrowTopRightOnSquare,
+  HiPencil,
+  HiTrash,
+} from "react-icons/hi2";
 
 // Components
 import TransactionDetails from "../../components/transactions/TransactionDetails";
@@ -10,6 +18,12 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import { TransactionDetailsSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
+import {
+  getLinkedReceiptSourcesApi,
+  unlinkReceiptSourceApi,
+} from "../../services/apiTransactions";
+import { formatMoney } from "../../utils/helpers";
+import toast from "react-hot-toast";
 
 // Hook & Styles
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
@@ -17,6 +31,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import * as S from "./TransactionPage.styles";
 
 function TransactionPage() {
+  const { i18n } = useTranslation();
   const {
     // Data
     transactionId,
@@ -41,7 +56,30 @@ function TransactionPage() {
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
   usePageTitle(t("legacy:transactionPage.header_title", "Деталі операції"));
+
+  const { data: linkedReceiptSources = [] } = useQuery({
+    queryKey: ["transaction", transactionId, "receipt-sources"],
+    queryFn: () => getLinkedReceiptSourcesApi(transactionId!),
+    enabled: Boolean(transactionId && transaction),
+  });
+
+  const unlinkReceiptMutation = useMutation({
+    mutationFn: (receiptSourceId: string) =>
+      unlinkReceiptSourceApi(transactionId!, receiptSourceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transaction", transactionId] });
+      queryClient.invalidateQueries({
+        queryKey: ["transaction", transactionId, "receipt-sources"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["inbox"] });
+      queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      toast.success("Чек відкріплено та повернуто до Inbox");
+    },
+    onError: () => toast.error("Не вдалося відкріпити чек"),
+  });
 
   if (isLoading) {
     return (
@@ -77,6 +115,15 @@ function TransactionPage() {
     "legacy:transactionPage.header_title",
     "Деталі операції",
   );
+  const receiptURL = linkedReceiptSources.find(
+    (source) => source.source_type === "url" && source.source_url,
+  )?.source_url;
+  const receiptDiscount = linkedReceiptSources.find(
+    (source) => (source.discount_total || 0) > 0,
+  );
+  const hasItemizedReceiptDiscount = (transaction.items || []).some(
+    (item) => item.name === "Знижка за чеком",
+  );
 
   return (
     <Modal>
@@ -100,7 +147,7 @@ function TransactionPage() {
         />
       )}
 
-      <S.PageContainer style={{ paddingBottom: isMobile ? "80px" : undefined }}>
+      <S.PageContainer style={{ paddingBottom: isMobile ? "120px" : undefined }}>
         {isMobile ? (
           <S.MobileHeaderSpacer>
             <S.MobileMeta>
@@ -202,6 +249,51 @@ function TransactionPage() {
             counterparties={counterparties}
           />
         </S.Card>
+
+        {receiptURL || (receiptDiscount && !hasItemizedReceiptDiscount) || linkedReceiptSources.length > 0 ? (
+          <S.ReceiptMetaRow>
+            {receiptURL ? (
+              <S.ReceiptSourceCard>
+                <HiOutlineArrowTopRightOnSquare size={19} />
+                <S.ReceiptSourceContent>
+                  <span>Електронний чек</span>
+                  <a href={receiptURL} target="_blank" rel="noreferrer" title={receiptURL}>
+                    {receiptURL}
+                  </a>
+                </S.ReceiptSourceContent>
+              </S.ReceiptSourceCard>
+            ) : null}
+            {receiptDiscount && !hasItemizedReceiptDiscount ? (
+              <S.ReceiptDiscountChip>
+                <HiMinusCircle size={17} />
+                Знижка в чеку: -
+                {formatMoney(
+                  receiptDiscount.discount_total || 0,
+                  receiptDiscount.currency || transaction.currency || "UAH",
+                  i18n.language,
+                )}
+                <small>вже врахована в цінах</small>
+              </S.ReceiptDiscountChip>
+            ) : null}
+            {linkedReceiptSources.length > 0 ? (
+              <Modal.Open opens="unlink-receipt-source">
+                <Button variation="secondary" size="small">
+                  Відкріпити чек
+                </Button>
+              </Modal.Open>
+            ) : null}
+          </S.ReceiptMetaRow>
+        ) : null}
+
+        {linkedReceiptSources[0] ? (
+          <Modal.Window name="unlink-receipt-source">
+            <ConfirmDelete
+              resourceName="цей чек"
+              onConfirm={() => unlinkReceiptMutation.mutate(linkedReceiptSources[0].id)}
+              disabled={unlinkReceiptMutation.isPending}
+            />
+          </Modal.Window>
+        ) : null}
       </S.PageContainer>
 
       {isMobile && !isBankTx && (

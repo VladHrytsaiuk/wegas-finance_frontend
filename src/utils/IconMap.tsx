@@ -1,183 +1,6 @@
 import React, { useState } from "react";
-import {
-  // --- UI & General ---
-  HiQuestionMarkCircle,
-  HiEllipsisHorizontalCircle,
-  HiCheckCircle,
-  HiXCircle,
-  HiFlag,
-
-  // --- Home & Living ---
-  HiHome,
-  HiHomeModern,
-  HiSparkles,
-  HiArchiveBox,
-  HiKey,
-  HiBolt,
-  HiFire,
-  HiCloud,
-  HiBuildingOffice,
-  HiSwatch,
-
-  // --- Services ---
-  HiClipboardDocumentList,
-  HiInbox,
-  HiScale,
-
-  // --- Communication ---
-  HiWifi,
-  HiDevicePhoneMobile,
-  HiGlobeAlt,
-
-  // --- Food ---
-  HiShoppingCart,
-  HiShoppingBag,
-  HiBuildingStorefront,
-  HiCake,
-  HiBeaker,
-  HiNoSymbol,
-
-  // --- Transport ---
-  HiTruck,
-  HiMapPin,
-  HiMap,
-  HiTicket,
-  HiFunnel,
-  HiWrenchScrewdriver,
-  HiWrench,
-  HiShieldCheck,
-  HiExclamationCircle,
-
-  // --- Travel ---
-  HiGlobeAmericas,
-  HiPaperAirplane,
-  HiBriefcase,
-
-  // --- Shopping ---
-  HiTag,
-  HiDeviceTablet,
-  HiComputerDesktop,
-  HiFaceSmile,
-  HiGift,
-
-  // --- Health ---
-  HiHeart,
-  HiPlusCircle,
-  HiUser,
-  HiUserGroup,
-
-  // --- Education ---
-  HiAcademicCap,
-  HiBookOpen,
-  HiPresentationChartLine,
-  HiChatBubbleLeftRight,
-  HiCodeBracket,
-
-  // --- Entertainment ---
-  HiFilm,
-  HiTrophy,
-  HiPlay,
-  HiMusicalNote,
-  HiPuzzlePiece,
-
-  // --- Finance & Obligations ---
-  HiBanknotes,
-  HiHandRaised,
-  HiUsers,
-  HiDocumentText,
-  HiReceiptPercent,
-  HiExclamationTriangle,
-  HiChartBar,
-  HiSun,
-  HiCube,
-  HiStar,
-  HiCurrencyDollar,
-  HiTrash,
-  HiArrowTrendingDown,
-  HiArrowTrendingUp,
-  HiArrowsRightLeft,
-  HiCreditCard,
-  HiCircleStack,
-} from "react-icons/hi2";
-
-// === 1. МАПА ІКОНОК ===
-const ICON_MAP: Record<string, React.ElementType> = {
-  HiEllipsisHorizontalCircle,
-  HiQuestionMarkCircle,
-  HiCheckCircle,
-  HiXCircle,
-  HiHome,
-  HiHomeModern,
-  HiShoppingCart,
-  HiBuildingStorefront,
-  HiClipboardDocumentList,
-  HiGlobeAmericas,
-  HiScale,
-  HiBanknotes,
-  HiBriefcase,
-  HiAcademicCap,
-  HiHeart,
-  HiTicket,
-  HiShoppingBag,
-  HiWifi,
-  HiKey,
-  HiMapPin,
-  HiInbox,
-  HiTag,
-  HiSparkles,
-  HiArchiveBox,
-  HiSwatch,
-  HiBolt,
-  HiFire,
-  HiCloud,
-  HiBuildingOffice,
-  HiDevicePhoneMobile,
-  HiGlobeAlt,
-  HiPlay,
-  HiCake,
-  HiBeaker,
-  HiNoSymbol,
-  HiTruck,
-  HiMap,
-  HiFunnel,
-  HiWrenchScrewdriver,
-  HiWrench,
-  HiShieldCheck,
-  HiExclamationCircle,
-  HiPaperAirplane,
-  HiDeviceTablet,
-  HiComputerDesktop,
-  HiFaceSmile,
-  HiGift,
-  HiPlusCircle,
-  HiUser,
-  HiUserGroup,
-  HiBookOpen,
-  HiPresentationChartLine,
-  HiChatBubbleLeftRight,
-  HiCodeBracket,
-  HiFilm,
-  HiTrophy,
-  HiMusicalNote,
-  HiPuzzlePiece,
-  HiHandRaised,
-  HiUsers,
-  HiDocumentText,
-  HiReceiptPercent,
-  HiExclamationTriangle,
-  HiChartBar,
-  HiSun,
-  HiCube,
-  HiStar,
-  HiCurrencyDollar,
-  HiTrash,
-  HiArrowTrendingDown,
-  HiArrowTrendingUp,
-  HiArrowsRightLeft,
-  HiCreditCard,
-  HiCircleStack,
-  HiFlag,
-};
+import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { ICON_MAP } from "./IconConstants";
 
 // === 2. ХЕЛПЕР ДЛЯ ЛОГОТИПІВ (Внутрішній) ===
 const getLogoSrc = (logoIdentifier: string | undefined | null) => {
@@ -233,6 +56,7 @@ interface SmartIconProps extends React.ComponentProps<"svg"> {
   size?: number | string;
   color?: string;
   className?: string;
+  fillContainer?: boolean;
 }
 
 export const SmartIcon: React.FC<SmartIconProps> = ({
@@ -241,6 +65,7 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
   size = 20,
   color,
   className,
+  fillContainer = false,
   ...props
 }) => {
   const [failedLogo, setFailedLogo] = useState<string | null>(null);
@@ -256,9 +81,9 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
         className={className}
         onError={() => setFailedLogo(logoSrc)}
         style={{
-          width: typeof size === "number" ? `${size}px` : size,
-          height: typeof size === "number" ? `${size}px` : size,
-          objectFit: "contain",
+          width: fillContainer ? "100%" : typeof size === "number" ? `${size}px` : size,
+          height: fillContainer ? "100%" : typeof size === "number" ? `${size}px` : size,
+          objectFit: fillContainer ? "cover" : "contain",
           borderRadius: "6px",
           display: "block",
         }}

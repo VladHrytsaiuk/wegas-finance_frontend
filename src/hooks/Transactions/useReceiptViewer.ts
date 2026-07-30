@@ -4,16 +4,19 @@ interface UseReceiptViewerProps {
   imageUrls: string[];
   onClose?: () => void;
   onIndexChange?: (index: number) => void;
+  currentIndex?: number;
 }
 
 export const useReceiptViewer = ({
   imageUrls,
   onClose,
   onIndexChange,
+  currentIndex = 0,
 }: UseReceiptViewerProps) => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(currentIndex);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
   const dragStart = useRef({ x: 0, y: 0 });
@@ -23,9 +26,19 @@ export const useReceiptViewer = ({
   const safeIndex =
     validUrls.length === 0 ? 0 : Math.min(index, validUrls.length - 1);
 
+  useEffect(() => {
+    setIndex(currentIndex);
+  }, [currentIndex]);
+
   // Reset functionality
   const handleReset = useCallback(() => {
     setScale(1);
+    setPosition({ x: 0, y: 0 });
+    setRotation(0);
+  }, []);
+
+  const handleRotateRight = useCallback(() => {
+    setRotation((current) => (current + 90) % 360);
     setPosition({ x: 0, y: 0 });
   }, []);
 
@@ -127,6 +140,7 @@ export const useReceiptViewer = ({
     state: {
       index: safeIndex,
       scale,
+      rotation,
       position,
       validUrls,
       hasMultipleImages: validUrls.length > 1,
@@ -138,6 +152,7 @@ export const useReceiptViewer = ({
       handleZoomIn,
       handleZoomOut,
       handleReset,
+      handleRotateRight,
       handleMouseDown,
       handleMouseMove,
       handleMouseUp,

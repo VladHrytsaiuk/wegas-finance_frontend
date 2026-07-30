@@ -453,12 +453,17 @@ function MobileAccounts() {
   }, [scopedAccountsBase, typeFilter]);
 
   useEffect(() => {
-    if (scope === "personal") setSelectedOwnerId("all");
+    if (scope === "personal") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedOwnerId("all");
+    }
   }, [scope]);
 
   useEffect(() => {
     if (!canUseFamilyScope && scope !== "personal") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setScope("personal");
+       
       setSelectedOwnerId("all");
     }
   }, [canUseFamilyScope, scope]);
@@ -471,18 +476,21 @@ function MobileAccounts() {
     );
 
     if (typeFilter !== "all" && !availableTypes.has(typeFilter)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypeFilter("all");
     }
   }, [scopedAccountsBase, typeFilter]);
 
   useEffect(() => {
     if (!scopedAccounts.length) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedAccountId(null);
       return;
     }
 
     const stillExists = scopedAccounts.some((account) => account.id === selectedAccountId);
     if (!stillExists) {
+       
       setSelectedAccountId(scopedAccounts[0].id);
     }
   }, [scopedAccounts, selectedAccountId]);
@@ -587,9 +595,9 @@ function MobileAccounts() {
     enabled: !!selectedAccount?.id,
   });
 
-  const recentTransactions = Array.isArray(recentRes)
+  const recentTransactions = useMemo(() => Array.isArray(recentRes)
     ? recentRes
-    : recentRes?.data || [];
+    : recentRes?.data || [], [recentRes]);
 
   const recentItems = useMemo(
     () => (recentTransactions as Transaction[]).slice(0, 3),

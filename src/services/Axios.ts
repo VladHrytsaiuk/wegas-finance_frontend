@@ -64,6 +64,14 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Якщо помилка 503 (Maintenance Mode)
+    if (error.response?.status === 503) {
+      window.dispatchEvent(new Event("maintenanceMode"));
+      // Повертаємо Promise, який ніколи не виконається, щоб запобігти unhandled rejection,
+      // який може зловити AppErrorBoundary і показати "застосунок зламався".
+      return new Promise(() => {});
+    }
+
     // Якщо помилка 401 і ми ще не пробували повторити цей запит
     if (error.response?.status === 401 && !originalRequest._retry) {
       const isAuthPage =

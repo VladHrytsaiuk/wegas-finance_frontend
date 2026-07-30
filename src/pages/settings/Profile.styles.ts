@@ -59,6 +59,13 @@ export const IntegrationCard = styled.div`
   }
 `;
 
+export const TelegramCard = styled(IntegrationCard)`
+  align-items: stretch;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--color-brand-50) 72%, transparent), transparent 38%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-brand-50)) 0%, var(--color-bg-surface) 100%);
+`;
+
 export const IntegrationLeft = styled.div`
   display: flex;
   align-items: center;
@@ -84,6 +91,10 @@ export const BankLogo = styled.img`
 export const TextInfo = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+export const TelegramTextInfo = styled(TextInfo)`
+  min-width: 0;
 `;
 
 export const BankTitleRow = styled.div`
@@ -149,6 +160,30 @@ export const ConnectionStatus = styled.div<{
 export const ActionsRight = styled.div`
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    justify-content: flex-start;
+  }
+`;
+
+export const ActionLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+`;
+
+export const OpenBotButton = styled(Button)`
+  border: none !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled) {
+    border: none !important;
+    box-shadow: none !important;
+  }
 `;
 
 export const SyncButton = styled(Button)<{ $isSpinning?: boolean }>`
@@ -159,6 +194,8 @@ export const SyncButton = styled(Button)<{ $isSpinning?: boolean }>`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+  border: none !important;
+  box-shadow: none !important;
 
   svg {
     ${(props) =>
@@ -177,18 +214,46 @@ export const IconButton = styled(Button)`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+  border: none !important;
+  box-shadow: none !important;
 
   ${(props) =>
-    props.$variation === "danger" &&
+    props.variation === "danger" &&
     css`
-      background-color: var(--color-red-50);
-      color: var(--color-red-600);
-      border: 1px solid var(--color-red-200);
+      background: var(--color-red-600) !important;
+      background-color: var(--color-red-600) !important;
+      color: white !important;
+      box-shadow: none !important;
 
-      &:hover {
-        background-color: var(--color-red-600) !important;
-        color: white;
-        border-color: var(--color-red-600);
+      &:hover:not(:disabled) {
+        background-color: var(--color-red-700) !important;
+        color: white !important;
+        box-shadow: none !important;
       }
     `}
+`;
+
+export const IntegrationMeta = styled.div`
+  margin-top: 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+`;
+
+export const MetaRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+`;
+
+export const MetaLabel = styled.span`
+  color: var(--color-text-secondary);
+`;
+
+export const MetaValue = styled.span`
+  color: var(--color-text-main);
+  font-weight: 600;
 `;

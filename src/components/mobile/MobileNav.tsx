@@ -1,14 +1,17 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   HiOutlineHome,
-  HiOutlineChartBar,
+  HiOutlineInbox,
   HiOutlineWallet,
   HiOutlineCog6Tooth,
   HiPlus,
 } from "react-icons/hi2";
 import MobileActionMenu from "./MobileActionMenu";
+import { getInboxPendingCountApi } from "../../services/apiInbox";
+import { ReceiptImportModal } from "../inbox/ReceiptImportModal";
 
 const Nav = styled.nav`
   position: fixed;
@@ -32,6 +35,7 @@ const Nav = styled.nav`
 `;
 
 const StyledNavLink = styled(NavLink)`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,6 +54,23 @@ const StyledNavLink = styled(NavLink)`
     width: 28px;
     height: 28px;
   }
+`;
+
+const CountBadge = styled.span`
+  position: absolute;
+  top: -2px;
+  right: calc(50% - 18px);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-danger-500, #ef4444);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--color-bg-surface);
 `;
 
 const ActionButtonWrapper = styled.div`
@@ -87,6 +108,12 @@ const ActionButton = styled.button`
 
 function MobileNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReceiptImportOpen, setIsReceiptImportOpen] = useState(false);
+  const { data: pendingInboxCount = 0 } = useQuery({
+    queryKey: ["inbox", "pending-count"],
+    queryFn: getInboxPendingCountApi,
+    staleTime: 30 * 1000,
+  });
 
   return (
     <>
@@ -95,8 +122,11 @@ function MobileNav() {
           <HiOutlineHome />
         </StyledNavLink>
         
-        <StyledNavLink to="/statistics">
-          <HiOutlineChartBar />
+        <StyledNavLink to="/inbox">
+          <HiOutlineInbox />
+          {pendingInboxCount > 0 ? (
+            <CountBadge>{pendingInboxCount > 99 ? "99+" : pendingInboxCount}</CountBadge>
+          ) : null}
         </StyledNavLink>
 
         <ActionButtonWrapper>
@@ -114,7 +144,18 @@ function MobileNav() {
         </StyledNavLink>
       </Nav>
 
-      {isMenuOpen && <MobileActionMenu onClose={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && (
+        <MobileActionMenu
+          onClose={() => setIsMenuOpen(false)}
+          onOpenReceiptImport={() => {
+            setIsMenuOpen(false);
+            setIsReceiptImportOpen(true);
+          }}
+        />
+      )}
+      {isReceiptImportOpen && (
+        <ReceiptImportModal onClose={() => setIsReceiptImportOpen(false)} />
+      )}
     </>
   );
 }

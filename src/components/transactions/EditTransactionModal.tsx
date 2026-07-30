@@ -4,11 +4,12 @@ import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 
-import { Overlay } from "../ui/Modal";
+import { BottomSheetPanel, DragHandle, Overlay } from "../ui/Modal";
 import CreateTransactionForm from "./form";
 import { CenteredSpinner } from "../ui/CenteredSpinner";
 import { getTransactionApi } from "../../services/apiTransactions";
 import { useScrollLock } from "../../hooks/ui/useScrollLock";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 // Просто центрувальник, без обмежень ширини
 const CenteredLayout = styled.div`
@@ -23,6 +24,7 @@ const CenteredLayout = styled.div`
 function EditTransactionModal() {
   const navigate = useNavigate();
   const { transactionId } = useParams();
+  const isMobile = useIsMobile();
 
   const { data: transaction, isLoading } = useQuery({
     queryKey: ["transaction", transactionId],
@@ -45,17 +47,31 @@ function EditTransactionModal() {
   }, [handleClose]);
 
   return createPortal(
-    <Overlay onClick={handleClose}>
-      <CenteredLayout onClick={(e) => e.stopPropagation()}>
-        {isLoading ? (
-          <CenteredSpinner isContainer />
-        ) : (
-          <CreateTransactionForm
-            transactionToEdit={transaction}
-            onCloseModal={handleClose}
-          />
-        )}
-      </CenteredLayout>
+    <Overlay $isBottomSheet={isMobile} onClick={handleClose}>
+      {isMobile ? (
+        <BottomSheetPanel onClick={(e) => e.stopPropagation()}>
+          <DragHandle />
+          {isLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <CreateTransactionForm
+              transactionToEdit={transaction}
+              onCloseModal={handleClose}
+            />
+          )}
+        </BottomSheetPanel>
+      ) : (
+        <CenteredLayout onClick={(e) => e.stopPropagation()}>
+          {isLoading ? (
+            <CenteredSpinner isContainer />
+          ) : (
+            <CreateTransactionForm
+              transactionToEdit={transaction}
+              onCloseModal={handleClose}
+            />
+          )}
+        </CenteredLayout>
+      )}
     </Overlay>,
     document.body
   );

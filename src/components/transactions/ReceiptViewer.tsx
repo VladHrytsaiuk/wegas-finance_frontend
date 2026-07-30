@@ -2,7 +2,9 @@ import {
   HiMagnifyingGlassPlus,
   HiMagnifyingGlassMinus,
   HiArrowPath,
+  HiArrowUturnRight,
   HiXMark,
+  HiTrash,
   HiChevronLeft,
   HiChevronRight,
 } from "react-icons/hi2";
@@ -14,6 +16,9 @@ interface ReceiptViewerProps {
   imageUrls: string[];
   onClose?: () => void;
   onIndexChange?: (index: number) => void;
+  currentIndex?: number;
+  onDeleteCurrent?: () => void;
+  isDeletingCurrent?: boolean;
 }
 
 export function ReceiptViewer(props: ReceiptViewerProps) {
@@ -35,12 +40,27 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
           <S.ToolBtn onClick={handlers.handleReset} title={t("legacy:viewer.reset")}>
             <HiArrowPath />
           </S.ToolBtn>
+          <S.ToolBtn onClick={handlers.handleRotateRight} title="Повернути фото">
+            <HiArrowUturnRight />
+          </S.ToolBtn>
           <S.ToolBtn
             onClick={handlers.handleZoomIn}
             title={t("legacy:viewer.zoom_in")}
           >
             <HiMagnifyingGlassPlus />
           </S.ToolBtn>
+          {props.onDeleteCurrent && (
+            <S.ToolBtn
+              onClick={props.onDeleteCurrent}
+              title={t(
+                "transactions:transactionForm.delete_current_photo",
+                "Видалити це фото",
+              )}
+              disabled={props.isDeletingCurrent}
+            >
+              <HiTrash />
+            </S.ToolBtn>
+          )}
         </S.ToolGroup>
 
         {props.onClose && (
@@ -73,6 +93,7 @@ export function ReceiptViewer(props: ReceiptViewerProps) {
         <S.StyledImage
           src={state.currentUrl}
           $scale={state.scale}
+          $rotation={state.rotation}
           $x={state.position.x}
           $y={state.position.y}
           draggable={false}

@@ -45,22 +45,28 @@ export const useAccountSelect = ({
 }: UseAccountSelectProps) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  const [didRestoreSavedValue, setDidRestoreSavedValue] = useState(false);
 
   useEffect(() => {
-    if (!value && accounts.length > 0) {
-      const savedId = localStorage.getItem(STORAGE_KEY);
+    if (didRestoreSavedValue || value || accounts.length === 0) return;
 
-      if (savedId) {
-        const accountExists = accounts.find(
-          (account) => String(account.id) === String(savedId),
-        );
+    const savedId = localStorage.getItem(STORAGE_KEY);
 
-        if (accountExists && !accountExists.is_synced) {
-          onChange(String(savedId));
-        }
-      }
+    if (!savedId) {
+      setDidRestoreSavedValue(true);
+      return;
     }
-  }, [accounts, value, onChange]);
+
+    const accountExists = accounts.find(
+      (account) => String(account.id) === String(savedId),
+    );
+
+    if (accountExists && !accountExists.is_synced) {
+      onChange(String(savedId));
+    }
+
+    setDidRestoreSavedValue(true);
+  }, [accounts, value, onChange, didRestoreSavedValue]);
 
   const sortedAccounts = useMemo(() => {
     return [...accounts].sort((a, b) => {
@@ -170,6 +176,7 @@ export const useAccountSelect = ({
   );
 
   const handleClear = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
     onChange("");
   }, [onChange]);
 

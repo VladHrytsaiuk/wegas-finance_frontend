@@ -1,12 +1,19 @@
 import { useState, useCallback, useMemo } from "react";
 
-import type { CreateAssetOnFlyInput } from "../../services/apiTransactions";
+import type {
+  CreateAssetOnFlyInput,
+  CreateTxItem,
+} from "../../services/apiTransactions";
 import type {
   Tag,
   Transaction,
   TransactionType,
   TransactionItem,
 } from "../../types/index";
+import {
+  DISCOUNT_ITEM_NAME,
+  isDiscountItem,
+} from "../../components/transactions/form/itemUtils";
 
 const INITIAL_ITEM: TransactionItem = {
   name: "",
@@ -41,8 +48,11 @@ interface UseTransactionFormProps {
   initialType?: string;
   initialAccountId?: string;
   initialCounterpartyId?: string;
+  initialCategoryId?: string;
   initialAmount?: number;
   initialNote?: string;
+  initialDate?: number;
+  initialItems?: CreateTxItem[];
 }
 
 export const useTransactionForm = (props?: UseTransactionFormProps) => {
@@ -51,8 +61,11 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
     initialType = "expense",
     initialAccountId = "",
     initialCounterpartyId = "",
+    initialCategoryId = "",
     initialAmount,
     initialNote = "",
+    initialDate,
+    initialItems = [],
   } = props || {};
 
   // --- МИТТЄВА ІНІЦІАЛІЗАЦІЯ СТЕЙТІВ ---
@@ -73,7 +86,7 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
   );
 
   const [categoryId, setCategoryId] = useState(() =>
-    transactionToEdit ? safeStr(transactionToEdit.category_id) : "",
+    transactionToEdit ? safeStr(transactionToEdit.category_id) : initialCategoryId,
   );
 
   const [counterpartyId, setCounterpartyId] = useState(() =>
@@ -85,6 +98,10 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
   const [date, setDate] = useState<string>(() => {
     if (transactionToEdit && transactionToEdit.date) {
       const d = new Date(transactionToEdit.date);
+      if (!isNaN(d.getTime())) return d.toISOString().split("T")[0];
+    }
+    if (initialDate) {
+      const d = new Date(initialDate);
       if (!isNaN(d.getTime())) return d.toISOString().split("T")[0];
     }
     return new Date().toISOString().split("T")[0];
@@ -119,7 +136,14 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
         categoryId: safeStr(item.category_id),
       }));
     }
-    return [];
+    return initialItems.map((item) => ({
+      name: safeStr(item.name),
+      quantity: Number(item.quantity) || 1,
+      price_per_unit: Number(item.price_per_unit) || 0,
+      total_amount: Number(item.total_amount) || 0,
+      comment: safeStr(item.comment),
+      categoryId: safeStr(item.category_id || item.categoryId),
+    }));
   });
 
   // --- ASSET СТЕЙТИ ---
@@ -329,7 +353,31 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
   };
 
   const setItemsList = (newItems: TransactionItem[]) => setItems(newItems);
-  const addItem = () => setItems([...items, { ...INITIAL_ITEM }]);
+  const addItem = () =>
+    setItems((currentItems) => {
+      const discountIndex = currentItems.findIndex(isDiscountItem);
+      if (discountIndex === -1) return [...currentItems, { ...INITIAL_ITEM }];
+
+      return [
+        ...currentItems.slice(0, discountIndex),
+        { ...INITIAL_ITEM },
+        ...currentItems.slice(discountIndex),
+      ];
+    });
+
+  const addDiscount = () =>
+    setItems((currentItems) => {
+      if (currentItems.some(isDiscountItem)) return currentItems;
+
+      return [
+        ...currentItems,
+        {
+          ...INITIAL_ITEM,
+          name: DISCOUNT_ITEM_NAME,
+          quantity: 1,
+        },
+      ];
+    });
 
   const removeItem = (index: number) => {
     const newItems = items.filter((_, i) => i !== index);
@@ -346,10 +394,14 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
     const item = { ...newItems[index], [field]: value };
     if (field === "quantity" || field === "price_per_unit") {
       const q = field === "quantity" ? Number(value) : Number(item.quantity);
-      const p =
+      let p =
         field === "price_per_unit"
           ? Number(value)
           : Number(item.price_per_unit);
+      if (isDiscountItem(item) && p > 0) {
+        p = -p;
+        item.price_per_unit = p;
+      }
       item.total_amount = q * p;
     }
     newItems[index] = item;
@@ -404,6 +456,7 @@ export const useTransactionForm = (props?: UseTransactionFormProps) => {
       setTagIds,
       setItems: setItemsList,
       addItem,
+      addDiscount,
       updateItem,
       removeItem,
       resetItems,

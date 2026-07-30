@@ -109,6 +109,34 @@ export const getTransactionApi = async (id: string) => {
   return response.data;
 };
 
+export interface LinkedReceiptSource {
+  id: string;
+  source_type: string;
+  source_url: string;
+  currency: string;
+  discount_total: number | null;
+}
+
+export const getLinkedReceiptSourcesApi = async (
+  id: string,
+): Promise<LinkedReceiptSource[]> => {
+  const response = await api.get<LinkedReceiptSource[]>(
+    `/transactions/${id}/receipt-sources`,
+  );
+  return response.data;
+};
+
+export const unlinkReceiptSourceApi = async (
+  transactionId: string,
+  receiptSourceId: string,
+) => {
+  const response = await api.post(
+    `/transactions/${transactionId}/receipt-sources/unlink`,
+    { receipt_source_id: receiptSourceId },
+  );
+  return response.data;
+};
+
 export const uploadReceiptApi = async ({
   id,
   file,
