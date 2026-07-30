@@ -5,20 +5,24 @@ const getApiUrl = () => {
   
   const hostname = window.location.hostname;
   
-  // Якщо ми на localhost, 127.0.0.1 або в локальній мережі (IP починається на 192.168. або 10.)
+  // 1. Спочатку перевіряємо чи є явно заданий VITE_API_URL в .env
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // 2. Якщо ми на localhost або в локальній мережі і VITE_API_URL не задано
   if (
     hostname === "localhost" || 
     hostname === "127.0.0.1" || 
     hostname.startsWith("192.168.") || 
     hostname.startsWith("10.") ||
-    hostname.endsWith(".local") // Для mDNS адрес типу MacBook-Pro.local
+    hostname.endsWith(".local")
   ) {
-    // Підставляємо той самий хост, але порт бекенда 8080
     return `http://${hostname}:8080/api`;
   }
   
-  // Для продакшену (Vercel)
-  return "/api";
+  // 3. Для продакшену (Vercel) без VITE_API_URL
+  return "https://wegas-finance.vercel.app/api";
 };
 
 const API_URL = getApiUrl();

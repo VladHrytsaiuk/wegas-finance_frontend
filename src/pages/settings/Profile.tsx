@@ -229,7 +229,11 @@ function Profile() {
 
   const handleTelegramConnect = async () => {
     if (!isTelegramWebhookConfigured) {
-      await syncTelegramWebhook();
+      try {
+        await syncTelegramWebhook();
+      } catch (e) {
+        console.warn("Webhook sync failed, continuing to link generation (polling mode might be active)", e);
+      }
     }
 
     await createTelegramLink();

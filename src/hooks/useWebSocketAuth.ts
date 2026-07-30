@@ -38,14 +38,23 @@ export function useWebSocketAuth(onMessage?: (data: WebSocketMessage) => void) {
       return;
     }
 
-    const isLocalhost =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-    
-    // Construct WebSocket URL
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const host = isLocalhost ? "localhost:8080" : window.location.host;
-    const wsUrl = `${protocol}//${host}/api/ws?token=${token}`;
+    let wsUrl = "";
+
+    if (import.meta.env.VITE_API_URL) {
+      // VITE_API_URL is like http://vsr1.nxtcloud.online:8080/wegasfinance/api
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const wsProtocol = apiUrl.startsWith("https") ? "wss:" : "ws:";
+      const urlWithoutProtocol = apiUrl.replace(/^https?:\/\//, "");
+      wsUrl = `${wsProtocol}//${urlWithoutProtocol}/ws?token=${token}`;
+    } else {
+      const isLocalhost =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+      
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const host = isLocalhost ? "localhost:8080" : window.location.host;
+      wsUrl = `${protocol}//${host}/api/ws?token=${token}`;
+    }
 
     const socket = new WebSocket(wsUrl);
 
