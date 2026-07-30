@@ -96,7 +96,11 @@ function Profile() {
           toast.success(t("settings:integrations.telegram_link_opening"));
         }
 
-        window.open(data.deep_link, "_blank", "noopener,noreferrer");
+        if (isMobile) {
+          window.location.href = data.deep_link;
+        } else {
+          window.open(data.deep_link, "_blank", "noopener,noreferrer");
+        }
       },
       onError: () => {
         setIsWaitingForTelegramStart(false);
@@ -451,12 +455,14 @@ function Profile() {
                 disabled={isTelegramBusy}
                 onClick={
                   isTelegramLinked && telegramStatus?.bot_username
-                    ? () =>
-                        window.open(
-                          `https://t.me/${telegramStatus.bot_username}`,
-                          "_blank",
-                          "noopener,noreferrer",
-                        )
+                    ? () => {
+                        const url = `https://t.me/${telegramStatus.bot_username}`;
+                        if (isMobile) {
+                          window.location.href = url;
+                        } else {
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        }
+                      }
                     : handleTelegramConnect
                 }
               >
