@@ -20,6 +20,7 @@ export const useCategoriesPage = () => {
   const [filters, setFilters] = useState({ type: [] as string[] });
   const [sortValue, setSortValue] = useState("default");
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [copyOnWriteCategory, setCopyOnWriteCategory] = useState<Category | null>(null);
 
   // --- Computed Tree ---
   const categoryTreeRoots = useCategoryTree({
@@ -32,12 +33,23 @@ export const useCategoriesPage = () => {
   // --- Handlers ---
   const handleEdit = (category: Category) => {
     if (!canManageStructure) return;
+    if (category.global_template_id) {
+      setCopyOnWriteCategory(category);
+      setTimeout(() => document.getElementById("trigger-copy-on-write-category")?.click(), 0);
+      return;
+    }
     setEditingCategory(category);
     // Programmatic open trigger
     setTimeout(
       () => document.getElementById("trigger-edit-category")?.click(),
       0
     );
+  };
+  const confirmCopyOnWrite = () => {
+    if (!copyOnWriteCategory) return;
+    setEditingCategory(copyOnWriteCategory);
+    setCopyOnWriteCategory(null);
+    setTimeout(() => document.getElementById("trigger-edit-category")?.click(), 0);
   };
 
   const handleDelete = (id: string) => {
@@ -104,6 +116,7 @@ export const useCategoriesPage = () => {
       categoryTreeRoots,
       flatCategories,
       editingCategory,
+      copyOnWriteCategory,
       searchQuery,
       filters,
       sortValue,
@@ -121,6 +134,7 @@ export const useCategoriesPage = () => {
       setFilters,
       setSortValue,
       handleEdit,
+      confirmCopyOnWrite,
       handleDelete,
       handleCreateClick,
       handleSave,

@@ -61,6 +61,8 @@ const GoalDetails = lazy(() => import("./pages/Goals/GoalDetails"));
 const Shopping = lazy(() => import("./pages/Shopping/Shopping"));
 const WishlistGroups = lazy(() => import("./pages/wishlist/WishlistGroups"));
 const WishlistItems = lazy(() => import("./pages/wishlist/WishlistItems"));
+const AdminCatalog = lazy(() => import("./pages/admin/AdminCatalog"));
+const AdminGuard = lazy(() => import("./components/AdminGuard"));
 
 // --- LAZY LOADED MODALS ---
 const CreateTransactionModal = lazy(() => import("./components/transactions/CreateTransactionModal"));
@@ -178,6 +180,12 @@ function AppRoutes() {
               path="inbox/:inboxId"
               element={withRouteSuspense(<InboxEntryPage />, "resources")}
             />
+            <Route element={withRouteSuspense(<AdminGuard />, "resources")}>
+              <Route path="admin" element={withRouteSuspense(<AdminCatalog />, "resources")} />
+              <Route path="admin/categories" element={withRouteSuspense(<AdminCatalog />, "resources")} />
+              <Route path="admin/counterparty-categories" element={withRouteSuspense(<Navigate replace to="/admin/counterparties" />, "resources")} />
+              <Route path="admin/counterparties" element={withRouteSuspense(<AdminCatalog />, "resources")} />
+            </Route>
             <Route
               path="accounts"
               element={withRouteSuspense(<Accounts />, "resources")}

@@ -1,66 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import type { IconType } from "react-icons";
-import {
-  HiAcademicCap,
-  HiBanknotes,
-  HiBolt,
-  HiBriefcase,
-  HiBuildingStorefront,
-  HiCloud,
-  HiComputerDesktop,
-  HiFire,
-  HiGift,
-  HiGlobeAlt,
-  HiHeart,
-  HiHome,
-  HiLightBulb,
-  HiMapPin,
-  HiMoon,
-  HiPhone,
-  HiShoppingBag,
-  HiShoppingCart,
-  HiStar,
-  HiSun,
-  HiTag,
-  HiTicket,
-  HiTruck,
-  HiUser,
-  HiUsers,
-  HiWifi,
-  HiWrench,
-} from "react-icons/hi2";
+import { HiTag } from "react-icons/hi2";
+import { ICON_MAP, PICKER_ICON_NAMES } from "../../utils/IconMap";
 
 // Constants
-export const PRESET_ICONS = [
-  "HiShoppingBag",
-  "HiShoppingCart",
-  "HiBuildingStorefront",
-  "HiTag",
-  "HiCreditCard",
-  "HiBanknotes",
-  "HiUser",
-  "HiUsers",
-  "HiHome",
-  "HiTruck",
-  "HiWrench",
-  "HiLightBulb",
-  "HiWifi",
-  "HiFire",
-  "HiHeart",
-  "HiAcademicCap",
-  "HiBriefcase",
-  "HiGlobeAlt",
-  "HiGift",
-  "HiTicket",
-  "HiMapPin",
-  "HiPhone",
-  "HiComputerDesktop",
-  "HiStar",
-  "HiSun",
-  "HiMoon",
-  "HiCloud",
-  "HiBolt",
-];
+export const PRESET_ICONS = PICKER_ICON_NAMES;
 
 export const PRESET_COLORS = [
   "#ef4444",
@@ -86,35 +29,7 @@ export const PRESET_COLORS = [
   "#000000",
 ];
 
-const PRESET_ICON_MAP: Record<string, IconType> = {
-  HiShoppingBag,
-  HiShoppingCart,
-  HiBuildingStorefront,
-  HiTag,
-  HiBanknotes,
-  HiUser,
-  HiUsers,
-  HiHome,
-  HiTruck,
-  HiWrench,
-  HiLightBulb,
-  HiWifi,
-  HiFire,
-  HiHeart,
-  HiAcademicCap,
-  HiBriefcase,
-  HiGlobeAlt,
-  HiGift,
-  HiTicket,
-  HiMapPin,
-  HiPhone,
-  HiComputerDesktop,
-  HiStar,
-  HiSun,
-  HiMoon,
-  HiCloud,
-  HiBolt,
-};
+const PRESET_ICON_MAP = ICON_MAP;
 
 interface UseColorIconPickerProps {
   icon: string;

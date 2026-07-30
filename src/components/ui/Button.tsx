@@ -4,24 +4,23 @@ import styled, { css } from "styled-components";
 // 1. Описуємо варіанти стилів (кольори)
 const variations = {
   primary: css`
-    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
+    background: var(--color-brand-600);
     color: white;
 
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-700));
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+      background: var(--color-brand-700);
     }
   `,
   secondary: css`
     background-color: var(--color-bg-surface);
     color: var(--color-text-main);
     border: 1px solid var(--color-border);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
 
     &:hover:not(:disabled) {
       background-color: var(--color-bg-page);
       border-color: var(--color-text-light);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      box-shadow: none;
     }
   `,
   soft: css`
@@ -91,11 +90,15 @@ const StyledButton = styled.button<StyleProps>`
   gap: 0.6rem; /* Відступ між іконкою і текстом */
 
   gap: 0.2rem;
+  /* Не залишаємо браузерний border кнопки (він виглядав як темна обводка
+     у primary/danger кнопок, де свій border не заданий). */
+  border: 0;
+  appearance: none;
   border-radius: 8px; /* Трохи округліше */
   cursor: pointer;
   letter-spacing: 0.01em;
 
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   transition: all 0.2s ease-in-out;
 
   /* Вставляємо стилі залежно від пропсів */
@@ -104,7 +107,7 @@ const StyledButton = styled.button<StyleProps>`
 
   /* Ефекти натискання та ховеру */
   &:hover:not(:disabled) {
-    box-shadow: var(--shadow-md);
+    box-shadow: none;
     transform: translateY(-1px);
   }
 

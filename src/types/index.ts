@@ -95,6 +95,7 @@ export interface Category extends BaseEntity {
   icon: string;
   color: string;
   type: CategoryType;
+  global_template_id?: string | null;
 }
 
 export interface CounterpartyCategory extends BaseEntity {
@@ -103,6 +104,7 @@ export interface CounterpartyCategory extends BaseEntity {
   type: CounterpartyType;
   icon: string;
   color: string;
+  global_template_id?: string | null;
 }
 export interface CounterpartyBalance {
   counterparty_id: string;
@@ -122,6 +124,7 @@ export interface Counterparty extends BaseEntity {
 
   logo?: string;
   icon: string;
+  global_template_id?: string | null;
 
   hasDebtHistory?: boolean;
 

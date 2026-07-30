@@ -98,10 +98,36 @@ import {
   HiArrowsRightLeft,
   HiCreditCard,
   HiCircleStack,
+  HiBell,
+  HiBuildingLibrary,
+  HiCalculator,
+  HiCalendarDays,
+  HiCamera,
+  HiChartPie,
+  HiClock,
+  HiCog6Tooth,
+  HiDocumentCurrencyDollar,
+  HiEnvelope,
+  HiFolder,
+  HiFolderOpen,
+  HiLightBulb,
+  HiLockClosed,
+  HiMagnifyingGlass,
+  HiMoon,
+  HiNewspaper,
+  HiPaintBrush,
+  HiPencilSquare,
+  HiPhone,
+  HiPhoto,
+  HiReceiptRefund,
+  HiRocketLaunch,
+  HiScissors,
+  HiSpeakerWave,
+  HiLanguage,
 } from "react-icons/hi2";
 
 // === 1. МАПА ІКОНОК ===
-const ICON_MAP: Record<string, React.ElementType> = {
+export const ICON_MAP: Record<string, React.ElementType> = {
   HiEllipsisHorizontalCircle,
   HiQuestionMarkCircle,
   HiCheckCircle,
@@ -177,7 +203,52 @@ const ICON_MAP: Record<string, React.ElementType> = {
   HiCreditCard,
   HiCircleStack,
   HiFlag,
+  HiBell,
+  HiBuildingLibrary,
+  HiCalculator,
+  HiCalendarDays,
+  HiCamera,
+  HiChartPie,
+  HiClock,
+  HiCog6Tooth,
+  HiDocumentCurrencyDollar,
+  HiEnvelope,
+  HiFolder,
+  HiFolderOpen,
+  HiLightBulb,
+  HiLockClosed,
+  HiMagnifyingGlass,
+  HiMoon,
+  HiNewspaper,
+  HiPaintBrush,
+  HiPencilSquare,
+  HiPhone,
+  HiPhoto,
+  HiReceiptRefund,
+  HiRocketLaunch,
+  HiScissors,
+  HiSpeakerWave,
+  HiLanguage,
 };
+
+// Набір для picker-а. Це не окрема мапа: кожна іконка тут гарантовано
+// підтримується CategoryIcon і в усіх списках застосунку відображається однаково.
+export const PICKER_ICON_NAMES = [
+  "HiShoppingBag", "HiShoppingCart", "HiBuildingStorefront", "HiTag",
+  "HiHome", "HiHomeModern", "HiBuildingOffice", "HiBuildingLibrary",
+  "HiBanknotes", "HiCreditCard", "HiCurrencyDollar", "HiReceiptPercent",
+  "HiCalculator", "HiChartBar", "HiChartPie", "HiBriefcase",
+  "HiTruck", "HiMapPin", "HiMap", "HiTicket", "HiWrench", "HiKey",
+  "HiBolt", "HiLightBulb", "HiFire", "HiCloud", "HiWifi", "HiPhone",
+  "HiComputerDesktop", "HiDevicePhoneMobile", "HiDeviceTablet", "HiCamera",
+  "HiHeart", "HiAcademicCap", "HiBookOpen", "HiUser", "HiUsers",
+  "HiGlobeAlt", "HiGlobeAmericas", "HiCalendarDays", "HiClock",
+  "HiGift", "HiCake", "HiStar", "HiSun", "HiMoon", "HiSparkles",
+  "HiFilm", "HiMusicalNote", "HiPuzzlePiece", "HiFaceSmile",
+  "HiFolder", "HiDocumentText", "HiNewspaper", "HiPhoto", "HiPaintBrush",
+  "HiBell", "HiEnvelope", "HiMagnifyingGlass", "HiCog6Tooth", "HiLockClosed",
+  "HiRocketLaunch", "HiFlag", "HiShieldCheck", "HiHandRaised",
+] as const;
 
 // === 2. ХЕЛПЕР ДЛЯ ЛОГОТИПІВ (Внутрішній) ===
 const getLogoSrc = (logoIdentifier: string | undefined | null) => {
@@ -233,6 +304,7 @@ interface SmartIconProps extends React.ComponentProps<"svg"> {
   size?: number | string;
   color?: string;
   className?: string;
+  fillContainer?: boolean;
 }
 
 export const SmartIcon: React.FC<SmartIconProps> = ({
@@ -241,6 +313,7 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
   size = 20,
   color,
   className,
+  fillContainer = false,
   ...props
 }) => {
   const [failedLogo, setFailedLogo] = useState<string | null>(null);
@@ -256,9 +329,9 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
         className={className}
         onError={() => setFailedLogo(logoSrc)}
         style={{
-          width: typeof size === "number" ? `${size}px` : size,
-          height: typeof size === "number" ? `${size}px` : size,
-          objectFit: "contain",
+          width: fillContainer ? "100%" : typeof size === "number" ? `${size}px` : size,
+          height: fillContainer ? "100%" : typeof size === "number" ? `${size}px` : size,
+          objectFit: fillContainer ? "cover" : "contain",
           borderRadius: "6px",
           display: "block",
         }}

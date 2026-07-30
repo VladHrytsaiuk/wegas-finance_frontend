@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -39,6 +39,8 @@ const Container = styled.div`
 `;
 
 function DesktopLayout() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
     return saved === "true";
@@ -52,8 +54,8 @@ function DesktopLayout() {
 
   return (
     <StyledDesktopLayout $collapsed={isCollapsed}>
-      <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
-      <Header />
+      <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} minimal={isAdmin} admin={isAdmin} />
+      {!isAdmin && <Header />}
       <Main>
         <Container>
           <Outlet />
