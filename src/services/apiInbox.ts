@@ -209,3 +209,7 @@ export const getInboxPendingCountApi = async (): Promise<number> => {
 
   return response.total ?? 0;
 };
+
+export const deleteInboxItemApi = async (id: string): Promise<void> => {
+  await api.delete(`/inbox/${id}`);
+};
