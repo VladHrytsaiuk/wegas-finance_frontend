@@ -13,6 +13,8 @@ import {
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 
+import Modal from "../../components/ui/Modal";
+import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -1050,18 +1052,24 @@ function InboxEntryPage() {
               Якщо це не той чек, ви можете видалити його з Inbox. Цю дію не можна скасувати.
             </p>
           </ActionCopy>
-          <CreateActionButton
-            type="button"
-            disabled={deleteMutation.isPending}
-            onClick={() => {
-              if (window.confirm("Ви дійсно хочете видалити цей чек?")) {
-                deleteMutation.mutate();
-              }
-            }}
-            style={{ backgroundColor: "var(--color-red-600)" }}
-          >
-            {deleteMutation.isPending ? "Видалення..." : "Видалити чек"}
-          </CreateActionButton>
+          <Modal>
+            <Modal.Open opens="delete-inbox-item">
+              <CreateActionButton
+                type="button"
+                disabled={deleteMutation.isPending}
+                style={{ backgroundColor: "var(--color-red-600)" }}
+              >
+                {deleteMutation.isPending ? "Видалення..." : "Видалити чек"}
+              </CreateActionButton>
+            </Modal.Open>
+            <Modal.Window name="delete-inbox-item">
+              <ConfirmDelete
+                resourceName="чек"
+                onConfirm={() => deleteMutation.mutate()}
+                disabled={deleteMutation.isPending}
+              />
+            </Modal.Window>
+          </Modal>
         </ActionCard>
       ) : null}
 
