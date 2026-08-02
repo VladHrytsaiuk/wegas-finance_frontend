@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import {
@@ -13,6 +13,8 @@ import {
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 
+import Modal from "../../components/ui/Modal";
+import ConfirmDelete from "../../components/ui/ConfirmDelete";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import CreateTransactionModal from "../../components/transactions/CreateTransactionModal";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -23,6 +25,7 @@ import {
   getInboxTransactionCandidatesApi,
   linkInboxTransactionApi,
   selectInboxAccountApi,
+  deleteInboxItemApi,
 } from "../../services/apiInbox";
 import { formatDate, formatMoney, getUploadedFileUrl } from "../../utils/helpers";
 import { SmartIcon } from "../../utils/IconMap";
@@ -668,6 +671,7 @@ function extractTransactionId(response: unknown): string | null {
 function InboxEntryPage() {
   const { i18n } = useTranslation();
   const { inboxId = "" } = useParams();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
   const [isCreateTransactionOpen, setIsCreateTransactionOpen] = useState(false);
@@ -743,6 +747,19 @@ function InboxEntryPage() {
       toast.success("Чек зв'язано з операцією");
     },
     onError: () => toast.error("Не вдалося зв'язати чек з операцією"),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteInboxItemApi(inboxId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inbox"] });
+      queryClient.invalidateQueries({ queryKey: ["inbox", "pending-count"] });
+      toast.success("Чек видалено з Inbox");
+      navigate("/inbox");
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.error || "Не вдалося видалити чек");
+    }
   });
 
   const items = useMemo(() => data?.receipt_source?.items ?? [], [data]);
@@ -1024,6 +1041,35 @@ function InboxEntryPage() {
           <CreateActionButton type="button" onClick={() => setIsCreateTransactionOpen(true)}>
             Створити транзакцію
           </CreateActionButton>
+        </ActionCard>
+      ) : null}
+
+      {canCreateTransaction ? (
+        <ActionCard>
+          <ActionCopy>
+            <h2>Помилилися з чеком?</h2>
+            <p>
+              Якщо це не той чек, ви можете видалити його з Inbox. Цю дію не можна скасувати.
+            </p>
+          </ActionCopy>
+          <Modal>
+            <Modal.Open opens="delete-inbox-item">
+              <CreateActionButton
+                type="button"
+                disabled={deleteMutation.isPending}
+                style={{ backgroundColor: "var(--color-red-600)" }}
+              >
+                {deleteMutation.isPending ? "Видалення..." : "Видалити чек"}
+              </CreateActionButton>
+            </Modal.Open>
+            <Modal.Window name="delete-inbox-item">
+              <ConfirmDelete
+                resourceName="чек"
+                onConfirm={() => deleteMutation.mutate()}
+                disabled={deleteMutation.isPending}
+              />
+            </Modal.Window>
+          </Modal>
         </ActionCard>
       ) : null}
 
