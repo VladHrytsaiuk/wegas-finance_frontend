@@ -1083,7 +1083,7 @@ export function AccountFormContent(props: AccountFormProps) {
               variation="primary"
               style={{ flex: 1 }}
               onClick={handleMobileSubmit}
-              disabled={isLoading || isSynced}
+              disabled={isLoading}
             >
               {mobileStep === totalSteps
                 ? state.isEditing
@@ -1106,7 +1106,7 @@ export function AccountFormContent(props: AccountFormProps) {
 
             <Button
               style={{ width: "auto" }}
-              disabled={isLoading || isSynced}
+              disabled={isLoading}
               type="submit"
               title={getShortcutLabel("Enter")}
             >
