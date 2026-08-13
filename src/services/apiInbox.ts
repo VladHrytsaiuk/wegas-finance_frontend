@@ -62,6 +62,7 @@ export interface InboxTransactionCandidate {
   score: number;
   confidence: "high" | "medium" | "low";
   matched_by: string[];
+  is_synced: boolean;
 }
 
 export interface InboxTransactionPreview {

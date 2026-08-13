@@ -138,6 +138,9 @@ export interface Tag extends BaseEntity {
 
 export interface TransactionItem extends BaseEntity {
   transaction_id: string;
+	/** Set only for a row imported from a linked Inbox receipt. */
+  receipt_source_id?: string | null;
+	category_id?: string | null;
   name: string;
   quantity: number;
   price_per_unit: number;
