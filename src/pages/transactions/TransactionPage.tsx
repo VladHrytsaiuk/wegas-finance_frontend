@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
   HiArrowLeft,
+  HiExclamationTriangle,
   HiMinusCircle,
   HiOutlineArrowTopRightOnSquare,
   HiPencil,
@@ -124,6 +125,9 @@ function TransactionPage() {
   const hasItemizedReceiptDiscount = (transaction.items || []).some(
     (item) => item.name === "Знижка за чеком",
   );
+  const uncategorizedReceiptItemCount = (transaction.items || []).filter(
+    (item) => item.receipt_source_id && !item.category_id && item.name !== "Знижка за чеком",
+  ).length;
 
   return (
     <Modal>
@@ -274,6 +278,16 @@ function TransactionPage() {
                 )}
                 <small>вже врахована в цінах</small>
               </S.ReceiptDiscountChip>
+            ) : null}
+            {uncategorizedReceiptItemCount > 0 ? (
+              <S.ReceiptSourceCard title="Товарні позиції з Inbox ще не мають категорій">
+                <HiExclamationTriangle size={19} />
+                <S.ReceiptSourceContent>
+                  <span>
+                    {uncategorizedReceiptItemCount} {uncategorizedReceiptItemCount === 1 ? "позиція" : "позицій"} з чека без категорії
+                  </span>
+                </S.ReceiptSourceContent>
+              </S.ReceiptSourceCard>
             ) : null}
             {linkedReceiptSources.length > 0 ? (
               <Modal.Open opens="unlink-receipt-source">

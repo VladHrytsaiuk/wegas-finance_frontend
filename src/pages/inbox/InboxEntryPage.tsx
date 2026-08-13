@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import styled from "styled-components";
 import {
   HiArrowLeft,
@@ -254,6 +255,39 @@ const ConfirmAccountButton = styled.button`
     cursor: wait;
     opacity: 0.65;
   }
+`;
+
+const AccountCandidates = styled(SectionCard)`
+  padding: 0.9rem;
+
+  h2 {
+    margin: 0;
+    color: var(--color-text-main);
+    font-size: 0.95rem;
+  }
+
+  > p {
+    margin: 0.25rem 0 0.75rem;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+  }
+`;
+
+const AccountCandidateRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--color-border);
+
+  strong,
+  span {
+    display: block;
+  }
+
+  strong { color: var(--color-text-main); font-size: 0.86rem; }
+  span { margin-top: 0.12rem; color: var(--color-text-secondary); font-size: 0.75rem; }
 `;
 
 const TransactionMatches = styled(SectionCard)`
@@ -700,7 +734,7 @@ function InboxEntryPage() {
     queryKey: ["inbox", inboxId, "transaction-candidates"],
     queryFn: () => getInboxTransactionCandidatesApi(inboxId),
     enabled: Boolean(
-      inboxId && data?.selected_account_id && data.status !== "linked",
+      inboxId && data?.total != null && data.status !== "linked",
     ),
   });
   const { data: manualSearchResponse } = useQuery({
@@ -712,7 +746,7 @@ function InboxEntryPage() {
       search: manualSearch,
       limit: 10,
     }) as Promise<{ data: Transaction[] }>,
-    enabled: isManualSearchOpen && Boolean(data?.selected_account_id && data?.total != null),
+    enabled: isManualSearchOpen && Boolean(data?.total != null),
   });
 
   const selectAccountMutation = useMutation({
@@ -757,8 +791,11 @@ function InboxEntryPage() {
       toast.success("Чек видалено з Inbox");
       navigate("/inbox");
     },
-    onError: (err: any) => {
-      toast.error(err?.response?.data?.error || "Не вдалося видалити чек");
+    onError: (error: unknown) => {
+      const message = isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined;
+      toast.error(message || "Не вдалося видалити чек");
     }
   });
 
@@ -826,6 +863,9 @@ function InboxEntryPage() {
   const canCreateTransaction = data.status !== "linked";
   const recommendedAccount = accountCandidates.find(
     (candidate) => candidate.recommended,
+  );
+  const manualAccountCandidates = accountCandidates.filter(
+    (candidate) => !candidate.recommended,
   );
   const selectedAccountLabel = data.selected_account
     ? `${data.selected_account.name} · ${data.selected_account.currency}`
@@ -949,11 +989,38 @@ function InboxEntryPage() {
         </AccountSuggestion>
       ) : null}
 
-      {data.selected_account_id && transactionCandidates.length > 0 ? (
+      {!data.selected_account_id && manualAccountCandidates.length > 0 ? (
+        <AccountCandidates>
+          <h2>Можливі рахунки за ЕПЗ</h2>
+          <p>Збіг неповний, тому підтвердьте потрібний рахунок вручну.</p>
+          {manualAccountCandidates.map((candidate) => (
+            <AccountCandidateRow key={candidate.account_id}>
+              <div>
+                <strong>{candidate.bank_name || candidate.account_name}</strong>
+                <span>
+                  {candidate.bank_name && candidate.account_name !== candidate.bank_name
+                    ? `${candidate.account_name} · `
+                    : ""}
+                  •••• {candidate.matched_card_number} · збіг {candidate.matched_digits} цифр
+                </span>
+              </div>
+              <ConfirmAccountButton
+                type="button"
+                disabled={selectAccountMutation.isPending}
+                onClick={() => selectAccountMutation.mutate(candidate.account_id)}
+              >
+                Обрати
+              </ConfirmAccountButton>
+            </AccountCandidateRow>
+          ))}
+        </AccountCandidates>
+      ) : null}
+
+      {transactionCandidates.length > 0 ? (
         <TransactionMatches>
           <TransactionMatchesTitle>
-            <strong>Можливі банківські операції</strong>
-            <span>Перевірте перед зв&apos;язуванням</span>
+            <strong>Можливі операції</strong>
+            <span>{data.selected_account_id ? "Перевірте перед зв'язуванням" : "Рахунок не визначено — перевірте перед зв'язуванням"}</span>
           </TransactionMatchesTitle>
           {visibleTransactionCandidates.slice(0, 3).map((candidate) => (
             <TransactionMatch key={candidate.transaction_id}>
@@ -976,6 +1043,7 @@ function InboxEntryPage() {
                     ? ` · ${Math.round(Math.abs(candidate.date - occurredAt) / 60000)} хв від чека`
                     : ""}
                 </span>
+                <span>{candidate.is_synced ? "Синхронізована операція" : "Створена вручну"}</span>
               </TransactionMatchCopy>
               <TransactionMatchAmount>
                 {formatMoney(candidate.amount, candidate.currency || data.currency || "UAH", i18n.language)}
@@ -1000,20 +1068,20 @@ function InboxEntryPage() {
         </TransactionMatches>
       ) : null}
 
-      {data.selected_account_id && data.total != null ? (
+      {data.total != null ? (
         <TransactionMatches>
           <TransactionMatchesTitle>
-            <strong>Не знайшли потрібну операцію?</strong>
-            <span>Пошук серед усіх операцій з цією сумою</span>
+            <strong>Зв’язати чек вручну</strong>
+            <span>{data.selected_account_id ? "Пошук серед операцій обраного рахунку з цією сумою" : "Пошук серед усіх ваших операцій з цією сумою"}</span>
           </TransactionMatchesTitle>
           {!isManualSearchOpen ? (
             <ShowMoreCandidatesButton type="button" onClick={() => setIsManualSearchOpen(true)}>
-              Знайти іншу операцію
+              Знайти та зв’язати вручну
             </ShowMoreCandidatesButton>
           ) : (
             <>
               <ManualSearch>
-                <ManualSearchInput value={manualSearch} onChange={(e) => setManualSearch(e.target.value)} placeholder="Назва, магазин або нотатка" />
+                <ManualSearchInput value={manualSearch} onChange={(e) => setManualSearch(e.target.value)} placeholder="Назва магазину або нотатка (необов’язково)" />
                 <ShowMoreCandidatesButton type="button" onClick={() => setIsManualSearchOpen(false)}>Закрити</ShowMoreCandidatesButton>
               </ManualSearch>
               {(manualSearchResponse?.data ?? []).slice(0, 5).map((transaction) => (
