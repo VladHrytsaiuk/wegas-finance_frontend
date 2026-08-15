@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
@@ -56,7 +57,7 @@ export default function EditTransactionModal({
     });
   };
 
-  return (
+  return createPortal(
     <S.Overlay onClick={onCancel}>
       <S.Card onClick={(e) => e.stopPropagation()}>
         {/* HEADER */}
@@ -164,6 +165,7 @@ export default function EditTransactionModal({
           <Button onClick={handleSubmit}>{t("accounts:accountForm.button_save")}</Button>
         </S.Footer>
       </S.Card>
-    </S.Overlay>
+      </S.Overlay>,
+    document.body,
   );
 }

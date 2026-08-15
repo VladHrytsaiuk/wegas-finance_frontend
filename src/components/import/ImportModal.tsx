@@ -40,6 +40,9 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
       invalidTransactionsCount,
       hasInvalidTransactions,
       isSaving,
+      savingsAccounts,
+      roundUpTargetId,
+      hasSelectedTransfers,
     },
     data: { categories, counterparties },
     actions: {
@@ -52,6 +55,8 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
       handleToggleAll,
       handleFillEmptyCategories,
       handleSaveEdit,
+      selectRoundUpTarget,
+      createRoundUpSavings,
       importBatch,
     },
     t,
@@ -100,6 +105,19 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
                 </span>
               </S.DisclaimerBanner>
             </S.DisclaimerWrapper>
+            {hasSelectedTransfers && (
+              <S.TransferTargetBanner>
+                <div>
+                  <strong>Перекази до скарбнички</strong>
+                  <span>Округлення буде переказом з цієї картки, а не доходом.</span>
+                </div>
+                <select value={roundUpTargetId} onChange={(event) => void selectRoundUpTarget(event.target.value)}>
+                  <option value="">Оберіть скарбничку</option>
+                  {savingsAccounts.map((saving) => <option key={saving.id} value={saving.id}>{saving.name}</option>)}
+                </select>
+                <Button variation="secondary" onClick={() => void createRoundUpSavings()}>Створити скарбничку</Button>
+              </S.TransferTargetBanner>
+            )}
 
             {/* ... ТАБЛИЦЯ (Без змін) ... */}
             <S.TableContainer>
@@ -192,6 +210,7 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
                     isLoading ||
                     isSaving ||
                     hasInvalidTransactions
+                    || (hasSelectedTransfers && !roundUpTargetId)
                   }
                   onClick={() => importBatch()}
                 >

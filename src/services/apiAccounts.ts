@@ -44,6 +44,7 @@ export interface Account {
   storage_type_id?: string | null;
   storage_type?: StorageType; // Preloaded об'єкт
   goal_id?: string | null;
+  round_up_target_account_id?: string | null;
 
   // System Flags
   is_synced?: boolean; // Чи синхронізовано з Моно
@@ -95,3 +96,6 @@ export const updateMobileAccountsOrderApi = async (accountIds: string[]) => {
   });
   return response.data;
 };
+
+export const setRoundUpTargetApi = async (id: string, targetAccountId: string | null) =>
+  (await api.patch<Account>(`/accounts/${id}/round-up-target`, { target_account_id: targetAccountId })).data;
