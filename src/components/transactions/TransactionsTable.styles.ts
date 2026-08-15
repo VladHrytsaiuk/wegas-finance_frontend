@@ -23,10 +23,12 @@ export const TableWrapper = styled.div`
 
   /* NOTE (Примітки) */
   .col-note {
+    display: table-cell;
+    width: 24%;
 
-    /* Змінено з 1400px на 1300px за твоїм бажанням */
-    display: none;
-  
+    @media (max-width: 1100px) {
+      display: none;
+    }
   }
 
   /* ACCOUNT */

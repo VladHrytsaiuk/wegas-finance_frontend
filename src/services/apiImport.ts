@@ -6,6 +6,7 @@ export interface ImportPreviewTransaction {
   description: string;
   counterparty_name: string;
   type: "income" | "expense" | "transfer";
+	transfer_direction?: "in" | "out";
   predicted_category: string;
   is_duplicate: boolean;
   // 👇 ОБОВ'ЯЗКОВО ДОДАЙ ЦІ ДВА РЯДКИ

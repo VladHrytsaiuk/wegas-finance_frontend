@@ -234,6 +234,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
         .map((tx) => ({
           account_id: account.id, // Використовуємо account.id
           target_account_id: tx.type === "transfer" ? (tx.target_account_id || roundUpTargetId) : "",
+	          transfer_direction: tx.transfer_direction || "out",
           amount: Math.abs(tx.amount),
           date: tx.date,
           note: tx.description || tx.counterparty_name,
