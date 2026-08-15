@@ -9,6 +9,7 @@ import { uploadBankStatementApi } from "../../services/apiImport";
 import { batchCreateTransactionsApi } from "../../services/apiTransactions";
 import { getCategoriesApi } from "../../services/apiCategories";
 import { getCounterpartiesApi } from "../../services/apiCounterparties";
+import { createAccountApi, getAccountsApi, setRoundUpTargetApi } from "../../services/apiAccounts";
 import { waitForNextPaint } from "../../utils/render";
 
 // Types
@@ -84,6 +85,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     newTx: ExtendedTransaction;
     existingTx: ExistingTransactionDB;
   } | null>(null);
+  const [roundUpTargetId, setRoundUpTargetId] = useState(account.round_up_target_account_id || "");
 
   // --- Data Fetching ---
   const { data: categories = [] } = useQuery({
@@ -95,6 +97,9 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
   });
+  const { data: accounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi });
+  const savingsAccounts = accounts.filter((item) => item.type === "piggy_bank" && item.currency === account.currency && item.id !== account.id);
+  const hasSelectedTransfers = transactions.some((tx, index) => selectedIndices.has(index) && tx.type === "transfer");
 
   // (Видалили зайвий запит getAccountsApi — він більше не потрібен)
 
@@ -210,12 +215,25 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       setSelectedIndices((prev) => new Set(prev).add(editingTx.index));
   };
 
+  const selectRoundUpTarget = async (targetId: string) => {
+    await setRoundUpTargetApi(account.id, targetId || null);
+    setRoundUpTargetId(targetId);
+    queryClient.invalidateQueries({ queryKey: ["accounts"] });
+  };
+
+  const createRoundUpSavings = async () => {
+    const created = await createAccountApi({ name: "Скарбничка", type: "piggy_bank", currency: account.currency, initial_balance: 0, color: "#f59e0b" });
+    await selectRoundUpTarget(created.id);
+    toast.success("Скарбничку створено та вибрано для цієї картки");
+  };
+
   const { mutate: importBatch, isPending: isSaving } = useMutation({
     mutationFn: async () => {
       const payload = transactions
         .filter((_, i) => selectedIndices.has(i))
         .map((tx) => ({
           account_id: account.id, // Використовуємо account.id
+          target_account_id: tx.type === "transfer" ? (tx.target_account_id || roundUpTargetId) : "",
           amount: Math.abs(tx.amount),
           date: tx.date,
           note: tx.description || tx.counterparty_name,
@@ -256,6 +274,9 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       invalidTransactionsCount,
       hasInvalidTransactions,
       isSaving,
+      savingsAccounts,
+      roundUpTargetId,
+      hasSelectedTransfers,
     },
     data: {
       categories,
@@ -271,6 +292,8 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       handleToggleAll,
       handleFillEmptyCategories,
       handleSaveEdit,
+      selectRoundUpTarget,
+      createRoundUpSavings,
       importBatch,
     },
     t,

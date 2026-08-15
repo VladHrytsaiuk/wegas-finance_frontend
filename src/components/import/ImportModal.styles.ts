@@ -4,7 +4,8 @@ export const Container = styled.div`
   width: 70vw;
   max-width: 1200px;
   min-width: 900px;
-  max-height: 100%;
+  height: min(82vh, 860px);
+  max-height: 82vh;
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-surface);
@@ -122,6 +123,21 @@ export const DisclaimerBanner = styled.div`
 
 export const DisclaimerWrapper = styled.div`
   padding: 0 2rem;
+`;
+
+export const TransferTargetBanner = styled.div`
+  margin: 0.75rem 2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-blue-200, #bfdbfe);
+  background: var(--color-blue-50, #eff6ff);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-text-main);
+  > div { flex: 1; display: grid; gap: 0.15rem; }
+  span { font-size: 0.8rem; color: var(--color-text-secondary); }
+  select { min-width: 190px; padding: 0.55rem 0.7rem; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg-surface); color: var(--color-text-main); }
 `;
 
 export const ErrorMessage = styled.div`

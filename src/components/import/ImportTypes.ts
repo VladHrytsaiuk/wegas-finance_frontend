@@ -25,4 +25,5 @@ export interface ImportPreviewTransaction {
 export interface ExtendedTransaction extends ImportPreviewTransaction {
   category_id?: string;
   counterparty_id?: string;
+  target_account_id?: string;
 }

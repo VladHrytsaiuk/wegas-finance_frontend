@@ -6,7 +6,7 @@ const fadeIn = keyframes`
 `;
 
 export const Overlay = styled.div`
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(4px);
