@@ -203,13 +203,11 @@ function TransactionPage() {
 
             <S.ButtonGroup>
               <Button
-                as={isBankTx ? "button" : Link}
-                to={isBankTx ? undefined : "edit"}
+                as={Link}
+                to="edit"
                 state={{ background: location }}
                 size="small"
                 variation="secondary"
-                disabled={isBankTx}
-                title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
                 style={{
                   width: "auto",
                   textDecoration: "none",
@@ -310,7 +308,7 @@ function TransactionPage() {
         ) : null}
       </S.PageContainer>
 
-      {isMobile && !isBankTx && (
+      {isMobile && (
         <FAB 
           onClick={() => navigate("edit", { state: { background: location } })} 
           icon={<HiPencil />} 

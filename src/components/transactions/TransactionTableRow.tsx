@@ -117,8 +117,6 @@ export const TransactionTableRow = memo(
             <S.ActionLink
               to={`/transactions/${tx.id}/edit`}
               state={{ background: location }}
-              $disabled={isBankTx}
-              title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
             >
               <HiPencil size={18} />
             </S.ActionLink>
@@ -180,8 +178,6 @@ export const TransactionTableRow = memo(
                     <S.MenuItemLink
                       to={`/transactions/${tx.id}/edit`}
                       state={{ background: location }}
-                      $disabled={isBankTx}
-                      title={isBankTx ? t("transactions:transactions.bank_tx_edit_restricted") : undefined}
                     >
                       <HiPencil size={16} /> {t("common:common.edit")}
                     </S.MenuItemLink>
