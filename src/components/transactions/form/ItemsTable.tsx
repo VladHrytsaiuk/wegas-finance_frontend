@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { HiMinusCircle, HiPlusCircle, HiXMark } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "../../../hooks/useIsMobile";
+import { isModifierPressed } from "../../../utils/platform";
 
 import { useSettings } from "../../../context/SettingsContext";
 import { formatMoney } from "../../../utils/helpers";
@@ -67,14 +68,23 @@ export const ItemsTable = ({
 
   useEffect(() => {
     if (!isMobile) return;
-    if (items.length === 0) {
-      setExpandedMobileItem(null);
-      return;
-    }
-    setExpandedMobileItem(items.length - 1);
+
+    const timer = window.setTimeout(() => {
+      setExpandedMobileItem(items.length === 0 ? null : items.length - 1);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [items.length, isMobile]);
 
   const handleAddItem = () => {
+    actions.addItem();
+  };
+
+  const handleTableKeyDownCapture = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!isModifierPressed(e) || e.code !== "KeyA") return;
+
+    e.preventDefault();
+    e.stopPropagation();
     actions.addItem();
   };
 
@@ -91,7 +101,7 @@ export const ItemsTable = ({
   };
 
   return (
-    <S.ItemsContainer>
+    <S.ItemsContainer tabIndex={0} onKeyDownCapture={handleTableKeyDownCapture}>
       <S.ItemsHeader>
         <S.ItemsTitle>
           {t("transactions:itemsTable.title_details")}

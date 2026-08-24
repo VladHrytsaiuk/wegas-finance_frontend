@@ -251,7 +251,7 @@ export const FormContent: React.FC<FormContentProps> = ({
     return (received / sent).toFixed(4);
   }, [state.localAmount, state.localTargetAmount]);
 
-  const handleToggleAssetPanel = () => {
+  const handleToggleAssetPanel = useCallback(() => {
     if (!form.isAssetPanelOpen) {
       actions.toggleAssetPanel();
       return;
@@ -262,7 +262,7 @@ export const FormContent: React.FC<FormContentProps> = ({
     } else {
       actions.toggleAssetPanel();
     }
-  };
+  }, [actions, form.assetId, form.isAssetPanelOpen, form.mileage, form.newAsset]);
 
   const confirmUnlinkAsset = () => {
     actions.setAssetId("");

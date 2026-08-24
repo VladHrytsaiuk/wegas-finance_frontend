@@ -68,8 +68,9 @@ export const Overlay = forwardRef<
     style?: React.CSSProperties;
   }
 >(({ children, $isBottomSheet, style, ...props }, ref) => {
-  const [viewportStyles, setViewportStyles] = useState<React.CSSProperties>({});
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
   const localRef = useRef<HTMLDivElement | null>(null);
+  const viewportFrameRef = useRef<number | null>(null);
 
   const setRefs = (node: HTMLDivElement | null) => {
     localRef.current = node;
@@ -85,45 +86,52 @@ export const Overlay = forwardRef<
   useEffect(() => {
     if (typeof window === "undefined" || !window.visualViewport) return;
 
-    const handleVisualViewportChange = () => {
-      const vv = window.visualViewport;
-      if (!vv) return;
+    const handleVisualViewportResize = () => {
+      if (viewportFrameRef.current !== null) return;
 
-      setViewportStyles({
-        height: `${vv.height}px`,
-        width: `${vv.width}px`,
-        top: `${vv.offsetTop}px`,
-        left: `${vv.offsetLeft}px`,
+      viewportFrameRef.current = window.requestAnimationFrame(() => {
+        viewportFrameRef.current = null;
+        const vv = window.visualViewport;
+        if (!vv) return;
+
+        const nextHeight = Math.round(vv.height);
+        setViewportHeight((currentHeight) =>
+          currentHeight === nextHeight ? currentHeight : nextHeight,
+        );
       });
     };
 
-    window.visualViewport.addEventListener("resize", handleVisualViewportChange);
-    window.visualViewport.addEventListener("scroll", handleVisualViewportChange);
+    window.visualViewport.addEventListener("resize", handleVisualViewportResize);
 
-    // Initial run
-    handleVisualViewportChange();
+    handleVisualViewportResize();
 
     return () => {
-      window.visualViewport?.removeEventListener("resize", handleVisualViewportChange);
-      window.visualViewport?.removeEventListener("scroll", handleVisualViewportChange);
+      window.visualViewport?.removeEventListener("resize", handleVisualViewportResize);
+      if (viewportFrameRef.current !== null) {
+        window.cancelAnimationFrame(viewportFrameRef.current);
+      }
     };
   }, []);
 
-  // Smooth scroll input into view on mobile keyboard toggle
+  // Mobile browsers handle input visibility natively. Avoid a delayed smooth
+  // scroll here: it moves the whole sheet after opening and looks like a flash.
   useEffect(() => {
+    if (!$isBottomSheet) return;
+
     const handleFocusIn = (e: FocusEvent) => {
       const target = e.target as HTMLElement;
       if (!localRef.current?.contains(target)) return;
 
-      if (
-        target &&
-        (target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
-          target.tagName === "SELECT")
-      ) {
-        setTimeout(() => {
-          target.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }, 150);
+      if (![
+        "INPUT",
+        "TEXTAREA",
+        "SELECT",
+      ].includes(target.tagName)) return;
+
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const { top, bottom } = target.getBoundingClientRect();
+      if (top < 0 || bottom > viewportHeight) {
+        target.scrollIntoView({ behavior: "auto", block: "nearest" });
       }
     };
 
@@ -131,13 +139,16 @@ export const Overlay = forwardRef<
     return () => {
       document.removeEventListener("focusin", handleFocusIn);
     };
-  }, []);
+  }, [$isBottomSheet]);
 
   return (
     <StyledOverlay
       ref={setRefs}
       $isBottomSheet={$isBottomSheet}
-      style={{ ...viewportStyles, ...style }}
+      style={{
+        ...(viewportHeight ? { height: `${viewportHeight}px` } : {}),
+        ...style,
+      }}
       {...props}
     >
       {children}
