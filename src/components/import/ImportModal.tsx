@@ -108,8 +108,8 @@ export default function ImportModal({ account, onCloseModal }: ImportModalProps)
             {hasSelectedTransfers && (
               <S.TransferTargetBanner>
                 <div>
-                  <strong>Перекази до скарбнички</strong>
-                  <span>Округлення буде переказом з цієї картки, а не доходом.</span>
+                  <strong>Перекази зі скарбничкою</strong>
+                  <span>Напрямок визначається автоматично за знаком суми у виписці.</span>
                 </div>
                 <select value={roundUpTargetId} onChange={(event) => void selectRoundUpTarget(event.target.value)}>
                   <option value="">Оберіть скарбничку</option>

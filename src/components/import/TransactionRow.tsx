@@ -121,7 +121,9 @@ export default function TransactionRow({
 
       {/* CATEGORY */}
       <td>
-        {tx.category_id ? (
+        {tx.type === "transfer" ? (
+          <S.CategoryBadge>Переказ</S.CategoryBadge>
+        ) : tx.category_id ? (
           <S.CategoryBadge>
             {categories.find((c) => c.id === tx.category_id)?.name}
           </S.CategoryBadge>

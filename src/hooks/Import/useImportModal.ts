@@ -107,7 +107,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
 
   const invalidTransactionsCount = useMemo(() => {
     return transactions.filter(
-      (tx, idx) => selectedIndices.has(idx) && !tx.category_id,
+      (tx, idx) => selectedIndices.has(idx) && tx.type !== "transfer" && !tx.category_id,
     ).length;
   }, [transactions, selectedIndices]);
 
