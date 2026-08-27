@@ -36,7 +36,7 @@ const FABContainer = styled.div`
   gap: 1rem;
 
   @media (max-width: 768px) {
-    bottom: calc(80px + env(safe-area-inset-bottom));
+    bottom: calc(80px + min(12px, env(safe-area-inset-bottom)));
     right: 1.25rem;
   }
 `;
