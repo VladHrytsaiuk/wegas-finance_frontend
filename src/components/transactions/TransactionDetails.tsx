@@ -469,7 +469,7 @@ function TransactionDetails({
           </S.Section>
           {/* --- ITEMS TABLE --- */}
           {validItems.length > 0 && (
-            <S.Section>
+            <S.ItemsSection>
               <S.SectionTitle>
                 {t("transactions:transactionDetails.section_items_title", {
                   count: validItems.length,
@@ -488,9 +488,15 @@ function TransactionDetails({
                   {validItems.map((item, idx: number) => (
                     <tr key={idx}>
                       <td>
-                        <div style={{ fontWeight: 500 }}>
+                        <S.ItemName>
                           {item.name || t("common:common.not_specified", "Не вказано")}
-                        </div>
+                        </S.ItemName>
+                        <S.ItemQuantity>
+                          {t("transactions:transactionDetails.items_quantity", {
+                            defaultValue: "{{count}} шт.",
+                            count: item.quantity || 0,
+                          })}
+                        </S.ItemQuantity>
                       </td>
                       <td style={{ textAlign: "right", fontWeight: 600 }}>
                         {formatMoney(
@@ -506,7 +512,7 @@ function TransactionDetails({
                   ))}
                 </tbody>
               </S.ItemsTable>
-            </S.Section>
+            </S.ItemsSection>
           )}
         </S.ContentSide>
       </S.Layout>

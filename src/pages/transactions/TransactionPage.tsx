@@ -151,7 +151,7 @@ function TransactionPage() {
         />
       )}
 
-      <S.PageContainer style={{ paddingBottom: isMobile ? "120px" : undefined }}>
+      <S.PageContainer>
         {isMobile ? (
           <S.MobileHeaderSpacer>
             <S.MobileMeta>

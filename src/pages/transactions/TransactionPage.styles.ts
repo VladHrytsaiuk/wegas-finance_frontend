@@ -12,7 +12,7 @@ export const PageContainer = styled.div`
 
   @media (max-width: 768px) {
     gap: 1rem;
-    padding: 1rem 1rem 2rem;
+    padding: 1rem 1rem calc(172px + env(safe-area-inset-bottom));
   }
 `;
 

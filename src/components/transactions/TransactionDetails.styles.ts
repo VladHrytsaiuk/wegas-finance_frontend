@@ -313,6 +313,38 @@ export const SectionTitle = styled.h4`
   letter-spacing: 0.5px;
 `;
 
+export const ItemsSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-page);
+  box-shadow: var(--shadow-sm);
+
+  ${SectionTitle} {
+    margin-bottom: 0.15rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.85rem;
+    border-radius: 12px;
+  }
+`;
+
+export const ItemName = styled.div`
+  font-weight: 600;
+  color: var(--color-text-main);
+`;
+
+export const ItemQuantity = styled.div`
+  margin-top: 0.15rem;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+`;
+
 export const ItemsTable = styled.table`
   width: 100%;
   border-collapse: separate;
@@ -341,6 +373,13 @@ export const ItemsTable = styled.table`
   }
   tr:last-child td {
     border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    th,
+    td {
+      padding: 0.65rem 0.5rem;
+    }
   }
 `;
 
