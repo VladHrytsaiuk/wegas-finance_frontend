@@ -5,14 +5,14 @@ export const PageContainer = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1rem 2rem;
 
   @media (max-width: 768px) {
     gap: 1rem;
-    padding: 1rem 1rem calc(172px + env(safe-area-inset-bottom));
+    padding: 1rem 1rem calc(112px + env(safe-area-inset-bottom));
   }
 `;
 
@@ -84,6 +84,14 @@ export const Card = styled.div`
   @media (max-width: 768px) {
     padding: 1rem;
     border-radius: 16px;
+  }
+`;
+
+export const ItemsCard = styled(Card)`
+  padding: 1.25rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
   }
 `;
 

@@ -11,7 +11,9 @@ import {
 } from "react-icons/hi2";
 
 // Components
-import TransactionDetails from "../../components/transactions/TransactionDetails";
+import TransactionDetails, {
+  TransactionItemsBlock,
+} from "../../components/transactions/TransactionDetails";
 import { Button } from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import ConfirmDelete from "../../components/ui/ConfirmDelete";
@@ -112,6 +114,9 @@ function TransactionPage() {
       ? 1
       : 0;
   const itemCount = Array.isArray(transaction.items) ? transaction.items.length : 0;
+  const transactionItems = (transaction.items || []).filter(
+    (item) => item && (item.name || item.total_amount || item.price_per_unit),
+  );
   const pageTitle = t(
     "legacy:transactionPage.header_title",
     "Деталі операції",
@@ -128,6 +133,10 @@ function TransactionPage() {
   const uncategorizedReceiptItemCount = (transaction.items || []).filter(
     (item) => item.receipt_source_id && !item.category_id && item.name !== "Знижка за чеком",
   ).length;
+  const transactionAccount = accounts.find(
+    (account) => String(account.id) === String(transaction.account_id),
+  );
+  const itemsCurrency = transaction.currency || transactionAccount?.currency || "UAH";
 
   return (
     <Modal>
@@ -251,6 +260,16 @@ function TransactionPage() {
             counterparties={counterparties}
           />
         </S.Card>
+
+        {transactionItems.length > 0 && (
+          <S.ItemsCard>
+            <TransactionItemsBlock
+              items={transactionItems}
+              currency={itemsCurrency}
+              language={i18n.language}
+            />
+          </S.ItemsCard>
+        )}
 
         {receiptURL || (receiptDiscount && !hasItemizedReceiptDiscount) || linkedReceiptSources.length > 0 ? (
           <S.ReceiptMetaRow>

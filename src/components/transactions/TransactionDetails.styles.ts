@@ -317,19 +317,14 @@ export const ItemsSection = styled.section`
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  padding: 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: var(--color-bg-page);
-  box-shadow: var(--shadow-sm);
+  min-width: 0;
 
   ${SectionTitle} {
     margin-bottom: 0.15rem;
   }
 
   @media (max-width: 768px) {
-    padding: 0.85rem;
-    border-radius: 12px;
+    gap: 0.3rem;
   }
 `;
 
@@ -343,6 +338,21 @@ export const ItemQuantity = styled.div`
   color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 500;
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+export const ItemCalculation = styled.td`
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+`;
+
+export const ItemTotal = styled.td`
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
 `;
 
 export const ItemsTable = styled.table`
@@ -376,6 +386,11 @@ export const ItemsTable = styled.table`
   }
 
   @media (max-width: 768px) {
+    th:nth-child(2),
+    td:nth-child(2) {
+      display: none;
+    }
+
     th,
     td {
       padding: 0.65rem 0.5rem;

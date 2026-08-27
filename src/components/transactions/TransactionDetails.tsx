@@ -467,56 +467,82 @@ function TransactionDetails({
               </S.UserInfo>
             )}
           </S.Section>
-          {/* --- ITEMS TABLE --- */}
-          {validItems.length > 0 && (
-            <S.ItemsSection>
-              <S.SectionTitle>
-                {t("transactions:transactionDetails.section_items_title", {
-                  count: validItems.length,
-                })}
-              </S.SectionTitle>
-              <S.ItemsTable>
-                <thead>
-                  <tr>
-                    <th>{t("transactions:transactionDetails.items_header_name")}</th>
-                    <th style={{ textAlign: "right" }}>
-                      {t("transactions:transactionDetails.items_header_amount")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {validItems.map((item, idx: number) => (
-                    <tr key={idx}>
-                      <td>
-                        <S.ItemName>
-                          {item.name || t("common:common.not_specified", "Не вказано")}
-                        </S.ItemName>
-                        <S.ItemQuantity>
-                          {t("transactions:transactionDetails.items_quantity", {
-                            defaultValue: "{{count}} шт.",
-                            count: item.quantity || 0,
-                          })}
-                        </S.ItemQuantity>
-                      </td>
-                      <td style={{ textAlign: "right", fontWeight: 600 }}>
-                        {formatMoney(
-                          Number(
-                            item.total_amount ??
-                              (item.quantity || 0) * (item.price_per_unit || 0),
-                          ),
-                          myCurrency,
-                          state.language,
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </S.ItemsTable>
-            </S.ItemsSection>
-          )}
         </S.ContentSide>
       </S.Layout>
     </S.Container>
+  );
+}
+
+interface TransactionItemsBlockProps {
+  items: TransactionItem[];
+  currency: string;
+  language: string;
+}
+
+export function TransactionItemsBlock({
+  items,
+  currency,
+  language,
+}: TransactionItemsBlockProps) {
+  const { t } = useTranslation();
+  const validItems = items.filter(
+    (item) => item && (item.name || item.total_amount || item.price_per_unit),
+  );
+
+  if (validItems.length === 0) return null;
+
+  return (
+    <S.ItemsSection>
+      <S.SectionTitle>
+        {t("transactions:transactionDetails.section_items_title", {
+          count: validItems.length,
+        })}
+      </S.SectionTitle>
+      <S.ItemsTable>
+        <thead>
+          <tr>
+            <th>{t("transactions:transactionDetails.items_header_name")}</th>
+            <th>
+              {t("transactions:transactionDetails.items_header_calculation", {
+                defaultValue: "Кількість × ціна",
+              })}
+            </th>
+            <th style={{ textAlign: "right" }}>
+              {t("transactions:transactionDetails.items_header_total", {
+                defaultValue: "Сума",
+              })}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {validItems.map((item, idx) => {
+            const quantity = Number(item.quantity ?? 1);
+            const price = Number(item.price_per_unit ?? 0);
+            const total = Number(item.total_amount ?? quantity * price);
+
+            return (
+              <tr key={idx}>
+                <td>
+                  <S.ItemName>
+                    {item.name || t("common:common.not_specified", "Не вказано")}
+                  </S.ItemName>
+                  <S.ItemQuantity>
+                    {t("transactions:transactionDetails.items_quantity", {
+                      defaultValue: "{{count}} шт.",
+                      count: quantity,
+                    })}
+                  </S.ItemQuantity>
+                </td>
+                <S.ItemCalculation>
+                  {quantity} × {formatMoney(price, currency, language)}
+                </S.ItemCalculation>
+                <S.ItemTotal>{formatMoney(total, currency, language)}</S.ItemTotal>
+              </tr>
+            );
+          })}
+        </tbody>
+      </S.ItemsTable>
+    </S.ItemsSection>
   );
 }
 

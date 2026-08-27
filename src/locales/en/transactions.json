@@ -84,6 +84,9 @@
     "items_header_name": "Name",
     "items_header_quantity": "Qty",
     "items_header_amount": "Amount",
+    "items_header_calculation": "Quantity × price",
+    "items_header_total": "Total",
+    "items_quantity": "{{count}} pcs.",
     "created_by": "Created by",
     "no_merchant": "Not selected"
   },

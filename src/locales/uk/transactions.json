@@ -153,6 +153,9 @@
     "items_header_name": "Назва",
     "items_header_quantity": "К-сть",
     "items_header_amount": "Сума",
+    "items_header_calculation": "Кількість × ціна",
+    "items_header_total": "Сума",
+    "items_quantity": "{{count}} шт.",
     "created_by": "Створено",
     "no_merchant": "Не обрано"
   },
