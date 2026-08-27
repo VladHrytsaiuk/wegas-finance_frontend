@@ -123,7 +123,6 @@ export default function CounterpartySelect(props: CounterpartySelectProps) {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 launchCreateModal();
               }}
             >

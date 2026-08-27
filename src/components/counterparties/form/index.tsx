@@ -61,7 +61,13 @@ export default function CounterpartyForm({
   }, [isDirty, setIsDirty]);
 
   return (
-    <S.Form onSubmit={submitHandler} key={defaultValues?.id || "new"}>
+    <S.Form
+      onSubmit={(event) => {
+        event.stopPropagation();
+        void submitHandler(event);
+      }}
+      key={defaultValues?.id || "new"}
+    >
       <S.Title>{title}</S.Title>
 
       {/* 1. Type (Person / Shop) */}
