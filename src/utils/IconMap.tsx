@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { HiQuestionMarkCircle } from "react-icons/hi2";
 import { ICON_MAP } from "./IconConstants";
+import { normalizeIconName } from "./iconName";
 
 // === 2. ХЕЛПЕР ДЛЯ ЛОГОТИПІВ (Внутрішній) ===
 const getLogoSrc = (logoIdentifier: string | undefined | null) => {
@@ -35,7 +36,7 @@ export const CategoryIcon: React.FC<IconProps> = ({
     return <HiQuestionMarkCircle size={size} {...props} />;
   }
 
-  let IconComponent = ICON_MAP[name];
+  let IconComponent = ICON_MAP[normalizeIconName(name, name)];
 
   if (!IconComponent && !name.startsWith("Hi")) {
     const pascalName = "Hi" + name.charAt(0).toUpperCase() + name.slice(1);

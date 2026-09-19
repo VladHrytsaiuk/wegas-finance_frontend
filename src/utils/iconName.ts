@@ -11,7 +11,11 @@ export function normalizeIconName(iconName: string | undefined | null): string |
 export function normalizeIconName(iconName: string | undefined | null, fallback: string): string;
 export function normalizeIconName(iconName: string | undefined | null, fallback?: string) {
   if (!iconName) return fallback;
-  if (iconName in ICON_MAP || iconName.startsWith("Hi")) return iconName;
+  if (iconName in ICON_MAP) return iconName;
+  // Старі версії зберігали lucide-іконки з зайвим префіксом (LuPawPrint →
+  // HiLuPawPrint). Такі назви вже лежать у базі, тож відновлюємо їх.
+  if (iconName.startsWith("HiLu") && iconName.slice(2) in ICON_MAP) return iconName.slice(2);
+  if (iconName.startsWith("Hi")) return iconName;
 
   const pascal = iconName
     .replace(/[-_]([a-z])/g, (_, char: string) => char.toUpperCase())
