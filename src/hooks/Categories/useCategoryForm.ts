@@ -1,6 +1,7 @@
 import { useState, useMemo, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useModal } from "../../components/ui/Modal";
+import { normalizeIconName as normalizeIcon } from "../../utils/iconName";
 
 // Types
 export interface Category {
@@ -30,15 +31,8 @@ interface UseCategoryFormProps {
   onSubmit: (data: CategoryFormData, options?: FormSubmitOptions) => void;
 }
 
-const normalizeIconName = (iconName: string | undefined): string => {
-  if (!iconName) return "HiTag";
-  if (iconName.startsWith("Hi")) return iconName;
-  // Convert kebab-case to PascalCase with Hi prefix if needed
-  const pascal = iconName
-    .replace(/-([a-z])/g, (g) => g[1].toUpperCase())
-    .replace(/^[a-z]/, (g) => g.toUpperCase());
-  return `Hi${pascal}`;
-};
+const normalizeIconName = (iconName: string | undefined): string =>
+  normalizeIcon(iconName, "HiTag");
 
 const getInitialCategoryFormState = (initialData?: Category) => ({
   name: initialData?.name || "",

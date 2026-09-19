@@ -9,6 +9,7 @@ import { useCounterpartyData } from "./useCounterpartyData";
 import { useCounterpartyTree } from "./useCounterpartyTree";
 import { useDropdownPosition } from "../useDropdownPosition";
 import type { Counterparty, CounterpartyCategory } from "../../types";
+import { normalizeIconName } from "../../utils/iconName";
 
 const EMPTY_ARRAY: string[] = [];
 const ROOT_ID_PEOPLE = "root_people";
@@ -139,8 +140,7 @@ export const useCounterpartySelect = ({
       else iconToUse = "HiUser";
     }
 
-    if (iconToUse && !iconToUse.startsWith("Hi"))
-      iconToUse = "Hi" + iconToUse.charAt(0).toUpperCase() + iconToUse.slice(1);
+    if (iconToUse) iconToUse = normalizeIconName(iconToUse, iconToUse);
 
     return iconToUse || "HiUser";
   }, [selectedCP, categories]);

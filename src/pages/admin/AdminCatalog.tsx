@@ -36,6 +36,7 @@ import {
 import { ColorPicker, IconPicker } from "../../components/ui/ColorIconPicker";
 import type { Category, CounterpartyCategory } from "../../types";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { normalizeIconName } from "../../utils/iconName";
 
 const Page = styled.section`width:100%;max-width:1180px;margin:0 auto;`;
 const PageHeader = styled.header`
@@ -101,11 +102,7 @@ type TreeNode = { id:string; name:string; icon:string; color?:string; logo?:stri
 type AdminCategory = Category & { system_key?: string; usage_count?: number };
 type AdminCounterpartyCategory = CounterpartyCategory & { system_key?: string; usage_count?: number };
 
-const normalizeIcon = (icon?: string) => {
-  if (!icon) return "HiTag";
-  if (icon.startsWith("Hi")) return icon;
-  return `Hi${icon.replace(/[-_]([a-z])/g, (_, char: string) => char.toUpperCase()).replace(/^./, char => char.toUpperCase())}`;
-};
+const normalizeIcon = (icon?: string) => normalizeIconName(icon, "HiTag");
 
 const typeLabels: Record<string, string> = { shop: "Магазини", person: "Люди", other: "Інше", expense: "Витрати", income: "Доходи" };
 const typeIcons: Record<string, string> = { shop: "HiShoppingCart", person: "HiUser", other: "HiTag", expense: "HiArrowTrendingDown", income: "HiArrowTrendingUp" };

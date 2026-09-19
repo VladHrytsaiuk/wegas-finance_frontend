@@ -1,15 +1,10 @@
 import { useMemo } from "react";
 import type { Category } from "../../types";
+import { normalizeIconName as normalizeIcon } from "../../utils/iconName";
 
 // Helper
-const normalizeIconName = (iconName: string | undefined): string => {
-  if (!iconName) return "HiTag";
-  if (iconName.startsWith("Hi")) return iconName;
-  const pascal = iconName
-    .replace(/-([a-z])/g, (g) => g[1].toUpperCase())
-    .replace(/^[a-z]/, (g) => g.toUpperCase());
-  return `Hi${pascal}`;
-};
+const normalizeIconName = (iconName: string | undefined): string =>
+  normalizeIcon(iconName, "HiTag");
 
 export interface CategoryTreeNode extends Category {
   icon: string;

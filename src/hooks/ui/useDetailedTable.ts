@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { normalizeIconName } from "../../utils/iconName";
 
 export interface DataItem {
   id?: string;
@@ -18,11 +19,6 @@ interface UseDetailedTableProps {
 }
 
 // Helper function
-const normalizeIconName = (name?: string) => {
-  if (!name) return undefined;
-  if (name.startsWith("Hi")) return name;
-  return `Hi${name.charAt(0).toUpperCase() + name.slice(1)}`;
-};
 
 export const useDetailedTable = ({
   data,

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { Counterparty, CounterpartyCategory } from "../../types";
 import type { TreeNodeData } from "../../components/counterparties/CounterpartyTree"; // Імпорт типу
+import { normalizeIconName as normalizeIcon } from "../../utils/iconName";
 
 type CounterpartyWithSubtype = Counterparty & {
   subtype?: string;
@@ -22,17 +23,8 @@ export interface CounterpartyTreeNode {
 }
 
 // Helper: shopping-cart -> HiShoppingCart
-const normalizeIconName = (iconName: string | undefined): string => {
-  if (!iconName) return "HiTag";
-  if (iconName.startsWith("Hi")) return iconName;
-
-  // Convert kebab-case to PascalCase (e.g. shopping-cart -> ShoppingCart)
-  const pascal = iconName
-    .replace(/[-_]([a-z])/g, (g) => g[1].toUpperCase())
-    .replace(/^[a-z]/, (g) => g.toUpperCase());
-
-  return `Hi${pascal}`;
-};
+const normalizeIconName = (iconName: string | undefined): string =>
+  normalizeIcon(iconName, "HiTag");
 
 interface UseTreeProps {
   counterparties: Counterparty[];
