@@ -45,9 +45,7 @@ const PinLogin = () => {
         return;
       }
 
-      console.log("Submitting PIN for email:", email);
       const response = await api.post("/login/pin", { email, pin: finalPin });
-      console.log("PIN login response received:", response.status);
       
       const { access_token, user, token } = response.data;
       const finalToken = access_token || token;

@@ -19,6 +19,7 @@ import * as S from "../../pages/wishlist/Wishlist.styles";
 import type { WishlistItemFormData } from "../../hooks/Wishlist/useWishlistForms";
 
 import type { WishlistItem, WishlistGroup, User } from "../../types";
+import { openExternalUrl, safeExternalUrl } from "../../utils/safeUrl";
 
 interface WishItemCardProps {
   item: WishlistItem;
@@ -189,9 +190,9 @@ export default function WishItemCard({
             {item.price ? formatMoney(item.price, item.currency || "UAH") : "—"}
           </S.PriceText>
 
-          {item.url && (
+          {safeExternalUrl(item.url) && (
             <S.LinkBtn
-              onClick={() => window.open(item.url, "_blank")}
+              onClick={() => openExternalUrl(item.url)}
               title={t("common:common.open_link", "Відкрити в магазині")}
             >
               <HiArrowTopRightOnSquare size={18} />

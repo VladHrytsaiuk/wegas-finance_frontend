@@ -37,6 +37,7 @@ import { inboxBadgeStyles } from "./inboxBadgeStyles";
 import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
 import { getTransactionsApi } from "../../services/apiTransactions";
 import type { Transaction } from "../../types";
+import { safeExternalUrl } from "../../utils/safeUrl";
 
 const Header = styled(PageStyles.Header)`
   margin-bottom: 0;
@@ -1192,9 +1193,9 @@ function InboxEntryPage() {
                 <span className="label">Посилання</span>
               </RowContent>
               <RowValue>
-                {data.receipt_source?.source_url ? (
+                {safeExternalUrl(data.receipt_source?.source_url) ? (
                   <SourceLink
-                    href={data.receipt_source.source_url}
+                    href={safeExternalUrl(data.receipt_source?.source_url)}
                     target="_blank"
                     rel="noreferrer"
                     title={data.receipt_source.source_url}
