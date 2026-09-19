@@ -98,6 +98,62 @@ export const ColorGrid = styled.div`
   gap: 0.35rem;
 `;
 
+export const CustomColorRow = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+`;
+
+export const NativeColorInput = styled.input`
+  width: 30px;
+  height: 26px;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-page);
+  cursor: pointer;
+`;
+
+export const IconSearch = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.1rem 0.15rem 0.45rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  color: var(--color-text-tertiary);
+
+  &:focus-within {
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 2px var(--color-brand-100);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+  }
+
+  input {
+    width: 132px;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--color-text-main);
+    font: inherit;
+    font-size: 0.78rem;
+  }
+`;
+
 export const ColorOption = styled.button<{
   $color: string;
   $isActive: boolean;
@@ -129,7 +185,7 @@ export const IconGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
   padding: 0.25rem;
-  max-height: 160px; /* Approx 4 rows */
+  max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;

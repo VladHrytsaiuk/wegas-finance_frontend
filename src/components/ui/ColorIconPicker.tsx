@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { HiCheck, HiChevronDown } from "react-icons/hi2";
+import { HiCheck, HiChevronDown, HiMagnifyingGlass } from "react-icons/hi2";
 
 import { useColorIconPicker } from "../../hooks/ui/useColorIconPicker";
 import { useDropdownPosition } from "../../hooks/useDropdownPosition";
@@ -13,6 +13,15 @@ interface ColorIconPickerProps {
   onIconChange: (icon: string) => void;
   square?: boolean;
 }
+
+const colorInputValue = (color: string) =>
+  /^#[\da-f]{6}$/i.test(color) ? color : "#64748b";
+
+const iconLabel = (iconName: string) =>
+  iconName
+    .replace(/^(Hi|Lu)/, "")
+    .replace(/([a-z\d])([A-Z])/g, "$1 $2")
+    .replace(/(\D)(\d+)/g, "$1 $2");
 
 /**
  * Combined picker that renders two separate columns (Color & Icon)
@@ -126,6 +135,15 @@ export function ColorPicker({
                   </S.ColorOption>
                 ))}
               </S.ColorGrid>
+              <S.CustomColorRow>
+                <S.NativeColorInput
+                  aria-label="Вибрати довільний колір"
+                  type="color"
+                  value={colorInputValue(color)}
+                  onChange={(event) => onColorChange(event.target.value)}
+                />
+                <span>Свій колір</span>
+              </S.CustomColorRow>
             </S.Section>
           </S.DropdownPortalContainer>,
           document.body,
@@ -148,6 +166,11 @@ export function IconPicker({
   const { state } = useColorIconPicker({ icon });
   const { presetIcons, presetIconMap, SelectedIconComponent } = state;
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const normalizedSearch = search.trim().toLocaleLowerCase();
+  const visibleIcons = presetIcons.filter((iconName) =>
+    iconLabel(iconName).toLocaleLowerCase().includes(normalizedSearch),
+  );
 
   const { triggerRef, menuRef, style } = useDropdownPosition(
     isOpen,
@@ -202,8 +225,17 @@ export function IconPicker({
             onClick={(e) => e.stopPropagation()}
           >
             <S.Section>
+              <S.IconSearch>
+                <HiMagnifyingGlass aria-hidden="true" />
+                <input
+                  aria-label="Пошук іконки"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Пошук іконки"
+                />
+              </S.IconSearch>
               <S.IconGrid>
-                {presetIcons.map((iconName) => {
+                {visibleIcons.map((iconName) => {
                   const CurrentIcon = presetIconMap[iconName];
                   if (!CurrentIcon) return null;
 
@@ -213,6 +245,8 @@ export function IconPicker({
                       type="button"
                       $active={icon === iconName}
                       $color={color}
+                      aria-label={iconLabel(iconName)}
+                      title={iconLabel(iconName)}
                       onClick={(e) => {
                         e.preventDefault();
                         onIconChange(iconName);
