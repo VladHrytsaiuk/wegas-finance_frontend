@@ -20,7 +20,8 @@ import { Sheet, PrimaryButton } from "../../../mobile/ui/Sheet";
 import { Group, Row, Meta } from "../../../mobile/ui/Group";
 import { Segmented } from "../../../mobile/ui/Segmented";
 import { categoryLabel } from "../../../mobile/categoryLabel";
-import { CategoryPicker, AccountPicker, CounterpartyPicker } from "./Pickers";
+import { CategoryPicker, AccountPicker } from "./Pickers";
+import { CounterpartyPicker, type NewCounterparty } from "./CounterpartyPicker";
 import { ItemsSheet } from "./ItemsSheet";
 import { dominantCategory, itemsTotal, knownItemsFrom, minorToInput, toApiItems, type DraftItem } from "./items";
 
@@ -228,9 +229,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     () => (allCategories as Category[]).filter((c) => c.type === (kind === "income" ? "income" : "expense")),
     [allCategories, kind],
   );
-  // Позичають зазвичай людям; решту контрагентів показуємо після них.
-  const people = useMemo(
-    () => [...counterparties].sort((a, b) => Number(b.type === "person") - Number(a.type === "person")),
+  const activeCounterparties = useMemo(
+    () => counterparties.filter((c) => !c.is_group && !c.is_archived),
     [counterparties],
   );
 
@@ -259,21 +259,19 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     return [...frequent, ...fallback].slice(0, 8);
   }, [recentOfType, categories]);
 
-  // Магазини й контрагенти: спершу ті, де купували найчастіше.
-  const merchants = useMemo(() => {
+  // «Часті» у виборі контрагента: для витрати/доходу — з останніх операцій,
+  // для боргу — люди з відкритим боргом.
+  const merchantUsage = useMemo(() => {
     const counts = new Map<string, number>();
     for (const tx of recentOfType) {
       if (tx.counterparty_id) counts.set(tx.counterparty_id, (counts.get(tx.counterparty_id) || 0) + 1);
     }
-    return counterparties
-      .filter((c) => !c.is_group && !c.is_archived)
-      .sort(
-        (a, b) =>
-          (counts.get(b.id) || 0) - (counts.get(a.id) || 0) ||
-          Number(a.type === "person") - Number(b.type === "person") ||
-          a.name.localeCompare(b.name),
-      );
-  }, [counterparties, recentOfType]);
+    return counts;
+  }, [recentOfType]);
+  const debtUsage = useMemo(
+    () => new Map(counterparties.filter((c) => c.balances?.some((b) => b.balance !== 0)).map((c) => [c.id, 1])),
+    [counterparties],
+  );
   // Остання категорія для кожного магазину — підставляється, коли його обрали.
   const merchantCategory = useMemo(() => {
     const last = new Map<string, string>();
@@ -310,8 +308,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const account = accounts.find((a) => a.id === accountId);
   const target = accounts.find((a) => a.id === targetAccountId);
   const category = categories.find((c) => c.id === categoryId);
-  const person = people.find((p) => p.id === counterpartyId);
-  const merchant = merchants.find((m) => m.id === merchantId);
+  const person = activeCounterparties.find((p) => p.id === counterpartyId);
+  const merchant = activeCounterparties.find((m) => m.id === merchantId);
   const needsTargetAmount = kind === "transfer" && !!account && !!target && account.currency !== target.currency;
 
   const reset = () => {
@@ -359,10 +357,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     onError: (error) => toast.error(errorMessage(error)),
   });
 
-  // Новий контрагент: людина для боргу, магазин для витрати, інше для доходу.
   const createPerson = useMutation({
-    mutationFn: (name: string) =>
-      createCounterpartyApi({ name, type: kind === "debt" ? "person" : kind === "expense" ? "shop" : "other" }),
+    mutationFn: (data: NewCounterparty) => createCounterpartyApi(data),
     onSuccess: (created) => {
       invalidate(["counterparties"]);
       if (kind === "debt") setCounterpartyId(created.id);
@@ -689,13 +685,19 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         open={picker === "person" || picker === "merchant"}
         onOpenChange={(next) => !next && setPicker(null)}
         title={picker === "merchant" ? (kind === "expense" ? "Де" : "Від кого") : "Хто"}
-        searchLabel={picker === "merchant" ? "Пошук магазину" : "Пошук людини"}
-        placeholder={picker === "merchant" ? "Магазин, компанія" : "Імʼя"}
-        people={picker === "merchant" ? merchants : people}
+        counterparties={activeCounterparties}
+        usage={picker === "merchant" ? merchantUsage : debtUsage}
+        typeOrder={
+          kind === "debt"
+            ? ["person", "other", "shop"]
+            : kind === "income"
+              ? ["other", "person", "shop"]
+              : ["shop", "other", "person"]
+        }
         value={picker === "merchant" ? merchantId : counterpartyId}
         onSelect={picker === "merchant" ? setMerchantId : setCounterpartyId}
-        onClear={picker === "merchant" && merchantId ? () => setMerchantId("") : undefined}
-        onCreate={(name) => createPerson.mutate(name)}
+        onClear={picker === "merchant" ? () => setMerchantId("") : undefined}
+        onCreate={(data) => createPerson.mutate(data)}
         isCreating={createPerson.isPending}
       />
     </>

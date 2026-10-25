@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { HiCheck, HiOutlineBuildingOffice2, HiOutlineBuildingStorefront, HiOutlineUser } from "react-icons/hi2";
+import { HiCheck } from "react-icons/hi2";
 import styled from "styled-components";
 
 import type { Category } from "../../../types";
@@ -114,111 +114,6 @@ export function AccountPicker({ open, onOpenChange, title, accounts, value, onSe
           />
         ))}
       </Group>
-    </Sheet>
-  );
-}
-
-interface PersonOption {
-  id: string;
-  name: string;
-  logo?: string;
-  icon?: string;
-  type?: string;
-}
-
-// Без логотипа — іконка за типом контрагента.
-const fallbackIcon = (type?: string) =>
-  type === "shop" ? (
-    <HiOutlineBuildingStorefront size={17} />
-  ) : type === "person" ? (
-    <HiOutlineUser size={17} />
-  ) : (
-    <HiOutlineBuildingOffice2 size={17} />
-  );
-
-interface CounterpartyPickerProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  people: PersonOption[];
-  value: string;
-  onSelect: (id: string) => void;
-  /** Створити нового контрагента з введеним іменем. */
-  onCreate: (name: string) => void;
-  isCreating: boolean;
-  title?: string;
-  searchLabel?: string;
-  placeholder?: string;
-  /** «Не вказувати» — прибрати вибір (для необов'язкового поля). */
-  onClear?: () => void;
-}
-
-export function CounterpartyPicker({
-  open,
-  onOpenChange,
-  people,
-  value,
-  onSelect,
-  onCreate,
-  isCreating,
-  title = "Хто",
-  searchLabel = "Пошук людини",
-  placeholder = "Імʼя",
-  onClear,
-}: CounterpartyPickerProps) {
-  const [query, setQuery] = useState("");
-  const q = query.trim();
-  const filtered = people.filter((p) => !q || p.name.toLowerCase().includes(q.toLowerCase()));
-  const exists = people.some((p) => p.name.toLowerCase() === q.toLowerCase());
-
-  return (
-    <Sheet nested open={open} onOpenChange={onOpenChange} title={title}>
-      <SearchField value={query} onChange={setQuery} placeholder={placeholder} label={searchLabel} />
-      {onClear && !q && (
-        <Group>
-          <Row
-            onClick={() => {
-              onClear();
-              onOpenChange(false);
-            }}
-            title="Не вказувати"
-          />
-        </Group>
-      )}
-      {q && !exists && (
-        <Group>
-          <Row
-            onClick={() => {
-              onCreate(q);
-              setQuery("");
-            }}
-            title={isCreating ? "Додаємо…" : `Додати «${q}»`}
-            inset={16}
-          />
-        </Group>
-      )}
-      {filtered.length > 0 && (
-        <Group>
-          {filtered.map((p) => (
-            <Row
-              key={p.id}
-              onClick={() => {
-                onSelect(p.id);
-                onOpenChange(false);
-              }}
-              leading={
-                p.logo || p.icon ? (
-                  <Tile logo={p.logo} iconName={p.icon} size={30} />
-                ) : (
-                  <Tile icon={fallbackIcon(p.type)} size={30} />
-                )
-              }
-              title={p.name}
-              trailing={p.id === value ? <Check aria-label="Обрано" /> : undefined}
-              inset={58}
-            />
-          ))}
-        </Group>
-      )}
     </Sheet>
   );
 }
