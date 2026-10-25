@@ -510,6 +510,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
             name: sendNewAsset.name,
             type: sendNewAsset.type,
             warranty_end: sendNewAsset.warranty_end ?? 0,
+            mileage: sendNewAsset.mileage ?? 0,
             serial_number: "",
             note: "",
           }

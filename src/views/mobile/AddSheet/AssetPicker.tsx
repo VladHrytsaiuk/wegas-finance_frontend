@@ -25,10 +25,22 @@ import { Tile } from "../../../mobile/ui/Tile";
 export interface NewAssetDraft {
   name: string;
   type: string;
-  /** Кінець гарантії, мс; за замовчуванням — дата операції + 1 рік. */
+  /** Кінець гарантії, мс; за замовчуванням — дата операції + 1 рік. Лише для речей. */
   warranty_end?: number;
+  /** Початковий пробіг нового авто, км. */
+  mileage?: number;
   files: File[];
 }
+
+// Гарантія має сенс лише для речей; для авто — пробіг, для нерухомості — нічого.
+const hasWarranty = (type: string) => type !== "car" && type !== "real_estate";
+
+const NAME_EXAMPLE: Record<string, string> = {
+  electronics: "Ноутбук",
+  furniture: "Диван",
+  real_estate: "Квартира",
+  car: "Toyota Corolla",
+};
 
 const ASSET_TYPES: { value: string; label: string }[] = [
   { value: "electronics", label: "Електроніка" },
@@ -132,6 +144,14 @@ export function AssetPicker({
 
   if (draft) {
     const warrantyEnd = draft.warranty_end ?? addYears(operationDate, 1).getTime();
+    const withWarranty = hasWarranty(draft.type);
+    const finish = () =>
+      choose("", {
+        ...draft,
+        name: draft.name.trim(),
+        warranty_end: withWarranty ? warrantyEnd : undefined,
+        mileage: draft.type === "car" ? draft.mileage : undefined,
+      });
     return (
       <Sheet
         nested
@@ -143,12 +163,27 @@ export function AssetPicker({
           <PrimaryButton
             type="button"
             disabled={!draft.name.trim()}
-            onClick={() => choose("", { ...draft, name: draft.name.trim(), warranty_end: warrantyEnd })}
+            onClick={finish}
           >
             Готово
           </PrimaryButton>
         }
       >
+        <Section caption="Тип">
+          <ChipRow role="group" aria-label="Тип активу">
+            {ASSET_TYPES.map((t) => (
+              <Chip
+                key={t.value}
+                type="button"
+                $active={draft.type === t.value}
+                aria-pressed={draft.type === t.value}
+                onClick={() => setDraft({ ...draft, type: t.value })}
+              >
+                {t.label}
+              </Chip>
+            ))}
+          </ChipRow>
+        </Section>
         <Group>
           <Row
             title={
@@ -156,32 +191,52 @@ export function AssetPicker({
                 $align="left"
                 type="text"
                 aria-label="Назва активу"
-                placeholder="Назва, напр. Ноутбук"
+                placeholder={`Назва, напр. ${NAME_EXAMPLE[draft.type] ?? "Велосипед"}`}
                 value={draft.name}
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}
               />
             }
           />
-          <Row
-            title="Гарантія до"
-            trailing={
-              <FieldInput
-                type="date"
-                aria-label="Гарантія до"
-                value={format(warrantyEnd, "yyyy-MM-dd")}
-                onChange={(e) =>
-                  setDraft({
-                    ...draft,
-                    warranty_end: e.target.value ? new Date(`${e.target.value}T12:00:00`).getTime() : undefined,
-                  })
-                }
-              />
-            }
-          />
+          {withWarranty && (
+            <Row
+              title="Гарантія до"
+              trailing={
+                <FieldInput
+                  type="date"
+                  aria-label="Гарантія до"
+                  value={format(warrantyEnd, "yyyy-MM-dd")}
+                  onChange={(e) =>
+                    setDraft({
+                      ...draft,
+                      warranty_end: e.target.value ? new Date(`${e.target.value}T12:00:00`).getTime() : undefined,
+                    })
+                  }
+                />
+              }
+            />
+          )}
+          {draft.type === "car" && (
+            <Row
+              title="Пробіг, км"
+              trailing={
+                <FieldInput
+                  type="text"
+                  inputMode="numeric"
+                  aria-label="Пробіг нового авто"
+                  placeholder="0"
+                  value={draft.mileage ?? ""}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, "");
+                    setDraft({ ...draft, mileage: digits ? Number(digits) : undefined });
+                  }}
+                />
+              }
+            />
+          )}
           <Row
             onClick={() => filesInput.current?.click()}
             leading={<HiOutlinePaperClip size={20} color="var(--m-accent)" />}
-            title="Гарантійні документи"
+            title={withWarranty ? "Гарантійні документи" : "Документи й фото"}
             trailing={<Meta>{draft.files.length ? `${draft.files.length} файл.` : "Додати"}</Meta>}
             inset={48}
           />
@@ -198,21 +253,6 @@ export function AssetPicker({
             setDraft({ ...draft, files: [...draft.files, ...files] });
           }}
         />
-        <Section caption="Тип">
-          <ChipRow role="group" aria-label="Тип активу">
-            {ASSET_TYPES.map((t) => (
-              <Chip
-                key={t.value}
-                type="button"
-                $active={draft.type === t.value}
-                aria-pressed={draft.type === t.value}
-                onClick={() => setDraft({ ...draft, type: t.value })}
-              >
-                {t.label}
-              </Chip>
-            ))}
-          </ChipRow>
-        </Section>
       </Sheet>
     );
   }
