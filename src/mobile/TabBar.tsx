@@ -10,7 +10,7 @@ import {
   HiPlus,
 } from "react-icons/hi2";
 
-import MobileActionMenu from "../components/mobile/MobileActionMenu";
+import { AddSheet } from "../views/mobile/AddSheet/AddSheet";
 import { ReceiptImportModal } from "../components/inbox/ReceiptImportModal";
 import { getInboxPendingCountApi } from "../services/apiInbox";
 
@@ -166,15 +166,11 @@ export function TabBar() {
         </Tab>
       </Bar>
 
-      {isMenuOpen && (
-        <MobileActionMenu
-          onClose={() => setIsMenuOpen(false)}
-          onOpenReceiptImport={() => {
-            setIsMenuOpen(false);
-            setIsReceiptImportOpen(true);
-          }}
-        />
-      )}
+      <AddSheet
+        open={isMenuOpen}
+        onOpenChange={setIsMenuOpen}
+        onOpenReceiptImport={() => setIsReceiptImportOpen(true)}
+      />
       {isReceiptImportOpen && (
         <ReceiptImportModal onClose={() => setIsReceiptImportOpen(false)} />
       )}

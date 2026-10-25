@@ -37,7 +37,8 @@
     "react-router-dom": "^7.10.0",
     "react-zoom-pan-pinch": "^3.7.0",
     "recharts": "^3.5.1",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "vaul": "1.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

@@ -99,7 +99,8 @@ const rowBase = css<{ $inset: number; $compact: boolean }>`
   text-align: left;
   text-decoration: none;
 
-  & + &::before {
+  /* Роздільник між будь-якими рядками групи: посилання, кнопками чи текстом. */
+  [data-row] + &::before {
     content: "";
     position: absolute;
     top: 0;
@@ -202,20 +203,20 @@ export function Row({ leading, title, subtitle, trailing, chevron, to, onClick, 
 
   if (to) {
     return (
-      <RowLink to={to} $inset={separatorInset} $compact={compact}>
+      <RowLink data-row="" to={to} $inset={separatorInset} $compact={compact}>
         {content}
       </RowLink>
     );
   }
   if (onClick) {
     return (
-      <RowButton type="button" onClick={onClick} $inset={separatorInset} $compact={compact}>
+      <RowButton data-row="" type="button" onClick={onClick} $inset={separatorInset} $compact={compact}>
         {content}
       </RowButton>
     );
   }
   return (
-    <RowDiv $inset={separatorInset} $compact={compact}>
+    <RowDiv data-row="" $inset={separatorInset} $compact={compact}>
       {content}
     </RowDiv>
   );
