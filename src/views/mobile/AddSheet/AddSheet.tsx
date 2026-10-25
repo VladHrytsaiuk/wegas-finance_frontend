@@ -498,7 +498,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
 
         <AmountField>
           <AmountInput
-            $size={amount.length > 9 ? 40 : 52}
+            $size={amount.length > 9 ? 38 : 48}
             type="text"
             inputMode="decimal"
             aria-label="Сума"

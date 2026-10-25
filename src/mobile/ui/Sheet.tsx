@@ -84,11 +84,12 @@ const Trailing = styled.div`
 const Body = styled.div`
   flex: 1;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   padding: 12px 16px 16px;
 
   /* У прокручуваній колонці блоки з overflow: hidden інакше стискаються

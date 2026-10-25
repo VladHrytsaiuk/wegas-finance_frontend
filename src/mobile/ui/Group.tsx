@@ -89,8 +89,9 @@ const rowBase = css<{ $inset: number; $compact: boolean }>`
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: ${(p) => (p.$compact ? 48 : 60)}px;
-  padding: 10px 16px;
+  /* 44 — стандартна висота рядка iOS. */
+  min-height: ${(p) => (p.$compact ? 44 : 60)}px;
+  padding: 8px 16px;
   box-sizing: border-box;
   border: none;
   background: none;
