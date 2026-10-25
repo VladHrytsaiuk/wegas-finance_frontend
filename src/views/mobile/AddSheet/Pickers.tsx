@@ -23,10 +23,12 @@ interface CategoryPickerProps {
   categories: Category[];
   value: string;
   onSelect: (id: string) => void;
+  /** Пункт «без власної категорії» зверху (значення ""). */
+  noneLabel?: string;
 }
 
 // Категорії згруповані за батьківською: батьківська теж вибирається.
-export function CategoryPicker({ open, onOpenChange, categories, value, onSelect }: CategoryPickerProps) {
+export function CategoryPicker({ open, onOpenChange, categories, value, onSelect, noneLabel }: CategoryPickerProps) {
   const [query, setQuery] = useState("");
 
   const groups = useMemo(() => {
@@ -49,6 +51,15 @@ export function CategoryPicker({ open, onOpenChange, categories, value, onSelect
   return (
     <Sheet nested open={open} onOpenChange={onOpenChange} title="Категорія">
       <SearchField value={query} onChange={setQuery} label="Пошук категорії" />
+      {noneLabel && !query && (
+        <Group>
+          <Row
+            onClick={() => pick("")}
+            title={noneLabel}
+            trailing={value === "" ? <Check aria-label="Обрано" /> : undefined}
+          />
+        </Group>
+      )}
       {groups.map(({ parent, items }) => (
         <Section key={parent.id} caption={items.length > 1 ? parent.name : undefined}>
           <Group>

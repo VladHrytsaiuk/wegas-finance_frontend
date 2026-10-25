@@ -19,9 +19,10 @@ import type { Category, Transaction } from "../../../types";
 import { Sheet, PrimaryButton } from "../../../mobile/ui/Sheet";
 import { Group, Row, Meta } from "../../../mobile/ui/Group";
 import { Segmented } from "../../../mobile/ui/Segmented";
+import { categoryLabel } from "../../../mobile/categoryLabel";
 import { CategoryPicker, AccountPicker, CounterpartyPicker } from "./Pickers";
 import { ItemsSheet } from "./ItemsSheet";
-import { itemsTotal, knownItemsFrom, minorToInput, toApiItems, type DraftItem } from "./items";
+import { dominantCategory, itemsTotal, knownItemsFrom, minorToInput, toApiItems, type DraftItem } from "./items";
 
 type Kind = "expense" | "income" | "transfer" | "debt";
 type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
@@ -146,6 +147,22 @@ const DateInput = styled(FieldInput)`
   color: var(--m-label-2);
 `;
 
+const MismatchHint = styled.p`
+  margin: -12px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--m-label-2);
+
+  button {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--m-accent);
+    cursor: pointer;
+  }
+`;
+
 const Hint = styled.p`
   margin: -8px 4px 0;
   font-size: 13px;
@@ -252,9 +269,14 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const accountId = accounts.some((a) => a.id === pickedAccountId)
     ? pickedAccountId
     : (accounts.find((a) => a.id === lastAccountId)?.id ?? accounts[0]?.id ?? "");
+  // Категорія операції: обрана вручну, інакше та, на яку припадає більше товарів,
+  // інакше найчастіша.
+  const itemsCategory = dominantCategory(items);
   const categoryId = categories.some((c) => c.id === pickedCategoryId)
     ? pickedCategoryId
-    : (chips[0]?.id ?? "");
+    : categories.some((c) => c.id === itemsCategory)
+      ? itemsCategory
+      : (chips[0]?.id ?? "");
 
   const account = accounts.find((a) => a.id === accountId);
   const target = accounts.find((a) => a.id === targetAccountId);
@@ -278,6 +300,13 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const close = () => {
     onOpenChange(false);
     reset();
+  };
+
+  // «Скасувати» стирає чернетку; свайп униз лише ховає панель — введений чек
+  // не пропаде від випадкового жесту.
+  const cancel = () => {
+    if (items.length > 0 && !window.confirm("Скасувати операцію? Введені товари буде втрачено.")) return;
+    close();
   };
 
   const invalidate = (keys: string[]) => {
@@ -358,7 +387,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       amount: minor,
       date: timestamp,
       note: note.trim(),
-      items: withItems ? toApiItems(items, discount) : undefined,
+      items: withItems ? toApiItems(items, discount, categoryId) : undefined,
     });
   };
 
@@ -368,6 +397,21 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     if (photo) photoUpload.mutate(photo);
   };
 
+  // Кнопка пояснює, чого бракує, замість мовчки бути неактивною.
+  const saveLabel = (() => {
+    if (mutation.isPending) return "Збереження…";
+    if (!accountId) return "Немає рахунку";
+    if (minor <= 0) return "Введіть суму";
+    if (kind === "transfer" && !targetAccountId) return "Оберіть, куди";
+    if (needsTargetAmount && toMinor(targetAmount) <= 0) return "Введіть отриману суму";
+    if (kind === "debt" && !counterpartyId) return "Оберіть людину";
+    if ((kind === "expense" || kind === "income") && !categoryId) return "Оберіть категорію";
+    return "Зберегти";
+  })();
+
+  const itemsSum = itemsTotal(items, discount);
+  const itemsMismatch = withItems && itemsSum > 0 && minor !== itemsSum;
+
   const symbol = account ? CURRENCY_SYMBOLS[account.currency] || account.currency : "₴";
   const accountLabel = kind === "transfer" ? "Звідки" : "Рахунок";
 
@@ -375,11 +419,12 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     <>
       <Sheet
         open={open}
-        onOpenChange={(next) => (next ? onOpenChange(true) : close())}
+        onOpenChange={onOpenChange}
+        onCancel={cancel}
         title="Нова операція"
         footer={
           <PrimaryButton type="button" disabled={!ready || mutation.isPending} onClick={save}>
-            {mutation.isPending ? "Збереження…" : "Зберегти"}
+            {saveLabel}
           </PrimaryButton>
         }
       >
@@ -430,6 +475,15 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
           <CurrencyMark>{symbol}</CurrencyMark>
         </AmountField>
 
+        {itemsMismatch && (
+          <MismatchHint>
+            Товари на {formatMoney(itemsSum, account?.currency || "UAH", language)} — сума інша.{" "}
+            <button type="button" onClick={() => setAmount(minorToInput(itemsSum))}>
+              Взяти суму товарів
+            </button>
+          </MismatchHint>
+        )}
+
         {(kind === "expense" || kind === "income") && chips.length > 0 && (
           <ChipRow role="group" aria-label="Часті категорії">
             {chips.map((c) => (
@@ -440,7 +494,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
                 aria-pressed={c.id === categoryId}
                 onClick={() => setCategoryId(c.id)}
               >
-                {c.name}
+                {categoryLabel(categories, c.id)}
               </Chip>
             ))}
           </ChipRow>
@@ -467,7 +521,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
             <Row
               onClick={() => setPicker("category")}
               title="Категорія"
-              trailing={<Meta>{category?.name ?? "Оберіть"}</Meta>}
+              trailing={<Meta>{categoryLabel(categories, category?.id) ?? "Оберіть"}</Meta>}
               chevron
             />
           )}
@@ -580,6 +634,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         discount={discount}
         onChange={changeItems}
         known={knownItems}
+        categories={categories}
+        mainCategoryId={categoryId}
         currency={account?.currency || "UAH"}
         language={language}
       />

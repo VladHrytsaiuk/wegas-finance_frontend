@@ -5,6 +5,8 @@ import styled from "styled-components";
 // Нижня панель iOS: тягнеться вниз, щоб закрити; вкладені панелі (вибір
 // категорії, рахунку) відкриваються поверх і зсувають попередню.
 
+// Однаковий z-index у всіх панелей: порядок задає DOM, тож вкладена панель
+// разом зі своїм затемненням лягає поверх батьківської, а не під неї.
 const Overlay = styled(Drawer.Overlay)`
   position: fixed;
   inset: 0;
@@ -17,7 +19,7 @@ const Content = styled(Drawer.Content)`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1001;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - env(safe-area-inset-top) - 12px);
@@ -112,9 +114,13 @@ interface SheetProps {
   footer?: ReactNode;
   /** Вкладена панель поверх іншої. */
   nested?: boolean;
+  /** Кнопка «Скасувати»; без обробника просто закриває панель. */
+  onCancel?: () => void;
+  /** Без «Скасувати» — коли зміни застосовуються одразу і скасовувати нічого. */
+  hideCancel?: boolean;
 }
 
-export function Sheet({ open, onOpenChange, title, children, trailing, footer, nested }: SheetProps) {
+export function Sheet({ open, onOpenChange, title, children, trailing, footer, nested, onCancel, hideCancel }: SheetProps) {
   const Root = nested ? Drawer.NestedRoot : Drawer.Root;
   return (
     <Root open={open} onOpenChange={onOpenChange}>
@@ -123,9 +129,13 @@ export function Sheet({ open, onOpenChange, title, children, trailing, footer, n
         <Content aria-describedby={undefined}>
           <Grabber aria-hidden="true" />
           <Header>
-            <SheetTextButton type="button" onClick={() => onOpenChange(false)}>
-              Скасувати
-            </SheetTextButton>
+            {hideCancel ? (
+              <span />
+            ) : (
+              <SheetTextButton type="button" onClick={onCancel ?? (() => onOpenChange(false))}>
+                Скасувати
+              </SheetTextButton>
+            )}
             <Title>{title}</Title>
             <Trailing>{trailing}</Trailing>
           </Header>
