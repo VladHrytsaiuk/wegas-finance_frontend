@@ -10,7 +10,11 @@ import { useSettings } from "../../../context/SettingsContext";
 import { getAccountsApi } from "../../../services/apiAccounts";
 import { getCategoriesApi } from "../../../services/apiCategories";
 import { createCounterpartyApi, getCounterpartiesApi } from "../../../services/apiCounterparties";
-import { createTransactionApi, getTransactionsApi } from "../../../services/apiTransactions";
+import { createTransactionApi, getTransactionsApi, type CreateTxData } from "../../../services/apiTransactions";
+import { getAssets } from "../../../services/apiAssets";
+import { getUsersApi } from "../../../services/apiUsers";
+import { getTagsApi } from "../../../services/apiTags";
+import { useUserRole } from "../../../hooks/useUserRole";
 import { createInboxPhotoApi } from "../../../services/apiInbox";
 import { compressImage } from "../../../utils/compressor";
 import { CURRENCY_SYMBOLS } from "../../../utils/currency";
@@ -23,11 +27,14 @@ import { categoryLabel } from "../../../mobile/categoryLabel";
 import { CategoryPicker, AccountPicker } from "./Pickers";
 import { CounterpartyPicker, type NewCounterparty } from "./CounterpartyPicker";
 import { ItemsSheet } from "./ItemsSheet";
+import { TagPicker } from "./TagPicker";
+import { AssetPicker, type NewAssetDraft } from "./AssetPicker";
+import { PhotosSheet } from "./PhotosSheet";
 import { dominantCategory, itemsTotal, knownItemsFrom, minorToInput, toApiItems, type DraftItem } from "./items";
 
 type Kind = "expense" | "income" | "transfer" | "debt";
 type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
-type Picker = null | "category" | "account" | "target" | "person" | "merchant" | "items";
+type Picker = null | "category" | "account" | "target" | "person" | "merchant" | "items" | "tags" | "asset" | "photos";
 
 const LAST_ACCOUNT_KEY = "m-last-account";
 
@@ -148,6 +155,17 @@ const DateInput = styled(FieldInput)`
   color: var(--m-label-2);
 `;
 
+const DateTime = styled.span`
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+
+  input[type="time"] {
+    flex: 0 0 auto;
+    width: auto;
+  }
+`;
+
 const MismatchHint = styled.p`
   margin: -12px 0 0;
   text-align: center;
@@ -193,6 +211,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const queryClient = useQueryClient();
   const { language } = useSettings();
   const photoInput = useRef<HTMLInputElement>(null);
+  const morePhotosInput = useRef<HTMLInputElement>(null);
+  const { user: me } = useUserRole();
 
   const [kind, setKind] = useState<Kind>("expense");
   const [debtType, setDebtType] = useState<DebtType>("loan_give");
@@ -205,6 +225,13 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   // Де купили / від кого дохід — окремо від «Хто» в боргу.
   const [merchantId, setMerchantId] = useState("");
   const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
+  const [time, setTime] = useState(() => format(new Date(), "HH:mm"));
+  const [tagIds, setTagIds] = useState<string[]>([]);
+  const [assetId, setAssetId] = useState("");
+  const [newAsset, setNewAsset] = useState<NewAssetDraft | null>(null);
+  const [mileage, setMileage] = useState("");
+  // Фото, прикріплені до операції (вже стиснені).
+  const [photos, setPhotos] = useState<File[]>([]);
   const [note, setNote] = useState("");
   const [picker, setPicker] = useState<Picker>(null);
   const [items, setItems] = useState<DraftItem[]>([]);
@@ -214,17 +241,24 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
 
   const { data: allAccounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi, enabled: open });
   const { data: allCategories = [] } = useQuery({ queryKey: ["categories"], queryFn: getCategoriesApi, enabled: open });
+  const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: getUsersApi, enabled: open });
+  const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: getTagsApi, enabled: open });
+  const { data: assets = [] } = useQuery({
+    queryKey: ["assets"],
+    queryFn: getAssets,
+    enabled: open && (kind === "expense" || kind === "income"),
+  });
   const { data: counterparties = [] } = useQuery({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
     enabled: open && kind !== "transfer",
   });
 
-  // Вручну не можна писати на рахунки, що синхронізуються з банком.
-  const accounts = useMemo(
-    () => allAccounts.filter((a) => !a.is_group && !a.is_archived && !a.is_synced),
-    [allAccounts],
-  );
+  // Як у старій формі: синхронізовані рахунки теж можна обрати (витрата з фото
+  // на такому рахунку йде в «Чеки» чекати банківську операцію), але
+  // за замовчуванням підставляється звичайний рахунок.
+  const accounts = useMemo(() => allAccounts.filter((a) => !a.is_group && !a.is_archived), [allAccounts]);
+  const manualAccounts = useMemo(() => accounts.filter((a) => !a.is_synced), [accounts]);
   const categories = useMemo(
     () => (allCategories as Category[]).filter((c) => c.type === (kind === "income" ? "income" : "expense")),
     [allCategories, kind],
@@ -295,7 +329,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   }, []);
   const accountId = accounts.some((a) => a.id === pickedAccountId)
     ? pickedAccountId
-    : (accounts.find((a) => a.id === lastAccountId)?.id ?? accounts[0]?.id ?? "");
+    : (manualAccounts.find((a) => a.id === lastAccountId)?.id ?? manualAccounts[0]?.id ?? accounts[0]?.id ?? "");
   // Категорія операції: обрана вручну, інакше та, на яку припадає більше товарів,
   // інакше звична для обраного магазину, інакше найчастіша.
   const categoryId =
@@ -321,6 +355,12 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     setMerchantId("");
     setNote("");
     setDate(format(new Date(), "yyyy-MM-dd"));
+    setTime(format(new Date(), "HH:mm"));
+    setTagIds([]);
+    setAssetId("");
+    setNewAsset(null);
+    setMileage("");
+    setPhotos([]);
     setItems([]);
     setDiscount(0);
     setFormKey((k) => k + 1);
@@ -334,7 +374,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   // «Скасувати» стирає чернетку; свайп униз лише ховає панель — введений чек
   // не пропаде від випадкового жесту.
   const cancel = () => {
-    if (items.length > 0 && !window.confirm("Скасувати операцію? Введені товари буде втрачено.")) return;
+    if ((items.length > 0 || photos.length > 0) && !window.confirm("Скасувати операцію? Введені товари й фото буде втрачено.")) return;
     close();
   };
 
@@ -343,9 +383,20 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   };
 
   const mutation = useMutation({
-    mutationFn: createTransactionApi,
-    onSuccess: () => {
-      invalidate(["transactions", "transactions-infinite", "accounts", "account", "stats", "goals", "goal", "counterparties"]);
+    mutationFn: async ({ data, toInbox }: { data: CreateTxData | FormData; toInbox: boolean }) =>
+      toInbox ? createInboxPhotoApi(data as FormData) : createTransactionApi(data),
+    onSuccess: (_, { toInbox }) => {
+      invalidate(["transactions", "transactions-infinite", "accounts", "account", "stats", "goals", "goal", "counterparties", "assets", "inbox"]);
+      if (toInbox) {
+        toast.success("Чек додано в «Чеки»: чекаємо банківську операцію");
+        try {
+          localStorage.setItem(LAST_ACCOUNT_KEY, accountId);
+        } catch {
+          // не критично
+        }
+        close();
+        return;
+      }
       try {
         localStorage.setItem(LAST_ACCOUNT_KEY, accountId);
       } catch {
@@ -403,11 +454,20 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     if (next.length > 0 && total > 0) setAmount(minorToInput(total));
   };
 
+  const withAsset = kind === "expense" || kind === "income";
+  const selectedAsset = withAsset ? assets.find((a) => a.id === assetId) : undefined;
+  const isCar = selectedAsset?.type === "car";
+  const sendNewAsset = kind === "expense" && newAsset ? newAsset : null;
+  // Як у старій формі: витрата з фото на синхронізованому рахунку — у «Чеки».
+  const toInbox = kind === "expense" && !!account?.is_synced && photos.length > 0;
+
   const save = () => {
-    // Сьогодні — поточний час; інший день — полудень, щоб не з'їхати на сусідню дату.
-    const isToday = date === format(new Date(), "yyyy-MM-dd");
-    const timestamp = isToday ? Date.now() : new Date(`${date}T12:00:00`).getTime();
-    mutation.mutate({
+    if (toInbox && photos.length > 1) {
+      toast.error("Для «Чеків» поки можна додати лише одне фото чека.");
+      return;
+    }
+    const timestamp = new Date(`${date}T${time || "12:00"}:00`).getTime();
+    const payload: CreateTxData = {
       type: kind === "debt" ? debtType : kind,
       account_id: accountId,
       target_account_id: kind === "transfer" ? targetAccountId : undefined,
@@ -418,18 +478,78 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       date: timestamp,
       note: note.trim(),
       items: withItems ? toApiItems(items, discount, categoryId) : undefined,
-    });
+      tag_ids: tagIds.length ? tagIds : undefined,
+      asset_id: withAsset && assetId ? assetId : undefined,
+      mileage: isCar && mileage ? Number(mileage) : undefined,
+    };
+
+    if (toInbox) {
+      const data = new FormData();
+      data.append(
+        "json",
+        JSON.stringify({
+          selected_account_id: accountId,
+          total: payload.amount,
+          occurred_at: payload.date,
+          note: payload.note,
+          counterparty_id: payload.counterparty_id,
+          category_id: payload.category_id,
+          items: payload.items,
+        }),
+      );
+      data.append("file", photos[0]);
+      mutation.mutate({ data, toInbox: true });
+      return;
+    }
+
+    const files = [...(sendNewAsset?.files ?? []), ...photos];
+    const json = {
+      ...payload,
+      new_asset: sendNewAsset
+        ? {
+            name: sendNewAsset.name,
+            type: sendNewAsset.type,
+            warranty_end: sendNewAsset.warranty_end ?? 0,
+            serial_number: "",
+            note: "",
+          }
+        : undefined,
+    };
+    if (!files.length) {
+      mutation.mutate({ data: json, toInbox: false });
+      return;
+    }
+    const data = new FormData();
+    data.append("json", JSON.stringify(json));
+    files.forEach((file) => data.append("files", file));
+    mutation.mutate({ data, toInbox: false });
   };
 
+  // «Фото чека» без введених даних — одразу в «Чеки» (як «лише фото» у старій
+  // формі); якщо операцію вже почали заповнювати — фото прикріплюється до неї.
+  const startedFilling = minor > 0 || items.length > 0;
+  const attachPhotos = async (files: File[]) => {
+    if (!files.length) return;
+    try {
+      const compressed = await Promise.all(files.map((file) => compressImage(file)));
+      setPhotos((prev) => [...prev, ...compressed]);
+      toast.success("Фото додано до операції");
+    } catch {
+      toast.error("Не вдалося обробити фото");
+    }
+  };
   const onPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const photo = event.target.files?.[0];
+    const files = Array.from(event.target.files || []);
     event.target.value = "";
-    if (photo) photoUpload.mutate(photo);
+    if (!files.length) return;
+    if (startedFilling || photos.length > 0) void attachPhotos(files);
+    else photoUpload.mutate(files[0]);
   };
 
   // Кнопка пояснює, чого бракує, замість мовчки бути неактивною.
   const saveLabel = (() => {
     if (mutation.isPending) return "Збереження…";
+    if (toInbox && ready) return "Зберегти в «Чеки»";
     if (!accountId) return "Немає рахунку";
     if (minor <= 0) return "Введіть суму";
     if (kind === "transfer" && !targetAccountId) return "Оберіть, куди";
@@ -459,6 +579,18 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         }
       >
         <input ref={photoInput} type="file" accept="image/*" hidden onChange={onPhoto} />
+        <input
+          ref={morePhotosInput}
+          type="file"
+          accept="image/*"
+          multiple
+          hidden
+          onChange={(e) => {
+            const files = Array.from(e.target.files || []);
+            e.target.value = "";
+            void attachPhotos(files);
+          }}
+        />
         <QuickActions>
           <QuickAction
             type="button"
@@ -621,15 +753,71 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
           <Row
             title="Дата"
             trailing={
-              <DateInput
-                type="date"
-                aria-label="Дата"
-                value={date}
-                max={format(new Date(), "yyyy-MM-dd")}
-                onChange={(e) => e.target.value && setDate(e.target.value)}
-              />
+              <DateTime>
+                <DateInput
+                  type="date"
+                  aria-label="Дата"
+                  value={date}
+                  max={format(new Date(), "yyyy-MM-dd")}
+                  onChange={(e) => e.target.value && setDate(e.target.value)}
+                />
+                <DateInput
+                  type="time"
+                  aria-label="Час"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                />
+              </DateTime>
             }
           />
+          <Row
+            onClick={() => setPicker("tags")}
+            title="Теги"
+            trailing={
+              <Meta>
+                {tagIds.length
+                  ? tags
+                      .filter((t) => tagIds.includes(t.id))
+                      .map((t) => t.name)
+                      .join(", ") || `${tagIds.length}`
+                  : "Немає"}
+              </Meta>
+            }
+            chevron
+          />
+          {withAsset && (
+            <Row
+              onClick={() => setPicker("asset")}
+              title="Актив"
+              trailing={
+                <Meta>{sendNewAsset ? `Новий: ${sendNewAsset.name}` : (selectedAsset?.name ?? "Немає")}</Meta>
+              }
+              chevron
+            />
+          )}
+          {isCar && (
+            <Row
+              title="Пробіг, км"
+              trailing={
+                <FieldInput
+                  type="text"
+                  inputMode="numeric"
+                  aria-label="Пробіг"
+                  placeholder={`Поточний ${selectedAsset?.mileage ?? 0}`}
+                  value={mileage}
+                  onChange={(e) => setMileage(e.target.value.replace(/\D/g, ""))}
+                />
+              }
+            />
+          )}
+          {photos.length > 0 && (
+            <Row
+              onClick={() => setPicker("photos")}
+              title="Фото"
+              trailing={<Meta>{photos.length}</Meta>}
+              chevron
+            />
+          )}
           <Row
             title="Нотатка"
             trailing={
@@ -644,12 +832,20 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
           />
         </Group>
 
-        {accounts.length === 0 && (
+        {isCar && mileage && (
           <Hint>
-            Немає рахунків для ручного введення: рахунки, що синхронізуються з банком, поповнюються
-            автоматично.
+            {Number(mileage) > (selectedAsset?.mileage ?? 0)
+              ? "Новий пробіг оновить загальний пробіг і дату останнього ТО в картці авто."
+              : `Історичний запис: менше поточного пробігу (${selectedAsset?.mileage ?? 0} км).`}
           </Hint>
         )}
+        {toInbox && (
+          <Hint>
+            Рахунок синхронізується з банком: чек з фото чекатиме в «Чеках» на банківську операцію і
+            прив'яжеться до неї.
+          </Hint>
+        )}
+        {accounts.length === 0 && <Hint>Немає рахунків. Додайте рахунок у розділі «Рахунки».</Hint>}
       </Sheet>
 
       <CategoryPicker
@@ -664,9 +860,41 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         onOpenChange={(next) => !next && setPicker(null)}
         title={picker === "target" ? "Куди" : accountLabel}
         accounts={picker === "target" ? accounts.filter((a) => a.id !== accountId) : accounts}
+        users={users}
+        currentUserId={me?.id}
         value={picker === "target" ? targetAccountId : accountId}
         onSelect={picker === "target" ? setTargetAccountId : setAccountId}
         language={language}
+      />
+      <TagPicker
+        open={picker === "tags"}
+        onOpenChange={(next) => !next && setPicker(null)}
+        value={tagIds}
+        onChange={setTagIds}
+      />
+      <AssetPicker
+        open={picker === "asset"}
+        onOpenChange={(next) => !next && setPicker(null)}
+        assetId={assetId}
+        newAsset={newAsset}
+        canCreate={kind === "expense"}
+        operationDate={new Date(`${date}T12:00:00`).getTime()}
+        onChange={(id, created) => {
+          setAssetId(id);
+          setNewAsset(created);
+          setMileage("");
+        }}
+      />
+      <PhotosSheet
+        open={picker === "photos"}
+        onOpenChange={(next) => !next && setPicker(null)}
+        photos={photos}
+        onRemove={(index) => {
+          const next = photos.filter((_, i) => i !== index);
+          setPhotos(next);
+          if (!next.length) setPicker(null);
+        }}
+        onAdd={() => morePhotosInput.current?.click()}
       />
       <ItemsSheet
         key={formKey}

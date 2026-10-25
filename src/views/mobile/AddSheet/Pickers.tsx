@@ -85,35 +85,77 @@ interface AccountPickerProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   accounts: Account[];
+  users: { id: string; name: string }[];
+  currentUserId?: string;
   value: string;
   onSelect: (id: string) => void;
   language: string;
 }
 
-export function AccountPicker({ open, onOpenChange, title, accounts, value, onSelect, language }: AccountPickerProps) {
+// Як у старій формі: рахунки згруповані за власником (мої — першими), у групі
+// звичайні рахунки перед синхронізованими з банком.
+export function AccountPicker({
+  open,
+  onOpenChange,
+  title,
+  accounts,
+  users,
+  currentUserId,
+  value,
+  onSelect,
+  language,
+}: AccountPickerProps) {
+  const [query, setQuery] = useState("");
+
+  const owners = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const visible = accounts
+      .filter((a) => !q || a.name.toLowerCase().includes(q))
+      .sort((a, b) => Number(!!a.is_synced) - Number(!!b.is_synced) || a.name.localeCompare(b.name));
+    const groups = new Map<string, Account[]>();
+    for (const account of visible) {
+      const key = account.user_id || "";
+      groups.set(key, [...(groups.get(key) || []), account]);
+    }
+    return [...groups.entries()]
+      .sort(([a], [b]) => Number(b === currentUserId) - Number(a === currentUserId))
+      .map(([userId, items]) => ({
+        userId,
+        caption: userId === currentUserId ? "Мої" : users.find((u) => u.id === userId)?.name || "Інші",
+        items,
+      }));
+  }, [accounts, users, currentUserId, query]);
+
   return (
     <Sheet nested open={open} onOpenChange={onOpenChange} title={title}>
-      <Group>
-        {accounts.map((account) => (
-          <Row
-            key={account.id}
-            onClick={() => {
-              onSelect(account.id);
-              onOpenChange(false);
-            }}
-            leading={<AccountTile account={account} size={30} />}
-            title={account.name}
-            trailing={
-              account.id === value ? (
-                <Check aria-label="Обрано" />
-              ) : (
-                <Meta>{formatMoney(account.balance, account.currency, language)}</Meta>
-              )
-            }
-            inset={58}
-          />
-        ))}
-      </Group>
+      {accounts.length > 8 && <SearchField value={query} onChange={setQuery} label="Пошук рахунку" />}
+      {owners.map((owner) => (
+        <Section key={owner.userId} caption={owners.length > 1 ? owner.caption : undefined}>
+          <Group>
+            {owner.items.map((account) => (
+              <Row
+                key={account.id}
+                onClick={() => {
+                  onSelect(account.id);
+                  setQuery("");
+                  onOpenChange(false);
+                }}
+                leading={<AccountTile account={account} size={30} />}
+                title={account.name}
+                subtitle={account.is_synced ? "Синхронізується з банком" : undefined}
+                trailing={
+                  account.id === value ? (
+                    <Check aria-label="Обрано" />
+                  ) : (
+                    <Meta>{formatMoney(account.balance, account.currency, language)}</Meta>
+                  )
+                }
+                inset={58}
+              />
+            ))}
+          </Group>
+        </Section>
+      ))}
     </Sheet>
   );
 }
