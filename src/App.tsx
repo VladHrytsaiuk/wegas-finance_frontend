@@ -58,6 +58,7 @@ const UtilityDetails = lazy(() => import("./pages/utility/UtilityDetails"));
 const UtilityAnalyticsPage = lazy(() => import("./pages/utility/UtilityAnalyticsPage"));
 const UtilityMeterAnalyticsPage = lazy(() => import("./pages/utility/UtilityMeterAnalyticsPage"));
 const Goals = lazy(() => import("./pages/Goals/Goals"));
+const MobileMore = lazy(() => import("./views/mobile/More/MobileMore"));
 const GoalDetails = lazy(() => import("./pages/Goals/GoalDetails"));
 const Shopping = lazy(() => import("./pages/Shopping/Shopping"));
 const WishlistGroups = lazy(() => import("./pages/wishlist/WishlistGroups"));
@@ -315,6 +316,10 @@ function AppRoutes() {
             <Route
               path="wishlist/:groupId"
               element={withRouteSuspense(<WishlistItems />, "resources")}
+            />
+            <Route
+              path="more"
+              element={withRouteSuspense(<MobileMore />, "resources")}
             />
             <Route
               path="investments/dashboard"

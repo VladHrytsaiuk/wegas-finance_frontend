@@ -1,12 +1,12 @@
 import { useIsMobile } from "../../hooks/useIsMobile";
 import DesktopDashboard from "./DesktopDashboard";
-import MobileDashboard from "../../views/mobile/Dashboard/MobileDashboard";
+import MobileOverview from "../../views/mobile/Overview/MobileOverview";
 
 function Dashboard() {
   const isMobile = useIsMobile();
 
   if (isMobile) {
-    return <MobileDashboard />;
+    return <MobileOverview />;
   }
 
   return <DesktopDashboard />;
