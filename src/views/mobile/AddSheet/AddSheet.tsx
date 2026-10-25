@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import toast from "react-hot-toast";
 import axios from "axios";
 import styled from "styled-components";
@@ -9,8 +9,15 @@ import { HiOutlineCamera, HiOutlineReceiptPercent } from "react-icons/hi2";
 import { useSettings } from "../../../context/SettingsContext";
 import { getAccountsApi } from "../../../services/apiAccounts";
 import { getCategoriesApi } from "../../../services/apiCategories";
-import { createCounterpartyApi, getCounterpartiesApi } from "../../../services/apiCounterparties";
-import { createTransactionApi, getTransactionsApi, type CreateTxData } from "../../../services/apiTransactions";
+import {
+  createCounterpartyApi,
+  getCounterpartiesApi,
+} from "../../../services/apiCounterparties";
+import {
+  createTransactionApi,
+  getTransactionsApi,
+  type CreateTxData,
+} from "../../../services/apiTransactions";
 import { getAssets } from "../../../services/apiAssets";
 import { getUsersApi } from "../../../services/apiUsers";
 import { getTagsApi } from "../../../services/apiTags";
@@ -20,7 +27,11 @@ import { compressImage } from "../../../utils/compressor";
 import { CURRENCY_SYMBOLS } from "../../../utils/currency";
 import { formatMoney } from "../../../utils/helpers";
 import type { Category, Transaction } from "../../../types";
-import { Sheet, PrimaryButton } from "../../../mobile/ui/Sheet";
+import {
+  Sheet,
+  PrimaryButton,
+  SheetTextButton,
+} from "../../../mobile/ui/Sheet";
 import { Group, Row, Meta } from "../../../mobile/ui/Group";
 import { Segmented } from "../../../mobile/ui/Segmented";
 import { categoryLabel } from "../../../mobile/categoryLabel";
@@ -30,11 +41,28 @@ import { ItemsSheet } from "./ItemsSheet";
 import { TagPicker } from "./TagPicker";
 import { AssetPicker, type NewAssetDraft } from "./AssetPicker";
 import { PhotosSheet } from "./PhotosSheet";
-import { dominantCategory, itemsTotal, knownItemsFrom, minorToInput, toApiItems, type DraftItem } from "./items";
+import {
+  dominantCategory,
+  itemsTotal,
+  knownItemsFrom,
+  minorToInput,
+  toApiItems,
+  type DraftItem,
+} from "./items";
 
 type Kind = "expense" | "income" | "transfer" | "debt";
 type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
-type Picker = null | "category" | "account" | "target" | "person" | "merchant" | "items" | "tags" | "asset" | "photos";
+type Picker =
+  | null
+  | "category"
+  | "account"
+  | "target"
+  | "person"
+  | "merchant"
+  | "items"
+  | "tags"
+  | "asset"
+  | "photos";
 
 const LAST_ACCOUNT_KEY = "m-last-account";
 
@@ -166,6 +194,14 @@ const DateTime = styled.span`
   }
 `;
 
+// Підсумок «Більше» обрізається, щоб не витісняти заголовок рядка.
+const SummaryMeta = styled(Meta)`
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const MismatchHint = styled.p`
   margin: -12px 0 0;
   text-align: center;
@@ -195,7 +231,8 @@ function toMinor(value: string) {
 }
 
 function errorMessage(error: unknown) {
-  if (axios.isAxiosError(error)) return error.response?.data?.error || error.message;
+  if (axios.isAxiosError(error))
+    return error.response?.data?.error || error.message;
   return "Не вдалося зберегти";
 }
 
@@ -207,7 +244,11 @@ interface AddSheetProps {
   onOpenReceiptImport: () => void;
 }
 
-export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetProps) {
+export function AddSheet({
+  open,
+  onOpenChange,
+  onOpenReceiptImport,
+}: AddSheetProps) {
   const queryClient = useQueryClient();
   const { language } = useSettings();
   const photoInput = useRef<HTMLInputElement>(null);
@@ -234,15 +275,33 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const [photos, setPhotos] = useState<File[]>([]);
   const [note, setNote] = useState("");
   const [picker, setPicker] = useState<Picker>(null);
+  // «Більше»: дата й час, теги, актив, фото — як «Додатково» у старій мобільній формі.
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [items, setItems] = useState<DraftItem[]>([]);
   const [discount, setDiscount] = useState(0);
   // Новий ключ скидає внутрішній стан редактора товарів після збереження.
   const [formKey, setFormKey] = useState(0);
 
-  const { data: allAccounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi, enabled: open });
-  const { data: allCategories = [] } = useQuery({ queryKey: ["categories"], queryFn: getCategoriesApi, enabled: open });
-  const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: getUsersApi, enabled: open });
-  const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: getTagsApi, enabled: open });
+  const { data: allAccounts = [] } = useQuery({
+    queryKey: ["accounts"],
+    queryFn: getAccountsApi,
+    enabled: open,
+  });
+  const { data: allCategories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategoriesApi,
+    enabled: open,
+  });
+  const { data: users = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: getUsersApi,
+    enabled: open,
+  });
+  const { data: tags = [] } = useQuery({
+    queryKey: ["tags"],
+    queryFn: getTagsApi,
+    enabled: open,
+  });
   const { data: assets = [] } = useQuery({
     queryKey: ["assets"],
     queryFn: getAssets,
@@ -257,10 +316,19 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   // Як у старій формі: синхронізовані рахунки теж можна обрати (витрата з фото
   // на такому рахунку йде в «Чеки» чекати банківську операцію), але
   // за замовчуванням підставляється звичайний рахунок.
-  const accounts = useMemo(() => allAccounts.filter((a) => !a.is_group && !a.is_archived), [allAccounts]);
-  const manualAccounts = useMemo(() => accounts.filter((a) => !a.is_synced), [accounts]);
+  const accounts = useMemo(
+    () => allAccounts.filter((a) => !a.is_group && !a.is_archived),
+    [allAccounts],
+  );
+  const manualAccounts = useMemo(
+    () => accounts.filter((a) => !a.is_synced),
+    [accounts],
+  );
   const categories = useMemo(
-    () => (allCategories as Category[]).filter((c) => c.type === (kind === "income" ? "income" : "expense")),
+    () =>
+      (allCategories as Category[]).filter(
+        (c) => c.type === (kind === "income" ? "income" : "expense"),
+      ),
     [allCategories, kind],
   );
   const activeCounterparties = useMemo(
@@ -275,7 +343,9 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     queryFn: async () => {
       const res = await getTransactionsApi({ type: chipsType, limit: 200 });
       // Фільтр «expense» бекенду включає перекази й борги — лишаємо лише сам тип.
-      return ((Array.isArray(res) ? res : res.data || []) as Transaction[]).filter((tx) => tx.type === chipsType);
+      return (
+        (Array.isArray(res) ? res : res.data || []) as Transaction[]
+      ).filter((tx) => tx.type === chipsType);
     },
     enabled: open && (kind === "expense" || kind === "income"),
     staleTime: 5 * 60 * 1000,
@@ -283,13 +353,16 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const chips = useMemo(() => {
     const counts = new Map<string, number>();
     for (const tx of recentOfType) {
-      if (tx.category_id) counts.set(tx.category_id, (counts.get(tx.category_id) || 0) + 1);
+      if (tx.category_id)
+        counts.set(tx.category_id, (counts.get(tx.category_id) || 0) + 1);
     }
     const frequent = [...counts.entries()]
       .sort((a, b) => b[1] - a[1])
       .map(([id]) => categories.find((c) => c.id === id))
       .filter((c): c is Category => !!c);
-    const fallback = categories.filter((c) => c.parent_id && !frequent.includes(c));
+    const fallback = categories.filter(
+      (c) => c.parent_id && !frequent.includes(c),
+    );
     return [...frequent, ...fallback].slice(0, 8);
   }, [recentOfType, categories]);
 
@@ -298,26 +371,42 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const merchantUsage = useMemo(() => {
     const counts = new Map<string, number>();
     for (const tx of recentOfType) {
-      if (tx.counterparty_id) counts.set(tx.counterparty_id, (counts.get(tx.counterparty_id) || 0) + 1);
+      if (tx.counterparty_id)
+        counts.set(
+          tx.counterparty_id,
+          (counts.get(tx.counterparty_id) || 0) + 1,
+        );
     }
     return counts;
   }, [recentOfType]);
   const debtUsage = useMemo(
-    () => new Map(counterparties.filter((c) => c.balances?.some((b) => b.balance !== 0)).map((c) => [c.id, 1])),
+    () =>
+      new Map(
+        counterparties
+          .filter((c) => c.balances?.some((b) => b.balance !== 0))
+          .map((c) => [c.id, 1]),
+      ),
     [counterparties],
   );
   // Остання категорія для кожного магазину — підставляється, коли його обрали.
   const merchantCategory = useMemo(() => {
     const last = new Map<string, string>();
     for (const tx of recentOfType) {
-      if (tx.counterparty_id && tx.category_id && !last.has(tx.counterparty_id)) {
+      if (
+        tx.counterparty_id &&
+        tx.category_id &&
+        !last.has(tx.counterparty_id)
+      ) {
         last.set(tx.counterparty_id, tx.category_id);
       }
     }
     return last;
   }, [recentOfType]);
 
-  const knownItems = useMemo(() => (kind === "expense" ? knownItemsFrom(recentOfType) : []), [kind, recentOfType]);
+  const knownItems = useMemo(
+    () => (kind === "expense" ? knownItemsFrom(recentOfType) : []),
+    [kind, recentOfType],
+  );
 
   // Поки нічого не обрано: останній використаний рахунок і найчастіша категорія.
   const lastAccountId = useMemo(() => {
@@ -329,13 +418,18 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   }, []);
   const accountId = accounts.some((a) => a.id === pickedAccountId)
     ? pickedAccountId
-    : (manualAccounts.find((a) => a.id === lastAccountId)?.id ?? manualAccounts[0]?.id ?? accounts[0]?.id ?? "");
+    : (manualAccounts.find((a) => a.id === lastAccountId)?.id ??
+      manualAccounts[0]?.id ??
+      accounts[0]?.id ??
+      "");
   // Категорія операції: обрана вручну, інакше та, на яку припадає більше товарів,
   // інакше звична для обраного магазину, інакше найчастіша.
   const categoryId =
-    [pickedCategoryId, dominantCategory(items), merchantCategory.get(merchantId) ?? ""].find((id) =>
-      categories.some((c) => c.id === id),
-    ) ??
+    [
+      pickedCategoryId,
+      dominantCategory(items),
+      merchantCategory.get(merchantId) ?? "",
+    ].find((id) => categories.some((c) => c.id === id)) ??
     chips[0]?.id ??
     "";
 
@@ -344,7 +438,11 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const category = categories.find((c) => c.id === categoryId);
   const person = activeCounterparties.find((p) => p.id === counterpartyId);
   const merchant = activeCounterparties.find((m) => m.id === merchantId);
-  const needsTargetAmount = kind === "transfer" && !!account && !!target && account.currency !== target.currency;
+  const needsTargetAmount =
+    kind === "transfer" &&
+    !!account &&
+    !!target &&
+    account.currency !== target.currency;
 
   const reset = () => {
     setKind("expense");
@@ -374,7 +472,13 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   // «Скасувати» стирає чернетку; свайп униз лише ховає панель — введений чек
   // не пропаде від випадкового жесту.
   const cancel = () => {
-    if ((items.length > 0 || photos.length > 0) && !window.confirm("Скасувати операцію? Введені товари й фото буде втрачено.")) return;
+    if (
+      (items.length > 0 || photos.length > 0) &&
+      !window.confirm(
+        "Скасувати операцію? Введені товари й фото буде втрачено.",
+      )
+    )
+      return;
     close();
   };
 
@@ -383,10 +487,29 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   };
 
   const mutation = useMutation({
-    mutationFn: async ({ data, toInbox }: { data: CreateTxData | FormData; toInbox: boolean }) =>
-      toInbox ? createInboxPhotoApi(data as FormData) : createTransactionApi(data),
+    mutationFn: async ({
+      data,
+      toInbox,
+    }: {
+      data: CreateTxData | FormData;
+      toInbox: boolean;
+    }) =>
+      toInbox
+        ? createInboxPhotoApi(data as FormData)
+        : createTransactionApi(data),
     onSuccess: (_, { toInbox }) => {
-      invalidate(["transactions", "transactions-infinite", "accounts", "account", "stats", "goals", "goal", "counterparties", "assets", "inbox"]);
+      invalidate([
+        "transactions",
+        "transactions-infinite",
+        "accounts",
+        "account",
+        "stats",
+        "goals",
+        "goal",
+        "counterparties",
+        "assets",
+        "inbox",
+      ]);
       if (toInbox) {
         toast.success("Чек додано в «Чеки»: чекаємо банківську операцію");
         try {
@@ -439,7 +562,11 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const ready = (() => {
     if (minor <= 0 || !accountId) return false;
     if (kind === "transfer")
-      return !!targetAccountId && targetAccountId !== accountId && (!needsTargetAmount || toMinor(targetAmount) > 0);
+      return (
+        !!targetAccountId &&
+        targetAccountId !== accountId &&
+        (!needsTargetAmount || toMinor(targetAmount) > 0)
+      );
     if (kind === "debt") return !!counterpartyId;
     return !!categoryId;
   })();
@@ -455,11 +582,14 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   };
 
   const withAsset = kind === "expense" || kind === "income";
-  const selectedAsset = withAsset ? assets.find((a) => a.id === assetId) : undefined;
+  const selectedAsset = withAsset
+    ? assets.find((a) => a.id === assetId)
+    : undefined;
   const isCar = selectedAsset?.type === "car";
   const sendNewAsset = kind === "expense" && newAsset ? newAsset : null;
   // Як у старій формі: витрата з фото на синхронізованому рахунку — у «Чеки».
-  const toInbox = kind === "expense" && !!account?.is_synced && photos.length > 0;
+  const toInbox =
+    kind === "expense" && !!account?.is_synced && photos.length > 0;
 
   const save = () => {
     if (toInbox && photos.length > 1) {
@@ -472,8 +602,14 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       account_id: accountId,
       target_account_id: kind === "transfer" ? targetAccountId : undefined,
       target_amount: needsTargetAmount ? toMinor(targetAmount) : undefined,
-      category_id: kind === "expense" || kind === "income" ? categoryId : undefined,
-      counterparty_id: kind === "debt" ? counterpartyId : kind !== "transfer" && merchantId ? merchantId : undefined,
+      category_id:
+        kind === "expense" || kind === "income" ? categoryId : undefined,
+      counterparty_id:
+        kind === "debt"
+          ? counterpartyId
+          : kind !== "transfer" && merchantId
+            ? merchantId
+            : undefined,
       amount: minor,
       date: timestamp,
       note: note.trim(),
@@ -532,7 +668,9 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const attachPhotos = async (files: File[]) => {
     if (!files.length) return;
     try {
-      const compressed = await Promise.all(files.map((file) => compressImage(file)));
+      const compressed = await Promise.all(
+        files.map((file) => compressImage(file)),
+      );
       setPhotos((prev) => [...prev, ...compressed]);
       toast.success("Фото додано до операції");
     } catch {
@@ -554,16 +692,37 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     if (!accountId) return "Немає рахунку";
     if (minor <= 0) return "Введіть суму";
     if (kind === "transfer" && !targetAccountId) return "Оберіть, куди";
-    if (needsTargetAmount && toMinor(targetAmount) <= 0) return "Введіть отриману суму";
+    if (needsTargetAmount && toMinor(targetAmount) <= 0)
+      return "Введіть отриману суму";
     if (kind === "debt" && !counterpartyId) return "Оберіть людину";
-    if ((kind === "expense" || kind === "income") && !categoryId) return "Оберіть категорію";
+    if ((kind === "expense" || kind === "income") && !categoryId)
+      return "Оберіть категорію";
     return "Зберегти";
   })();
 
   const itemsSum = itemsTotal(items, discount);
   const itemsMismatch = withItems && itemsSum > 0 && minor !== itemsSum;
 
-  const symbol = account ? CURRENCY_SYMBOLS[account.currency] || account.currency : "₴";
+  const detailsSummary = (() => {
+    const today = format(new Date(), "yyyy-MM-dd");
+    const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd");
+    const day =
+      date === today
+        ? "Сьогодні"
+        : date === yesterday
+          ? "Вчора"
+          : format(new Date(`${date}T12:00:00`), "dd.MM");
+    const parts = [`${day}, ${time}`];
+    if (tagIds.length) parts.push(`теги: ${tagIds.length}`);
+    if (sendNewAsset) parts.push(sendNewAsset.name);
+    else if (selectedAsset) parts.push(selectedAsset.name);
+    if (photos.length) parts.push(`фото: ${photos.length}`);
+    return parts.join(" · ");
+  })();
+
+  const symbol = account
+    ? CURRENCY_SYMBOLS[account.currency] || account.currency
+    : "₴";
   const accountLabel = kind === "transfer" ? "Звідки" : "Рахунок";
 
   return (
@@ -574,12 +733,22 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         onCancel={cancel}
         title="Нова операція"
         footer={
-          <PrimaryButton type="button" disabled={!ready || mutation.isPending} onClick={save}>
+          <PrimaryButton
+            type="button"
+            disabled={!ready || mutation.isPending}
+            onClick={save}
+          >
             {saveLabel}
           </PrimaryButton>
         }
       >
-        <input ref={photoInput} type="file" accept="image/*" hidden onChange={onPhoto} />
+        <input
+          ref={photoInput}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={onPhoto}
+        />
         <input
           ref={morePhotosInput}
           type="file"
@@ -640,8 +809,13 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
 
         {itemsMismatch && (
           <MismatchHint>
-            Товари на {formatMoney(itemsSum, account?.currency || "UAH", language)} — сума інша.{" "}
-            <button type="button" onClick={() => setAmount(minorToInput(itemsSum))}>
+            Товари на{" "}
+            {formatMoney(itemsSum, account?.currency || "UAH", language)} — сума
+            інша.{" "}
+            <button
+              type="button"
+              onClick={() => setAmount(minorToInput(itemsSum))}
+            >
               Взяти суму товарів
             </button>
           </MismatchHint>
@@ -684,7 +858,11 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
             <Row
               onClick={() => setPicker("category")}
               title="Категорія"
-              trailing={<Meta>{categoryLabel(categories, category?.id) ?? "Оберіть"}</Meta>}
+              trailing={
+                <Meta>
+                  {categoryLabel(categories, category?.id) ?? "Оберіть"}
+                </Meta>
+              }
               chevron
             />
           )}
@@ -752,6 +930,54 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
             />
           )}
           <Row
+            title="Нотатка"
+            trailing={
+              <FieldInput
+                type="text"
+                aria-label="Нотатка"
+                placeholder="Необовʼязково"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            }
+          />
+          <Row
+            onClick={() => setDetailsOpen(true)}
+            title="Більше"
+            trailing={<SummaryMeta>{detailsSummary}</SummaryMeta>}
+            chevron
+          />
+        </Group>
+
+        {toInbox && (
+          <Hint>
+            Рахунок синхронізується з банком: чек з фото чекатиме в «Чеках» на
+            банківську операцію і прив'яжеться до неї.
+          </Hint>
+        )}
+        {accounts.length === 0 && (
+          <Hint>Немає рахунків. Додайте рахунок у розділі «Рахунки».</Hint>
+        )}
+      </Sheet>
+
+      <Sheet
+        nested
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        title="Більше"
+        hideCancel
+        trailing={
+          <SheetTextButton
+            type="button"
+            $bold
+            onClick={() => setDetailsOpen(false)}
+          >
+            Готово
+          </SheetTextButton>
+        }
+      >
+        <Group>
+          <Row
             title="Дата"
             trailing={
               <DateTime>
@@ -791,7 +1017,11 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
               onClick={() => setPicker("asset")}
               title="Актив"
               trailing={
-                <Meta>{sendNewAsset ? `Новий: ${sendNewAsset.name}` : (selectedAsset?.name ?? "Немає")}</Meta>
+                <Meta>
+                  {sendNewAsset
+                    ? `Новий: ${sendNewAsset.name}`
+                    : (selectedAsset?.name ?? "Немає")}
+                </Meta>
               }
               chevron
             />
@@ -806,7 +1036,9 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
                   aria-label="Пробіг"
                   placeholder={`Поточний ${selectedAsset?.mileage ?? 0}`}
                   value={mileage}
-                  onChange={(e) => setMileage(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) =>
+                    setMileage(e.target.value.replace(/\D/g, ""))
+                  }
                 />
               }
             />
@@ -819,20 +1051,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
               chevron
             />
           )}
-          <Row
-            title="Нотатка"
-            trailing={
-              <FieldInput
-                type="text"
-                aria-label="Нотатка"
-                placeholder="Необовʼязково"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
-            }
-          />
         </Group>
-
         {isCar && mileage && (
           <Hint>
             {Number(mileage) > (selectedAsset?.mileage ?? 0)
@@ -840,13 +1059,36 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
               : `Історичний запис: менше поточного пробігу (${selectedAsset?.mileage ?? 0} км).`}
           </Hint>
         )}
-        {toInbox && (
-          <Hint>
-            Рахунок синхронізується з банком: чек з фото чекатиме в «Чеках» на банківську операцію і
-            прив'яжеться до неї.
-          </Hint>
-        )}
-        {accounts.length === 0 && <Hint>Немає рахунків. Додайте рахунок у розділі «Рахунки».</Hint>}
+        <TagPicker
+          open={picker === "tags"}
+          onOpenChange={(next) => !next && setPicker(null)}
+          value={tagIds}
+          onChange={setTagIds}
+        />
+        <AssetPicker
+          open={picker === "asset"}
+          onOpenChange={(next) => !next && setPicker(null)}
+          assetId={assetId}
+          newAsset={newAsset}
+          canCreate={kind === "expense"}
+          operationDate={new Date(`${date}T12:00:00`).getTime()}
+          onChange={(id, created) => {
+            setAssetId(id);
+            setNewAsset(created);
+            setMileage("");
+          }}
+        />
+        <PhotosSheet
+          open={picker === "photos"}
+          onOpenChange={(next) => !next && setPicker(null)}
+          photos={photos}
+          onRemove={(index) => {
+            const next = photos.filter((_, i) => i !== index);
+            setPhotos(next);
+            if (!next.length) setPicker(null);
+          }}
+          onAdd={() => morePhotosInput.current?.click()}
+        />
       </Sheet>
 
       <CategoryPicker
@@ -860,42 +1102,16 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         open={picker === "account" || picker === "target"}
         onOpenChange={(next) => !next && setPicker(null)}
         title={picker === "target" ? "Куди" : accountLabel}
-        accounts={picker === "target" ? accounts.filter((a) => a.id !== accountId) : accounts}
+        accounts={
+          picker === "target"
+            ? accounts.filter((a) => a.id !== accountId)
+            : accounts
+        }
         users={users}
         currentUserId={me?.id}
         value={picker === "target" ? targetAccountId : accountId}
         onSelect={picker === "target" ? setTargetAccountId : setAccountId}
         language={language}
-      />
-      <TagPicker
-        open={picker === "tags"}
-        onOpenChange={(next) => !next && setPicker(null)}
-        value={tagIds}
-        onChange={setTagIds}
-      />
-      <AssetPicker
-        open={picker === "asset"}
-        onOpenChange={(next) => !next && setPicker(null)}
-        assetId={assetId}
-        newAsset={newAsset}
-        canCreate={kind === "expense"}
-        operationDate={new Date(`${date}T12:00:00`).getTime()}
-        onChange={(id, created) => {
-          setAssetId(id);
-          setNewAsset(created);
-          setMileage("");
-        }}
-      />
-      <PhotosSheet
-        open={picker === "photos"}
-        onOpenChange={(next) => !next && setPicker(null)}
-        photos={photos}
-        onRemove={(index) => {
-          const next = photos.filter((_, i) => i !== index);
-          setPhotos(next);
-          if (!next.length) setPicker(null);
-        }}
-        onAdd={() => morePhotosInput.current?.click()}
       />
       <ItemsSheet
         key={formKey}
@@ -913,7 +1129,13 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       <CounterpartyPicker
         open={picker === "person" || picker === "merchant"}
         onOpenChange={(next) => !next && setPicker(null)}
-        title={picker === "merchant" ? (kind === "expense" ? "Де" : "Від кого") : "Хто"}
+        title={
+          picker === "merchant"
+            ? kind === "expense"
+              ? "Де"
+              : "Від кого"
+            : "Хто"
+        }
         counterparties={activeCounterparties}
         usage={picker === "merchant" ? merchantUsage : debtUsage}
         typeOrder={
