@@ -13,6 +13,7 @@ import { getGoalsApi } from "../../../services/apiGoals";
 import { getUsersApi } from "../../../services/apiUsers";
 import { getMeters } from "../../../services/apiUtility";
 import { formatMoney, sortTransactions } from "../../../utils/helpers";
+import { collapseTransfers } from "../../../mobile/transfers";
 import type { Account, Category } from "../../../types";
 import type { TransactionListItem } from "../../../hooks/Transactions/useTransactionItem";
 import type { Tint } from "../../../mobile/tokens";
@@ -77,8 +78,12 @@ export function useMobileOverview() {
   const { data: meters = [] } = useQuery({ queryKey: ["utilityMeters"], queryFn: getMeters });
 
   const recent = useMemo(
-    () => sortTransactions((recentQuery.data ?? []) as TransactionListItem[]).slice(0, 3),
-    [recentQuery.data],
+    () =>
+      collapseTransfers(
+        sortTransactions((recentQuery.data ?? []) as TransactionListItem[]),
+        accounts as unknown as Account[],
+      ).slice(0, 3),
+    [recentQuery.data, accounts],
   );
 
   // «Потребує уваги»: чеки, борги нам, комуналка, наші борги.
@@ -90,7 +95,7 @@ export function useMobileOverview() {
         key: "inbox",
         title: `${inboxCount} ${plural(inboxCount, "чек чекає", "чеки чекають", "чеків чекають")} розбору`,
         subtitle: "Підтвердьте збіг або оберіть рахунок",
-        to: "/inbox",
+        to: "/transactions?filter=inbox",
         tint: "green",
         icon: "inbox",
       });

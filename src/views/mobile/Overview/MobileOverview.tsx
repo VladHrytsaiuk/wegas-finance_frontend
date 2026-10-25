@@ -298,6 +298,7 @@ function MobileOverview() {
                 transaction={tx}
                 categories={data.categories}
                 accounts={data.accounts}
+                subtitle={tx.displaySubtitle}
               />
             ))}
           </Group>

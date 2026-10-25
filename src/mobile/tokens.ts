@@ -14,6 +14,7 @@ export const MobileTokens = createGlobalStyle`
     --m-label-3: #aeaeb2;
     --m-separator: #e5e5ea;
     --m-fill: rgba(118, 118, 128, 0.12);
+    --m-segment-active: #ffffff;
     --m-overlay: rgba(0, 0, 0, 0.32);
 
     --m-accent: #047857;
@@ -49,6 +50,7 @@ export const MobileTokens = createGlobalStyle`
     --m-label-3: #636366;
     --m-separator: #38383a;
     --m-fill: rgba(118, 118, 128, 0.24);
+    --m-segment-active: #636366;
     --m-overlay: rgba(0, 0, 0, 0.5);
 
     --m-accent: #3dd68c;

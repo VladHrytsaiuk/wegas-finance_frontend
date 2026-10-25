@@ -34,10 +34,12 @@ interface TxRowProps {
   accounts: Account[];
   /** Показати час під сумою (у стрічці операцій). */
   showTime?: boolean;
+  /** Готовий підпис замість «категорія · рахунок» (напр. «Звідки → Куди»). */
+  subtitle?: string;
 }
 
 // Рядок операції: витрати звичайним текстом, акцентом лише доходи.
-export function TxRow({ transaction, categories, accounts, showTime }: TxRowProps) {
+export function TxRow({ transaction, categories, accounts, showTime, subtitle: subtitleOverride }: TxRowProps) {
   const { currency: baseCurrency, language } = useSettings();
   const view = useTransactionItem({
     transaction,
@@ -57,7 +59,8 @@ export function TxRow({ transaction, categories, accounts, showTime }: TxRowProp
   const amount = `${sign}${formatMoney(Math.abs(transaction.amount), txCurrency, language)}`;
   const tone = view.isForgiveness ? "muted" : type === "income" ? "income" : "default";
 
-  const subtitle = [view.subtitle, view.accountName].filter(Boolean).join(" · ");
+  const subtitle =
+    subtitleOverride ?? [view.subtitle, view.accountName].filter(Boolean).join(" · ");
 
   return (
     <Row

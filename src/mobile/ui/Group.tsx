@@ -26,8 +26,16 @@ const SectionTitle = styled.h2`
   letter-spacing: -0.01em;
 `;
 
-const Caption = styled.span`
+const CaptionRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
   padding: 0 16px;
+  font-variant-numeric: tabular-nums;
+`;
+
+const Caption = styled.span`
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -51,7 +59,12 @@ export function Section({ title, caption, action, children }: SectionProps) {
           {action}
         </SectionHead>
       )}
-      {caption && <Caption>{caption}</Caption>}
+      {caption && (
+        <CaptionRow>
+          <Caption>{caption}</Caption>
+          {!title && action}
+        </CaptionRow>
+      )}
       {children}
     </SectionWrap>
   );
