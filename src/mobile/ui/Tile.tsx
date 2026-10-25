@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import styled from "styled-components";
 import { SmartIcon } from "../../utils/IconMap";
 import type { Tint } from "../tokens";
@@ -19,9 +19,13 @@ const Box = styled.span<{ $size: number; $bg: string; $fg: string; $logo: boolea
   color: ${(p) => p.$fg};
   border: ${(p) => (p.$logo ? "0.5px solid rgba(0, 0, 0, 0.08)" : "none")};
 
-  & img {
-    border-radius: 0 !important;
-  }
+`;
+
+const LogoImg = styled.img`
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 interface TileProps {
@@ -38,11 +42,20 @@ interface TileProps {
 
 const isHex = (value?: string) => !!value && /^#[0-9a-f]{6}$/i.test(value);
 
+const logoSrc = (logo: string) => {
+  if (/^(data:|https?:)/.test(logo)) return logo;
+  const folder = logo.startsWith("icon_") ? "banks" : "brands";
+  return `/${folder}/${/\.(svg|png|jpe?g|webp)$/i.test(logo) ? logo : `${logo}.svg`}`;
+};
+
 export function Tile({ logo, iconName, icon, color, tint = "gray", size = 36 }: TileProps) {
-  if (logo) {
+  // Логотип, якого немає на сервері, замінюємо звичайною іконкою, а не знаком питання.
+  const [failedLogo, setFailedLogo] = useState<string | null>(null);
+
+  if (logo && failedLogo !== logo) {
     return (
       <Box $size={size} $bg="#ffffff" $fg="var(--m-label)" $logo aria-hidden="true">
-        <SmartIcon logo={logo} iconName={iconName} fillContainer size={size} />
+        <LogoImg src={logoSrc(logo)} alt="" onError={() => setFailedLogo(logo)} />
       </Box>
     );
   }

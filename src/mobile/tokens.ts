@@ -71,6 +71,12 @@ export const MobileTokens = createGlobalStyle`
     --m-tint-gray-bg: #2c2c2e;
     --m-tint-gray-fg: #e5e5ea;
   }
+
+  /* Старий глобальний стиль малює рамку фокусу на кожному полі; в iOS її немає. */
+  [data-vaul-drawer] input:focus-visible,
+  [data-m-screen] input:focus-visible {
+    box-shadow: none !important;
+  }
 `;
 
 export type Tint = "green" | "orange" | "blue" | "yellow" | "gray";

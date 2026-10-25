@@ -1,14 +1,7 @@
-import { useMemo, type ReactNode } from "react";
+import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import {
-  HiOutlineBanknotes,
-  HiOutlineCreditCard,
-  HiOutlineFlag,
-  HiOutlineCurrencyDollar,
-  HiOutlineWallet,
-} from "react-icons/hi2";
 
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useUserRole } from "../../../hooks/useUserRole";
@@ -18,37 +11,10 @@ import { getGoalsApi } from "../../../services/apiGoals";
 import { getUsersApi } from "../../../services/apiUsers";
 import { statsService } from "../../../services/apiStats";
 import { formatMoney } from "../../../utils/helpers";
-import { bankLogo } from "../../../mobile/bankLogo";
 import { Screen, LargeTitle } from "../../../mobile/ui/Screen";
 import { Section, Group, Row, Amount } from "../../../mobile/ui/Group";
-import { Tile } from "../../../mobile/ui/Tile";
-
-type SectionKey = "cards" | "cash" | "savings" | "crypto" | "other";
-
-const SECTIONS: { key: SectionKey; caption: string }[] = [
-  { key: "cards", caption: "Картки" },
-  { key: "cash", caption: "Готівка" },
-  { key: "savings", caption: "Накопичення" },
-  { key: "crypto", caption: "Крипта" },
-  { key: "other", caption: "Інше" },
-];
-
-const SECTION_ICONS: Record<SectionKey, ReactNode> = {
-  cards: <HiOutlineCreditCard size={20} />,
-  cash: <HiOutlineBanknotes size={20} />,
-  savings: <HiOutlineFlag size={20} />,
-  crypto: <HiOutlineCurrencyDollar size={20} />,
-  other: <HiOutlineWallet size={20} />,
-};
-
-function sectionOf(account: Account): SectionKey {
-  const type: string = account.type;
-  if (account.goal_id || type === "piggy_bank" || type === "savings") return "savings";
-  if (type === "card") return "cards";
-  if (type === "cash") return "cash";
-  if (type === "crypto") return "crypto";
-  return "other";
-}
+import { AccountTile } from "../../../mobile/accountTile";
+import { ACCOUNT_SECTIONS, accountSection } from "../../../mobile/accountSection";
 
 const ProgressTrack = styled.span`
   display: block;
@@ -101,9 +67,9 @@ function MobileAccountsList() {
 
   const sections = useMemo(() => {
     const visible = accounts.filter((a) => !a.is_group && !a.is_archived);
-    return SECTIONS.map((section) => ({
+    return ACCOUNT_SECTIONS.map((section) => ({
       ...section,
-      accounts: visible.filter((a) => sectionOf(a) === section.key),
+      accounts: visible.filter((a) => accountSection(a) === section.key),
     })).filter((section) => section.accounts.length > 0);
   }, [accounts]);
 
@@ -148,11 +114,7 @@ function MobileAccountsList() {
                   key={account.id}
                   to={`/accounts/${account.id}`}
                   leading={
-                    <Tile
-                      logo={bankLogo(account)}
-                      icon={SECTION_ICONS[section.key]}
-                      tint={section.key === "savings" ? "green" : "gray"}
-                    />
+                    <AccountTile account={account} />
                   }
                   title={account.name}
                   subtitle={

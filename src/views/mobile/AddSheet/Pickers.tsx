@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
-import { HiCheck } from "react-icons/hi2";
+import { HiCheck, HiOutlineUser } from "react-icons/hi2";
 import styled from "styled-components";
 
 import type { Category } from "../../../types";
 import type { Account } from "../../../services/apiAccounts";
 import { formatMoney } from "../../../utils/helpers";
-import { bankLogo } from "../../../mobile/bankLogo";
+import { AccountTile } from "../../../mobile/accountTile";
 import { Sheet } from "../../../mobile/ui/Sheet";
 import { Section, Group, Row, Meta } from "../../../mobile/ui/Group";
 import { SearchField } from "../../../mobile/ui/SearchField";
@@ -90,7 +90,7 @@ export function AccountPicker({ open, onOpenChange, title, accounts, value, onSe
               onSelect(account.id);
               onOpenChange(false);
             }}
-            leading={<Tile logo={bankLogo(account)} iconName="HiOutlineWallet" size={30} />}
+            leading={<AccountTile account={account} size={30} />}
             title={account.name}
             trailing={
               account.id === value ? (
@@ -163,7 +163,13 @@ export function CounterpartyPicker({
                 onSelect(p.id);
                 onOpenChange(false);
               }}
-              leading={<Tile logo={p.logo} iconName={p.icon || "HiOutlineUser"} size={30} />}
+              leading={
+                p.logo || p.icon ? (
+                  <Tile logo={p.logo} iconName={p.icon} size={30} />
+                ) : (
+                  <Tile icon={<HiOutlineUser size={17} />} size={30} />
+                )
+              }
               title={p.name}
               trailing={p.id === value ? <Check aria-label="Обрано" /> : undefined}
               inset={58}

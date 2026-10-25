@@ -14,15 +14,18 @@ import { createTransactionApi, getTransactionsApi } from "../../../services/apiT
 import { createInboxPhotoApi } from "../../../services/apiInbox";
 import { compressImage } from "../../../utils/compressor";
 import { CURRENCY_SYMBOLS } from "../../../utils/currency";
+import { formatMoney } from "../../../utils/helpers";
 import type { Category, Transaction } from "../../../types";
 import { Sheet, PrimaryButton } from "../../../mobile/ui/Sheet";
 import { Group, Row, Meta } from "../../../mobile/ui/Group";
 import { Segmented } from "../../../mobile/ui/Segmented";
 import { CategoryPicker, AccountPicker, CounterpartyPicker } from "./Pickers";
+import { ItemsSheet } from "./ItemsSheet";
+import { itemsTotal, knownItemsFrom, minorToInput, toApiItems, type DraftItem } from "./items";
 
 type Kind = "expense" | "income" | "transfer" | "debt";
 type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
-type Picker = null | "category" | "account" | "target" | "person";
+type Picker = null | "category" | "account" | "target" | "person" | "items";
 
 const LAST_ACCOUNT_KEY = "m-last-account";
 
@@ -184,6 +187,10 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
   const [note, setNote] = useState("");
   const [picker, setPicker] = useState<Picker>(null);
+  const [items, setItems] = useState<DraftItem[]>([]);
+  const [discount, setDiscount] = useState(0);
+  // Новий ключ скидає внутрішній стан редактора товарів після збереження.
+  const [formKey, setFormKey] = useState(0);
 
   const { data: allAccounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi, enabled: open });
   const { data: allCategories = [] } = useQuery({ queryKey: ["categories"], queryFn: getCategoriesApi, enabled: open });
@@ -232,6 +239,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     return [...frequent, ...fallback].slice(0, 8);
   }, [recentOfType, categories]);
 
+  const knownItems = useMemo(() => (kind === "expense" ? knownItemsFrom(recentOfType) : []), [kind, recentOfType]);
+
   // Поки нічого не обрано: останній використаний рахунок і найчастіша категорія.
   const lastAccountId = useMemo(() => {
     try {
@@ -261,6 +270,9 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     setCounterpartyId("");
     setNote("");
     setDate(format(new Date(), "yyyy-MM-dd"));
+    setItems([]);
+    setDiscount(0);
+    setFormKey((k) => k + 1);
   };
 
   const close = () => {
@@ -322,6 +334,16 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     return !!categoryId;
   })();
 
+  const withItems = kind === "expense" && items.length > 0;
+
+  // Сума операції йде за товарами; її ще можна виправити вручну.
+  const changeItems = (next: DraftItem[], nextDiscount: number) => {
+    setItems(next);
+    setDiscount(nextDiscount);
+    const total = itemsTotal(next, nextDiscount);
+    if (next.length > 0 && total > 0) setAmount(minorToInput(total));
+  };
+
   const save = () => {
     // Сьогодні — поточний час; інший день — полудень, щоб не з'їхати на сусідню дату.
     const isToday = date === format(new Date(), "yyyy-MM-dd");
@@ -336,6 +358,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       amount: minor,
       date: timestamp,
       note: note.trim(),
+      items: withItems ? toApiItems(items, discount) : undefined,
     });
   };
 
@@ -448,6 +471,20 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
               chevron
             />
           )}
+          {kind === "expense" && (
+            <Row
+              onClick={() => setPicker("items")}
+              title="Товари"
+              trailing={
+                <Meta>
+                  {items.length > 0
+                    ? `${items.length} · ${formatMoney(itemsTotal(items, discount), account?.currency || "UAH", language)}`
+                    : "Ввести чек"}
+                </Meta>
+              }
+              chevron
+            />
+          )}
           {kind === "debt" && (
             <Row
               onClick={() => setPicker("person")}
@@ -533,6 +570,17 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         accounts={picker === "target" ? accounts.filter((a) => a.id !== accountId) : accounts}
         value={picker === "target" ? targetAccountId : accountId}
         onSelect={picker === "target" ? setTargetAccountId : setAccountId}
+        language={language}
+      />
+      <ItemsSheet
+        key={formKey}
+        open={picker === "items"}
+        onOpenChange={(next) => !next && setPicker(null)}
+        items={items}
+        discount={discount}
+        onChange={changeItems}
+        known={knownItems}
+        currency={account?.currency || "UAH"}
         language={language}
       />
       <CounterpartyPicker

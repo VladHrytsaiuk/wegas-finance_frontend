@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import styled from "styled-components";
 
 // Сторінка вкладки: відступ під статус-бар, великий заголовок і блоки з проміжком.
-export const Screen = styled.div`
+export const Screen = styled.div.attrs<{ "data-m-screen"?: string }>({ "data-m-screen": "" })`
   display: flex;
   flex-direction: column;
   gap: 24px;
