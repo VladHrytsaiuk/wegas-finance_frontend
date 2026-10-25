@@ -86,6 +86,14 @@ export default function AssetForm({
 
   const { register, control, handleSubmit, isSubmitting, trigger, errors } = form;
 
+  const handleCloseAttempt = () => {
+    if (isDirty) {
+      setShowConfirm(true);
+    } else {
+      onCloseModal?.();
+    }
+  };
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
