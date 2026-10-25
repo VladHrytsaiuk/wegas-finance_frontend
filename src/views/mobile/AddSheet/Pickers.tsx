@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { HiCheck, HiOutlineUser } from "react-icons/hi2";
+import { HiCheck, HiOutlineBuildingOffice2, HiOutlineBuildingStorefront, HiOutlineUser } from "react-icons/hi2";
 import styled from "styled-components";
 
 import type { Category } from "../../../types";
@@ -123,7 +123,18 @@ interface PersonOption {
   name: string;
   logo?: string;
   icon?: string;
+  type?: string;
 }
+
+// Без логотипа — іконка за типом контрагента.
+const fallbackIcon = (type?: string) =>
+  type === "shop" ? (
+    <HiOutlineBuildingStorefront size={17} />
+  ) : type === "person" ? (
+    <HiOutlineUser size={17} />
+  ) : (
+    <HiOutlineBuildingOffice2 size={17} />
+  );
 
 interface CounterpartyPickerProps {
   open: boolean;
@@ -134,6 +145,11 @@ interface CounterpartyPickerProps {
   /** Створити нового контрагента з введеним іменем. */
   onCreate: (name: string) => void;
   isCreating: boolean;
+  title?: string;
+  searchLabel?: string;
+  placeholder?: string;
+  /** «Не вказувати» — прибрати вибір (для необов'язкового поля). */
+  onClear?: () => void;
 }
 
 export function CounterpartyPicker({
@@ -144,6 +160,10 @@ export function CounterpartyPicker({
   onSelect,
   onCreate,
   isCreating,
+  title = "Хто",
+  searchLabel = "Пошук людини",
+  placeholder = "Імʼя",
+  onClear,
 }: CounterpartyPickerProps) {
   const [query, setQuery] = useState("");
   const q = query.trim();
@@ -151,8 +171,19 @@ export function CounterpartyPicker({
   const exists = people.some((p) => p.name.toLowerCase() === q.toLowerCase());
 
   return (
-    <Sheet nested open={open} onOpenChange={onOpenChange} title="Хто">
-      <SearchField value={query} onChange={setQuery} placeholder="Імʼя" label="Пошук людини" />
+    <Sheet nested open={open} onOpenChange={onOpenChange} title={title}>
+      <SearchField value={query} onChange={setQuery} placeholder={placeholder} label={searchLabel} />
+      {onClear && !q && (
+        <Group>
+          <Row
+            onClick={() => {
+              onClear();
+              onOpenChange(false);
+            }}
+            title="Не вказувати"
+          />
+        </Group>
+      )}
       {q && !exists && (
         <Group>
           <Row
@@ -178,7 +209,7 @@ export function CounterpartyPicker({
                 p.logo || p.icon ? (
                   <Tile logo={p.logo} iconName={p.icon} size={30} />
                 ) : (
-                  <Tile icon={<HiOutlineUser size={17} />} size={30} />
+                  <Tile icon={fallbackIcon(p.type)} size={30} />
                 )
               }
               title={p.name}

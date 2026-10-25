@@ -26,7 +26,7 @@ import { dominantCategory, itemsTotal, knownItemsFrom, minorToInput, toApiItems,
 
 type Kind = "expense" | "income" | "transfer" | "debt";
 type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
-type Picker = null | "category" | "account" | "target" | "person" | "items";
+type Picker = null | "category" | "account" | "target" | "person" | "merchant" | "items";
 
 const LAST_ACCOUNT_KEY = "m-last-account";
 
@@ -201,6 +201,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const [pickedAccountId, setAccountId] = useState("");
   const [targetAccountId, setTargetAccountId] = useState("");
   const [counterpartyId, setCounterpartyId] = useState("");
+  // Де купили / від кого дохід — окремо від «Хто» в боргу.
+  const [merchantId, setMerchantId] = useState("");
   const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
   const [note, setNote] = useState("");
   const [picker, setPicker] = useState<Picker>(null);
@@ -214,7 +216,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const { data: counterparties = [] } = useQuery({
     queryKey: ["counterparties"],
     queryFn: getCounterpartiesApi,
-    enabled: open && kind === "debt",
+    enabled: open && kind !== "transfer",
   });
 
   // Вручну не можна писати на рахунки, що синхронізуються з банком.
@@ -238,7 +240,8 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     queryKey: ["transactions", "chips", chipsType],
     queryFn: async () => {
       const res = await getTransactionsApi({ type: chipsType, limit: 200 });
-      return (Array.isArray(res) ? res : res.data || []) as Transaction[];
+      // Фільтр «expense» бекенду включає перекази й борги — лишаємо лише сам тип.
+      return ((Array.isArray(res) ? res : res.data || []) as Transaction[]).filter((tx) => tx.type === chipsType);
     },
     enabled: open && (kind === "expense" || kind === "income"),
     staleTime: 5 * 60 * 1000,
@@ -256,6 +259,32 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     return [...frequent, ...fallback].slice(0, 8);
   }, [recentOfType, categories]);
 
+  // Магазини й контрагенти: спершу ті, де купували найчастіше.
+  const merchants = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const tx of recentOfType) {
+      if (tx.counterparty_id) counts.set(tx.counterparty_id, (counts.get(tx.counterparty_id) || 0) + 1);
+    }
+    return counterparties
+      .filter((c) => !c.is_group && !c.is_archived)
+      .sort(
+        (a, b) =>
+          (counts.get(b.id) || 0) - (counts.get(a.id) || 0) ||
+          Number(a.type === "person") - Number(b.type === "person") ||
+          a.name.localeCompare(b.name),
+      );
+  }, [counterparties, recentOfType]);
+  // Остання категорія для кожного магазину — підставляється, коли його обрали.
+  const merchantCategory = useMemo(() => {
+    const last = new Map<string, string>();
+    for (const tx of recentOfType) {
+      if (tx.counterparty_id && tx.category_id && !last.has(tx.counterparty_id)) {
+        last.set(tx.counterparty_id, tx.category_id);
+      }
+    }
+    return last;
+  }, [recentOfType]);
+
   const knownItems = useMemo(() => (kind === "expense" ? knownItemsFrom(recentOfType) : []), [kind, recentOfType]);
 
   // Поки нічого не обрано: останній використаний рахунок і найчастіша категорія.
@@ -270,18 +299,19 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     ? pickedAccountId
     : (accounts.find((a) => a.id === lastAccountId)?.id ?? accounts[0]?.id ?? "");
   // Категорія операції: обрана вручну, інакше та, на яку припадає більше товарів,
-  // інакше найчастіша.
-  const itemsCategory = dominantCategory(items);
-  const categoryId = categories.some((c) => c.id === pickedCategoryId)
-    ? pickedCategoryId
-    : categories.some((c) => c.id === itemsCategory)
-      ? itemsCategory
-      : (chips[0]?.id ?? "");
+  // інакше звична для обраного магазину, інакше найчастіша.
+  const categoryId =
+    [pickedCategoryId, dominantCategory(items), merchantCategory.get(merchantId) ?? ""].find((id) =>
+      categories.some((c) => c.id === id),
+    ) ??
+    chips[0]?.id ??
+    "";
 
   const account = accounts.find((a) => a.id === accountId);
   const target = accounts.find((a) => a.id === targetAccountId);
   const category = categories.find((c) => c.id === categoryId);
   const person = people.find((p) => p.id === counterpartyId);
+  const merchant = merchants.find((m) => m.id === merchantId);
   const needsTargetAmount = kind === "transfer" && !!account && !!target && account.currency !== target.currency;
 
   const reset = () => {
@@ -290,6 +320,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     setTargetAmount("");
     setTargetAccountId("");
     setCounterpartyId("");
+    setMerchantId("");
     setNote("");
     setDate(format(new Date(), "yyyy-MM-dd"));
     setItems([]);
@@ -328,11 +359,14 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     onError: (error) => toast.error(errorMessage(error)),
   });
 
+  // Новий контрагент: людина для боргу, магазин для витрати, інше для доходу.
   const createPerson = useMutation({
-    mutationFn: (name: string) => createCounterpartyApi({ name, type: "person" }),
+    mutationFn: (name: string) =>
+      createCounterpartyApi({ name, type: kind === "debt" ? "person" : kind === "expense" ? "shop" : "other" }),
     onSuccess: (created) => {
       invalidate(["counterparties"]);
-      setCounterpartyId(created.id);
+      if (kind === "debt") setCounterpartyId(created.id);
+      else setMerchantId(created.id);
       setPicker(null);
     },
     onError: (error) => toast.error(errorMessage(error)),
@@ -383,7 +417,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       target_account_id: kind === "transfer" ? targetAccountId : undefined,
       target_amount: needsTargetAmount ? toMinor(targetAmount) : undefined,
       category_id: kind === "expense" || kind === "income" ? categoryId : undefined,
-      counterparty_id: kind === "debt" ? counterpartyId : undefined,
+      counterparty_id: kind === "debt" ? counterpartyId : kind !== "transfer" && merchantId ? merchantId : undefined,
       amount: minor,
       date: timestamp,
       note: note.trim(),
@@ -525,17 +559,11 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
               chevron
             />
           )}
-          {kind === "expense" && (
+          {(kind === "expense" || kind === "income") && (
             <Row
-              onClick={() => setPicker("items")}
-              title="Товари"
-              trailing={
-                <Meta>
-                  {items.length > 0
-                    ? `${items.length} · ${formatMoney(itemsTotal(items, discount), account?.currency || "UAH", language)}`
-                    : "Ввести чек"}
-                </Meta>
-              }
+              onClick={() => setPicker("merchant")}
+              title={kind === "expense" ? "Де" : "Від кого"}
+              trailing={<Meta>{merchant?.name ?? "Необовʼязково"}</Meta>}
               chevron
             />
           )}
@@ -574,6 +602,24 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
                   onChange={(e) => setTargetAmount(onlyAmount(e.target.value))}
                 />
               }
+            />
+          )}
+        </Group>
+
+        {/* Деталі — окремою групою, щоб головне читалось одним поглядом. */}
+        <Group>
+          {kind === "expense" && (
+            <Row
+              onClick={() => setPicker("items")}
+              title="Товари"
+              trailing={
+                <Meta>
+                  {items.length > 0
+                    ? `${items.length} · ${formatMoney(itemsTotal(items, discount), account?.currency || "UAH", language)}`
+                    : "Ввести чек"}
+                </Meta>
+              }
+              chevron
             />
           )}
           <Row
@@ -640,11 +686,15 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         language={language}
       />
       <CounterpartyPicker
-        open={picker === "person"}
+        open={picker === "person" || picker === "merchant"}
         onOpenChange={(next) => !next && setPicker(null)}
-        people={people}
-        value={counterpartyId}
-        onSelect={setCounterpartyId}
+        title={picker === "merchant" ? (kind === "expense" ? "Де" : "Від кого") : "Хто"}
+        searchLabel={picker === "merchant" ? "Пошук магазину" : "Пошук людини"}
+        placeholder={picker === "merchant" ? "Магазин, компанія" : "Імʼя"}
+        people={picker === "merchant" ? merchants : people}
+        value={picker === "merchant" ? merchantId : counterpartyId}
+        onSelect={picker === "merchant" ? setMerchantId : setCounterpartyId}
+        onClear={picker === "merchant" && merchantId ? () => setMerchantId("") : undefined}
         onCreate={(name) => createPerson.mutate(name)}
         isCreating={createPerson.isPending}
       />

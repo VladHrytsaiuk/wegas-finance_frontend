@@ -126,6 +126,7 @@ export interface Counterparty extends BaseEntity {
   logo?: string;
   icon: string;
   global_template_id?: string | null;
+  is_archived?: boolean;
 
   hasDebtHistory?: boolean;
 
