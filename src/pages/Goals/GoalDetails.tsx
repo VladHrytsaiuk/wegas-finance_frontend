@@ -11,6 +11,7 @@ import {
   HiArchiveBox,
   HiOutlineFlag,
   HiOutlineChatBubbleLeftEllipsis,
+  HiPhoto,
 } from "react-icons/hi2";
 
 // UI Components
@@ -64,6 +65,7 @@ function GoalDetails() {
     avgDailyIncomeNeeded,
     forecastDate,
     forecastStatus,
+    fullPhotoUrl,
   } = stats;
 
   return (
@@ -136,11 +138,9 @@ function GoalDetails() {
                 )}
               </Button>
 
-              <Modal.Open opens="edit-goal">
-                <Button variation="secondary">
-                  <HiPencil /> {t("common:common.edit")}
-                </Button>
-              </Modal.Open>
+              <Button variation="secondary" onClick={actions.handleOpenEdit}>
+                <HiPencil /> {t("common:common.edit")}
+              </Button>
 
               <Modal.Open opens="delete-goal">
                 <Button variation="danger">
@@ -181,7 +181,7 @@ function GoalDetails() {
                 </span>
               </div>
               <S.ProgressBar>
-                <S.ProgressFill $width={percent} $color={goal.color} />
+                <S.ProgressFill $percent={percent} $color={goal.color} />
               </S.ProgressBar>
             </S.ProgressWrapper>
 
@@ -204,11 +204,13 @@ function GoalDetails() {
                   <HiFlag /> {t("goals_debts:goalDetails.meta_days_left")}
                 </div>
                 <div className="data">
-                  {daysRemaining > 0
-                    ? t("goals_debts:goalDetails.days_count", {
-                        count: daysRemaining,
-                      })
-                    : t("goals_debts:goalDetails.overdue")}
+                  {daysRemaining === null
+                    ? "—"
+                    : daysRemaining > 0
+                      ? t("goals_debts:goalDetails.days_count", {
+                          count: daysRemaining,
+                        })
+                      : t("goals_debts:goalDetails.overdue")}
                 </div>
               </S.MetaItem>
             </S.MetaDataGrid>
@@ -233,7 +235,7 @@ function GoalDetails() {
                       <span>{acc.name}</span>
                     </div>
                     <span className="balance">
-                      {formatMoney(acc.balance, acc.currency)}
+                      {formatMoney(acc.balance ?? 0, acc.currency)}
                     </span>
                   </S.AccountRowItem>
                 ))
@@ -275,12 +277,14 @@ function GoalDetails() {
                     `goals_debts:goalDetails.forecast_status_${forecastStatus}`,
                   )}
                 </S.ForecastStatus>
-                <div className="date">
-                  {t("goals_debts:goalDetails.forecast_date_label")}{" "}
-                  {format(new Date(forecastDate), "d MMMM yyyy", {
-                    locale: currentLocale,
-                  })}
-                </div>
+                {forecastDate && (
+                  <div className="date">
+                    {t("goals_debts:goalDetails.forecast_date_label")}{" "}
+                    {format(forecastDate, "d MMMM yyyy", {
+                      locale: currentLocale,
+                    })}
+                  </div>
+                )}
               </div>
 
               <S.ForecastDetails>
@@ -295,24 +299,28 @@ function GoalDetails() {
               </S.ForecastDetails>
             </S.ForecastContent>
 
-            {goal.note && (
+            {goal.description && (
               <S.MetaSpacer>
                 <div className="icon-label">
                   <HiOutlineChatBubbleLeftEllipsis />{" "}
                   {t("goals_debts:goalDetails.meta_note")}
                 </div>
-                <S.NoteText>{goal.note}</S.NoteText>
+                <S.NoteText>{goal.description}</S.NoteText>
               </S.MetaSpacer>
             )}
           </S.StyledCard>
 
-          {/* ФОТО */}
+          {/* ФОТО: змінюється у вікні редагування цілі */}
           <S.StyledCard $noPadding>
-            <GoalImagePanel
-              imageUrl={goal.image_url}
-              onUpload={actions.handlePhotoUpload}
-              onDelete={actions.handlePhotoDelete}
-            />
+            {fullPhotoUrl ? (
+              <GoalImagePanel src={fullPhotoUrl} alt={goal.name} />
+            ) : (
+              <EmptyState
+                isFullPage={false}
+                icon={<HiPhoto />}
+                title={t("goals_debts:goalDetails.photo_empty")}
+              />
+            )}
           </S.StyledCard>
         </S.BottomGrid>
 
@@ -333,11 +341,7 @@ function GoalDetails() {
         </Modal.Window>
       </Modal>
 
-      {isMobile && (
-        <Modal.Open opens="edit-goal">
-          <FAB onClick={() => {}} icon={<HiPencil />} />
-        </Modal.Open>
-      )}
+      {isMobile && <FAB onClick={actions.handleOpenEdit} icon={<HiPencil />} />}
     </S.PageContainer>
   );
 }

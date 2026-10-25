@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { differenceInCalendarDays } from "date-fns";
+import { addDays, differenceInCalendarDays } from "date-fns";
 import { getUploadedFileUrl } from "../../utils/helpers";
 
 import {
@@ -69,7 +69,41 @@ export function useGoalDetails() {
       }
     }
 
+    // Прогноз: середній темп накопичення від дати старту цілі.
+    const today = new Date();
+    const daysElapsed = Math.max(
+      1,
+      differenceInCalendarDays(today, new Date(goal.date_start || goal.created_at)),
+    );
+    const dailyRate = goal.current_amount / daysElapsed;
+
+    let forecastDate: Date | null = null;
+    if (!isCompleted && dailyRate > 0) {
+      forecastDate = addDays(today, Math.ceil(remainingMoney / dailyRate));
+    }
+
+    let forecastStatus: "reached" | "on_track" | "behind" | "no_data";
+    if (isCompleted) {
+      forecastStatus = "reached";
+    } else if (!forecastDate) {
+      forecastStatus = "no_data";
+    } else if (goal.date_deadline && forecastDate > new Date(goal.date_deadline)) {
+      forecastStatus = "behind";
+    } else {
+      forecastStatus = "on_track";
+    }
+
+    const avgDailyIncomeNeeded =
+      daysLeft !== null && daysLeft > 0
+        ? Math.ceil(remainingMoney / daysLeft)
+        : remainingMoney;
+
     return {
+      percent: Math.round(percentage),
+      daysRemaining: daysLeft,
+      avgDailyIncomeNeeded,
+      forecastDate,
+      forecastStatus,
       percentage,
       remainingMoney,
       isCompleted,
@@ -123,6 +157,14 @@ export function useGoalDetails() {
 
   const handleAccountClick = (id: string) => navigate(`/accounts/${id}`);
 
+  const handleOpenEdit = () => setIsEditModalOpen(true);
+
+  // Модалка редагування оновлює лише список цілей, тож деталі оновлюємо тут.
+  const handleCloseEdit = () => {
+    setIsEditModalOpen(false);
+    queryClient.invalidateQueries({ queryKey: ["goal", goalId] });
+  };
+
   return {
     state: {
       goal,
@@ -136,6 +178,8 @@ export function useGoalDetails() {
       handleDelete,
       handleToggleStatus,
       setIsEditModalOpen,
+      handleOpenEdit,
+      handleCloseEdit,
       handleBack,
       handleAccountClick,
     },

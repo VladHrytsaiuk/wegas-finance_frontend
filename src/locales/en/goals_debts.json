@@ -118,7 +118,26 @@
     "accounts_empty": "No linked accounts",
     "photo_empty": "No photo",
     "link_empty": "No link",
-    "total_balance": "Total Balance"
+    "total_balance": "Total Balance",
+    "not_found": "Goal not found",
+    "financial_status": "Financial status",
+    "remaining_label": "Left to save",
+    "meta_deadline": "Deadline",
+    "meta_days_left": "Time left",
+    "days_count_one": "{{count}} day",
+    "days_count_other": "{{count}} days",
+    "overdue": "Overdue",
+    "info_and_sources": "Savings sources",
+    "forecast_title": "Forecast",
+    "forecast_status_on_track": "On track",
+    "forecast_status_behind": "Behind the deadline",
+    "forecast_status_reached": "Goal reached",
+    "forecast_status_no_data": "Not enough data yet",
+    "forecast_date_label": "Estimated completion:",
+    "daily_needed": "Save per day",
+    "meta_note": "Notes",
+    "btn_pause": "Pause",
+    "btn_resume": "Resume"
   },
   "GOALDETAILS": {
     "STATUS_ACTIVE": "Active"

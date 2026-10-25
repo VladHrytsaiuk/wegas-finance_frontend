@@ -118,6 +118,27 @@
     "accounts_empty": "Рахунки не прив'язані",
     "photo_empty": "Фото відсутнє",
     "link_empty": "Немає посилання",
-    "total_balance": "Загальний баланс"
+    "total_balance": "Загальний баланс",
+    "not_found": "Ціль не знайдено",
+    "financial_status": "Фінансовий стан",
+    "remaining_label": "Залишилось зібрати",
+    "meta_deadline": "Дедлайн",
+    "meta_days_left": "Залишилось",
+    "days_count_one": "{{count}} день",
+    "days_count_few": "{{count}} дні",
+    "days_count_many": "{{count}} днів",
+    "days_count_other": "{{count}} дня",
+    "overdue": "Термін минув",
+    "info_and_sources": "Джерела накопичень",
+    "forecast_title": "Прогноз",
+    "forecast_status_on_track": "Встигаєте вчасно",
+    "forecast_status_behind": "Не встигаєте до дедлайну",
+    "forecast_status_reached": "Ціль досягнуто",
+    "forecast_status_no_data": "Замало даних для прогнозу",
+    "forecast_date_label": "Орієнтовна дата досягнення:",
+    "daily_needed": "Відкладати щодня",
+    "meta_note": "Нотатки",
+    "btn_pause": "Призупинити",
+    "btn_resume": "Відновити"
   }
 }

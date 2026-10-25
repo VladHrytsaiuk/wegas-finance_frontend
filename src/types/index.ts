@@ -51,6 +51,7 @@ export interface Account extends BaseEntity {
   type: AccountType;
   currency: Currency;
   initial_balance: number;
+  balance?: number; // Поточний баланс з бекенда
 
   calculated_balance: number;
 
