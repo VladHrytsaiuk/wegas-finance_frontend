@@ -1,33 +1,37 @@
 import { useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import axios from "axios";
 import styled from "styled-components";
-import {
-  HiOutlineCamera,
-  HiOutlineReceiptPercent,
-  HiChevronRight,
-} from "react-icons/hi2";
+import { HiOutlineCamera, HiOutlineReceiptPercent } from "react-icons/hi2";
 
 import { useSettings } from "../../../context/SettingsContext";
 import { getAccountsApi } from "../../../services/apiAccounts";
 import { getCategoriesApi } from "../../../services/apiCategories";
+import { createCounterpartyApi, getCounterpartiesApi } from "../../../services/apiCounterparties";
 import { createTransactionApi, getTransactionsApi } from "../../../services/apiTransactions";
-import { setPendingReceiptPhoto } from "../../../utils/pendingReceiptPhoto";
+import { createInboxPhotoApi } from "../../../services/apiInbox";
+import { compressImage } from "../../../utils/compressor";
 import { CURRENCY_SYMBOLS } from "../../../utils/currency";
 import type { Category, Transaction } from "../../../types";
 import { Sheet, PrimaryButton } from "../../../mobile/ui/Sheet";
 import { Group, Row, Meta } from "../../../mobile/ui/Group";
 import { Segmented } from "../../../mobile/ui/Segmented";
-import { Tile } from "../../../mobile/ui/Tile";
-import { CategoryPicker, AccountPicker } from "./Pickers";
+import { CategoryPicker, AccountPicker, CounterpartyPicker } from "./Pickers";
 
-type TxType = "expense" | "income" | "transfer";
-type Picker = null | "category" | "account" | "target";
+type Kind = "expense" | "income" | "transfer" | "debt";
+type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
+type Picker = null | "category" | "account" | "target" | "person";
 
 const LAST_ACCOUNT_KEY = "m-last-account";
+
+const DEBT_TYPES: { value: DebtType; label: string }[] = [
+  { value: "loan_give", label: "Я позичив" },
+  { value: "loan_repay", label: "Мені повернули" },
+  { value: "debt_take", label: "Я взяв у борг" },
+  { value: "debt_repay", label: "Я повернув" },
+];
 
 const QuickActions = styled.div`
   display: grid;
@@ -38,34 +42,21 @@ const QuickActions = styled.div`
 const QuickAction = styled.button`
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 56px;
-  padding: 12px;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
   border: none;
-  border-radius: var(--m-radius-group);
+  border-radius: 12px;
   background: var(--m-surface);
-  color: var(--m-label);
+  color: var(--m-accent);
   font: inherit;
-  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
 
-  & strong {
-    display: block;
-    font-size: 15px;
-    font-weight: 600;
+  &:disabled {
+    opacity: 0.5;
   }
-
-  & small {
-    display: block;
-    font-size: 12px;
-    color: var(--m-label-2);
-  }
-`;
-
-const Hint = styled.p`
-  margin: -8px 4px 0;
-  font-size: 13px;
-  color: var(--m-label-2);
 `;
 
 const AmountField = styled.label`
@@ -73,7 +64,6 @@ const AmountField = styled.label`
   align-items: baseline;
   justify-content: center;
   gap: 6px;
-  padding: 4px 0;
 `;
 
 const AmountInput = styled.input<{ $size: number }>`
@@ -103,13 +93,22 @@ const CurrencyMark = styled.span`
   color: var(--m-label-2);
 `;
 
-const Chips = styled.div`
+// Чипи одним рядком з горизонтальною прокруткою — не з'їдають висоту.
+const ChipRow = styled.div`
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
+  margin: 0 -16px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Chip = styled.button<{ $active: boolean }>`
+  flex-shrink: 0;
   height: 36px;
   padding: 0 14px;
   border: none;
@@ -117,23 +116,16 @@ const Chip = styled.button<{ $active: boolean }>`
   font: inherit;
   font-size: 15px;
   font-weight: 500;
+  white-space: nowrap;
   cursor: pointer;
   color: ${(p) => (p.$active ? "var(--m-on-accent)" : "var(--m-label)")};
   background: ${(p) => (p.$active ? "var(--m-accent)" : "var(--m-surface)")};
 `;
 
-const DateInput = styled.input`
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: 17px;
-  color: var(--m-label-2);
-  text-align: right;
-`;
-
-const NoteInput = styled.input`
+const FieldInput = styled.input`
   flex: 1;
   width: 100%;
+  min-width: 0;
   border: none;
   background: none;
   outline: none;
@@ -141,18 +133,25 @@ const NoteInput = styled.input`
   font-size: 17px;
   color: var(--m-label);
   text-align: right;
+
+  &::placeholder {
+    color: var(--m-label-3);
+  }
 `;
 
-const Chevron = styled(HiChevronRight)`
-  width: 16px;
-  height: 16px;
-  color: var(--m-label-3);
+const DateInput = styled(FieldInput)`
+  color: var(--m-label-2);
+`;
+
+const Hint = styled.p`
+  margin: -8px 4px 0;
+  font-size: 13px;
+  color: var(--m-label-2);
 `;
 
 // Сума з будь-яким роздільником → копійки.
 function toMinor(value: string) {
-  const normalized = value.replace(/\s/g, "").replace(",", ".");
-  const number = Number.parseFloat(normalized);
+  const number = Number.parseFloat(value.replace(/\s/g, "").replace(",", "."));
   return Number.isFinite(number) && number > 0 ? Math.round(number * 100) : 0;
 }
 
@@ -161,6 +160,8 @@ function errorMessage(error: unknown) {
   return "Не вдалося зберегти";
 }
 
+const onlyAmount = (value: string) => value.replace(/[^\d.,\s]/g, "");
+
 interface AddSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -168,24 +169,29 @@ interface AddSheetProps {
 }
 
 export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
   const queryClient = useQueryClient();
   const { language } = useSettings();
   const photoInput = useRef<HTMLInputElement>(null);
 
-  const [type, setType] = useState<TxType>("expense");
+  const [kind, setKind] = useState<Kind>("expense");
+  const [debtType, setDebtType] = useState<DebtType>("loan_give");
   const [amount, setAmount] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [pickedCategoryId, setCategoryId] = useState("");
   const [pickedAccountId, setAccountId] = useState("");
   const [targetAccountId, setTargetAccountId] = useState("");
+  const [counterpartyId, setCounterpartyId] = useState("");
   const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
   const [note, setNote] = useState("");
   const [picker, setPicker] = useState<Picker>(null);
 
   const { data: allAccounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi, enabled: open });
   const { data: allCategories = [] } = useQuery({ queryKey: ["categories"], queryFn: getCategoriesApi, enabled: open });
+  const { data: counterparties = [] } = useQuery({
+    queryKey: ["counterparties"],
+    queryFn: getCounterpartiesApi,
+    enabled: open && kind === "debt",
+  });
 
   // Вручну не можна писати на рахунки, що синхронізуються з банком.
   const accounts = useMemo(
@@ -193,18 +199,24 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     [allAccounts],
   );
   const categories = useMemo(
-    () => (allCategories as Category[]).filter((c) => c.type === (type === "income" ? "income" : "expense")),
-    [allCategories, type],
+    () => (allCategories as Category[]).filter((c) => c.type === (kind === "income" ? "income" : "expense")),
+    [allCategories, kind],
+  );
+  // Позичають зазвичай людям; решту контрагентів показуємо після них.
+  const people = useMemo(
+    () => [...counterparties].sort((a, b) => Number(b.type === "person") - Number(a.type === "person")),
+    [counterparties],
   );
 
-  // Найчастіші категорії з останніх операцій — для вибору в один дотик.
+  // Найчастіші категорії з останніх операцій — вибір в один дотик.
+  const chipsType = kind === "income" ? "income" : "expense";
   const { data: recentOfType = [] } = useQuery({
-    queryKey: ["transactions", "chips", type],
+    queryKey: ["transactions", "chips", chipsType],
     queryFn: async () => {
-      const res = await getTransactionsApi({ type, limit: 200 });
+      const res = await getTransactionsApi({ type: chipsType, limit: 200 });
       return (Array.isArray(res) ? res : res.data || []) as Transaction[];
     },
-    enabled: open && type !== "transfer",
+    enabled: open && (kind === "expense" || kind === "income"),
     staleTime: 5 * 60 * 1000,
   });
   const chips = useMemo(() => {
@@ -217,7 +229,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       .map(([id]) => categories.find((c) => c.id === id))
       .filter((c): c is Category => !!c);
     const fallback = categories.filter((c) => c.parent_id && !frequent.includes(c));
-    return [...frequent, ...fallback].slice(0, 6);
+    return [...frequent, ...fallback].slice(0, 8);
   }, [recentOfType, categories]);
 
   // Поки нічого не обрано: останній використаний рахунок і найчастіша категорія.
@@ -238,13 +250,15 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
   const account = accounts.find((a) => a.id === accountId);
   const target = accounts.find((a) => a.id === targetAccountId);
   const category = categories.find((c) => c.id === categoryId);
-  const needsTargetAmount = type === "transfer" && !!account && !!target && account.currency !== target.currency;
+  const person = people.find((p) => p.id === counterpartyId);
+  const needsTargetAmount = kind === "transfer" && !!account && !!target && account.currency !== target.currency;
 
   const reset = () => {
-    setType("expense");
+    setKind("expense");
     setAmount("");
     setTargetAmount("");
     setTargetAccountId("");
+    setCounterpartyId("");
     setNote("");
     setDate(format(new Date(), "yyyy-MM-dd"));
   };
@@ -254,12 +268,14 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     reset();
   };
 
+  const invalidate = (keys: string[]) => {
+    for (const key of keys) queryClient.invalidateQueries({ queryKey: [key] });
+  };
+
   const mutation = useMutation({
     mutationFn: createTransactionApi,
     onSuccess: () => {
-      for (const key of ["transactions", "transactions-infinite", "accounts", "account", "stats", "goals", "goal"]) {
-        queryClient.invalidateQueries({ queryKey: [key] });
-      }
+      invalidate(["transactions", "transactions-infinite", "accounts", "account", "stats", "goals", "goal", "counterparties"]);
       try {
         localStorage.setItem(LAST_ACCOUNT_KEY, accountId);
       } catch {
@@ -271,42 +287,66 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
     onError: (error) => toast.error(errorMessage(error)),
   });
 
+  const createPerson = useMutation({
+    mutationFn: (name: string) => createCounterpartyApi({ name, type: "person" }),
+    onSuccess: (created) => {
+      invalidate(["counterparties"]);
+      setCounterpartyId(created.id);
+      setPicker(null);
+    },
+    onError: (error) => toast.error(errorMessage(error)),
+  });
+
+  // Фото чека одразу йде в чергу Операції → Чеки; рахунок і суму вкажуть там.
+  const photoUpload = useMutation({
+    mutationFn: async (photo: File) => {
+      const data = new FormData();
+      data.append("json", JSON.stringify({}));
+      data.append("file", await compressImage(photo));
+      return createInboxPhotoApi(data);
+    },
+    onSuccess: () => {
+      invalidate(["inbox"]);
+      toast.success("Фото додано в Операції → Чеки");
+      close();
+    },
+    onError: (error) => toast.error(errorMessage(error)),
+  });
+
   const minor = toMinor(amount);
-  const canSave =
-    minor > 0 &&
-    !!accountId &&
-    (type === "transfer"
-      ? !!targetAccountId && targetAccountId !== accountId && (!needsTargetAmount || toMinor(targetAmount) > 0)
-      : !!categoryId) &&
-    !mutation.isPending;
+  const ready = (() => {
+    if (minor <= 0 || !accountId) return false;
+    if (kind === "transfer")
+      return !!targetAccountId && targetAccountId !== accountId && (!needsTargetAmount || toMinor(targetAmount) > 0);
+    if (kind === "debt") return !!counterpartyId;
+    return !!categoryId;
+  })();
 
   const save = () => {
     // Сьогодні — поточний час; інший день — полудень, щоб не з'їхати на сусідню дату.
     const isToday = date === format(new Date(), "yyyy-MM-dd");
     const timestamp = isToday ? Date.now() : new Date(`${date}T12:00:00`).getTime();
     mutation.mutate({
-      type,
+      type: kind === "debt" ? debtType : kind,
       account_id: accountId,
-      target_account_id: type === "transfer" ? targetAccountId : undefined,
+      target_account_id: kind === "transfer" ? targetAccountId : undefined,
       target_amount: needsTargetAmount ? toMinor(targetAmount) : undefined,
-      category_id: type === "transfer" ? undefined : categoryId,
+      category_id: kind === "expense" || kind === "income" ? categoryId : undefined,
+      counterparty_id: kind === "debt" ? counterpartyId : undefined,
       amount: minor,
       date: timestamp,
       note: note.trim(),
     });
   };
 
-  const openPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
     const photo = event.target.files?.[0];
     event.target.value = "";
-    if (!photo) return;
-    setPendingReceiptPhoto(photo);
-    close();
-    navigate("/transactions/new?type=expense&photoOnly=1", { state: { background: location } });
+    if (photo) photoUpload.mutate(photo);
   };
 
   const symbol = account ? CURRENCY_SYMBOLS[account.currency] || account.currency : "₴";
-  const amountSize = amount.length > 9 ? 40 : 56;
+  const accountLabel = kind === "transfer" ? "Звідки" : "Рахунок";
 
   return (
     <>
@@ -315,19 +355,20 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
         onOpenChange={(next) => (next ? onOpenChange(true) : close())}
         title="Нова операція"
         footer={
-          <PrimaryButton type="button" disabled={!canSave} onClick={save}>
+          <PrimaryButton type="button" disabled={!ready || mutation.isPending} onClick={save}>
             {mutation.isPending ? "Збереження…" : "Зберегти"}
           </PrimaryButton>
         }
       >
-        <input ref={photoInput} type="file" accept="image/*" hidden onChange={openPhoto} />
+        <input ref={photoInput} type="file" accept="image/*" hidden onChange={onPhoto} />
         <QuickActions>
-          <QuickAction type="button" onClick={() => photoInput.current?.click()}>
-            <Tile tint="green" size={32} icon={<HiOutlineCamera size={18} />} />
-            <span>
-              <strong>Фото чека</strong>
-              <small>Камера або галерея</small>
-            </span>
+          <QuickAction
+            type="button"
+            disabled={photoUpload.isPending}
+            onClick={() => photoInput.current?.click()}
+          >
+            <HiOutlineCamera size={20} aria-hidden="true" />
+            {photoUpload.isPending ? "Завантаження…" : "Фото чека"}
           </QuickAction>
           <QuickAction
             type="button"
@@ -336,41 +377,38 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
               onOpenReceiptImport();
             }}
           >
-            <Tile tint="green" size={32} icon={<HiOutlineReceiptPercent size={18} />} />
-            <span>
-              <strong>Е-чек</strong>
-              <small>XML або посилання</small>
-            </span>
+            <HiOutlineReceiptPercent size={20} aria-hidden="true" />
+            Е-чек
           </QuickAction>
         </QuickActions>
-        <Hint>Чек потрапить в Операції → Чеки. Або введіть вручну:</Hint>
 
         <Segmented
           label="Тип операції"
-          value={type}
-          onChange={setType}
+          value={kind}
+          onChange={setKind}
           options={[
             { value: "expense", label: "Витрата" },
             { value: "income", label: "Дохід" },
             { value: "transfer", label: "Переказ" },
+            { value: "debt", label: "Борг" },
           ]}
         />
 
         <AmountField>
           <AmountInput
-            $size={amountSize}
+            $size={amount.length > 9 ? 40 : 52}
             type="text"
             inputMode="decimal"
             aria-label="Сума"
             placeholder="0"
             value={amount}
-            onChange={(e) => setAmount(e.target.value.replace(/[^\d.,\s]/g, ""))}
+            onChange={(e) => setAmount(onlyAmount(e.target.value))}
           />
           <CurrencyMark>{symbol}</CurrencyMark>
         </AmountField>
 
-        {type !== "transfer" && chips.length > 0 && (
-          <Chips role="group" aria-label="Часті категорії">
+        {(kind === "expense" || kind === "income") && chips.length > 0 && (
+          <ChipRow role="group" aria-label="Часті категорії">
             {chips.map((c) => (
               <Chip
                 key={c.id}
@@ -382,52 +420,67 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
                 {c.name}
               </Chip>
             ))}
-          </Chips>
+          </ChipRow>
+        )}
+
+        {kind === "debt" && (
+          <ChipRow role="group" aria-label="Що сталося">
+            {DEBT_TYPES.map((d) => (
+              <Chip
+                key={d.value}
+                type="button"
+                $active={d.value === debtType}
+                aria-pressed={d.value === debtType}
+                onClick={() => setDebtType(d.value)}
+              >
+                {d.label}
+              </Chip>
+            ))}
+          </ChipRow>
         )}
 
         <Group>
-          {type === "transfer" ? (
-            <>
-              <Row
-                onClick={() => setPicker("account")}
-                title="Звідки"
-                trailing={<Meta>{account?.name ?? "Оберіть"}</Meta>}
-                chevron
-              />
-              <Row
-                onClick={() => setPicker("target")}
-                title="Куди"
-                trailing={<Meta>{target?.name ?? "Оберіть"}</Meta>}
-                chevron
-              />
-            </>
-          ) : (
-            <>
-              <Row
-                onClick={() => setPicker("category")}
-                title="Категорія"
-                trailing={<Meta>{category?.name ?? "Оберіть"}</Meta>}
-                chevron
-              />
-              <Row
-                onClick={() => setPicker("account")}
-                title="Рахунок"
-                trailing={<Meta>{account?.name ?? "Оберіть"}</Meta>}
-                chevron
-              />
-            </>
+          {(kind === "expense" || kind === "income") && (
+            <Row
+              onClick={() => setPicker("category")}
+              title="Категорія"
+              trailing={<Meta>{category?.name ?? "Оберіть"}</Meta>}
+              chevron
+            />
+          )}
+          {kind === "debt" && (
+            <Row
+              onClick={() => setPicker("person")}
+              title="Хто"
+              trailing={<Meta>{person?.name ?? "Оберіть"}</Meta>}
+              chevron
+            />
+          )}
+          <Row
+            onClick={() => setPicker("account")}
+            title={accountLabel}
+            trailing={<Meta>{account?.name ?? "Оберіть"}</Meta>}
+            chevron
+          />
+          {kind === "transfer" && (
+            <Row
+              onClick={() => setPicker("target")}
+              title="Куди"
+              trailing={<Meta>{target?.name ?? "Оберіть"}</Meta>}
+              chevron
+            />
           )}
           {needsTargetAmount && (
             <Row
               title={`Отримано, ${CURRENCY_SYMBOLS[target!.currency] || target!.currency}`}
               trailing={
-                <NoteInput
+                <FieldInput
                   type="text"
                   inputMode="decimal"
                   aria-label="Отримана сума"
                   placeholder="0"
                   value={targetAmount}
-                  onChange={(e) => setTargetAmount(e.target.value.replace(/[^\d.,\s]/g, ""))}
+                  onChange={(e) => setTargetAmount(onlyAmount(e.target.value))}
                 />
               }
             />
@@ -447,7 +500,7 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
           <Row
             title="Нотатка"
             trailing={
-              <NoteInput
+              <FieldInput
                 type="text"
                 aria-label="Нотатка"
                 placeholder="Необовʼязково"
@@ -458,19 +511,11 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
           />
         </Group>
 
-        <Group>
-          <Row
-            onClick={() => {
-              close();
-              navigate("/transactions/new", { state: { background: location } });
-            }}
-            title="Повна форма"
-            subtitle="Борг, товари з чека, теги, актив, фото"
-            trailing={<Chevron aria-hidden="true" />}
-          />
-        </Group>
         {accounts.length === 0 && (
-          <Hint>Немає рахунків для ручного введення: рахунки, що синхронізуються з банком, поповнюються автоматично.</Hint>
+          <Hint>
+            Немає рахунків для ручного введення: рахунки, що синхронізуються з банком, поповнюються
+            автоматично.
+          </Hint>
         )}
       </Sheet>
 
@@ -484,13 +529,21 @@ export function AddSheet({ open, onOpenChange, onOpenReceiptImport }: AddSheetPr
       <AccountPicker
         open={picker === "account" || picker === "target"}
         onOpenChange={(next) => !next && setPicker(null)}
-        title={picker === "target" ? "Куди" : type === "transfer" ? "Звідки" : "Рахунок"}
+        title={picker === "target" ? "Куди" : accountLabel}
         accounts={picker === "target" ? accounts.filter((a) => a.id !== accountId) : accounts}
         value={picker === "target" ? targetAccountId : accountId}
         onSelect={picker === "target" ? setTargetAccountId : setAccountId}
         language={language}
       />
+      <CounterpartyPicker
+        open={picker === "person"}
+        onOpenChange={(next) => !next && setPicker(null)}
+        people={people}
+        value={counterpartyId}
+        onSelect={setCounterpartyId}
+        onCreate={(name) => createPerson.mutate(name)}
+        isCreating={createPerson.isPending}
+      />
     </>
   );
 }
-

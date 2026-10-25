@@ -106,3 +106,71 @@ export function AccountPicker({ open, onOpenChange, title, accounts, value, onSe
     </Sheet>
   );
 }
+
+interface PersonOption {
+  id: string;
+  name: string;
+  logo?: string;
+  icon?: string;
+}
+
+interface CounterpartyPickerProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  people: PersonOption[];
+  value: string;
+  onSelect: (id: string) => void;
+  /** Створити нового контрагента з введеним іменем. */
+  onCreate: (name: string) => void;
+  isCreating: boolean;
+}
+
+export function CounterpartyPicker({
+  open,
+  onOpenChange,
+  people,
+  value,
+  onSelect,
+  onCreate,
+  isCreating,
+}: CounterpartyPickerProps) {
+  const [query, setQuery] = useState("");
+  const q = query.trim();
+  const filtered = people.filter((p) => !q || p.name.toLowerCase().includes(q.toLowerCase()));
+  const exists = people.some((p) => p.name.toLowerCase() === q.toLowerCase());
+
+  return (
+    <Sheet nested open={open} onOpenChange={onOpenChange} title="Хто">
+      <SearchField value={query} onChange={setQuery} placeholder="Імʼя" label="Пошук людини" />
+      {q && !exists && (
+        <Group>
+          <Row
+            onClick={() => {
+              onCreate(q);
+              setQuery("");
+            }}
+            title={isCreating ? "Додаємо…" : `Додати «${q}»`}
+            inset={16}
+          />
+        </Group>
+      )}
+      {filtered.length > 0 && (
+        <Group>
+          {filtered.map((p) => (
+            <Row
+              key={p.id}
+              onClick={() => {
+                onSelect(p.id);
+                onOpenChange(false);
+              }}
+              leading={<Tile logo={p.logo} iconName={p.icon || "HiOutlineUser"} size={30} />}
+              title={p.name}
+              trailing={p.id === value ? <Check aria-label="Обрано" /> : undefined}
+              inset={58}
+            />
+          ))}
+        </Group>
+      )}
+    </Sheet>
+  );
+}

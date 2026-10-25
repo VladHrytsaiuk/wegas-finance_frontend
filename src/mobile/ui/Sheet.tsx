@@ -88,6 +88,12 @@ const Body = styled.div`
   flex-direction: column;
   gap: 20px;
   padding: 12px 16px 16px;
+
+  /* У прокручуваній колонці блоки з overflow: hidden інакше стискаються
+     й обрізають свої рядки (у Safari зникали «Дата» й «Нотатка»). */
+  & > * {
+    flex-shrink: 0;
+  }
 `;
 
 const Footer = styled.div`
@@ -111,7 +117,7 @@ interface SheetProps {
 export function Sheet({ open, onOpenChange, title, children, trailing, footer, nested }: SheetProps) {
   const Root = nested ? Drawer.NestedRoot : Drawer.Root;
   return (
-    <Root open={open} onOpenChange={onOpenChange} repositionInputs={false}>
+    <Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>
         <Overlay />
         <Content aria-describedby={undefined}>
