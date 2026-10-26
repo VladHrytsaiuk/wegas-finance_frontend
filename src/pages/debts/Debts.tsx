@@ -24,9 +24,10 @@ import { formatMoney } from "../../utils/helpers";
 import * as S from "./Debts.styles";
 import { useDebtsPage, type DebtTotals } from "../../hooks/Debts/useDebtsPage";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileDebts from "../../views/mobile/Debts/MobileDebts";
 import { FAB } from "../../components/ui/FAB";
 
-function Debts() {
+function DesktopDebts() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -541,6 +542,12 @@ function Debts() {
       )}
     </S.PageContainer>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function Debts() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileDebts /> : <DesktopDebts />;
 }
 
 export default Debts;

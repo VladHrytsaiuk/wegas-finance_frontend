@@ -22,11 +22,12 @@ import { useDebtorDetails } from "../../hooks/Debts/useDebtorDetails";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileDebtor from "../../views/mobile/Debts/MobileDebtor";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import type { CounterpartyBalance } from "../../types";
 
-function DebtorDetails() {
+function DesktopDebtorDetails() {
   const {
     state: {
       counterparty,
@@ -352,6 +353,12 @@ function DebtorDetails() {
       )}
     </S.PageWrapper>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function DebtorDetails() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileDebtor /> : <DesktopDebtorDetails />;
 }
 
 export default DebtorDetails;

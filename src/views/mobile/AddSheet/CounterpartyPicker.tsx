@@ -1,20 +1,15 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  HiCheck,
-  HiOutlineBuildingOffice2,
-  HiOutlineBuildingStorefront,
-  HiOutlineUser,
-} from "react-icons/hi2";
+import { HiCheck } from "react-icons/hi2";
 import styled from "styled-components";
 
-import type { Counterparty, CounterpartyCategory } from "../../../types";
+import type { Counterparty } from "../../../types";
 import { getCpCategoriesApi } from "../../../services/apiCounterparties";
 import { Sheet, PrimaryButton } from "../../../mobile/ui/Sheet";
 import { Section, Group, Row } from "../../../mobile/ui/Group";
 import { SearchField } from "../../../mobile/ui/SearchField";
 import { Segmented } from "../../../mobile/ui/Segmented";
-import { Tile } from "../../../mobile/ui/Tile";
+import { CounterpartyTile } from "../../../mobile/counterpartyTile";
 
 // Вибір контрагента з тими ж групами, що й у старій формі: тип (магазини,
 // інше, люди) → категорія контрагента → контрагенти. Зверху — часті.
@@ -72,36 +67,6 @@ const Chip = styled.button<{ $active: boolean }>`
   color: ${(p) => (p.$active ? "var(--m-on-accent)" : "var(--m-label)")};
   background: ${(p) => (p.$active ? "var(--m-accent)" : "var(--m-surface)")};
 `;
-
-const fallbackIcon = (type?: string) =>
-  type === "shop" ? (
-    <HiOutlineBuildingStorefront size={17} />
-  ) : type === "person" ? (
-    <HiOutlineUser size={17} />
-  ) : (
-    <HiOutlineBuildingOffice2 size={17} />
-  );
-
-function CounterpartyTile({
-  cp,
-  category,
-}: {
-  cp: Counterparty;
-  category?: CounterpartyCategory;
-}) {
-  if (cp.logo || cp.icon)
-    return (
-      <Tile
-        logo={cp.logo}
-        iconName={cp.icon}
-        color={category?.color}
-        size={30}
-      />
-    );
-  if (category?.icon)
-    return <Tile iconName={category.icon} color={category.color} size={30} />;
-  return <Tile icon={fallbackIcon(cp.type)} size={30} />;
-}
 
 interface CounterpartyPickerProps {
   open: boolean;
