@@ -32,8 +32,9 @@ import toast from "react-hot-toast";
 import { useTransactionPage } from "../../hooks/Transactions/useTransactionPage";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import * as S from "./TransactionPage.styles";
+import MobileTransaction from "../../views/mobile/Transaction/MobileTransaction";
 
-function TransactionPage() {
+function DesktopTransactionPage() {
   const { i18n } = useTranslation();
   const {
     // Data
@@ -335,6 +336,12 @@ function TransactionPage() {
       )}
     </Modal>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function TransactionPage() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileTransaction /> : <DesktopTransactionPage />;
 }
 
 export default TransactionPage;

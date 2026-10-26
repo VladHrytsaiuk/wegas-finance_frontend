@@ -16,6 +16,7 @@ import {
 import {
   createTransactionApi,
   getTransactionsApi,
+  updateTransactionApi,
   type CreateTxData,
 } from "../../../services/apiTransactions";
 import { getAssets } from "../../../services/apiAssets";
@@ -42,6 +43,13 @@ import { TagPicker } from "./TagPicker";
 import { AssetPicker, type NewAssetDraft } from "./AssetPicker";
 import { PhotosSheet } from "./PhotosSheet";
 import {
+  emptyInitial,
+  initialFromTransaction,
+  type DebtType,
+  type Kind,
+} from "./editState";
+import type { TransactionFull } from "../Transaction/transactionFull";
+import {
   dominantCategory,
   itemsTotal,
   knownItemsFrom,
@@ -50,8 +58,6 @@ import {
   type DraftItem,
 } from "./items";
 
-type Kind = "expense" | "income" | "transfer" | "debt";
-type DebtType = "loan_give" | "loan_repay" | "debt_take" | "debt_repay";
 type Picker =
   | null
   | "category"
@@ -242,43 +248,50 @@ interface AddSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onOpenReceiptImport: () => void;
+  /** Наявна операція — панель працює як редагування. */
+  transaction?: TransactionFull;
 }
 
 export function AddSheet({
   open,
   onOpenChange,
   onOpenReceiptImport,
+  transaction,
 }: AddSheetProps) {
+  const isEdit = !!transaction;
+  const [init] = useState(() =>
+    transaction ? initialFromTransaction(transaction) : emptyInitial(),
+  );
   const queryClient = useQueryClient();
   const { language } = useSettings();
   const photoInput = useRef<HTMLInputElement>(null);
   const morePhotosInput = useRef<HTMLInputElement>(null);
   const { user: me } = useUserRole();
 
-  const [kind, setKind] = useState<Kind>("expense");
-  const [debtType, setDebtType] = useState<DebtType>("loan_give");
-  const [amount, setAmount] = useState("");
+  const [kind, setKind] = useState<Kind>(init.kind);
+  const [debtType, setDebtType] = useState<DebtType>(init.debtType);
+  const [amount, setAmount] = useState(init.amount);
   const [targetAmount, setTargetAmount] = useState("");
-  const [pickedCategoryId, setCategoryId] = useState("");
-  const [pickedAccountId, setAccountId] = useState("");
-  const [targetAccountId, setTargetAccountId] = useState("");
-  const [counterpartyId, setCounterpartyId] = useState("");
+  const [pickedCategoryId, setCategoryId] = useState(init.categoryId);
+  const [pickedAccountId, setAccountId] = useState(init.accountId);
+  const [targetAccountId, setTargetAccountId] = useState(init.targetAccountId);
+  const [counterpartyId, setCounterpartyId] = useState(init.counterpartyId);
   // Де купили / від кого дохід — окремо від «Хто» в боргу.
-  const [merchantId, setMerchantId] = useState("");
-  const [date, setDate] = useState(() => format(new Date(), "yyyy-MM-dd"));
-  const [time, setTime] = useState(() => format(new Date(), "HH:mm"));
-  const [tagIds, setTagIds] = useState<string[]>([]);
-  const [assetId, setAssetId] = useState("");
+  const [merchantId, setMerchantId] = useState(init.merchantId);
+  const [date, setDate] = useState(init.date);
+  const [time, setTime] = useState(init.time);
+  const [tagIds, setTagIds] = useState<string[]>(init.tagIds);
+  const [assetId, setAssetId] = useState(init.assetId);
   const [newAsset, setNewAsset] = useState<NewAssetDraft | null>(null);
-  const [mileage, setMileage] = useState("");
+  const [mileage, setMileage] = useState(init.mileage);
   // Фото, прикріплені до операції (вже стиснені).
   const [photos, setPhotos] = useState<File[]>([]);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(init.note);
   const [picker, setPicker] = useState<Picker>(null);
   // «Більше»: дата й час, теги, актив, фото — як «Додатково» у старій мобільній формі.
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [items, setItems] = useState<DraftItem[]>([]);
-  const [discount, setDiscount] = useState(0);
+  const [items, setItems] = useState<DraftItem[]>(init.items);
+  const [discount, setDiscount] = useState(init.discount);
   // Новий ключ скидає внутрішній стан редактора товарів після збереження.
   const [formKey, setFormKey] = useState(0);
 
@@ -438,7 +451,18 @@ export function AddSheet({
   const category = categories.find((c) => c.id === categoryId);
   const person = activeCounterparties.find((p) => p.id === counterpartyId);
   const merchant = activeCounterparties.find((m) => m.id === merchantId);
+  // Редагування: для операції з банку не міняються тип, сума, рахунок і дата
+  // (як у старій формі); у переказу рахунки не змінюються — бекенд цього не вміє.
+  const txAccount = transaction
+    ? allAccounts.find((a) => a.id === transaction.account_id)
+    : undefined;
+  const locked = isEdit && !!txAccount?.is_synced;
+  const transferEdit = isEdit && kind === "transfer";
+  // Операція, що прийшла з банку: бекенд зберігає лише категорію й контрагента,
+  // решту полів не показуємо як редаговані, щоб зміни не губились мовчки.
+  const bankOnly = locked && !!transaction?.external_id;
   const needsTargetAmount =
+    !isEdit &&
     kind === "transfer" &&
     !!account &&
     !!target &&
@@ -472,6 +496,10 @@ export function AddSheet({
   // «Скасувати» стирає чернетку; свайп униз лише ховає панель — введений чек
   // не пропаде від випадкового жесту.
   const cancel = () => {
+    if (isEdit) {
+      onOpenChange(false);
+      return;
+    }
     if (
       (items.length > 0 || photos.length > 0) &&
       !window.confirm(
@@ -494,9 +522,14 @@ export function AddSheet({
       data: CreateTxData | FormData;
       toInbox: boolean;
     }) =>
-      toInbox
-        ? createInboxPhotoApi(data as FormData)
-        : createTransactionApi(data),
+      isEdit
+        ? updateTransactionApi({
+            ...(data as CreateTxData),
+            id: transaction!.id,
+          })
+        : toInbox
+          ? createInboxPhotoApi(data as FormData)
+          : createTransactionApi(data),
     onSuccess: (_, { toInbox }) => {
       invalidate([
         "transactions",
@@ -524,6 +557,14 @@ export function AddSheet({
         localStorage.setItem(LAST_ACCOUNT_KEY, accountId);
       } catch {
         // Без збереженого рахунку просто почнемо з першого.
+      }
+      if (isEdit) {
+        queryClient.invalidateQueries({
+          queryKey: ["transaction", transaction!.id],
+        });
+        toast.success("Зміни збережено");
+        onOpenChange(false);
+        return;
       }
       toast.success("Операцію додано");
       close();
@@ -578,7 +619,7 @@ export function AddSheet({
     setItems(next);
     setDiscount(nextDiscount);
     const total = itemsTotal(next, nextDiscount);
-    if (next.length > 0 && total > 0) setAmount(minorToInput(total));
+    if (next.length > 0 && total > 0 && !locked) setAmount(minorToInput(total));
   };
 
   const withAsset = kind === "expense" || kind === "income";
@@ -589,9 +630,44 @@ export function AddSheet({
   const sendNewAsset = kind === "expense" && newAsset ? newAsset : null;
   // Як у старій формі: витрата з фото на синхронізованому рахунку — у «Чеки».
   const toInbox =
-    kind === "expense" && !!account?.is_synced && photos.length > 0;
+    !isEdit && kind === "expense" && !!account?.is_synced && photos.length > 0;
 
   const save = () => {
+    if (isEdit && transaction) {
+      mutation.mutate({
+        data: {
+          // Половину переказу бекенд визначає сам; рахунок — той самий.
+          type:
+            kind === "transfer"
+              ? "transfer"
+              : kind === "debt"
+                ? debtType
+                : kind,
+          account_id: kind === "transfer" ? transaction.account_id : accountId,
+          category_id:
+            kind === "expense" || kind === "income" ? categoryId : undefined,
+          counterparty_id:
+            kind === "debt"
+              ? counterpartyId
+              : kind !== "transfer" && merchantId
+                ? merchantId
+                : undefined,
+          amount: minor,
+          date: new Date(`${date}T${time || "12:00"}:00`).getTime(),
+          note: note.trim(),
+          items: withItems
+            ? toApiItems(items, discount, categoryId, init.discountName)
+            : [],
+          tag_ids: tagIds,
+          asset_id: withAsset && assetId ? assetId : null,
+          mileage: isCar && mileage ? Number(mileage) : undefined,
+          // Стара форма тут скидала прапорець, і прощений борг знову рухав баланс.
+          is_forgiveness: transaction.is_forgiveness,
+        },
+        toInbox: false,
+      });
+      return;
+    }
     if (toInbox && photos.length > 1) {
       toast.error("Для «Чеків» поки можна додати лише одне фото чека.");
       return;
@@ -688,6 +764,7 @@ export function AddSheet({
   // Кнопка пояснює, чого бракує, замість мовчки бути неактивною.
   const saveLabel = (() => {
     if (mutation.isPending) return "Збереження…";
+    if (isEdit && ready) return "Зберегти зміни";
     if (toInbox && ready) return "Зберегти в «Чеки»";
     if (!accountId) return "Немає рахунку";
     if (minor <= 0) return "Введіть суму";
@@ -731,7 +808,7 @@ export function AddSheet({
         open={open}
         onOpenChange={onOpenChange}
         onCancel={cancel}
-        title="Нова операція"
+        title={isEdit ? "Редагування" : "Нова операція"}
         footer={
           <PrimaryButton
             type="button"
@@ -761,38 +838,45 @@ export function AddSheet({
             void attachPhotos(files);
           }}
         />
-        <QuickActions>
-          <QuickAction
-            type="button"
-            disabled={photoUpload.isPending}
-            onClick={() => photoInput.current?.click()}
-          >
-            <HiOutlineCamera size={20} aria-hidden="true" />
-            {photoUpload.isPending ? "Завантаження…" : "Фото чека"}
-          </QuickAction>
-          <QuickAction
-            type="button"
-            onClick={() => {
-              close();
-              onOpenReceiptImport();
-            }}
-          >
-            <HiOutlineReceiptPercent size={20} aria-hidden="true" />
-            Е-чек
-          </QuickAction>
-        </QuickActions>
+        {!isEdit && (
+          <QuickActions>
+            <QuickAction
+              type="button"
+              disabled={photoUpload.isPending}
+              onClick={() => photoInput.current?.click()}
+            >
+              <HiOutlineCamera size={20} aria-hidden="true" />
+              {photoUpload.isPending ? "Завантаження…" : "Фото чека"}
+            </QuickAction>
+            <QuickAction
+              type="button"
+              onClick={() => {
+                close();
+                onOpenReceiptImport();
+              }}
+            >
+              <HiOutlineReceiptPercent size={20} aria-hidden="true" />
+              Е-чек
+            </QuickAction>
+          </QuickActions>
+        )}
 
-        <Segmented
-          label="Тип операції"
-          value={kind}
-          onChange={setKind}
-          options={[
-            { value: "expense", label: "Витрата" },
-            { value: "income", label: "Дохід" },
-            { value: "transfer", label: "Переказ" },
-            { value: "debt", label: "Борг" },
-          ]}
-        />
+        {/* Переказ не можна перетворити на іншу операцію і навпаки (бекенд). */}
+        {!locked && !transferEdit && (
+          <Segmented
+            label="Тип операції"
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: "expense", label: "Витрата" },
+              { value: "income", label: "Дохід" },
+              ...(isEdit
+                ? []
+                : [{ value: "transfer" as const, label: "Переказ" }]),
+              { value: "debt", label: "Борг" },
+            ]}
+          />
+        )}
 
         <AmountField>
           <AmountInput
@@ -801,6 +885,7 @@ export function AddSheet({
             inputMode="decimal"
             aria-label="Сума"
             placeholder="0"
+            disabled={locked}
             value={amount}
             onChange={(e) => setAmount(onlyAmount(e.target.value))}
           />
@@ -883,17 +968,19 @@ export function AddSheet({
             />
           )}
           <Row
-            onClick={() => setPicker("account")}
+            onClick={
+              locked || transferEdit ? undefined : () => setPicker("account")
+            }
             title={accountLabel}
             trailing={<Meta>{account?.name ?? "Оберіть"}</Meta>}
-            chevron
+            chevron={!locked && !transferEdit}
           />
           {kind === "transfer" && (
             <Row
-              onClick={() => setPicker("target")}
+              onClick={transferEdit ? undefined : () => setPicker("target")}
               title="Куди"
               trailing={<Meta>{target?.name ?? "Оберіть"}</Meta>}
-              chevron
+              chevron={!transferEdit}
             />
           )}
           {needsTargetAmount && (
@@ -914,41 +1001,62 @@ export function AddSheet({
         </Group>
 
         {/* Деталі — окремою групою, щоб головне читалось одним поглядом. */}
-        <Group>
-          {kind === "expense" && (
+        {!bankOnly && (
+          <Group>
+            {kind === "expense" && (
+              <Row
+                onClick={() => setPicker("items")}
+                title="Товари"
+                trailing={
+                  <Meta>
+                    {items.length > 0
+                      ? `${items.length} · ${formatMoney(itemsTotal(items, discount), account?.currency || "UAH", language)}`
+                      : "Ввести чек"}
+                  </Meta>
+                }
+                chevron
+              />
+            )}
             <Row
-              onClick={() => setPicker("items")}
-              title="Товари"
+              title="Нотатка"
               trailing={
-                <Meta>
-                  {items.length > 0
-                    ? `${items.length} · ${formatMoney(itemsTotal(items, discount), account?.currency || "UAH", language)}`
-                    : "Ввести чек"}
-                </Meta>
+                <FieldInput
+                  type="text"
+                  aria-label="Нотатка"
+                  placeholder="Необовʼязково"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
               }
+            />
+            <Row
+              onClick={() => setDetailsOpen(true)}
+              title="Більше"
+              trailing={<SummaryMeta>{detailsSummary}</SummaryMeta>}
               chevron
             />
-          )}
-          <Row
-            title="Нотатка"
-            trailing={
-              <FieldInput
-                type="text"
-                aria-label="Нотатка"
-                placeholder="Необовʼязково"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
-            }
-          />
-          <Row
-            onClick={() => setDetailsOpen(true)}
-            title="Більше"
-            trailing={<SummaryMeta>{detailsSummary}</SummaryMeta>}
-            chevron
-          />
-        </Group>
+          </Group>
+        )}
 
+        {bankOnly ? (
+          <Hint>
+            Операція з банку: тут можна змінити категорію й «Де». Сума, дата,
+            нотатка й решта приходять з банку.
+          </Hint>
+        ) : (
+          locked && (
+            <Hint>
+              Рахунок синхронізується з банком: суму, рахунок, дату й тип
+              змінити не можна.
+            </Hint>
+          )
+        )}
+        {transferEdit && (
+          <Hint>
+            Рахунки переказу не змінюються — щоб змінити, видаліть переказ і
+            створіть заново.
+          </Hint>
+        )}
         {toInbox && (
           <Hint>
             Рахунок синхронізується з банком: чек з фото чекатиме в «Чеках» на
@@ -984,6 +1092,7 @@ export function AddSheet({
                 <DateInput
                   type="date"
                   aria-label="Дата"
+                  disabled={locked}
                   value={date}
                   max={format(new Date(), "yyyy-MM-dd")}
                   onChange={(e) => e.target.value && setDate(e.target.value)}
@@ -991,6 +1100,7 @@ export function AddSheet({
                 <DateInput
                   type="time"
                   aria-label="Час"
+                  disabled={locked}
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                 />
@@ -1043,7 +1153,7 @@ export function AddSheet({
               }
             />
           )}
-          {photos.length > 0 && (
+          {!isEdit && photos.length > 0 && (
             <Row
               onClick={() => setPicker("photos")}
               title="Фото"
@@ -1070,7 +1180,7 @@ export function AddSheet({
           onOpenChange={(next) => !next && setPicker(null)}
           assetId={assetId}
           newAsset={newAsset}
-          canCreate={kind === "expense"}
+          canCreate={!isEdit && kind === "expense"}
           operationDate={new Date(`${date}T12:00:00`).getTime()}
           onChange={(id, created) => {
             setAssetId(id);

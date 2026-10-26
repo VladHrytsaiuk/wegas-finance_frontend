@@ -14,6 +14,7 @@ import { categoryLabel } from "../../../mobile/categoryLabel";
 import { CategoryPicker } from "./Pickers";
 import {
   findKnown,
+  itemTotal,
   itemsTotal,
   minorToInput,
   suggestKnown,
@@ -225,7 +226,11 @@ export function ItemsSheet({
 
   const submit = () => {
     if (!canAdd) return;
-    const item = { name: name.trim(), quantity, price: priceMinor, categoryId: draftCategory };
+    // Сума з чека лишається, якщо кількість і ціну не чіпали (вагові товари).
+    const original = editing === null ? undefined : items[editing];
+    const keepTotal =
+      original && original.quantity === quantity && original.price === priceMinor ? original.total : undefined;
+    const item = { name: name.trim(), quantity, price: priceMinor, categoryId: draftCategory, total: keepTotal };
     const next = editing === null ? [...items, item] : items.map((it, i) => (i === editing ? item : it));
     onChange(next, discount);
     clearDraft();
@@ -404,7 +409,7 @@ export function ItemsSheet({
                   subtitle={[categoryName(category?.id ?? ""), item.quantity > 1 ? `${item.quantity} × ${money(item.price)}` : ""]
                     .filter(Boolean)
                     .join(" · ")}
-                  trailing={<Amount>{money(item.quantity * item.price)}</Amount>}
+                  trailing={<Amount>{money(itemTotal(item))}</Amount>}
                   inset={58}
                 />
               );

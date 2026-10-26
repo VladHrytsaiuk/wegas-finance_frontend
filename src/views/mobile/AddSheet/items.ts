@@ -9,7 +9,12 @@ export interface DraftItem {
   price: number;
   /** Порожньо — як у самої операції. */
   categoryId: string;
+  /** Сума з чека, якщо вона не дорівнює кількість × ціна (вага, округлення). */
+  total?: number;
 }
+
+/** Сума позиції: збережена з чека або кількість × ціна. */
+export const itemTotal = (item: DraftItem) => item.total ?? item.quantity * item.price;
 
 export interface KnownItem {
   name: string;
@@ -24,14 +29,14 @@ export function minorToInput(minor: number) {
 }
 
 export function itemsTotal(items: DraftItem[], discount: number) {
-  return items.reduce((sum, item) => sum + item.quantity * item.price, 0) - discount;
+  return items.reduce((sum, item) => sum + itemTotal(item), 0) - discount;
 }
 
 /** Категорія, на яку припадає найбільша сума товарів, або "". */
 export function dominantCategory(items: DraftItem[]) {
   const sums = new Map<string, number>();
   for (const item of items) {
-    if (item.categoryId) sums.set(item.categoryId, (sums.get(item.categoryId) || 0) + item.quantity * item.price);
+    if (item.categoryId) sums.set(item.categoryId, (sums.get(item.categoryId) || 0) + itemTotal(item));
   }
   return [...sums.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
 }
@@ -41,17 +46,22 @@ export function dominantCategory(items: DraftItem[]) {
  * вибір користувача потрапляє в історію, з якої бекенд підбирає категорії.
  * Знижка — окремий рядок з від'ємною ціною, як у старій формі.
  */
-export function toApiItems(items: DraftItem[], discount: number, fallbackCategoryId: string) {
+export function toApiItems(
+  items: DraftItem[],
+  discount: number,
+  fallbackCategoryId: string,
+  discountName = DISCOUNT_ITEM_NAME,
+) {
   const rows = items.map((item) => ({
     name: item.name,
     quantity: item.quantity,
     price_per_unit: item.price,
-    total_amount: item.quantity * item.price,
+    total_amount: itemTotal(item),
     category_id: item.categoryId || fallbackCategoryId || null,
   }));
   if (discount > 0) {
     rows.push({
-      name: DISCOUNT_ITEM_NAME,
+      name: discountName,
       quantity: 1,
       price_per_unit: -discount,
       total_amount: -discount,
