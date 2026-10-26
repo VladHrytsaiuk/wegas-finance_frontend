@@ -72,6 +72,17 @@ export const MobileTokens = createGlobalStyle`
     --m-tint-gray-fg: #e5e5ea;
   }
 
+  /* Прокручується лише контейнер застосунку, не документ. Глобальний
+     body { min-height: 100vh } у Safari вищий за видиму частину, тож документ
+     прокручувався й панель «‹ Назад» виїжджала за верхній край. */
+  html,
+  body,
+  #root {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
   /* Старий глобальний стиль малює рамку фокусу на кожному полі; в iOS її немає. */
   [data-vaul-drawer] input:focus-visible,
   [data-m-screen] input:focus-visible {

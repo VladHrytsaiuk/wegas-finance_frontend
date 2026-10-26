@@ -1,5 +1,6 @@
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { MobileTokens } from "../mobile/tokens";
 import { TabBar } from "../mobile/TabBar";
 
@@ -21,10 +22,17 @@ const Main = styled.main`
 `;
 
 function MobileLayout() {
+  // Новий екран відкривається зверху, як в iOS, а не на прокрутці попереднього.
+  const main = useRef<HTMLElement>(null);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    main.current?.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <Shell>
       <MobileTokens />
-      <Main>
+      <Main ref={main}>
         <Outlet />
       </Main>
       <TabBar />
