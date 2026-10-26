@@ -33,6 +33,7 @@ import {
   type TransactionListItem,
 } from "../../../hooks/Transactions/useTransactionItem";
 import { compressImage } from "../../../utils/compressor";
+import { safeExternalUrl } from "../../../utils/safeUrl";
 import { formatMoney, getUploadedFileUrl } from "../../../utils/helpers";
 import { isDiscountItem } from "../../../components/transactions/form/itemUtils";
 import { AccountTile } from "../../../mobile/accountTile";
@@ -451,9 +452,10 @@ export default function MobileTransaction() {
 
   const items = (tx.items || []).filter((i) => i && (i.name || i.total_amount));
   const itemsTotal = items.reduce((sum, i) => sum + (i.total_amount || 0), 0);
-  const receiptUrl = receiptSources.find(
-    (s) => s.source_type === "url" && s.source_url,
-  )?.source_url;
+  const receiptUrl = safeExternalUrl(
+    receiptSources.find((s) => s.source_type === "url" && s.source_url)
+      ?.source_url,
+  );
   const receiptDiscount = receiptSources.find(
     (s) => (s.discount_total || 0) > 0,
   );

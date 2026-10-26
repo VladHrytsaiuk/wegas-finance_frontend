@@ -151,10 +151,10 @@ const RowTitle = styled.span`
   text-overflow: ellipsis;
 `;
 
-const RowSubtitle = styled.span`
+const RowSubtitle = styled.span<{ $wrap?: boolean }>`
   font-size: 13px;
   color: var(--m-label-2);
-  white-space: nowrap;
+  white-space: ${(p) => (p.$wrap ? "normal" : "nowrap")};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -185,9 +185,21 @@ interface RowProps {
   onClick?: () => void;
   /** Відступ роздільника зліва: під текстом, а не під іконкою. */
   inset?: number;
+  /** Підпис у кілька рядків, коли в ньому важливі деталі. */
+  wrapSubtitle?: boolean;
 }
 
-export function Row({ leading, title, subtitle, trailing, chevron, to, onClick, inset }: RowProps) {
+export function Row({
+  leading,
+  title,
+  subtitle,
+  trailing,
+  chevron,
+  to,
+  onClick,
+  inset,
+  wrapSubtitle,
+}: RowProps) {
   const separatorInset = inset ?? (leading ? 64 : 16);
   const compact = !subtitle;
   const content = (
@@ -195,7 +207,7 @@ export function Row({ leading, title, subtitle, trailing, chevron, to, onClick, 
       {leading}
       <RowText>
         <RowTitle>{title}</RowTitle>
-        {subtitle && <RowSubtitle>{subtitle}</RowSubtitle>}
+        {subtitle && <RowSubtitle $wrap={wrapSubtitle}>{subtitle}</RowSubtitle>}
       </RowText>
       {trailing && <RowTrailing>{trailing}</RowTrailing>}
       {chevron && <Chevron aria-hidden="true" />}
@@ -211,7 +223,13 @@ export function Row({ leading, title, subtitle, trailing, chevron, to, onClick, 
   }
   if (onClick) {
     return (
-      <RowButton data-row="" type="button" onClick={onClick} $inset={separatorInset} $compact={compact}>
+      <RowButton
+        data-row=""
+        type="button"
+        onClick={onClick}
+        $inset={separatorInset}
+        $compact={compact}
+      >
         {content}
       </RowButton>
     );

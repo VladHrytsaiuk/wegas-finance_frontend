@@ -47,6 +47,7 @@ import {
   initialFromTransaction,
   type DebtType,
   type Kind,
+  type SheetInitial,
 } from "./editState";
 import type { TransactionFull } from "../Transaction/transactionFull";
 import {
@@ -250,6 +251,11 @@ interface AddSheetProps {
   onOpenReceiptImport: () => void;
   /** Наявна операція — панель працює як редагування. */
   transaction?: TransactionFull;
+  /** Нова операція з готовими даними (напр. з чека). */
+  prefill?: SheetInitial;
+  /** Після створення — напр. прив'язати чек до нової операції. */
+  onCreated?: (transactionId: string) => Promise<void> | void;
+  title?: string;
 }
 
 export function AddSheet({
@@ -257,10 +263,15 @@ export function AddSheet({
   onOpenChange,
   onOpenReceiptImport,
   transaction,
+  prefill,
+  onCreated,
+  title,
 }: AddSheetProps) {
   const isEdit = !!transaction;
   const [init] = useState(() =>
-    transaction ? initialFromTransaction(transaction) : emptyInitial(),
+    transaction
+      ? initialFromTransaction(transaction)
+      : (prefill ?? emptyInitial()),
   );
   const queryClient = useQueryClient();
   const { language } = useSettings();
@@ -530,7 +541,7 @@ export function AddSheet({
         : toInbox
           ? createInboxPhotoApi(data as FormData)
           : createTransactionApi(data),
-    onSuccess: (_, { toInbox }) => {
+    onSuccess: async (response, { toInbox }) => {
       invalidate([
         "transactions",
         "transactions-infinite",
@@ -563,6 +574,12 @@ export function AddSheet({
           queryKey: ["transaction", transaction!.id],
         });
         toast.success("Зміни збережено");
+        onOpenChange(false);
+        return;
+      }
+      if (onCreated) {
+        const id = (response as { id?: string } | undefined)?.id;
+        if (id) await onCreated(id);
         onOpenChange(false);
         return;
       }
@@ -808,7 +825,7 @@ export function AddSheet({
         open={open}
         onOpenChange={onOpenChange}
         onCancel={cancel}
-        title={isEdit ? "Редагування" : "Нова операція"}
+        title={title ?? (isEdit ? "Редагування" : "Нова операція")}
         footer={
           <PrimaryButton
             type="button"
@@ -838,7 +855,7 @@ export function AddSheet({
             void attachPhotos(files);
           }}
         />
-        {!isEdit && (
+        {!isEdit && !prefill && (
           <QuickActions>
             <QuickAction
               type="button"

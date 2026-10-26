@@ -2,7 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { format, isToday, isYesterday, isThisYear, type Locale } from "date-fns";
+import {
+  format,
+  isToday,
+  isYesterday,
+  isThisYear,
+  type Locale,
+} from "date-fns";
 import { uk, enUS } from "date-fns/locale";
 import { HiOutlineCamera, HiOutlineReceiptPercent } from "react-icons/hi2";
 
@@ -19,10 +25,14 @@ import {
   type InboxEntry,
 } from "../../../services/apiInbox";
 import { formatMoney, sortTransactions } from "../../../utils/helpers";
-import { collapseTransfers, type DisplayTransaction } from "../../../mobile/transfers";
+import {
+  collapseTransfers,
+  type DisplayTransaction,
+} from "../../../mobile/transfers";
 import type { Account, Category } from "../../../types";
 import type { TransactionListItem } from "../../../hooks/Transactions/useTransactionItem";
 import { Screen, LargeTitle } from "../../../mobile/ui/Screen";
+import { INBOX_ACTION, receiptTitle } from "../Inbox/inboxLabels";
 import { Section, Group, Row, Amount, Meta } from "../../../mobile/ui/Group";
 import { Segmented } from "../../../mobile/ui/Segmented";
 import { SearchField } from "../../../mobile/ui/SearchField";
@@ -31,12 +41,18 @@ import { TxRow } from "../../../mobile/ui/TxRow";
 
 type Filter = "all" | "expense" | "income" | "inbox";
 
-const INBOX_STATUS: Record<string, string> = {
-  new: "Новий",
-  needs_account: "Оберіть рахунок",
-  needs_link: "Звʼяжіть з операцією",
-  needs_review: "Перевірте",
-};
+// Підсумок над чеками, як на старій сторінці: що саме чекає на дію.
+function inboxSummary(entries: InboxEntry[]) {
+  const noAccount = entries.filter((e) => e.status === "needs_account").length;
+  const review = entries.filter((e) => e.status === "needs_review").length;
+  const parts = [
+    noAccount ? `${noAccount} без рахунку` : "",
+    review ? `${review} на перевірці` : "",
+  ].filter(Boolean);
+  return parts.length
+    ? parts.join(" · ")
+    : `${entries.length} готові до звʼязування`;
+}
 
 const Controls = styled.div`
   display: flex;
@@ -76,13 +92,21 @@ function MobileOperations() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filter = (searchParams.get("filter") as Filter) || "all";
   const setFilter = (value: Filter) =>
-    setSearchParams(value === "all" ? {} : { filter: value }, { replace: true });
+    setSearchParams(value === "all" ? {} : { filter: value }, {
+      replace: true,
+    });
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search.trim(), 300);
 
-  const { data: accounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi });
-  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: getCategoriesApi });
+  const { data: accounts = [] } = useQuery({
+    queryKey: ["accounts"],
+    queryFn: getAccountsApi,
+  });
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategoriesApi,
+  });
   const { data: inboxCount = 0 } = useQuery({
     queryKey: ["inbox", "pending-count"],
     queryFn: getInboxPendingCountApi,
@@ -96,22 +120,31 @@ function MobileOperations() {
   });
   const inbox = useQuery({
     queryKey: ["inbox", "mobile-pending"],
-    queryFn: () => getInboxApi({ status: [...PENDING_INBOX_STATUSES], limit: 100 }),
+    queryFn: () =>
+      getInboxApi({ status: [...PENDING_INBOX_STATUSES], limit: 100 }),
     enabled: isInbox,
   });
 
   // Групи по днях; підсумок дня — доходи мінус витрати в базовій валюті.
   const groups = useMemo(() => {
-    const byDay = new Map<string, { label: string; total: number; items: DisplayTransaction[] }>();
+    const byDay = new Map<
+      string,
+      { label: string; total: number; items: DisplayTransaction[] }
+    >();
     const sorted = sortTransactions(list.transactions as TransactionListItem[]);
-    for (const tx of collapseTransfers(sorted, accounts as unknown as Account[])) {
+    for (const tx of collapseTransfers(
+      sorted,
+      accounts as unknown as Account[],
+    )) {
       const date = new Date(tx.date);
       const key = format(date, "yyyy-MM-dd");
-      if (!byDay.has(key)) byDay.set(key, { label: dayLabel(date, locale), total: 0, items: [] });
+      if (!byDay.has(key))
+        byDay.set(key, { label: dayLabel(date, locale), total: 0, items: [] });
       const group = byDay.get(key)!;
       group.items.push(tx);
       const txCurrency =
-        (accounts as unknown as Account[]).find((a) => a.id === tx.account_id)?.currency ||
+        (accounts as unknown as Account[]).find((a) => a.id === tx.account_id)
+          ?.currency ||
         tx.currency ||
         currency;
       if (txCurrency === currency) {
@@ -130,7 +163,8 @@ function MobileOperations() {
     if (!node || isInbox) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) fetchNextPage();
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage)
+          fetchNextPage();
       },
       { rootMargin: "400px" },
     );
@@ -142,11 +176,15 @@ function MobileOperations() {
     `${amount > 0 ? "+" : amount < 0 ? "−" : ""}${formatMoney(Math.abs(amount), currency, language)}`;
 
   const inboxRow = (entry: InboxEntry) => {
-    const title = entry.merchant || entry.receipt_source?.merchant || entry.note || "Новий чек";
+    const title = receiptTitle(entry);
     const when = entry.occurred_at ?? entry.created_at;
+    // Як у старому списку: статус, дата, рахунок і кількість позицій.
+    const itemCount = entry.receipt_source?.items?.length ?? 0;
     const subtitle = [
-      INBOX_STATUS[entry.status] ?? entry.status,
+      INBOX_ACTION[entry.status] ?? entry.status,
       when ? format(new Date(when), "d MMM, HH:mm", { locale }) : null,
+      entry.selected_account?.name,
+      itemCount ? `${itemCount} поз.` : null,
     ]
       .filter(Boolean)
       .join(" · ");
@@ -168,9 +206,12 @@ function MobileOperations() {
         }
         title={title}
         subtitle={subtitle}
+        wrapSubtitle
         trailing={
           entry.total !== null ? (
-            <Amount>{formatMoney(entry.total, entry.currency || currency, language)}</Amount>
+            <Amount>
+              {formatMoney(entry.total, entry.currency || currency, language)}
+            </Amount>
           ) : undefined
         }
         chevron
@@ -183,7 +224,13 @@ function MobileOperations() {
       <LargeTitle title="Операції" />
 
       <Controls>
-        {!isInbox && <SearchField value={search} onChange={setSearch} label="Пошук операцій" />}
+        {!isInbox && (
+          <SearchField
+            value={search}
+            onChange={setSearch}
+            label="Пошук операцій"
+          />
+        )}
         <Segmented
           label="Що показати"
           value={filter}
@@ -192,16 +239,24 @@ function MobileOperations() {
             { value: "all", label: "Усі" },
             { value: "expense", label: "Витрати" },
             { value: "income", label: "Доходи" },
-            { value: "inbox", label: inboxCount > 0 ? `Чеки · ${inboxCount}` : "Чеки" },
+            {
+              value: "inbox",
+              label: inboxCount > 0 ? `Чеки · ${inboxCount}` : "Чеки",
+            },
           ]}
         />
       </Controls>
 
       {isInbox ? (
         <>
-          <Note>Чеки з Telegram-бота, фото й файлів. Відкрийте чек, щоб звʼязати його з операцією.</Note>
+          <Note>
+            Чеки з Telegram-бота, фото й файлів. Відкрийте чек, щоб звʼязати
+            його з операцією.
+          </Note>
           {inbox.data?.data.length ? (
-            <Group>{inbox.data.data.map(inboxRow)}</Group>
+            <Section caption={inboxSummary(inbox.data.data)}>
+              <Group>{inbox.data.data.map(inboxRow)}</Group>
+            </Section>
           ) : (
             !inbox.isLoading && <Empty>Усі чеки розібрано</Empty>
           )}
@@ -213,7 +268,9 @@ function MobileOperations() {
               key={group.label}
               caption={group.label}
               action={
-                group.total !== 0 ? <Meta>{signed(group.total)}</Meta> : undefined
+                group.total !== 0 ? (
+                  <Meta>{signed(group.total)}</Meta>
+                ) : undefined
               }
             >
               <Group>
@@ -231,7 +288,9 @@ function MobileOperations() {
             </Section>
           ))}
           {!list.isLoading && groups.length === 0 && (
-            <Empty>{debouncedSearch ? "Нічого не знайдено" : "Операцій поки немає"}</Empty>
+            <Empty>
+              {debouncedSearch ? "Нічого не знайдено" : "Операцій поки немає"}
+            </Empty>
           )}
           <Sentinel ref={sentinelRef} />
         </>

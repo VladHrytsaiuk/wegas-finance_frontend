@@ -6,6 +6,8 @@ export interface InboxReceiptItem {
   quantity: number;
   price_per_unit: number;
   total_amount: number;
+  /** Категорія товару: підтверджена для магазину або підібрана за історією. */
+  category_id?: string | null;
 }
 
 export interface InboxNamedEntityPreview {
@@ -103,11 +105,14 @@ export interface InboxFilters {
   offset?: number;
 }
 
+// Чеки, що чекають на дію. «Відкріплено» теж: такий чек треба зв'язати знову
+// (бекенд за замовчуванням показує його в списку, тож лічильник має збігатися).
 export const PENDING_INBOX_STATUSES = [
   "new",
   "needs_account",
   "needs_link",
   "needs_review",
+  "unlinked",
 ] as const;
 
 export const getInboxApi = async (

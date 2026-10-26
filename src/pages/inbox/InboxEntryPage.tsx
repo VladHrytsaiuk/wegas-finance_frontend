@@ -38,6 +38,7 @@ import { ReceiptViewer } from "../../components/transactions/ReceiptViewer";
 import { getTransactionsApi } from "../../services/apiTransactions";
 import type { Transaction } from "../../types";
 import { safeExternalUrl } from "../../utils/safeUrl";
+import MobileInboxEntry from "../../views/mobile/Inbox/MobileInboxEntry";
 
 const Header = styled(PageStyles.Header)`
   margin-bottom: 0;
@@ -703,7 +704,7 @@ function extractTransactionId(response: unknown): string | null {
   return typeof payload.data?.id === "string" ? payload.data.id : null;
 }
 
-function InboxEntryPage() {
+function DesktopInboxEntryPage() {
   const { i18n } = useTranslation();
   const { inboxId = "" } = useParams();
   const navigate = useNavigate();
@@ -1363,6 +1364,12 @@ function InboxEntryPage() {
     </PageStyles.PageContainer>
     </>
   );
+}
+
+// На мобілці — новий екран чека з тими самими можливостями.
+function InboxEntryPage() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileInboxEntry /> : <DesktopInboxEntryPage />;
 }
 
 export default InboxEntryPage;
