@@ -28,12 +28,13 @@ import { useGoalDetails } from "../../hooks/Goals/useGoalDetails";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { formatMoney } from "../../utils/helpers";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileGoal from "../../views/mobile/Goals/MobileGoal";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 import * as S from "./GoalDetails.styles";
 import type { Account } from "../../types";
 
-function GoalDetails() {
+function DesktopGoalDetails() {
   const { state, actions, t, i18n } = useGoalDetails();
   const { goal, stats, isLoading, isEditModalOpen, isToggling } = state;
 
@@ -344,6 +345,12 @@ function GoalDetails() {
       {isMobile && <FAB onClick={actions.handleOpenEdit} icon={<HiPencil />} />}
     </S.PageContainer>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function GoalDetails() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileGoal /> : <DesktopGoalDetails />;
 }
 
 export default GoalDetails;

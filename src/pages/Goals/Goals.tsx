@@ -17,11 +17,12 @@ import { useGoalsPage } from "../../hooks/Goals/useGoalsPage";
 import { useGoalsFilter } from "../../hooks/Goals/useGoalsFilter";
 import { useHeader } from "../../context/HeaderContext";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileGoals from "../../views/mobile/Goals/MobileGoals";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Goals.styles";
 import type { Goal } from "../../types";
 
-function Goals() {
+function DesktopGoals() {
   const {
     state: { goals, isLoading, isCreateModalOpen, editingGoal, extendingGoal },
     handlers: {
@@ -199,6 +200,12 @@ function Goals() {
     </S.PageContainer>
   </>
 );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function Goals() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileGoals /> : <DesktopGoals />;
 }
 
 export default Goals;
