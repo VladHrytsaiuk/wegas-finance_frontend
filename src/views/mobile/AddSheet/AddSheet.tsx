@@ -469,8 +469,8 @@ export function AddSheet({
     : undefined;
   const locked = isEdit && !!txAccount?.is_synced;
   const transferEdit = isEdit && kind === "transfer";
-  // Операція, що прийшла з банку: бекенд зберігає лише категорію й контрагента,
-  // решту полів не показуємо як редаговані, щоб зміни не губились мовчки.
+  // Операція, що прийшла з банку: сума, дата й опис (нотатка) — від банку;
+  // категорію, «Де», товари, теги й актив можна міняти (рішення Vlad).
   const bankOnly = locked && !!transaction?.external_id;
   const needsTargetAmount =
     !isEdit &&
@@ -673,7 +673,13 @@ export function AddSheet({
           date: new Date(`${date}T${time || "12:00"}:00`).getTime(),
           note: note.trim(),
           items: withItems
-            ? toApiItems(items, discount, categoryId, init.discountName)
+            ? toApiItems(
+                items,
+                discount,
+                categoryId,
+                init.discountName,
+                init.discountSourceId,
+              )
             : [],
           tag_ids: tagIds,
           asset_id: withAsset && assetId ? assetId : null,
@@ -1018,7 +1024,7 @@ export function AddSheet({
         </Group>
 
         {/* Деталі — окремою групою, щоб головне читалось одним поглядом. */}
-        {!bankOnly && (
+        {
           <Group>
             {kind === "expense" && (
               <Row
@@ -1034,18 +1040,20 @@ export function AddSheet({
                 chevron
               />
             )}
-            <Row
-              title="Нотатка"
-              trailing={
-                <FieldInput
-                  type="text"
-                  aria-label="Нотатка"
-                  placeholder="Необовʼязково"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                />
-              }
-            />
+            {!bankOnly && (
+              <Row
+                title="Нотатка"
+                trailing={
+                  <FieldInput
+                    type="text"
+                    aria-label="Нотатка"
+                    placeholder="Необовʼязково"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                  />
+                }
+              />
+            )}
             <Row
               onClick={() => setDetailsOpen(true)}
               title="Більше"
@@ -1053,12 +1061,12 @@ export function AddSheet({
               chevron
             />
           </Group>
-        )}
+        }
 
         {bankOnly ? (
           <Hint>
-            Операція з банку: тут можна змінити категорію й «Де». Сума, дата,
-            нотатка й решта приходять з банку.
+            Операція з банку: сума, дата й опис приходять з банку. Категорію,
+            «Де», товари, теги й актив можна змінити.
           </Hint>
         ) : (
           locked && (

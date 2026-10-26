@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { HiCheck, HiOutlineBuildingOffice2, HiOutlineBuildingStorefront, HiOutlineUser } from "react-icons/hi2";
+import {
+  HiCheck,
+  HiOutlineBuildingOffice2,
+  HiOutlineBuildingStorefront,
+  HiOutlineUser,
+} from "react-icons/hi2";
 import styled from "styled-components";
 
 import type { Counterparty, CounterpartyCategory } from "../../../types";
@@ -77,9 +82,24 @@ const fallbackIcon = (type?: string) =>
     <HiOutlineBuildingOffice2 size={17} />
   );
 
-function CounterpartyTile({ cp, category }: { cp: Counterparty; category?: CounterpartyCategory }) {
-  if (cp.logo || cp.icon) return <Tile logo={cp.logo} iconName={cp.icon} color={category?.color} size={30} />;
-  if (category?.icon) return <Tile iconName={category.icon} color={category.color} size={30} />;
+function CounterpartyTile({
+  cp,
+  category,
+}: {
+  cp: Counterparty;
+  category?: CounterpartyCategory;
+}) {
+  if (cp.logo || cp.icon)
+    return (
+      <Tile
+        logo={cp.logo}
+        iconName={cp.icon}
+        color={category?.color}
+        size={30}
+      />
+    );
+  if (category?.icon)
+    return <Tile iconName={category.icon} color={category.color} size={30} />;
   return <Tile icon={fallbackIcon(cp.type)} size={30} />;
 }
 
@@ -123,24 +143,34 @@ export function CounterpartyPicker({
     enabled: open,
     staleTime: 5 * 60 * 1000,
   });
-  const categoryOf = (cp: Counterparty) => cpCategories.find((c) => c.id === cp.category_id);
+  const categoryOf = (cp: Counterparty) =>
+    cpCategories.find((c) => c.id === cp.category_id);
 
   const q = query.trim().toLowerCase();
   const exists = counterparties.some((c) => c.name.toLowerCase() === q);
 
   const sections = useMemo(() => {
     const byUsage = (a: Counterparty, b: Counterparty) =>
-      (usage.get(b.id) || 0) - (usage.get(a.id) || 0) || a.name.localeCompare(b.name);
+      (usage.get(b.id) || 0) - (usage.get(a.id) || 0) ||
+      a.name.localeCompare(b.name);
     const matches = (cp: Counterparty) =>
       !q ||
       cp.name.toLowerCase().includes(q) ||
-      !!cpCategories.find((c) => c.id === cp.category_id)?.name.toLowerCase().includes(q);
+      !!cpCategories
+        .find((c) => c.id === cp.category_id)
+        ?.name.toLowerCase()
+        .includes(q);
     const visible = counterparties.filter(matches);
 
-    const result: { key: string; caption: string; items: Counterparty[] }[] = [];
+    const result: { key: string; caption: string; items: Counterparty[] }[] =
+      [];
     if (!q) {
-      const frequent = visible.filter((cp) => usage.get(cp.id)).sort(byUsage).slice(0, 5);
-      if (frequent.length) result.push({ key: "frequent", caption: "Часті", items: frequent });
+      const frequent = visible
+        .filter((cp) => usage.get(cp.id))
+        .sort(byUsage)
+        .slice(0, 5);
+      if (frequent.length)
+        result.push({ key: "frequent", caption: "Часті", items: frequent });
     }
     for (const type of typeOrder) {
       const ofType = visible.filter((cp) => (cp.type || "other") === type);
@@ -148,13 +178,24 @@ export function CounterpartyPicker({
         .filter((c) => c.type === type)
         .sort((a, b) => a.name.localeCompare(b.name));
       for (const category of categories) {
-        const items = ofType.filter((cp) => cp.category_id === category.id).sort(byUsage);
-        if (items.length) result.push({ key: category.id, caption: category.name, items });
+        const items = ofType
+          .filter((cp) => cp.category_id === category.id)
+          .sort(byUsage);
+        if (items.length)
+          result.push({ key: category.id, caption: category.name, items });
       }
       const rest = ofType
-        .filter((cp) => !cp.category_id || !categories.some((c) => c.id === cp.category_id))
+        .filter(
+          (cp) =>
+            !cp.category_id || !categories.some((c) => c.id === cp.category_id),
+        )
         .sort(byUsage);
-      if (rest.length) result.push({ key: `type-${type}`, caption: TYPE_CAPTION[type], items: rest });
+      if (rest.length)
+        result.push({
+          key: `type-${type}`,
+          caption: TYPE_CAPTION[type],
+          items: rest,
+        });
     }
     return result;
   }, [counterparties, cpCategories, usage, typeOrder, q]);
@@ -213,7 +254,9 @@ export function CounterpartyPicker({
         <Segmented
           label="Тип контрагента"
           value={draft.type}
-          onChange={(type) => setDraft({ ...draft, type, category_id: undefined })}
+          onChange={(type) =>
+            setDraft({ ...draft, type, category_id: undefined })
+          }
           options={[
             { value: "shop", label: "Магазин" },
             { value: "person", label: "Людина" },
@@ -230,7 +273,11 @@ export function CounterpartyPicker({
                   $active={draft.category_id === c.id}
                   aria-pressed={draft.category_id === c.id}
                   onClick={() =>
-                    setDraft({ ...draft, category_id: draft.category_id === c.id ? undefined : c.id })
+                    setDraft({
+                      ...draft,
+                      category_id:
+                        draft.category_id === c.id ? undefined : c.id,
+                    })
                   }
                 >
                   {c.name}
@@ -245,7 +292,12 @@ export function CounterpartyPicker({
 
   return (
     <Sheet nested open={open} onOpenChange={close} title={title}>
-      <SearchField value={query} onChange={setQuery} placeholder="Пошук" label="Пошук контрагента" />
+      <SearchField
+        value={query}
+        onChange={setQuery}
+        placeholder="Пошук"
+        label="Пошук контрагента"
+      />
       {q && !exists && (
         <Group>
           <Row
@@ -275,7 +327,9 @@ export function CounterpartyPicker({
                 onClick={() => pick(cp.id)}
                 leading={<CounterpartyTile cp={cp} category={categoryOf(cp)} />}
                 title={cp.name}
-                trailing={cp.id === value ? <Check aria-label="Обрано" /> : undefined}
+                trailing={
+                  cp.id === value ? <Check aria-label="Обрано" /> : undefined
+                }
                 inset={58}
               />
             ))}

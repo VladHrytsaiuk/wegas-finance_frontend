@@ -61,9 +61,21 @@ interface PhotosSheetProps {
   onAdd: () => void;
 }
 
-export function PhotosSheet({ open, onOpenChange, photos, onRemove, onAdd }: PhotosSheetProps) {
-  const urls = useMemo(() => photos.map((photo) => URL.createObjectURL(photo)), [photos]);
-  useEffect(() => () => urls.forEach((url) => URL.revokeObjectURL(url)), [urls]);
+export function PhotosSheet({
+  open,
+  onOpenChange,
+  photos,
+  onRemove,
+  onAdd,
+}: PhotosSheetProps) {
+  const urls = useMemo(
+    () => photos.map((photo) => URL.createObjectURL(photo)),
+    [photos],
+  );
+  useEffect(
+    () => () => urls.forEach((url) => URL.revokeObjectURL(url)),
+    [urls],
+  );
 
   return (
     <Sheet
@@ -73,7 +85,11 @@ export function PhotosSheet({ open, onOpenChange, photos, onRemove, onAdd }: Pho
       title="Фото"
       hideCancel
       trailing={
-        <SheetTextButton type="button" $bold onClick={() => onOpenChange(false)}>
+        <SheetTextButton
+          type="button"
+          $bold
+          onClick={() => onOpenChange(false)}
+        >
           Готово
         </SheetTextButton>
       }
@@ -82,7 +98,11 @@ export function PhotosSheet({ open, onOpenChange, photos, onRemove, onAdd }: Pho
         {urls.map((url, index) => (
           <Thumb key={url}>
             <img src={url} alt={`Фото ${index + 1}`} />
-            <Remove type="button" aria-label={`Прибрати фото ${index + 1}`} onClick={() => onRemove(index)}>
+            <Remove
+              type="button"
+              aria-label={`Прибрати фото ${index + 1}`}
+              onClick={() => onRemove(index)}
+            >
               <HiXMark size={16} />
             </Remove>
           </Thumb>

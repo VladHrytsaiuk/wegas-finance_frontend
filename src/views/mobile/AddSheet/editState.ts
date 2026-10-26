@@ -33,6 +33,8 @@ export interface SheetInitial {
   discount: number;
   /** Назва рядка знижки, щоб не перейменувати «Знижка за чеком» при збереженні. */
   discountName?: string;
+  /** Знижка з прив'язаного чека. */
+  discountSourceId?: string;
   tagIds: string[];
   assetId: string;
   mileage: string;
@@ -106,9 +108,11 @@ export function initialFromTransaction(tx: TransactionFull): SheetInitial {
         (i.quantity ? Math.round(i.total_amount / i.quantity) : i.total_amount),
       categoryId: i.category_id || "",
       total: i.total_amount,
+      receiptSourceId: i.receipt_source_id || undefined,
     })),
     discount: discounts.reduce((sum, i) => sum + Math.abs(i.total_amount), 0),
     discountName: discounts[0]?.name,
+    discountSourceId: discounts[0]?.receipt_source_id || undefined,
     tagIds: (tx.tags || []).map((t) => t.id),
     assetId: tx.asset_id || "",
     mileage: tx.mileage ? String(tx.mileage) : "",

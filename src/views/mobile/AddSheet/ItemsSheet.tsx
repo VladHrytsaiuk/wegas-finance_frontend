@@ -191,7 +191,9 @@ export function ItemsSheet({
   const [price, setPrice] = useState("");
   // null — категорію ще не обирали вручну, тоді вона підбирається сама.
   const [pickedCategory, setPickedCategory] = useState<string | null>(null);
-  const [discountText, setDiscountText] = useState(() => minorToInput(discount));
+  const [discountText, setDiscountText] = useState(() =>
+    minorToInput(discount),
+  );
   const [editing, setEditing] = useState<number | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [nameFocused, setNameFocused] = useState(false);
@@ -205,12 +207,18 @@ export function ItemsSheet({
   const { data: predicted } = useQuery({
     queryKey: ["predictCategory", debouncedName],
     queryFn: () => predictCategoryApi(debouncedName),
-    enabled: open && pickedCategory === null && !exact?.categoryId && debouncedName.length >= 3,
+    enabled:
+      open &&
+      pickedCategory === null &&
+      !exact?.categoryId &&
+      debouncedName.length >= 3,
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
-  const autoCategory = exact?.categoryId || (debouncedName === name.trim() ? predicted : "") || "";
-  const draftCategory = pickedCategory ?? (categoryName(autoCategory) ? autoCategory : "");
+  const autoCategory =
+    exact?.categoryId || (debouncedName === name.trim() ? predicted : "") || "";
+  const draftCategory =
+    pickedCategory ?? (categoryName(autoCategory) ? autoCategory : "");
 
   const priceMinor = toMinor(price);
   const canAdd = name.trim().length > 0 && priceMinor > 0 && quantity > 0;
@@ -229,9 +237,23 @@ export function ItemsSheet({
     // Сума з чека лишається, якщо кількість і ціну не чіпали (вагові товари).
     const original = editing === null ? undefined : items[editing];
     const keepTotal =
-      original && original.quantity === quantity && original.price === priceMinor ? original.total : undefined;
-    const item = { name: name.trim(), quantity, price: priceMinor, categoryId: draftCategory, total: keepTotal };
-    const next = editing === null ? [...items, item] : items.map((it, i) => (i === editing ? item : it));
+      original &&
+      original.quantity === quantity &&
+      original.price === priceMinor
+        ? original.total
+        : undefined;
+    const item = {
+      name: name.trim(),
+      quantity,
+      price: priceMinor,
+      categoryId: draftCategory,
+      total: keepTotal,
+      receiptSourceId: original?.receiptSourceId,
+    };
+    const next =
+      editing === null
+        ? [...items, item]
+        : items.map((it, i) => (i === editing ? item : it));
     onChange(next, discount);
     clearDraft();
     // Наступний товар — одразу з клавіатурою.
@@ -291,7 +313,11 @@ export function ItemsSheet({
       title="Товари"
       hideCancel
       trailing={
-        <SheetTextButton type="button" $bold onClick={() => onOpenChange(false)}>
+        <SheetTextButton
+          type="button"
+          $bold
+          onClick={() => onOpenChange(false)}
+        >
           Готово
         </SheetTextButton>
       }
@@ -339,10 +365,22 @@ export function ItemsSheet({
                   aria-label="Кількість"
                   value={quantity}
                   onChange={(e) =>
-                    setQuantity(Math.max(1, Number.parseInt(e.target.value.replace(/\D/g, ""), 10) || 1))
+                    setQuantity(
+                      Math.max(
+                        1,
+                        Number.parseInt(
+                          e.target.value.replace(/\D/g, ""),
+                          10,
+                        ) || 1,
+                      ),
+                    )
                   }
                 />
-                <StepButton type="button" aria-label="Більше" onClick={() => setQuantity((q) => q + 1)}>
+                <StepButton
+                  type="button"
+                  aria-label="Більше"
+                  onClick={() => setQuantity((q) => q + 1)}
+                >
                   <HiPlus size={18} />
                 </StepButton>
               </Stepper>
@@ -376,7 +414,11 @@ export function ItemsSheet({
               onClick={() => pickSuggestion(s)}
             >
               <strong>{s.name}</strong>
-              <span>{[money(s.price), categoryName(s.categoryId)].filter(Boolean).join(" · ")}</span>
+              <span>
+                {[money(s.price), categoryName(s.categoryId)]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
             </Suggestion>
           ))}
         </Suggestions>
@@ -399,14 +441,27 @@ export function ItemsSheet({
         <Section caption={`У чеку · ${items.length}`}>
           <Group>
             {items.map((item, index) => {
-              const category = categories.find((c) => c.id === (item.categoryId || mainCategoryId));
+              const category = categories.find(
+                (c) => c.id === (item.categoryId || mainCategoryId),
+              );
               return (
                 <Row
                   key={`${item.name}-${index}`}
                   onClick={() => edit(index)}
-                  leading={<Tile iconName={category?.icon} color={category?.color} size={30} />}
+                  leading={
+                    <Tile
+                      iconName={category?.icon}
+                      color={category?.color}
+                      size={30}
+                    />
+                  }
                   title={item.name}
-                  subtitle={[categoryName(category?.id ?? ""), item.quantity > 1 ? `${item.quantity} × ${money(item.price)}` : ""]
+                  subtitle={[
+                    categoryName(category?.id ?? ""),
+                    item.quantity > 1
+                      ? `${item.quantity} × ${money(item.price)}`
+                      : "",
+                  ]
                     .filter(Boolean)
                     .join(" · ")}
                   trailing={<Amount>{money(itemTotal(item))}</Amount>}
@@ -432,7 +487,10 @@ export function ItemsSheet({
             />
           }
         />
-        <Row title="Разом" trailing={total > 0 ? <Total>{money(total)}</Total> : <Meta>—</Meta>} />
+        <Row
+          title="Разом"
+          trailing={total > 0 ? <Total>{money(total)}</Total> : <Meta>—</Meta>}
+        />
       </Group>
 
       <CategoryPicker

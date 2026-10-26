@@ -57,7 +57,8 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
   car: <HiOutlineTruck size={17} />,
 };
 
-const assetIcon = (type?: string) => TYPE_ICON[type || ""] ?? <HiOutlineCube size={17} />;
+const assetIcon = (type?: string) =>
+  TYPE_ICON[type || ""] ?? <HiOutlineCube size={17} />;
 
 const Check = styled(HiCheck)`
   width: 20px;
@@ -124,10 +125,16 @@ export function AssetPicker({
   const filesInput = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState<NewAssetDraft | null>(null);
-  const { data: assets = [] } = useQuery({ queryKey: ["assets"], queryFn: getAssets, enabled: open });
+  const { data: assets = [] } = useQuery({
+    queryKey: ["assets"],
+    queryFn: getAssets,
+    enabled: open,
+  });
 
   const q = query.trim().toLowerCase();
-  const filtered = assets.filter((a: Asset) => !q || a.name.toLowerCase().includes(q));
+  const filtered = assets.filter(
+    (a: Asset) => !q || a.name.toLowerCase().includes(q),
+  );
 
   const close = (next: boolean) => {
     if (!next) {
@@ -143,7 +150,8 @@ export function AssetPicker({
   };
 
   if (draft) {
-    const warrantyEnd = draft.warranty_end ?? addYears(operationDate, 1).getTime();
+    const warrantyEnd =
+      draft.warranty_end ?? addYears(operationDate, 1).getTime();
     const withWarranty = hasWarranty(draft.type);
     const finish = () =>
       choose("", {
@@ -208,7 +216,9 @@ export function AssetPicker({
                   onChange={(e) =>
                     setDraft({
                       ...draft,
-                      warranty_end: e.target.value ? new Date(`${e.target.value}T12:00:00`).getTime() : undefined,
+                      warranty_end: e.target.value
+                        ? new Date(`${e.target.value}T12:00:00`).getTime()
+                        : undefined,
                     })
                   }
                 />
@@ -227,7 +237,10 @@ export function AssetPicker({
                   value={draft.mileage ?? ""}
                   onChange={(e) => {
                     const digits = e.target.value.replace(/\D/g, "");
-                    setDraft({ ...draft, mileage: digits ? Number(digits) : undefined });
+                    setDraft({
+                      ...draft,
+                      mileage: digits ? Number(digits) : undefined,
+                    });
                   }}
                 />
               }
@@ -237,7 +250,11 @@ export function AssetPicker({
             onClick={() => filesInput.current?.click()}
             leading={<HiOutlinePaperClip size={20} color="var(--m-accent)" />}
             title={withWarranty ? "Гарантійні документи" : "Документи й фото"}
-            trailing={<Meta>{draft.files.length ? `${draft.files.length} файл.` : "Додати"}</Meta>}
+            trailing={
+              <Meta>
+                {draft.files.length ? `${draft.files.length} файл.` : "Додати"}
+              </Meta>
+            }
             inset={48}
           />
         </Group>
@@ -259,17 +276,31 @@ export function AssetPicker({
 
   return (
     <Sheet nested open={open} onOpenChange={close} title="Актив">
-      {assets.length > 8 && <SearchField value={query} onChange={setQuery} label="Пошук активу" />}
+      {assets.length > 8 && (
+        <SearchField value={query} onChange={setQuery} label="Пошук активу" />
+      )}
       {(canCreate || assetId || newAsset) && (
         <Group>
           {canCreate && (
             <Row
-              onClick={() => setDraft(newAsset ?? { name: query.trim(), type: "other", files: [] })}
-              title={newAsset ? `Новий: ${newAsset.name} — змінити` : "Новий актив"}
+              onClick={() =>
+                setDraft(
+                  newAsset ?? { name: query.trim(), type: "other", files: [] },
+                )
+              }
+              title={
+                newAsset ? `Новий: ${newAsset.name} — змінити` : "Новий актив"
+              }
               inset={16}
             />
           )}
-          {(assetId || newAsset) && <Row onClick={() => choose("", null)} title="Без активу" inset={16} />}
+          {(assetId || newAsset) && (
+            <Row
+              onClick={() => choose("", null)}
+              title="Без активу"
+              inset={16}
+            />
+          )}
         </Group>
       )}
       {filtered.length > 0 && (
@@ -280,8 +311,14 @@ export function AssetPicker({
               onClick={() => choose(asset.id, null)}
               leading={<Tile icon={assetIcon(asset.type)} size={30} />}
               title={asset.name}
-              subtitle={asset.type === "car" && asset.mileage ? `${asset.mileage.toLocaleString("uk-UA")} км` : undefined}
-              trailing={asset.id === assetId ? <Check aria-label="Обрано" /> : undefined}
+              subtitle={
+                asset.type === "car" && asset.mileage
+                  ? `${asset.mileage.toLocaleString("uk-UA")} км`
+                  : undefined
+              }
+              trailing={
+                asset.id === assetId ? <Check aria-label="Обрано" /> : undefined
+              }
               inset={58}
             />
           ))}

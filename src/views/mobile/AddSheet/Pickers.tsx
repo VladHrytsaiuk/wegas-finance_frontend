@@ -28,7 +28,14 @@ interface CategoryPickerProps {
 }
 
 // Категорії згруповані за батьківською: батьківська теж вибирається.
-export function CategoryPicker({ open, onOpenChange, categories, value, onSelect, noneLabel }: CategoryPickerProps) {
+export function CategoryPicker({
+  open,
+  onOpenChange,
+  categories,
+  value,
+  onSelect,
+  noneLabel,
+}: CategoryPickerProps) {
   const [query, setQuery] = useState("");
 
   const groups = useMemo(() => {
@@ -37,7 +44,9 @@ export function CategoryPicker({ open, onOpenChange, categories, value, onSelect
     return parents
       .map((parent) => {
         const children = categories.filter((c) => c.parent_id === parent.id);
-        const items = [parent, ...children].filter((c) => !q || c.name.toLowerCase().includes(q));
+        const items = [parent, ...children].filter(
+          (c) => !q || c.name.toLowerCase().includes(q),
+        );
         return { parent, items };
       })
       .filter((g) => g.items.length > 0);
@@ -61,15 +70,24 @@ export function CategoryPicker({ open, onOpenChange, categories, value, onSelect
         </Group>
       )}
       {groups.map(({ parent, items }) => (
-        <Section key={parent.id} caption={items.length > 1 ? parent.name : undefined}>
+        <Section
+          key={parent.id}
+          caption={items.length > 1 ? parent.name : undefined}
+        >
           <Group>
             {items.map((c) => (
               <Row
                 key={c.id}
                 onClick={() => pick(c.id)}
                 leading={<Tile iconName={c.icon} color={c.color} size={30} />}
-                title={c.id === parent.id && items.length > 1 ? `${c.name} — загалом` : c.name}
-                trailing={c.id === value ? <Check aria-label="Обрано" /> : undefined}
+                title={
+                  c.id === parent.id && items.length > 1
+                    ? `${c.name} — загалом`
+                    : c.name
+                }
+                trailing={
+                  c.id === value ? <Check aria-label="Обрано" /> : undefined
+                }
                 inset={58}
               />
             ))}
@@ -111,26 +129,40 @@ export function AccountPicker({
     const q = query.trim().toLowerCase();
     const visible = accounts
       .filter((a) => !q || a.name.toLowerCase().includes(q))
-      .sort((a, b) => Number(!!a.is_synced) - Number(!!b.is_synced) || a.name.localeCompare(b.name));
+      .sort(
+        (a, b) =>
+          Number(!!a.is_synced) - Number(!!b.is_synced) ||
+          a.name.localeCompare(b.name),
+      );
     const groups = new Map<string, Account[]>();
     for (const account of visible) {
       const key = account.user_id || "";
       groups.set(key, [...(groups.get(key) || []), account]);
     }
     return [...groups.entries()]
-      .sort(([a], [b]) => Number(b === currentUserId) - Number(a === currentUserId))
+      .sort(
+        ([a], [b]) => Number(b === currentUserId) - Number(a === currentUserId),
+      )
       .map(([userId, items]) => ({
         userId,
-        caption: userId === currentUserId ? "Мої" : users.find((u) => u.id === userId)?.name || "Інші",
+        caption:
+          userId === currentUserId
+            ? "Мої"
+            : users.find((u) => u.id === userId)?.name || "Інші",
         items,
       }));
   }, [accounts, users, currentUserId, query]);
 
   return (
     <Sheet nested open={open} onOpenChange={onOpenChange} title={title}>
-      {accounts.length > 8 && <SearchField value={query} onChange={setQuery} label="Пошук рахунку" />}
+      {accounts.length > 8 && (
+        <SearchField value={query} onChange={setQuery} label="Пошук рахунку" />
+      )}
       {owners.map((owner) => (
-        <Section key={owner.userId} caption={owners.length > 1 ? owner.caption : undefined}>
+        <Section
+          key={owner.userId}
+          caption={owners.length > 1 ? owner.caption : undefined}
+        >
           <Group>
             {owner.items.map((account) => (
               <Row
@@ -142,12 +174,16 @@ export function AccountPicker({
                 }}
                 leading={<AccountTile account={account} size={30} />}
                 title={account.name}
-                subtitle={account.is_synced ? "Синхронізується з банком" : undefined}
+                subtitle={
+                  account.is_synced ? "Синхронізується з банком" : undefined
+                }
                 trailing={
                   account.id === value ? (
                     <Check aria-label="Обрано" />
                   ) : (
-                    <Meta>{formatMoney(account.balance, account.currency, language)}</Meta>
+                    <Meta>
+                      {formatMoney(account.balance, account.currency, language)}
+                    </Meta>
                   )
                 }
                 inset={58}

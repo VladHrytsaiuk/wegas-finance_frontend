@@ -38,6 +38,8 @@ export interface CreateTxItem {
   comment?: string;
   categoryId?: string;
   category_id?: string | null;
+  /** Лише при редагуванні: товар з чека, прив'язаного до операції. */
+  receipt_source_id?: string;
 }
 
 export interface CreateTxData {

@@ -35,10 +35,19 @@ interface TagPickerProps {
   onChange: (ids: string[]) => void;
 }
 
-export function TagPicker({ open, onOpenChange, value, onChange }: TagPickerProps) {
+export function TagPicker({
+  open,
+  onOpenChange,
+  value,
+  onChange,
+}: TagPickerProps) {
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
-  const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: getTagsApi, enabled: open });
+  const { data: tags = [] } = useQuery({
+    queryKey: ["tags"],
+    queryFn: getTagsApi,
+    enabled: open,
+  });
 
   const create = useMutation({
     mutationFn: (name: string) => createTagApi({ name, color: NEW_TAG_COLOR }),
@@ -51,9 +60,14 @@ export function TagPicker({ open, onOpenChange, value, onChange }: TagPickerProp
   });
 
   const q = query.trim();
-  const filtered = tags.filter((t) => !q || t.name.toLowerCase().includes(q.toLowerCase()));
+  const filtered = tags.filter(
+    (t) => !q || t.name.toLowerCase().includes(q.toLowerCase()),
+  );
   const exists = tags.some((t) => t.name.toLowerCase() === q.toLowerCase());
-  const toggle = (id: string) => onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id]);
+  const toggle = (id: string) =>
+    onChange(
+      value.includes(id) ? value.filter((v) => v !== id) : [...value, id],
+    );
 
   return (
     <Sheet
@@ -63,12 +77,21 @@ export function TagPicker({ open, onOpenChange, value, onChange }: TagPickerProp
       title="Теги"
       hideCancel
       trailing={
-        <SheetTextButton type="button" $bold onClick={() => onOpenChange(false)}>
+        <SheetTextButton
+          type="button"
+          $bold
+          onClick={() => onOpenChange(false)}
+        >
           Готово
         </SheetTextButton>
       }
     >
-      <SearchField value={query} onChange={setQuery} placeholder="Пошук або новий тег" label="Пошук тегу" />
+      <SearchField
+        value={query}
+        onChange={setQuery}
+        placeholder="Пошук або новий тег"
+        label="Пошук тегу"
+      />
       {q && !exists && (
         <Group>
           <Row
@@ -86,7 +109,11 @@ export function TagPicker({ open, onOpenChange, value, onChange }: TagPickerProp
               onClick={() => toggle(tag.id)}
               leading={<Dot $color={tag.color} />}
               title={tag.name}
-              trailing={value.includes(tag.id) ? <Check aria-label="Обрано" /> : undefined}
+              trailing={
+                value.includes(tag.id) ? (
+                  <Check aria-label="Обрано" />
+                ) : undefined
+              }
               inset={46}
             />
           ))}
