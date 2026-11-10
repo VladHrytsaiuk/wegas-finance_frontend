@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { useIsMobile as useIsMobileView } from "../../hooks/useIsMobile";
+import MobileWishlist from "../../views/mobile/Wishlist/MobileWishlist";
 import { useNavigate } from "react-router-dom";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus, HiFolderPlus } from "react-icons/hi2";
@@ -22,7 +24,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Wishlist.styles";
 
-export default function WishlistGroups() {
+function DesktopWishlistGroups() {
   return (
     <Modal>
       <WishlistGroupsContent />
@@ -227,4 +229,9 @@ function WishlistGroupsContent() {
     </S.PageContainer>
   </>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+export default function WishlistGroups() {
+  return useIsMobileView() ? <MobileWishlist /> : <DesktopWishlistGroups />;
 }
