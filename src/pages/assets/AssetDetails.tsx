@@ -24,6 +24,8 @@ import {
   HiOutlineArrowDownTray,
 } from "react-icons/hi2";
 
+import { useIsMobile as useIsMobileView } from "../../hooks/useIsMobile";
+import MobileAsset from "../../views/mobile/Assets/MobileAsset";
 import { Button } from "../../components/ui/Button";
 import { DetailPageSkeleton } from "../../components/ui/Skeleton/LoadingSkeletons";
 import Modal from "../../components/ui/Modal";
@@ -64,7 +66,7 @@ const ReceiptViewerWrapper = ({
   </S.ViewerWrapper>
 );
 
-export default function AssetDetails() {
+function DesktopAssetDetails() {
   const { state, actions, helpers, t } = useAssetDetails();
   const {
     asset,
@@ -538,4 +540,9 @@ export default function AssetDetails() {
       )}
     </S.PageContainer>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+export default function AssetDetails() {
+  return useIsMobileView() ? <MobileAsset /> : <DesktopAssetDetails />;
 }

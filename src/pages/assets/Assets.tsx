@@ -1,4 +1,6 @@
 import { HiPlus } from "react-icons/hi2";
+import { useIsMobile as useIsMobileView } from "../../hooks/useIsMobile";
+import MobileAssets from "../../views/mobile/Assets/MobileAssets";
 import { usePageTitle } from "../../hooks/usePageTitle";
 
 import Modal from "../../components/ui/Modal";
@@ -19,7 +21,7 @@ import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import * as S from "./Assets.styles";
 import { FAB } from "../../components/ui/FAB";
 
-export default function Assets() {
+function DesktopAssets() {
   const { state, actions, helpers, t } = useAssets();
   const isMobile = useIsMobile();
   usePageTitle(t("navigation:general.assets", "Майно"));
@@ -131,4 +133,9 @@ export default function Assets() {
     </S.PageContainer>
   </>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+export default function Assets() {
+  return useIsMobileView() ? <MobileAssets /> : <DesktopAssets />;
 }

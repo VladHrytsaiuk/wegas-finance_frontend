@@ -215,6 +215,16 @@ export interface Asset {
   serial_number?: string;
   note?: string;
 
+  // Продаж і підрахунки бекенда (стара сторінка їх не показувала)
+  is_sold?: boolean;
+  sold_price?: number;
+  stats?: {
+    total_expenses: number;
+    total_income: number;
+    tco: number;
+    current_value: number;
+  };
+
   // Фото
   photo?: string;
   photos?: { id: string; path: string }[];
