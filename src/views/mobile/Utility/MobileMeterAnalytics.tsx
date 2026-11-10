@@ -114,7 +114,7 @@ export default function MobileMeterAnalytics() {
 
   return (
     <Page>
-      <NavBar backLabel={meter.name} onBack={back} />
+      <NavBar backLabel="Лічильник" onBack={back} />
       <Body>
         <LargeTitle
           title="Аналітика"

@@ -73,8 +73,15 @@ export function ReadingSheet({ open, onOpenChange, meter }: Props) {
     !!date &&
     !lower;
 
-  // Як рахує бекенд: різниця з попереднім; перший показник — уся цифра.
-  const consumed = valid ? valueNumber - (hasPrevious ? previous : 0) : 0;
+  // Як рахує бекенд: різниця з попереднім. Перший показник лічильника — точка
+  // відліку (без нарахування); інтернет і квартплата платяться з першого запису.
+  const flatFee = meter.type === "internet" || meter.type === "rent";
+  const baseline = !hasPrevious && !flatFee;
+  const consumed = valid
+    ? baseline
+      ? 0
+      : valueNumber - (hasPrevious ? previous : 0)
+    : 0;
   const estimate = Math.round(consumed * tariffNumber * 100);
 
   const save = () => {
@@ -168,7 +175,12 @@ export function ReadingSheet({ open, onOpenChange, meter }: Props) {
         </Meta>
       </Section>
 
-      {valid && (
+      {valid && baseline && (
+        <Meta as="p" style={{ margin: 0, padding: "0 16px" }}>
+          Це перший показник: він стане точкою відліку, нарахування не буде.
+        </Meta>
+      )}
+      {valid && !baseline && (
         <Group>
           <Row
             title="До сплати орієнтовно"
