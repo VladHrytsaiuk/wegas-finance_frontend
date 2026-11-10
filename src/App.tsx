@@ -63,6 +63,7 @@ const Goals = lazy(() => import("./pages/Goals/Goals"));
 const MobileMore = lazy(() => import("./views/mobile/More/MobileMore"));
 const GoalDetails = lazy(() => import("./pages/Goals/GoalDetails"));
 const Shopping = lazy(() => import("./pages/Shopping/Shopping"));
+const ShoppingListPage = lazy(() => import("./pages/Shopping/ShoppingListPage"));
 const WishlistGroups = lazy(() => import("./pages/wishlist/WishlistGroups"));
 const WishlistItems = lazy(() => import("./pages/wishlist/WishlistItems"));
 const AdminCatalog = lazy(() => import("./pages/admin/AdminCatalog"));
@@ -322,6 +323,10 @@ function AppRoutes() {
             <Route
               path="shopping"
               element={withRouteSuspense(<Shopping />, "resources")}
+            />
+            <Route
+              path="shopping/:id"
+              element={withRouteSuspense(<ShoppingListPage />, "resources")}
             />
             <Route
               path="wishlist"

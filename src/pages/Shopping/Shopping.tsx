@@ -16,13 +16,14 @@ import { useShoppingFilters } from "../../hooks/Shopping/useShoppingFilters";
 import { useHeader } from "../../context/HeaderContext"; // Імпорт контексту заголовка
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import MobileShopping from "../../views/mobile/Shopping/MobileShopping";
 import * as S from "./Shopping.styles";
 import type { ShoppingVisibility } from "../../hooks/Shopping/useShoppingPage";
 
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
 function Shopping() {
-  return (
-    <ShoppingContent />
-  );
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileShopping /> : <ShoppingContent />;
 }
 
 function ShoppingContent() {
