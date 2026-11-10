@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-    <title>Finance Dashboard</title>
+    <title>FERP</title>
     
     <!-- PWA & iOS Tags -->
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#f2f2f7">
     <link rel="apple-touch-icon" href="/apple-icon-180.png?v=2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -30,7 +30,7 @@
           if (themeColorMeta) {
             themeColorMeta.setAttribute(
               "content",
-              theme === "dark" ? "#111827" : "#ffffff",
+              theme === "dark" ? "#000000" : "#f2f2f7",
             );
           }
         } catch (error) {
@@ -39,22 +39,19 @@
       })();
     </script>
     <style>
+      /* Екран запуску в стилі iOS: плитка застосунку, індикатор активності,
+         підпис етапу з'являється лише якщо завантаження затягнулось. */
       :root {
-        --bootstrap-bg: #f6f7fb;
-        --bootstrap-surface: rgba(255, 255, 255, 0.88);
-        --bootstrap-text: #667085;
-        --bootstrap-accent: #0f9f6e;
-        --bootstrap-accent-soft: rgba(15, 159, 110, 0.18);
-        --bootstrap-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        --boot-bg: #f2f2f7;
+        --boot-label: #6c6c70;
+        --boot-tile: #ffffff;
+        --boot-tile-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.1);
       }
 
       html[data-theme="dark"] {
-        --bootstrap-bg: #0f172a;
-        --bootstrap-surface: rgba(17, 24, 39, 0.92);
-        --bootstrap-text: #94a3b8;
-        --bootstrap-accent: #34d399;
-        --bootstrap-accent-soft: rgba(52, 211, 153, 0.18);
-        --bootstrap-shadow: 0 24px 60px rgba(2, 6, 23, 0.42);
+        --boot-bg: #000000;
+        --boot-label: #aeaeb2;
+        --boot-tile-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 10px 28px rgba(0, 0, 0, 0.6);
       }
 
       * {
@@ -69,23 +66,17 @@
       }
 
       body {
-        background:
-          radial-gradient(circle at top, rgba(15, 159, 110, 0.08), transparent 36%),
-          linear-gradient(180deg, #fbfcfe 0%, var(--bootstrap-bg) 100%);
+        background: var(--boot-bg);
         font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "SF Pro Text",
           Inter,
           ui-sans-serif,
           system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
           "Segoe UI",
           sans-serif;
-      }
-
-      html[data-theme="dark"] body {
-        background:
-          radial-gradient(circle at top, rgba(52, 211, 153, 0.12), transparent 30%),
-          linear-gradient(180deg, #0b1220 0%, var(--bootstrap-bg) 100%);
+        -webkit-font-smoothing: antialiased;
       }
 
       #app-bootstrap {
@@ -96,7 +87,8 @@
         align-items: center;
         justify-content: center;
         padding: 24px;
-        transition: opacity 180ms ease, visibility 180ms ease;
+        background: var(--boot-bg);
+        transition: opacity 220ms ease, visibility 220ms ease;
       }
 
       #app-bootstrap.is-hidden {
@@ -105,94 +97,115 @@
         pointer-events: none;
       }
 
-      .bootstrap-card {
-        width: min(360px, 100%);
+      .bootstrap-stack {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 18px;
-        padding: 28px 24px;
-        border: 1px solid rgba(15, 23, 42, 0.06);
-        border-radius: 24px;
-        background: var(--bootstrap-surface);
-        box-shadow: var(--bootstrap-shadow);
-        backdrop-filter: blur(10px);
+        /* Трохи вище середини — як на екрані запуску iOS. */
+        transform: translateY(-4vh);
       }
 
-      .bootstrap-spinner {
+      .bootstrap-tile {
+        display: grid;
+        place-items: center;
+        width: 88px;
+        height: 88px;
+        border-radius: 22%;
+        background: var(--boot-tile);
+        box-shadow: var(--boot-tile-shadow);
+        animation: boot-pop 520ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+      }
+
+      .bootstrap-tile svg {
         width: 52px;
         height: 52px;
-        border-radius: 50%;
-        background:
-          radial-gradient(farthest-side, var(--bootstrap-accent) 94%, transparent) top/10px 10px no-repeat,
-          conic-gradient(transparent 30%, var(--bootstrap-accent));
-        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 0);
-        mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 0);
-        animation: bootstrap-rotate 1s linear infinite;
       }
 
-      .bootstrap-text {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        text-align: center;
+      .ios-spinner {
+        position: relative;
+        width: 22px;
+        height: 22px;
+        margin-top: 40px;
+        color: var(--boot-label);
       }
 
+      .ios-spinner i {
+        position: absolute;
+        left: 10px;
+        top: 0;
+        width: 2px;
+        height: 6px;
+        border-radius: 1px;
+        background: currentColor;
+        transform-origin: 1px 11px;
+        opacity: 0.15;
+        animation: boot-fade 1.2s linear infinite;
+      }
+
+      .ios-spinner i:nth-child(1) { transform: rotate(0deg); animation-delay: -1.2s; }
+      .ios-spinner i:nth-child(2) { transform: rotate(30deg); animation-delay: -1.1s; }
+      .ios-spinner i:nth-child(3) { transform: rotate(60deg); animation-delay: -1s; }
+      .ios-spinner i:nth-child(4) { transform: rotate(90deg); animation-delay: -0.9s; }
+      .ios-spinner i:nth-child(5) { transform: rotate(120deg); animation-delay: -0.8s; }
+      .ios-spinner i:nth-child(6) { transform: rotate(150deg); animation-delay: -0.7s; }
+      .ios-spinner i:nth-child(7) { transform: rotate(180deg); animation-delay: -0.6s; }
+      .ios-spinner i:nth-child(8) { transform: rotate(210deg); animation-delay: -0.5s; }
+      .ios-spinner i:nth-child(9) { transform: rotate(240deg); animation-delay: -0.4s; }
+      .ios-spinner i:nth-child(10) { transform: rotate(270deg); animation-delay: -0.3s; }
+      .ios-spinner i:nth-child(11) { transform: rotate(300deg); animation-delay: -0.2s; }
+      .ios-spinner i:nth-child(12) { transform: rotate(330deg); animation-delay: -0.1s; }
+
+      /* Підпис етапу: лише якщо завантаження триває довше за секунду. */
       .bootstrap-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #101828;
-      }
-
-      html[data-theme="dark"] .bootstrap-title {
-        color: #f8fafc;
+        margin-top: 14px;
+        min-height: 18px;
+        font-size: 13px;
+        line-height: 18px;
+        color: var(--boot-label);
+        text-align: center;
+        opacity: 0;
+        animation: boot-late 300ms ease 1100ms forwards;
       }
 
       .bootstrap-subtitle {
-        max-width: 260px;
-        font-size: 14px;
-        line-height: 1.5;
-        color: var(--bootstrap-text);
+        display: none;
       }
 
-      .bootstrap-pulse {
-        width: 96px;
-        height: 8px;
-        border-radius: 999px;
-        background:
-          linear-gradient(90deg, transparent, var(--bootstrap-accent-soft), transparent);
-        background-size: 200% 100%;
-        animation: bootstrap-shimmer 1.2s ease-in-out infinite;
+      @keyframes boot-fade {
+        from { opacity: 1; }
+        to { opacity: 0.15; }
       }
 
-      @keyframes bootstrap-rotate {
-        to {
-          transform: rotate(1turn);
-        }
+      @keyframes boot-pop {
+        from { opacity: 0; transform: scale(0.92); }
+        to { opacity: 1; transform: scale(1); }
       }
 
-      @keyframes bootstrap-shimmer {
-        0% {
-          background-position: 200% 0;
-        }
-        100% {
-          background-position: -200% 0;
-        }
+      @keyframes boot-late {
+        to { opacity: 1; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .bootstrap-tile { animation: none; }
+        .ios-spinner i { animation: none; opacity: 0.5; }
+        .bootstrap-title { animation: none; opacity: 1; }
       }
     </style>
   </head>
   <body>
-    <div id="app-bootstrap" aria-live="polite" aria-busy="true">
-      <div class="bootstrap-card">
-        <div class="bootstrap-spinner"></div>
-        <div class="bootstrap-text">
-          <div class="bootstrap-title">Завантаження застосунку</div>
-          <div class="bootstrap-subtitle">
-            Підтягуємо інтерфейс, налаштування та дані сесії.
-          </div>
+    <div id="app-bootstrap" role="status" aria-live="polite" aria-busy="true">
+      <div class="bootstrap-stack">
+        <div class="bootstrap-tile" aria-hidden="true">
+          <svg viewBox="2.5 1.5 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6.98103L4.68196 12.5255L5.53415 9.61091L4.92864 7.42838C4.86884 7.27926 4.6685 6.98103 4.34557 6.98103H3Z" fill="#16BE8C"/>
+            <path d="M4.83894 12.9999L6.72273 6.60145L7.61978 9.61091L6.7788 12.539C6.70031 12.7288 6.52987 12.9349 6.20693 12.9999H4.83894Z" fill="#16BE8C"/>
+            <path d="M6.91335 6.11343L8.83079 12.5255L9.68298 9.61091L8.88685 6.66924C8.83826 6.54271 8.77472 6.22189 8.34862 6.11343L8.25049 6.11344C7.93856 6.11344 7.23174 6.11344 6.91335 6.11343Z" fill="#0B5C45"/>
+            <path d="M8.99898 12.9999L12.0265 2.54823C12.0788 2.37006 12.2732 2.01096 12.632 2C12.9908 1.98904 13.6935 1.99543 14 2L10.9949 12.3357C10.9239 12.5571 10.6966 13 10.3558 13L8.99898 12.9999Z" fill="#0B5C45"/>
+          </svg>
         </div>
-        <div class="bootstrap-pulse"></div>
+        <div class="ios-spinner" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="bootstrap-title">Запускаємо застосунок…</div>
+        <div class="bootstrap-subtitle"></div>
       </div>
     </div>
     <div id="root"></div>

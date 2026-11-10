@@ -39,6 +39,7 @@ import { isDiscountItem } from "../../../components/transactions/form/itemUtils"
 import { AccountTile } from "../../../mobile/accountTile";
 import { categoryLabel } from "../../../mobile/categoryLabel";
 import { Section, Group, Row, Amount, Meta } from "../../../mobile/ui/Group";
+import { ScreenState } from "../../../mobile/ui/Loader";
 import { NavBar, NavButton } from "../../../mobile/ui/NavBar";
 import {
   ConfirmSheet,
@@ -240,12 +241,6 @@ const Footnote = styled.p`
   color: var(--m-label-2);
 `;
 
-const Center = styled.p`
-  margin: 40vh 0 0;
-  text-align: center;
-  color: var(--m-label-2);
-`;
-
 // Курс у звичному напрямку: «1 USD ≈ 41,0000 UAH», а не «1 UAH ≈ 0,0244 USD».
 function rateText(
   fromAmount: number,
@@ -390,7 +385,7 @@ export default function MobileTransaction() {
     return (
       <Page>
         <NavBar backLabel="Операції" onBack={back} />
-        <Center>Завантаження…</Center>
+        <ScreenState loading>Завантаження…</ScreenState>
       </Page>
     );
   }
@@ -398,7 +393,7 @@ export default function MobileTransaction() {
     return (
       <Page>
         <NavBar backLabel="Операції" onBack={back} />
-        <Center>Операцію не знайдено</Center>
+        <ScreenState>Операцію не знайдено</ScreenState>
       </Page>
     );
   }

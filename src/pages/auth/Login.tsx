@@ -12,12 +12,14 @@ import {
 
 import { useLogin } from "../../hooks/Auth/useLogin";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileLogin from "../../views/mobile/Auth/MobileLogin";
 
 interface LoginProps {
   setToken: (token: string) => void;
 }
 
-function Login({ setToken }: LoginProps) {
+function DesktopLogin({ setToken }: LoginProps) {
   const { state, actions, t } = useLogin({ setToken });
   const navigate = useNavigate();
   
@@ -127,6 +129,12 @@ function Login({ setToken }: LoginProps) {
       </AuthForm>
     </AuthLayout>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function Login({ setToken }: LoginProps) {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileLogin setToken={setToken} /> : <DesktopLogin setToken={setToken} />;
 }
 
 export default Login;

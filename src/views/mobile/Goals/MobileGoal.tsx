@@ -20,6 +20,7 @@ import { formatMoney, getUploadedFileUrl } from "../../../utils/helpers";
 import { safeExternalUrl } from "../../../utils/safeUrl";
 import { AccountTile } from "../../../mobile/accountTile";
 import { Section, Group, Row, Amount, Meta } from "../../../mobile/ui/Group";
+import { ScreenState } from "../../../mobile/ui/Loader";
 import { NavBar, NavButton } from "../../../mobile/ui/NavBar";
 import {
   ConfirmSheet,
@@ -189,12 +190,6 @@ const DateField = styled.input`
   text-align: right;
 `;
 
-const Center = styled.p`
-  margin: 40vh 0 0;
-  text-align: center;
-  color: var(--m-label-2);
-`;
-
 const FORECAST: Record<string, string> = {
   reached: "Ціль досягнута",
   on_track: "Встигаєте вчасно",
@@ -262,7 +257,7 @@ export default function MobileGoal() {
     return (
       <Page>
         <NavBar backLabel="Цілі" onBack={back} />
-        <Center>Завантаження…</Center>
+        <ScreenState loading>Завантаження…</ScreenState>
       </Page>
     );
   }
@@ -270,7 +265,7 @@ export default function MobileGoal() {
     return (
       <Page>
         <NavBar backLabel="Цілі" onBack={back} />
-        <Center>Ціль не знайдено</Center>
+        <ScreenState>Ціль не знайдено</ScreenState>
       </Page>
     );
   }

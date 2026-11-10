@@ -1,3 +1,5 @@
+import { StatusScreen } from "./mobile/StatusScreen";
+import { useIsMobile } from "./hooks/useIsMobile";
 import { lazy, Suspense, useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -155,6 +157,7 @@ function AppRoutes() {
   const location = useLocation();
   const background = (location.state as ModalLocationState | null)?.background;
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // 1. Initial check for maintenance mode
@@ -188,6 +191,17 @@ function AppRoutes() {
     const bootstrapElement = document.getElementById("app-bootstrap");
     if (bootstrapElement) bootstrapElement.classList.add("is-hidden");
     window.dispatchEvent(new Event("app:ready"));
+
+    if (isMobile) {
+      return (
+        <StatusScreen
+          title="Система в режимі обслуговування"
+          message="Зараз проводяться технічні роботи. Ми повернемось до роботи якнайшвидше! Спробуйте оновити сторінку пізніше."
+          actionLabel="Оновити сторінку"
+          onAction={() => window.location.reload()}
+        />
+      );
+    }
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--color-bg-page)', color: 'var(--color-text-main)', textAlign: 'center', padding: '2rem' }}>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 export function usePageTitle(title?: string) {
   const { t, i18n } = useTranslation();
   
-  const appName = t('common:shared.app_name', 'Фінансовий дашборд');
+  const appName = t('common:shared.app_name', 'FERP');
 
   useEffect(() => {
     if (title) {

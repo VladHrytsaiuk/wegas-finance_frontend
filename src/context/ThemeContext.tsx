@@ -51,7 +51,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     if (themeColorMeta) {
       themeColorMeta.setAttribute(
         "content",
-        theme === "dark" ? "#111827" : "#ffffff",
+        theme === "dark" ? "#000000" : "#f2f2f7",
       );
     }
   }, [theme]);

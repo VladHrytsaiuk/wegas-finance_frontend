@@ -28,6 +28,7 @@ import { formatMoney, getUploadedFileUrl } from "../../../utils/helpers";
 import { safeExternalUrl } from "../../../utils/safeUrl";
 import { categoryLabel } from "../../../mobile/categoryLabel";
 import { Section, Group, Row, Amount, Meta } from "../../../mobile/ui/Group";
+import { ScreenState } from "../../../mobile/ui/Loader";
 import { NavBar } from "../../../mobile/ui/NavBar";
 import {
   ConfirmSheet,
@@ -188,12 +189,6 @@ const Empty = styled.p`
   text-align: center;
 `;
 
-const Center = styled.p`
-  margin: 40vh 0 0;
-  text-align: center;
-  color: var(--m-label-2);
-`;
-
 const errorMessage = (error: unknown, fallback: string) =>
   (axios.isAxiosError(error) && error.response?.data?.error) || fallback;
 
@@ -323,7 +318,7 @@ export default function MobileInboxEntry() {
     return (
       <Page>
         <NavBar backLabel="Чеки" onBack={back} />
-        <Center>Завантаження…</Center>
+        <ScreenState loading>Завантаження…</ScreenState>
       </Page>
     );
   }
@@ -331,7 +326,7 @@ export default function MobileInboxEntry() {
     return (
       <Page>
         <NavBar backLabel="Чеки" onBack={back} />
-        <Center>Не вдалося відкрити чек</Center>
+        <ScreenState>Не вдалося відкрити чек</ScreenState>
       </Page>
     );
   }

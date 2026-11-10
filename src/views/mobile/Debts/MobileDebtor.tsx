@@ -24,6 +24,7 @@ import { formatMoney, sortTransactions } from "../../../utils/helpers";
 import type { TransactionListItem } from "../../../hooks/Transactions/useTransactionItem";
 import { CounterpartyTile } from "../../../mobile/counterpartyTile";
 import { Section, Group, Row, Meta } from "../../../mobile/ui/Group";
+import { ScreenState } from "../../../mobile/ui/Loader";
 import { NavBar, NavButton } from "../../../mobile/ui/NavBar";
 import { Segmented } from "../../../mobile/ui/Segmented";
 import { PrimaryButton, Sheet } from "../../../mobile/ui/Sheet";
@@ -166,12 +167,6 @@ const Chip = styled.button<{ $active: boolean }>`
   background: ${(p) => (p.$active ? "var(--m-accent)" : "var(--m-surface)")};
 `;
 
-const Center = styled.p`
-  margin: 40vh 0 0;
-  text-align: center;
-  color: var(--m-label-2);
-`;
-
 const EPS = 1;
 type CpType = "person" | "shop" | "other";
 
@@ -295,7 +290,7 @@ export default function MobileDebtor() {
     return (
       <Page>
         <NavBar backLabel="Борги" onBack={back} />
-        <Center>Завантаження…</Center>
+        <ScreenState loading>Завантаження…</ScreenState>
       </Page>
     );
   }
@@ -303,7 +298,7 @@ export default function MobileDebtor() {
     return (
       <Page>
         <NavBar backLabel="Борги" onBack={back} />
-        <Center>Не знайдено</Center>
+        <ScreenState>Не знайдено</ScreenState>
       </Page>
     );
   }

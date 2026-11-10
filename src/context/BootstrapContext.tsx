@@ -23,18 +23,9 @@ const STAGE_COPY: Record<
   Exclude<BootstrapStage, "hidden">,
   { title: string; subtitle: string }
 > = {
-  bootstrap: {
-    title: "Завантаження застосунку",
-    subtitle: "Підтягуємо інтерфейс, налаштування та дані сесії.",
-  },
-  auth: {
-    title: "Перевірка авторизації",
-    subtitle: "Підтверджуємо сесію та права доступу.",
-  },
-  resources: {
-    title: "Завантаження ресурсів",
-    subtitle: "Готуємо сторінку, модулі та потрібні дані інтерфейсу.",
-  },
+  bootstrap: { title: "Запускаємо застосунок…", subtitle: "" },
+  auth: { title: "Перевіряємо вхід…", subtitle: "" },
+  resources: { title: "Завантажуємо дані…", subtitle: "" },
 };
 
 export function BootstrapProvider({ children }: { children: ReactNode }) {

@@ -12,8 +12,10 @@ import {
 
 import { useRegister } from "../../hooks/Auth/useRegister";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileRegister from "../../views/mobile/Auth/MobileRegister";
 
-function Register() {
+function DesktopRegister() {
   const { state, actions, t } = useRegister();
   usePageTitle(t("auth:auth.register_title", "Реєстрація"));
   const { name, email, password, inviteCode, isPending } = state;
@@ -127,6 +129,12 @@ function Register() {
       </AuthForm>
     </AuthLayout>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+function Register() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileRegister /> : <DesktopRegister />;
 }
 
 export default Register;
