@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MobileMeter from "../../views/mobile/Utility/MobileMeter";
 import { format, isValid } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -51,7 +52,7 @@ const extractTransactionId = (response: TransactionSuccessPayload) => {
   return response?.id || response?.data?.id || null;
 };
 
-export default function UtilityDetails() {
+function DesktopUtilityDetails() {
   return (
     <Modal>
       <UtilityDetailsContent />
@@ -444,4 +445,9 @@ function UtilityDetailsContent() {
       )}
     </>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+export default function UtilityDetails() {
+  return useIsMobile() ? <MobileMeter /> : <DesktopUtilityDetails />;
 }

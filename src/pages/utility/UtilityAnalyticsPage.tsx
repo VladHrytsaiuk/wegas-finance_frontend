@@ -8,6 +8,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileUtilityAnalytics from "../../views/mobile/Utility/MobileUtilityAnalytics";
 import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 import { useTranslation } from "react-i18next";
 
@@ -35,7 +37,7 @@ import {
 // configuration for Recharts legend
 const legendStyle = { paddingTop: "20px" };
 
-export default function UtilityAnalyticsPage() {
+function DesktopUtilityAnalyticsPage() {
   const {
     isLoading,
     chartData,
@@ -148,4 +150,9 @@ export default function UtilityAnalyticsPage() {
       )}
     </PageContainer>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими даними.
+export default function UtilityAnalyticsPage() {
+  return useIsMobile() ? <MobileUtilityAnalytics /> : <DesktopUtilityAnalyticsPage />;
 }

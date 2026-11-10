@@ -110,6 +110,8 @@ interface AssetPickerProps {
   canCreate: boolean;
   /** Дата операції — для гарантії за замовчуванням. */
   operationDate: number;
+  /** Лише назва, тип і гарантія: без пробігу та документів (де їх нікуди зберігати). */
+  simple?: boolean;
   onChange: (assetId: string, newAsset: NewAssetDraft | null) => void;
 }
 
@@ -120,6 +122,7 @@ export function AssetPicker({
   newAsset,
   canCreate,
   operationDate,
+  simple,
   onChange,
 }: AssetPickerProps) {
   const filesInput = useRef<HTMLInputElement>(null);
@@ -225,7 +228,7 @@ export function AssetPicker({
               }
             />
           )}
-          {draft.type === "car" && (
+          {draft.type === "car" && !simple && (
             <Row
               title="Пробіг, км"
               trailing={
@@ -246,17 +249,21 @@ export function AssetPicker({
               }
             />
           )}
-          <Row
-            onClick={() => filesInput.current?.click()}
-            leading={<HiOutlinePaperClip size={20} color="var(--m-accent)" />}
-            title={withWarranty ? "Гарантійні документи" : "Документи й фото"}
-            trailing={
-              <Meta>
-                {draft.files.length ? `${draft.files.length} файл.` : "Додати"}
-              </Meta>
-            }
-            inset={48}
-          />
+          {!simple && (
+            <Row
+              onClick={() => filesInput.current?.click()}
+              leading={<HiOutlinePaperClip size={20} color="var(--m-accent)" />}
+              title={withWarranty ? "Гарантійні документи" : "Документи й фото"}
+              trailing={
+                <Meta>
+                  {draft.files.length
+                    ? `${draft.files.length} файл.`
+                    : "Додати"}
+                </Meta>
+              }
+              inset={48}
+            />
+          )}
         </Group>
         <input
           ref={filesInput}

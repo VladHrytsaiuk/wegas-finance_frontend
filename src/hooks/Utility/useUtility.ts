@@ -86,6 +86,7 @@ export function useUtilityReadings(meterId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityReadings", meterId] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
+      queryClient.invalidateQueries({ queryKey: ["utilityMeter"] });
       toast.success(t("stats_utility:utility.toast_reading_add_success"));
     },
     onError: (error: unknown) =>
@@ -100,6 +101,7 @@ export function useUtilityReadings(meterId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["utilityReadings", meterId] });
       queryClient.invalidateQueries({ queryKey: ["utilityMeters"] });
+      queryClient.invalidateQueries({ queryKey: ["utilityMeter"] });
       toast.success(t("stats_utility:utility.toast_reading_delete_success"));
     },
   });

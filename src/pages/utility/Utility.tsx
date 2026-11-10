@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import MobileUtility from "../../views/mobile/Utility/MobileUtility";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { HiPlus, HiOutlineBolt, HiChartBar } from "react-icons/hi2";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -26,7 +27,7 @@ import AddReadingForm from "../../components/utility/AddReadingModal";
 import UtilityMeterCard from "../../components/utility/UtilityMeterCard";
 import type { UtilityMeter } from "../../types";
 
-export default function Utility() {
+function DesktopUtility() {
   return (
     <Modal>
       <UtilityContent />
@@ -60,10 +61,10 @@ function UtilityContent() {
   const [activeMeter, setActiveMeter] = useState<UtilityMeter | null>(null);
 
   // Стабілізуємо хендлери для UtilityMeterCard
-  // const handleMeterClick = useCallback(
-  //   (id: string) => navigate(`/utility/${id}`),
-  //   [navigate],
-  // );
+  const handleMeterClick = useCallback(
+    (id: string) => navigate(`/utility/${id}`),
+    [navigate],
+  );
 
   const handleMeterEdit = useCallback(
     (meter: UtilityMeter) => {
@@ -199,6 +200,7 @@ function UtilityContent() {
                   <UtilityMeterCard
                     key={meter.id}
                     meter={meter}
+                    onClick={handleMeterClick}
                     onEdit={handleMeterEdit}
                     onDelete={handleMeterDelete}
                     onPay={handleMeterPay}
@@ -269,4 +271,9 @@ function UtilityContent() {
       </S.PageContainer>
     </>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими можливостями.
+export default function Utility() {
+  return useIsMobile() ? <MobileUtility /> : <DesktopUtility />;
 }

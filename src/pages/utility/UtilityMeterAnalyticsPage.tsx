@@ -9,6 +9,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileMeterAnalytics from "../../views/mobile/Utility/MobileMeterAnalytics";
 import { HiArrowLeft, HiChartBar } from "react-icons/hi2";
 
 import TariffHistoryChart from "../../components/utility/TariffHistoryChart";
@@ -24,7 +26,7 @@ import { useMeterAnalytics } from "../../hooks/Utility/useUtilityMeterAnalyticsP
 import * as S from "./UtilityMeterAnalyticsPage.styles";
 import { useTranslation } from "react-i18next";
 
-export default function UtilityMeterAnalyticsPage() {
+function DesktopUtilityMeterAnalyticsPage() {
   const { meter, stats, isLoading, hasData, handleBack, meterId } =
     useMeterAnalytics();
   const { t } = useTranslation();
@@ -136,4 +138,9 @@ export default function UtilityMeterAnalyticsPage() {
       )}
     </S.PageContainer>
   );
+}
+
+// На мобілці — новий екран у стилі iOS з тими самими даними.
+export default function UtilityMeterAnalyticsPage() {
+  return useIsMobile() ? <MobileMeterAnalytics /> : <DesktopUtilityMeterAnalyticsPage />;
 }
