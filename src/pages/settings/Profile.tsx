@@ -9,6 +9,8 @@ import {
   HiBolt,
 } from "react-icons/hi2";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
+import MobileProfile from "../../views/mobile/Settings/MobileProfile";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "../../components/ui/Button";
@@ -53,7 +55,7 @@ const DisconnectModalAdapter = ({
 
 // --- MAIN PROFILE COMPONENT ---
 
-function Profile() {
+function DesktopProfile() {
   const { state, actions, t } = useProfileForm();
   const isMobile = useIsMobile();
   const { name, email, isLoading, isUpdating } = state;
@@ -523,6 +525,14 @@ function Profile() {
       </Modal.Window>
     </Modal>
   );
+}
+
+function Profile() {
+  const isMobile = useIsMobile();
+  const { pathname } = useLocation();
+  // Інтеграції (Monobank, Telegram) поки що на старому екрані.
+  if (isMobile && pathname.endsWith("/profile")) return <MobileProfile />;
+  return <DesktopProfile />;
 }
 
 export default Profile;

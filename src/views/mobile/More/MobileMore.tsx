@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   HiOutlineChartBar,
@@ -10,6 +10,7 @@ import {
   HiOutlineBolt,
   HiOutlineCog6Tooth,
   HiOutlineShieldCheck,
+  HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
 
 import { usePageTitle } from "../../../hooks/usePageTitle";
@@ -22,6 +23,7 @@ import { getCounterpartiesApi } from "../../../services/apiCounterparties";
 import { Screen, LargeTitle } from "../../../mobile/ui/Screen";
 import { Section, Group, Row, Meta } from "../../../mobile/ui/Group";
 import { Tile } from "../../../mobile/ui/Tile";
+import { FeedbackSheet } from "../../../mobile/FeedbackSheet";
 
 interface Item {
   to: string;
@@ -36,6 +38,7 @@ function MobileMore() {
   usePageTitle("Ще");
   const { user } = useUserRole();
   const { currency, language } = useSettings();
+  const [feedback, setFeedback] = useState(false);
 
   const { data: goals = [] } = useQuery({ queryKey: ["goals"], queryFn: getGoalsApi });
   const { data: lists = [] } = useQuery({ queryKey: ["shopping-lists"], queryFn: getShoppingListsApi });
@@ -123,6 +126,16 @@ function MobileMore() {
           </Group>
         </Section>
       ))}
+      <Group>
+        <Row
+          onClick={() => setFeedback(true)}
+          leading={icon(<HiOutlineChatBubbleLeftRight size={18} />)}
+          title="Підтримка / Баг"
+          inset={58}
+          chevron
+        />
+      </Group>
+      <FeedbackSheet open={feedback} onOpenChange={setFeedback} />
     </Screen>
   );
 }

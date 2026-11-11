@@ -25,6 +25,7 @@ import { ModernPinInput } from "../../components/auth/ModernPinInput";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { useChangePasswordForm } from "../../hooks/Settings/useProfile";
 
+import MobileSecurity from "../../views/mobile/Settings/MobileSecurity";
 import * as S from "./Security.styles";
 
 // --- PIN CODE FORM ---
@@ -418,12 +419,17 @@ function SecurityContent() {
   );
 }
 
-function Security() {
+function DesktopSecurity() {
   return (
     <Modal>
       <SecurityContent />
     </Modal>
   );
+}
+
+function Security() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileSecurity /> : <DesktopSecurity />;
 }
 
 export default Security;

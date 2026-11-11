@@ -1,308 +1,182 @@
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { 
-  HiOutlineUser, 
-  HiOutlineGlobeAlt, 
-  HiOutlineRectangleGroup, 
-  HiOutlineTag,
+import { useState, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  HiOutlineArrowDownTray,
   HiOutlineArrowRightOnRectangle,
+  HiOutlineCog6Tooth,
+  HiOutlinePuzzlePiece,
+  HiOutlineRectangleGroup,
+  HiOutlineShieldCheck,
+  HiOutlineTag,
   HiOutlineUserGroup,
-  HiOutlineDocumentArrowDown,
-  HiOutlineChevronRight,
   HiOutlineUsers,
-  HiOutlineShieldCheck
-  ,HiOutlineBanknotes
 } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useSettingsLayout } from "../../../hooks/Settings/useSettingsLayout";
-import Modal from "../../../components/ui/Modal";
-import ConfirmLogout from "../../../components/ui/ConfirmLogout";
+import { getMeApi, getUsersApi } from "../../../services/apiUsers";
+import { ConfirmSheet } from "../../../mobile/ui/ConfirmSheet";
+import { Group, Meta, Row, Section } from "../../../mobile/ui/Group";
+import { NavBar } from "../../../mobile/ui/NavBar";
+import { LargeTitle } from "../../../mobile/ui/Screen";
+import { Tile } from "../../../mobile/ui/Tile";
 
-const StyledMobileSettings = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: var(--color-bg-page);
-  min-height: 100vh;
+// Налаштування: профіль зверху, далі розділи. Кожен розділ — окремий екран.
+
+const Page = styled.div.attrs<{ "data-m-screen"?: string }>({
+  "data-m-screen": "",
+})`
+  min-height: 100%;
+  background: var(--m-bg);
+  color: var(--m-label);
+  font-family: var(--m-font);
+  -webkit-font-smoothing: antialiased;
 `;
 
-const StickyHeader = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background-color: var(--color-bg-surface);
-  padding: 16px 20px;
-  padding-top: max(16px, env(safe-area-inset-top));
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-`;
-
-const HeaderTitle = styled.h1`
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--color-text-main);
-  letter-spacing: -0.5px;
-`;
-
-const Content = styled.div`
+const Body = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 20px 16px;
+  padding: 0 16px 32px;
 `;
 
-const Section = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-left: 12px;
-  margin-bottom: 4px;
-`;
-
-const ListGroup = styled.div`
-  background-color: var(--color-bg-surface);
-  border-radius: 16px;
-  border: 1px solid var(--color-border);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-`;
-
-const ListItem = styled(Link)<{ $isLast?: boolean; $isDestructive?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  text-decoration: none;
-  color: ${props => props.$isDestructive ? 'var(--color-red-600)' : 'var(--color-text-main)'};
-  background-color: transparent;
-  border-bottom: ${props => props.$isLast ? 'none' : '1px solid var(--color-border)'};
-  transition: background-color 0.2s;
-
-  &:active {
-    background-color: var(--color-bg-hover);
-  }
-`;
-
-const ListButton = styled.button<{ $isLast?: boolean; $isDestructive?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  width: 100%;
-  border: none;
-  background-color: transparent;
-  color: ${props => props.$isDestructive ? 'var(--color-red-600)' : 'var(--color-text-main)'};
-  border-bottom: ${props => props.$isLast ? 'none' : '1px solid var(--color-border)'};
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:active {
-    background-color: var(--color-bg-hover);
-  }
-`;
-
-const LeftSide = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 14px;
-`;
-
-const IconBox = styled.div<{ $bg: string }>`
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: ${props => props.$bg};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
-const Label = styled.span`
-  font-size: 16px;
+const Avatar = styled.span`
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 24px;
   font-weight: 600;
+  color: var(--m-on-accent);
+  background: var(--m-accent);
 `;
 
-const RightSide = styled.div`
-  color: var(--color-text-tertiary);
-  display: flex;
-  align-items: center;
+const icon = (node: ReactNode) => <Tile icon={node} tint="gray" size={30} />;
 
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-`;
+const ROLE_LABEL: Record<string, string> = {
+  admin: "CEO сім'ї",
+  member: "Акціонер",
+  child: "Стартапер",
+};
 
 function MobileSettings() {
-  const { t, actions } = useSettingsLayout();
-  usePageTitle(t("settings:settingsLayout.header"));
+  usePageTitle("Налаштування");
+  const navigate = useNavigate();
+  const { actions } = useSettingsLayout();
+  const [logoutOpen, setLogoutOpen] = useState(false);
+
+  const { data: me } = useQuery({ queryKey: ["me"], queryFn: getMeApi });
+  const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: getUsersApi });
+  const members = Array.isArray(users) ? users.length : 0;
 
   return (
-    <Modal>
-      <StyledMobileSettings>
-        <StickyHeader>
-          <HeaderTitle>{t("settings:settingsLayout.header")}</HeaderTitle>
-        </StickyHeader>
+    <Page>
+      <NavBar backLabel="Ще" onBack={() => navigate("/more")} />
+      <Body>
+        <LargeTitle title="Налаштування" />
 
-        <Content>
-          <Section>
-            <SectionTitle>Фінанси</SectionTitle>
-            <ListGroup>
-              <ListItem to="/settings/finance" $isLast>
-                <LeftSide><IconBox $bg="#10b981"><HiOutlineBanknotes /></IconBox><Label>Фінанси</Label></LeftSide>
-                <RightSide><HiOutlineChevronRight /></RightSide>
-              </ListItem>
-            </ListGroup>
-          </Section>
-
-          <Section>
-            <SectionTitle>{t("settings:settingsLayout.group_account")}</SectionTitle>
-            <ListGroup>
-              <ListItem to="/settings/profile">
-                <LeftSide>
-                  <IconBox $bg="#8b5cf6">
-                    <HiOutlineUser />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_profile")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/users" $isLast>
-                <LeftSide>
-                  <IconBox $bg="#6366f1">
-                    <HiOutlineUserGroup />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_users")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-            </ListGroup>
-          </Section>
-
-          <Section>
-            <SectionTitle>{t("settings:settingsLayout.group_structure")}</SectionTitle>
-            <ListGroup>
-              <ListItem to="/settings/categories">
-                <LeftSide>
-                  <IconBox $bg="#f59e0b">
-                    <HiOutlineRectangleGroup />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_categories")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/tags">
-                <LeftSide>
-                  <IconBox $bg="#ec4899">
-                    <HiOutlineTag />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_tags")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/counterparties">
-                <LeftSide>
-                  <IconBox $bg="#10b981">
-                    <HiOutlineUsers />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_counterparties")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/export" $isLast>
-                <LeftSide>
-                  <IconBox $bg="#06b6d4">
-                    <HiOutlineDocumentArrowDown />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_export")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-            </ListGroup>
-          </Section>
-
-          <Section>
-            <SectionTitle>{t("settings:settingsLayout.group_system")}</SectionTitle>
-            <ListGroup>
-              <ListItem to="/settings/general">
-                <LeftSide>
-                  <IconBox $bg="#3b82f6">
-                    <HiOutlineGlobeAlt />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_general")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-
-              <ListItem to="/settings/security" $isLast>
-                <LeftSide>
-                  <IconBox $bg="#10b981">
-                    <HiOutlineShieldCheck />
-                  </IconBox>
-                  <Label>{t("settings:settingsLayout.menu_security", "Безпека")}</Label>
-                </LeftSide>
-                <RightSide>
-                  <HiOutlineChevronRight />
-                </RightSide>
-              </ListItem>
-            </ListGroup>
-          </Section>
-
-          <Section>
-            <ListGroup>
-              <Modal.Open opens="logout">
-                <ListButton $isLast $isDestructive>
-                  <LeftSide>
-                    <IconBox $bg="#ef4444">
-                      <HiOutlineArrowRightOnRectangle />
-                    </IconBox>
-                    <Label>{t("settings:settingsLayout.menu_logout")}</Label>
-                  </LeftSide>
-                </ListButton>
-              </Modal.Open>
-            </ListGroup>
-          </Section>
-        </Content>
-
-        <Modal.Window name="logout">
-          <ConfirmLogout
-            resourceName={t("settings:settingsLayout.menu_logout")}
-            onConfirm={actions.handleLogout}
+        <Group>
+          <Row
+            to="/settings/profile"
+            leading={<Avatar aria-hidden="true">{(me?.name || "?").trim().charAt(0).toUpperCase()}</Avatar>}
+            title={me?.name || "Профіль"}
+            subtitle={me?.email ? `${me.email}${me.role_id ? ` · ${ROLE_LABEL[me.role_id] ?? ""}` : ""}` : undefined}
+            chevron
+            inset={84}
           />
-        </Modal.Window>
-      </StyledMobileSettings>
-    </Modal>
+        </Group>
+
+        <Group>
+          <Row
+            to="/settings/users"
+            leading={icon(<HiOutlineUserGroup size={18} />)}
+            title="Родина"
+            trailing={members > 0 ? <Meta>{members}</Meta> : undefined}
+            inset={58}
+            chevron
+          />
+          <Row
+            to="/settings/integrations"
+            leading={icon(<HiOutlinePuzzlePiece size={18} />)}
+            title="Інтеграції"
+            trailing={<Meta>Monobank, Telegram</Meta>}
+            inset={58}
+            chevron
+          />
+        </Group>
+
+        <Section caption="Довідники">
+          <Group>
+            <Row
+              to="/settings/categories"
+              leading={icon(<HiOutlineRectangleGroup size={18} />)}
+              title="Категорії"
+              inset={58}
+              chevron
+            />
+            <Row
+              to="/settings/tags"
+              leading={icon(<HiOutlineTag size={18} />)}
+              title="Теги"
+              inset={58}
+              chevron
+            />
+            <Row
+              to="/settings/counterparties"
+              leading={icon(<HiOutlineUsers size={18} />)}
+              title="Контрагенти"
+              inset={58}
+              chevron
+            />
+          </Group>
+        </Section>
+
+        <Group>
+          <Row
+            to="/settings/export"
+            leading={icon(<HiOutlineArrowDownTray size={18} />)}
+            title="Експорт і резервна копія"
+            inset={58}
+            chevron
+          />
+          <Row
+            to="/settings/general"
+            leading={icon(<HiOutlineCog6Tooth size={18} />)}
+            title="Загальні"
+            trailing={<Meta>Тема, мова, валюта</Meta>}
+            inset={58}
+            chevron
+          />
+          <Row
+            to="/settings/security"
+            leading={icon(<HiOutlineShieldCheck size={18} />)}
+            title="Безпека"
+            inset={58}
+            chevron
+          />
+        </Group>
+
+        <Group>
+          <Row
+            onClick={() => setLogoutOpen(true)}
+            leading={icon(<HiOutlineArrowRightOnRectangle size={18} />)}
+            title={<span style={{ color: "var(--m-destructive, #ff3b30)" }}>Вийти</span>}
+            inset={58}
+          />
+        </Group>
+      </Body>
+
+      <ConfirmSheet
+        open={logoutOpen}
+        onOpenChange={setLogoutOpen}
+        message="Вийти з акаунта?"
+        actions={[{ label: "Вийти", destructive: true, onSelect: actions.handleLogout }]}
+      />
+    </Page>
   );
 }
 

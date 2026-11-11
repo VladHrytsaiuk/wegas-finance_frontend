@@ -372,6 +372,10 @@ function AppRoutes() {
                 element={withRouteSuspense(<Profile />, "resources")}
               />
               <Route
+                path="integrations"
+                element={withRouteSuspense(<Profile />, "resources")}
+              />
+              <Route
                 path="security"
                 element={withRouteSuspense(<Security />, "resources")}
               />

@@ -6,6 +6,7 @@ import { HiCheck } from "react-icons/hi2";
 import { useGeneralSettings } from "../../hooks/Settings/useGeneralSettings";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import MobileGeneralSettings from "../../views/mobile/Settings/MobileGeneralSettings";
 import * as S from "./General.styles";
 
 interface OptionType {
@@ -26,7 +27,7 @@ const getTriggerLabel = (options: OptionType[], value: string) => {
   );
 };
 
-function General() {
+function DesktopGeneral() {
   const { state, actions, t } = useGeneralSettings();
   const isMobile = useIsMobile();
   const {
@@ -148,6 +149,11 @@ function General() {
       </S.Container>
     </>
   );
+}
+
+function General() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileGeneralSettings /> : <DesktopGeneral />;
 }
 
 export default General;

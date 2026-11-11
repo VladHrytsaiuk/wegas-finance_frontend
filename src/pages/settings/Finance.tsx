@@ -1,9 +1,10 @@
+import { Navigate } from "react-router-dom";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { useGeneralSettings } from "../../hooks/Settings/useGeneralSettings";
 import * as S from "./General.styles";
 
-function Finance() {
+function DesktopFinance() {
   const { state, actions } = useGeneralSettings();
   const isMobile = useIsMobile();
   const isBusy = state.isLoading || state.isPending;
@@ -32,6 +33,12 @@ function Finance() {
       </S.Container>
     </>
   );
+}
+
+function Finance() {
+  const isMobile = useIsMobile();
+  // На телефоні перемикач чеків живе в «Загальних».
+  return isMobile ? <Navigate replace to="/settings/general" /> : <DesktopFinance />;
 }
 
 export default Finance;
