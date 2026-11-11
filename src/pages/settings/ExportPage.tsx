@@ -9,6 +9,7 @@ import {
   HiArchiveBox,
 } from "react-icons/hi2";
 import { Trans } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
 import { DateRangePicker } from "../../components/ui/DateRangePicker";
 import { MultiSelectFilter } from "../../components/shared/TableToolbar/MultiSelectFilter";
@@ -28,7 +29,10 @@ interface ExportPageProps {
 }
 
 export default function ExportPage(props?: ExportPageProps) {
-  const { state, actions, t } = useExportPage(props);
+  // Зі «Статистики» (телефон) період і рахунки приходять через стан переходу.
+  const location = useLocation();
+  const initial = props ?? (location.state as { export?: ExportPageProps } | null)?.export;
+  const { state, actions, t } = useExportPage(initial);
   const isMobile = useIsMobile();
   const {
     activeTab,

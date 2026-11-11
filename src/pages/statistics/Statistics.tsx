@@ -14,6 +14,7 @@ import {
   StatisticsPageSkeleton,
 } from "../../components/ui/Skeleton/LoadingSkeletons";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import MobileStatistics from "../../views/mobile/Statistics/MobileStatistics";
 import { FAB } from "../../components/ui/FAB";
 
 import { useStatistics } from "../../hooks/Stats/useStatistics";
@@ -21,7 +22,7 @@ import * as S from "./Statistics.styles";
 
 const ExportPage = lazy(() => import("../settings/ExportPage"));
 
-export const Statistics = () => {
+const DesktopStatistics = () => {
   const { state, actions, t } = useStatistics();
   usePageTitle(t("navigation:general.statistics", "Статистика"));
   const isMobile = useIsMobile();
@@ -167,4 +168,9 @@ export const Statistics = () => {
       )}
     </Modal>
   );
+};
+
+export const Statistics = () => {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileStatistics /> : <DesktopStatistics />;
 };

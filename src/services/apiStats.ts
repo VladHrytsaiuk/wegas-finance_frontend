@@ -10,6 +10,9 @@ export interface DashboardStats {
 
 export interface TopStat {
   id?: string;
+  color?: string;
+  icon?: string;
+  logo?: string;
   name: string;
   metadata: string;
   currency: string;
@@ -33,6 +36,7 @@ export interface Transaction {
 }
 
 export interface StatsFilter {
+  label?: string;
   from: number;
   to: number;
   accountIds: string[];
@@ -65,8 +69,10 @@ export const statsService = {
     type: "income" | "expense",
     entity: "category" | "tag" | "counterparty",
     filter: StatsFilter,
+    limit?: number,
   ): Promise<TopStat[]> => {
     const params = {
+      limit,
       type,
       entity,
       from: filter.from,
@@ -89,6 +95,8 @@ export const statsService = {
       to: filter.to,
       currency: filter.currency,
       account_ids: filter.accountIds.join(","),
+      // дні рахуються за часом користувача, а не UTC
+      tz_offset: -new Date().getTimezoneOffset(),
     };
     const response = await api.get<TrendStat[]>("/dashboard/trend", { params });
     return response.data;
