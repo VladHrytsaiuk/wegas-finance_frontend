@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 
@@ -9,10 +9,15 @@ import { useUserRole } from "../../../hooks/useUserRole";
 import { useSettings } from "../../../context/SettingsContext";
 import { getAccountsApi, type Account } from "../../../services/apiAccounts";
 import { getGoalsApi } from "../../../services/apiGoals";
-import { getUsersApi } from "../../../services/apiUsers";
+import { getMeApi, getUsersApi } from "../../../services/apiUsers";
+import { HiPlus } from "react-icons/hi2";
 import { statsService } from "../../../services/apiStats";
 import { formatMoney } from "../../../utils/helpers";
+import { NavButton } from "../../../mobile/ui/NavBar";
 import { Screen, LargeTitle } from "../../../mobile/ui/Screen";
+import { sortAccountsByPreferredOrder } from "../../../utils/accountSorting";
+import { AccountSheet } from "../Accounts/AccountSheet";
+import { AccountsOrderSheet } from "./AccountsOrderSheet";
 import { Section, Group, Row, Amount, Meta } from "../../../mobile/ui/Group";
 import { AccountTile } from "../../../mobile/accountTile";
 import { ACCOUNT_SECTIONS, accountSection } from "../../../mobile/accountSection";
@@ -40,21 +45,11 @@ const SubtitleStack = styled.span`
   flex-direction: column;
 `;
 
-const AddButton = styled.button`
-  height: 50px;
-  border: none;
-  border-radius: var(--m-radius-group);
-  background: var(--m-surface);
-  color: var(--m-accent);
-  font: inherit;
-  font-size: 17px;
-  cursor: pointer;
-`;
-
 function MobileAccountsList() {
   usePageTitle("Рахунки");
   const navigate = useNavigate();
-  const location = useLocation();
+  const [creating, setCreating] = useState(false);
+  const [ordering, setOrdering] = useState(false);
   const { user } = useUserRole();
   const { currency, language } = useSettings();
   const { convert } = useExchangeRates();
@@ -67,13 +62,24 @@ function MobileAccountsList() {
     queryFn: () => statsService.getDashboard({ from: 0, to: 0, accountIds: [], currency }),
   });
 
+  const { data: me } = useQuery({ queryKey: ["me"], queryFn: getMeApi });
+  const orderIds = useMemo(() => {
+    try {
+      const parsed = me?.mobile_accounts_order ? JSON.parse(me.mobile_accounts_order) : [];
+      return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === "string") : [];
+    } catch {
+      return [];
+    }
+  }, [me?.mobile_accounts_order]);
+  const ordered = useMemo(() => sortAccountsByPreferredOrder(accounts, orderIds), [accounts, orderIds]);
+
   const sections = useMemo(() => {
-    const visible = accounts.filter((a) => !a.is_group && !a.is_archived);
+    const visible = ordered.filter((a) => !a.is_group && !a.is_archived);
     return ACCOUNT_SECTIONS.map((section) => ({
       ...section,
       accounts: visible.filter((a) => accountSection(a) === section.key),
     })).filter((section) => section.accounts.length > 0);
-  }, [accounts]);
+  }, [ordered]);
 
   const subtitleFor = (account: Account) => {
     const parts: string[] = [];
@@ -102,6 +108,11 @@ function MobileAccountsList() {
         title="Рахунки"
         subtitle={
           balance ? `Разом ${formatMoney(balance.total_balance, currency, language)}` : undefined
+        }
+        trailing={
+          <NavButton type="button" aria-label="Додати рахунок" onClick={() => setCreating(true)}>
+            <HiPlus size={26} />
+          </NavButton>
         }
       />
 
@@ -146,12 +157,17 @@ function MobileAccountsList() {
         </Section>
       ))}
 
-      <AddButton
-        type="button"
-        onClick={() => navigate("/accounts/new", { state: { background: location } })}
-      >
-        Додати рахунок
-      </AddButton>
+      {sections.length > 0 && (
+        <Group>
+          <Row onClick={() => setOrdering(true)} title="Порядок рахунків" chevron />
+        </Group>
+      )}
+      {creating && (
+        <AccountSheet open={creating} onOpenChange={(open) => !open && setCreating(false)} onCreated={(created) => navigate(`/accounts/${created.id}`)} />
+      )}
+      {ordering && (
+        <AccountsOrderSheet open={ordering} onOpenChange={(open) => !open && setOrdering(false)} accounts={sections.flatMap((s) => s.accounts)} />
+      )}
     </Screen>
   );
 }

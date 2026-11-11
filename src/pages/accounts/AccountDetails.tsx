@@ -39,6 +39,7 @@ import * as S from "./AccountDetails.styles";
 import { Button } from "../../components/ui/Button";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import MobileAccount from "../../views/mobile/Accounts/MobileAccount";
 import { FAB } from "../../components/ui/FAB";
 import { HiMinus, HiArrowsRightLeft } from "react-icons/hi2";
 import { Overlay, StyledModal } from "../../components/ui/Modal";
@@ -46,7 +47,7 @@ import ImportModal from "../../components/import/ImportModal";
 
 const ExportModal = lazy(() => import("../settings/ExportPage"));
 
-function AccountDetails() {
+function DesktopAccountDetails() {
   const { t } = useTranslation();
   const { setPageTitle, resetPageTitle } = useHeader();
   const location = useLocation();
@@ -445,6 +446,11 @@ function AccountDetails() {
         )}
     </Modal>
   );
+}
+
+function AccountDetails() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileAccount /> : <DesktopAccountDetails />;
 }
 
 export default AccountDetails;

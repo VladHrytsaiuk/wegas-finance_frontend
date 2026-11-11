@@ -10,7 +10,7 @@ import {
   type Locale,
 } from "date-fns";
 import { uk, enUS } from "date-fns/locale";
-import { HiOutlineCamera, HiOutlineReceiptPercent } from "react-icons/hi2";
+import { HiOutlineCamera, HiOutlineReceiptPercent, HiXMark } from "react-icons/hi2";
 
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useDebounce } from "../../../hooks/useDebounce";
@@ -61,6 +61,22 @@ const Controls = styled.div`
   margin-top: -8px;
 `;
 
+const AccountChip = styled.button`
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 16px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--m-accent);
+  background: var(--m-fill);
+  cursor: pointer;
+`;
+
 const Note = styled.p`
   margin: -8px 4px 0;
   font-size: 13px;
@@ -91,10 +107,19 @@ function MobileOperations() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const filter = (searchParams.get("filter") as Filter) || "all";
-  const setFilter = (value: Filter) =>
-    setSearchParams(value === "all" ? {} : { filter: value }, {
-      replace: true,
-    });
+  // Рахунок приходить з екрана рахунку: ?account=<id>
+  const accountId = searchParams.get("account") || undefined;
+  const setFilter = (value: Filter) => {
+    const next: Record<string, string> = {};
+    if (value !== "all") next.filter = value;
+    if (accountId) next.account = accountId;
+    setSearchParams(next, { replace: true });
+  };
+  const clearAccount = () => {
+    const next: Record<string, string> = {};
+    if (filter !== "all") next.filter = filter;
+    setSearchParams(next, { replace: true });
+  };
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search.trim(), 300);
@@ -117,6 +142,7 @@ function MobileOperations() {
   const list = useInfiniteTransactionsData({
     type: filter === "expense" || filter === "income" ? filter : undefined,
     search: debouncedSearch || undefined,
+    account_id: accountId,
   });
   const inbox = useQuery({
     queryKey: ["inbox", "mobile-pending"],
@@ -246,6 +272,12 @@ function MobileOperations() {
           ]}
         />
       </Controls>
+
+      {accountId && !isInbox && (
+        <AccountChip type="button" aria-label="Прибрати фільтр за рахунком" onClick={clearAccount}>
+          Рахунок: {(accounts as unknown as Account[]).find((a) => a.id === accountId)?.name ?? "…"} <HiXMark size={14} />
+        </AccountChip>
+      )}
 
       {isInbox ? (
         <>
