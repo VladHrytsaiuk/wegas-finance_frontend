@@ -27,6 +27,7 @@ import { AddMemberChoiceModal } from "./AddMemberChoiceModal";
 import { FAB } from "../../components/ui/FAB";
 import type { UserProfile } from "../../services/apiUsers";
 
+import MobileFamily from "../../views/mobile/Settings/MobileFamily";
 import * as S from "./FamilySettings.styles";
 
 // Helper component for local modals to ensure visual consistency
@@ -69,7 +70,7 @@ const LocalModal: React.FC<{
   );
 };
 
-function FamilySettings() {
+function DesktopFamilySettings() {
   // Explicit boolean states for addition-related modals
   const [isChoiceOpen, setIsChoiceOpen] = useState(false);
   const [isInviteOpen, setIsInviteOpen] = useState(false);
@@ -241,6 +242,11 @@ function FamilySettings() {
   );
 }
 
+
+function FamilySettings() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileFamily /> : <DesktopFamilySettings />;
+}
 
 export default FamilySettings;
 ;

@@ -17,7 +17,7 @@ interface ErrorResponse {
   error?: string;
 }
 
-type UpdateUserData = Partial<Pick<UserProfile, "name" | "email" | "role_id">>;
+type UpdateUserData = Partial<Pick<UserProfile, "name" | "email" | "role_id">> & { password?: string };
 
 export const useUsers = () => {
   const { t } = useTranslation();

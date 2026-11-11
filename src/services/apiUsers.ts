@@ -21,6 +21,8 @@ export interface UpdateUserData {
   name?: string;
   email?: string;
   role_id?: string;
+  /** Новий пароль; порожнє — лишити як є. */
+  password?: string;
 }
 
 // Отримати дані про себе (хто залогінився)

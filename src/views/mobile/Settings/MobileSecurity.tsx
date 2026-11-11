@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { HiOutlineKey } from "react-icons/hi2";
 
@@ -10,6 +9,7 @@ import { Footnote, RowInput } from "../../../mobile/ui/Field";
 import { Group, Row, Section } from "../../../mobile/ui/Group";
 import { PrimaryButton, Sheet } from "../../../mobile/ui/Sheet";
 import { Tile } from "../../../mobile/ui/Tile";
+import { MIN_PASSWORD, errorText } from "./family";
 import { SettingsScreen } from "./SettingsScreen";
 
 // Безпека: зміна пароля. ПІН і біометрія вимкнені (як і в старій сторінці).
@@ -28,13 +28,12 @@ function PasswordSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (o
       setConfirm("");
       onOpenChange(false);
     },
-    onError: (err: AxiosError<{ error?: string }>) =>
-      toast.error(err.response?.data?.error || "Не вдалося змінити пароль"),
+    onError: (err) => toast.error(errorText(err, "Не вдалося змінити пароль")),
   });
 
   const submit = () => {
     if (newPassword !== confirm) return void toast.error("Паролі не збігаються");
-    if (newPassword.length < 4) return void toast.error("Пароль закороткий (мінімум 4 символи)");
+    if (newPassword.length < MIN_PASSWORD) return void toast.error(`Пароль закороткий (мінімум ${MIN_PASSWORD} символів)`);
     mutate({ old_password: oldPassword, new_password: newPassword });
   };
 
@@ -88,7 +87,7 @@ function PasswordSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (o
             }
           />
         </Group>
-        <Footnote>Мінімум 4 символи.</Footnote>
+        <Footnote>Мінімум {MIN_PASSWORD} символів.</Footnote>
       </Section>
     </Sheet>
   );
