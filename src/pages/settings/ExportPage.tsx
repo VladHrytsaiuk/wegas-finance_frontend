@@ -19,6 +19,7 @@ import Spinner from "../../components/ui/Spinner";
 import { useExportPage } from "../../hooks/Settings/useExportPage";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import MobileExport from "../../views/mobile/Settings/MobileExport";
 import * as S from "./ExportPage.styles";
 
 interface ExportPageProps {
@@ -28,7 +29,7 @@ interface ExportPageProps {
   initialTab?: "transactions" | "stats" | "backup";
 }
 
-export default function ExportPage(props?: ExportPageProps) {
+function DesktopExportPage(props?: ExportPageProps) {
   // Зі «Статистики» (телефон) період і рахунки приходять через стан переходу.
   const location = useLocation();
   const initial = props ?? (location.state as { export?: ExportPageProps } | null)?.export;
@@ -286,4 +287,9 @@ export default function ExportPage(props?: ExportPageProps) {
       </div>
     </S.PageContainer>
   );
+}
+
+export default function ExportPage(props?: ExportPageProps) {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileExport /> : <DesktopExportPage {...props} />;
 }
