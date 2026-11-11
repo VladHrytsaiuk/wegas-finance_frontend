@@ -177,7 +177,9 @@ export const useTransactionItem = ({
         ? t("transactions:transactions.debt_take_label", "Взяв у борг")
         : isIncoming
           ? t("transactions:transactions.repay_in_label", "Повернення")
-          : t("transactions:transactions.give_label", "Видача");
+          : rawType === "debt_repay"
+            ? t("transactions:transactions.repay_out_label", "Повернув борг")
+            : t("transactions:transactions.give_label", "Видача");
 
       // 🔥 Встановлюємо іконки "Вхід" / "Вихід"
       iconName = isIncoming ? "DebtIn" : "DebtOut";
