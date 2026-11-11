@@ -23,13 +23,15 @@ import type { Category, Counterparty } from "../../types";
 interface UseImportModalProps {
   account: Account;
   onClose?: () => void;
+  /** Не питати банк: бекенд визначає його за вмістом файлу (мобільний імпорт). */
+  autoDetect?: boolean;
 }
 
 interface ImportErrorResponse {
   error?: string;
 }
 
-export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
+export const useImportModal = ({ account, onClose, autoDetect }: UseImportModalProps) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -70,6 +72,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
   );
 
   const [isLoading, setIsLoading] = useState(false);
+  const [detectedBank, setDetectedBank] = useState<{ bank: string; corrected: boolean } | null>(null);
   const [transactions, setTransactions] = useState<ExtendedTransaction[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
     new Set(),
@@ -121,7 +124,8 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
       await waitForNextPaint();
 
       // Використовуємо account.id
-      const data = await uploadBankStatementApi(account.id, bankType, file);
+      const data = await uploadBankStatementApi(account.id, autoDetect ? "auto" : bankType, file);
+      if (data.bank_type) setDetectedBank({ bank: data.bank_type, corrected: !!data.bank_corrected });
 
       const processed = data.transactions.map((tx): ExtendedTransaction => {
         const foundCategory = categories.find(
@@ -265,6 +269,7 @@ export const useImportModal = ({ account, onClose }: UseImportModalProps) => {
     state: {
       step,
       bankType,
+      detectedBank,
       isLoading,
       transactions,
       selectedIndices,

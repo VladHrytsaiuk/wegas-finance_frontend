@@ -31,8 +31,7 @@ import { NavBar, NavButton } from "../../../mobile/ui/NavBar";
 import { TxRow } from "../../../mobile/ui/TxRow";
 import { AddSheet } from "../AddSheet/AddSheet";
 import { emptyInitial, type Kind } from "../AddSheet/editState";
-import Modal, { useModal } from "../../../components/ui/Modal";
-import ImportModal from "../../../components/import/ImportModal";
+import { ImportSheet } from "../Import/ImportSheet";
 import { AccountSheet } from "./AccountSheet";
 
 // Рахунок: сума, швидкі дії (дохід / витрата / переказ), місяць, ціль чи сховище,
@@ -128,12 +127,6 @@ const Empty = styled.p`
   color: var(--m-label-2);
 `;
 
-// Імпорт виписки поки що в старому вікні (буде перероблено разом з імпортом).
-function ImportRow() {
-  const { open } = useModal();
-  return <Row onClick={() => open("import-statement")} title="Імпорт виписки" chevron />;
-}
-
 const TYPE_LABEL: Record<string, string> = {
   card: "Картка",
   cash: "Готівка",
@@ -154,6 +147,7 @@ export default function MobileAccount() {
   const [operation, setOperation] = useState<Kind | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [importing, setImporting] = useState(false);
   usePageTitle(account?.name ?? "Рахунок");
 
   if (isLoading || !account) {
@@ -197,7 +191,6 @@ export default function MobileAccount() {
   };
 
   return (
-    <Modal>
     <Page>
       <NavBar
         backLabel="Рахунки"
@@ -235,7 +228,7 @@ export default function MobileAccount() {
 
         {(locked || isImportable) && (
           <Group>
-            {isImportable && <ImportRow />}
+            {isImportable && <Row onClick={() => setImporting(true)} title="Імпорт виписки" chevron />}
             {locked && (
               <Row
                 onClick={isSyncingNow ? undefined : () => void sync()}
@@ -352,12 +345,7 @@ export default function MobileAccount() {
         message={`Видалити рахунок «${account.name}»?`}
         actions={[{ label: "Видалити", destructive: true, onSelect: () => deleteAccount(account.id) }]}
       />
-      {isImportable && (
-        <Modal.Window name="import-statement" padding="0">
-          <ImportModal account={account as unknown as import("../../../services/apiAccounts").Account} />
-        </Modal.Window>
-      )}
+      {importing && <ImportSheet open={importing} onOpenChange={(open) => !open && setImporting(false)} account={account as unknown as import("../../../services/apiAccounts").Account} />}
     </Page>
-    </Modal>
   );
 }

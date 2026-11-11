@@ -16,6 +16,10 @@ export interface ImportPreviewTransaction {
 }
 export interface ImportPreviewResponse {
   transactions: ImportPreviewTransaction[];
+  /** Банк, за яким файл розібрано (визначений бекендом за вмістом). */
+  bank_type?: "monobank" | "privatbank";
+  /** Обраний банк не збігся з файлом — використано визначений. */
+  bank_corrected?: boolean;
 }
 
 export interface ExistingTransactionDB {
