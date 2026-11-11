@@ -79,3 +79,14 @@ export const Footnote = styled.p`
   line-height: 1.4;
   color: var(--m-label-2);
 `;
+
+/** Невелика дія акцентним кольором біля заголовка розділу («А–Я», «Змінити»). */
+export const TextAction = styled.button.attrs({ type: "button" })`
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--m-accent);
+  cursor: pointer;
+`;

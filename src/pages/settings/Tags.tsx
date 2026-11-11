@@ -12,10 +12,11 @@ import { FAB } from "../../components/ui/FAB";
 import { useTags } from "../../hooks/Settings/useTags";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
+import MobileTags from "../../views/mobile/Settings/MobileTags";
 import * as S from "./Tags.styles";
 import type { Tag } from "../../types";
 
-function Tags() {
+function DesktopTags() {
   return (
     <Modal>
       <TagsContent />
@@ -103,6 +104,11 @@ function TagsContent() {
       </Modal.Window>
     </>
   );
+}
+
+function Tags() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileTags /> : <DesktopTags />;
 }
 
 export default Tags;

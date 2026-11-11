@@ -10,13 +10,14 @@ import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkelet
 import { EmptyState } from "../../components/ui/EmptyState";
 
 // Styles & Logic
+import MobileCounterparties from "../../views/mobile/Settings/MobileCounterparties";
 import * as S from "./Counterparties.styles";
 import { useCounterpartiesPage } from "../../hooks/Counterparties/useCounterpartiesPage";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 import { FAB } from "../../components/ui/FAB";
 
-function Counterparties() {
+function DesktopCounterparties() {
   return (
     <Modal>
       <CounterpartiesContent />
@@ -179,6 +180,11 @@ function CounterpartiesContent() {
       </S.PageWrapper>
     </>
   );
+}
+
+function Counterparties() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileCounterparties /> : <DesktopCounterparties />;
 }
 
 export default Counterparties;

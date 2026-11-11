@@ -27,6 +27,31 @@ const Swatch = styled.button<{ $color: string }>`
   cursor: pointer;
 `;
 
+interface ColorSwatchesProps {
+  color: string;
+  onChange: (color: string) => void;
+}
+
+/** Набір кольорів (ті самі, що й у старому ColorIconPicker). */
+export function ColorSwatches({ color, onChange }: ColorSwatchesProps) {
+  return (
+    <Colors role="group" aria-label="Колір">
+      {PRESET_COLORS.map((c) => (
+        <Swatch
+          key={c}
+          type="button"
+          $color={c}
+          aria-label={c}
+          aria-pressed={c === color}
+          onClick={() => onChange(c)}
+        >
+          {c === color && <HiCheck size={18} />}
+        </Swatch>
+      ))}
+    </Colors>
+  );
+}
+
 const Icons = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -56,6 +81,8 @@ interface AppearancePickerProps {
   color: string;
   icon: string;
   onChange: (value: { color: string; icon: string }) => void;
+  /** Без вибору кольору (напр. у контрагента колір задає категорія). */
+  hideColor?: boolean;
 }
 
 export function AppearancePicker({
@@ -64,6 +91,7 @@ export function AppearancePicker({
   color,
   icon,
   onChange,
+  hideColor,
 }: AppearancePickerProps) {
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
@@ -89,22 +117,11 @@ export function AppearancePicker({
         </SheetTextButton>
       }
     >
-      <Section caption="Колір">
-        <Colors role="group" aria-label="Колір">
-          {PRESET_COLORS.map((c) => (
-            <Swatch
-              key={c}
-              type="button"
-              $color={c}
-              aria-label={c}
-              aria-pressed={c === color}
-              onClick={() => onChange({ color: c, icon })}
-            >
-              {c === color && <HiCheck size={18} />}
-            </Swatch>
-          ))}
-        </Colors>
-      </Section>
+      {!hideColor && (
+        <Section caption="Колір">
+          <ColorSwatches color={color} onChange={(c) => onChange({ color: c, icon })} />
+        </Section>
+      )}
       <Section caption="Іконка">
         <SearchField
           value={query}

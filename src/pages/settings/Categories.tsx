@@ -12,12 +12,13 @@ import { SettingsListSkeleton } from "../../components/ui/Skeleton/LoadingSkelet
 import { FAB } from "../../components/ui/FAB";
 
 // Styles & Logic
+import MobileCategories from "../../views/mobile/Settings/MobileCategories";
 import * as S from "./Categories.styles";
 import { useCategoriesPage } from "../../hooks/Categories/useCategoriesPage";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import MobilePageHeader from "../../components/mobile/MobilePageHeader";
 
-function Categories() {
+function DesktopCategories() {
   return (
     <Modal>
       <CategoriesContent />
@@ -198,6 +199,11 @@ function CategoriesContent() {
       </Modal.Window>
     </>
   );
+}
+
+function Categories() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileCategories /> : <DesktopCategories />;
 }
 
 export default Categories;
