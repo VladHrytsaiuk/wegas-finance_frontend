@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 
+import { useExchangeRates } from "../../../hooks/useExchangeRates";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useUserRole } from "../../../hooks/useUserRole";
 import { useSettings } from "../../../context/SettingsContext";
@@ -12,7 +13,7 @@ import { getUsersApi } from "../../../services/apiUsers";
 import { statsService } from "../../../services/apiStats";
 import { formatMoney } from "../../../utils/helpers";
 import { Screen, LargeTitle } from "../../../mobile/ui/Screen";
-import { Section, Group, Row, Amount } from "../../../mobile/ui/Group";
+import { Section, Group, Row, Amount, Meta } from "../../../mobile/ui/Group";
 import { AccountTile } from "../../../mobile/accountTile";
 import { ACCOUNT_SECTIONS, accountSection } from "../../../mobile/accountSection";
 
@@ -56,6 +57,7 @@ function MobileAccountsList() {
   const location = useLocation();
   const { user } = useUserRole();
   const { currency, language } = useSettings();
+  const { convert } = useExchangeRates();
 
   const { data: accounts = [] } = useQuery({ queryKey: ["accounts"], queryFn: getAccountsApi });
   const { data: goals = [] } = useQuery({ queryKey: ["goals"], queryFn: getGoalsApi });
@@ -130,7 +132,12 @@ function MobileAccountsList() {
                     )
                   }
                   trailing={
-                    <Amount>{formatMoney(account.balance, account.currency, language)}</Amount>
+                    <>
+                      <Amount>{formatMoney(account.balance, account.currency, language)}</Amount>
+                      {account.currency !== currency && convert(account.balance, account.currency, currency) !== undefined && (
+                        <Meta>≈ {formatMoney(convert(account.balance, account.currency, currency)!, currency, language, false)}</Meta>
+                      )}
+                    </>
                   }
                 />
               );

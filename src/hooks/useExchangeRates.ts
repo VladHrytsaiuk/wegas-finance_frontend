@@ -53,5 +53,16 @@ export function useExchangeRates() {
   const usd = data?.find((r) => r.currency_code === "USD")?.rate;
   const eur = data?.find((r) => r.currency_code === "EUR")?.rate;
 
-  return { usd, eur, isLoading };
+  /** Курси до гривні: скільки гривень коштує одиниця валюти (UAH = 1). */
+  const toUah = (code: string) => (code === "UAH" ? 1 : data?.find((r) => r.currency_code === code)?.rate);
+
+  /** Сума в найменших одиницях з однієї валюти в іншу; undefined, якщо курсу немає. */
+  const convert = (amount: number, from: string, to: string) => {
+    if (from === to) return amount;
+    const a = toUah(from);
+    const b = toUah(to);
+    return a && b ? Math.round((amount * a) / b) : undefined;
+  };
+
+  return { usd, eur, isLoading, convert };
 }
