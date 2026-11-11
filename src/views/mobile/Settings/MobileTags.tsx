@@ -8,7 +8,7 @@ import type { Tag } from "../../../types";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { createTagApi, deleteTagApi, getTagsApi } from "../../../services/apiTags";
 import { ConfirmSheet } from "../../../mobile/ui/ConfirmSheet";
-import { RowInput, TextAction } from "../../../mobile/ui/Field";
+import { RowInput } from "../../../mobile/ui/Field";
 import { Group, Row, Section } from "../../../mobile/ui/Group";
 import { ScreenState } from "../../../mobile/ui/Loader";
 import { NavButton } from "../../../mobile/ui/NavBar";
@@ -19,6 +19,7 @@ import { Tile } from "../../../mobile/ui/Tile";
 import { PRESET_COLORS } from "../../../hooks/ui/useColorIconPicker";
 import { CATALOG_SORTS, matches, sortByName, type CatalogSort } from "./catalog";
 import { SettingsScreen } from "./SettingsScreen";
+import { SortBar } from "./SortBar";
 
 // Теги: список, пошук, сортування, новий тег (назва й колір), видалення.
 
@@ -105,16 +106,14 @@ export default function MobileTags() {
       }
     >
       {tags.length > 6 && <SearchField value={query} onChange={setQuery} label="Пошук тегів" />}
+      {visible.length > 1 && <SortBar sort={sort} onOpen={() => setSortOpen(true)} />}
 
       {isLoading ? (
         <ScreenState loading>Завантаження…</ScreenState>
       ) : visible.length === 0 ? (
         <Empty>{tags.length === 0 ? "Тегів ще немає. Натисніть «+», щоб додати." : "Нічого не знайдено"}</Empty>
       ) : (
-        <Section
-          caption={`Теги · ${visible.length}`}
-          action={<TextAction onClick={() => setSortOpen(true)}>{CATALOG_SORTS.find((s) => s.value === sort)?.label}</TextAction>}
-        >
+        <Section caption={`Теги · ${visible.length}`}>
           <Group>
             {visible.map((tag) => (
               <Row

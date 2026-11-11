@@ -18,6 +18,7 @@ import { CATALOG_SORTS, copyOnWriteMessage, matches, sortByName, type CatalogSor
 import { CpCategorySheet } from "./CpCategorySheet";
 import { CounterpartySheet } from "./CounterpartySheet";
 import { SettingsScreen } from "./SettingsScreen";
+import { SortBar } from "./SortBar";
 
 // Контрагенти: магазини, люди, інші; групи за категоріями; пошук і сортування.
 
@@ -118,21 +119,20 @@ export default function MobileCounterparties() {
     >
       <Segmented label="Тип контрагентів" options={FILTERS} value={filter} onChange={setFilter} />
       <SearchField value={query} onChange={setQuery} label="Пошук контрагентів" />
+      {blocks.length > 0 && <SortBar sort={sort} onOpen={() => setSortOpen(true)} />}
 
       {isLoading ? (
         <ScreenState loading>Завантаження…</ScreenState>
       ) : blocks.length === 0 ? (
         <Empty>{query ? "Нічого не знайдено" : "Контрагентів ще немає. Натисніть «+», щоб додати."}</Empty>
       ) : (
-        blocks.map((block, index) => (
+        blocks.map((block) => (
           <Section
             key={block.key}
             caption={block.caption}
             action={
               block.category && canManageStructure ? (
                 <TextAction onClick={() => openCat(block.category!)}>Змінити</TextAction>
-              ) : index === 0 ? (
-                <TextAction onClick={() => setSortOpen(true)}>{CATALOG_SORTS.find((s) => s.value === sort)?.label}</TextAction>
               ) : undefined
             }
           >
@@ -154,12 +154,6 @@ export default function MobileCounterparties() {
             </Group>
           </Section>
         ))
-      )}
-
-      {blocks.length > 0 && blocks[0].category && canManageStructure && (
-        <TextAction style={{ alignSelf: "flex-start", padding: "0 16px" }} onClick={() => setSortOpen(true)}>
-          Сортування: {CATALOG_SORTS.find((s) => s.value === sort)?.label}
-        </TextAction>
       )}
 
       <ConfirmSheet

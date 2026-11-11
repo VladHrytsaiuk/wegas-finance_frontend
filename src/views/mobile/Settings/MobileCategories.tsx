@@ -7,7 +7,6 @@ import { useCategoryData } from "../../../hooks/Categories/useCategoryData";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useUserRole } from "../../../hooks/useUserRole";
 import { ConfirmSheet } from "../../../mobile/ui/ConfirmSheet";
-import { TextAction } from "../../../mobile/ui/Field";
 import { Group, Meta, Row, Section } from "../../../mobile/ui/Group";
 import { ScreenState } from "../../../mobile/ui/Loader";
 import { NavButton } from "../../../mobile/ui/NavBar";
@@ -17,6 +16,7 @@ import { Tile } from "../../../mobile/ui/Tile";
 import { CategorySheet } from "./CategorySheet";
 import { CATALOG_SORTS, copyOnWriteMessage, matches, sortByName, type CatalogSort } from "./catalog";
 import { SettingsScreen } from "./SettingsScreen";
+import { SortBar } from "./SortBar";
 
 // Категорії: витрати й доходи, верхній рівень і підкатегорії; пошук і сортування.
 
@@ -94,16 +94,14 @@ export default function MobileCategories() {
     >
       <Segmented label="Тип категорій" options={KINDS} value={kind} onChange={setKind} />
       {categories.length > 6 && <SearchField value={query} onChange={setQuery} label="Пошук категорій" />}
+      {roots.length > 1 && <SortBar sort={sort} onOpen={() => setSortOpen(true)} />}
 
       {isLoading ? (
         <ScreenState loading>Завантаження…</ScreenState>
       ) : roots.length === 0 ? (
         <Empty>{query ? "Нічого не знайдено" : `Ще немає категорій ${kind === "expense" ? "витрат" : "доходів"}`}</Empty>
       ) : (
-        <Section
-          caption={`Категорії · ${roots.length}`}
-          action={<TextAction onClick={() => setSortOpen(true)}>{CATALOG_SORTS.find((s) => s.value === sort)?.label}</TextAction>}
-        >
+        <Section caption={`Категорії · ${roots.length}`}>
           <Group>
             {roots.flatMap(({ root, children }) => [
               <Row

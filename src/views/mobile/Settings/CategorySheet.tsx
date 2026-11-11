@@ -43,6 +43,7 @@ export function CategorySheet({ open, onOpenChange, category, categories, defaul
   const [pickParent, setPickParent] = useState(false);
   const [parentQuery, setParentQuery] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   const children = category ? categories.filter((c) => c.parent_id === category.id) : [];
   // Батьком може бути лише верхня категорія того ж типу; та, що має підкатегорії, сама підкатегорією не стає.
@@ -106,9 +107,16 @@ export function CategorySheet({ open, onOpenChange, category, categories, defaul
       {editing && (
         <Section>
           <Group>
-            <Row onClick={() => setConfirmDelete(true)} title={<span style={{ color: "#ff3b30" }}>Видалити категорію</span>} />
+            <Row
+              onClick={() => (children.length > 0 ? setBlocked(true) : setConfirmDelete(true))}
+              title={<span style={{ color: "#ff3b30" }}>Видалити категорію</span>}
+            />
           </Group>
-          <Footnote>Операції не видаляються. Підкатегорії стануть окремими категоріями.</Footnote>
+          <Footnote>
+            {children.length > 0
+              ? `Спершу видаліть підкатегорії (${children.length}) — категорію з підкатегоріями видалити не можна.`
+              : "Існуючі операції не видаляються."}
+          </Footnote>
         </Section>
       )}
 
@@ -153,6 +161,12 @@ export function CategorySheet({ open, onOpenChange, category, categories, defaul
         </Group>
       </Sheet>
 
+      <ConfirmSheet
+        open={blocked}
+        onOpenChange={setBlocked}
+        message={`У категорії «${category?.name}» є підкатегорії (${children.length}). Спершу видаліть їх або змініть їм батьківську категорію, тоді категорію можна буде видалити.`}
+        actions={[]}
+      />
       <ConfirmSheet
         open={confirmDelete}
         onOpenChange={setConfirmDelete}
