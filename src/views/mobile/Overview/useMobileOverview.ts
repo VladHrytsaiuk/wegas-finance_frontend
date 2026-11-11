@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { startOfMonth, endOfDay } from "date-fns";
+import { startOfMonth, endOfDay, endOfMonth, subMonths, min } from "date-fns";
 
 import { useSettings } from "../../../context/SettingsContext";
 import { statsService } from "../../../services/apiStats";
@@ -45,6 +45,13 @@ export function useMobileOverview() {
     return [startOfMonth(now).getTime(), endOfDay(now).getTime()];
   }, []);
 
+  // Минулий місяць за ті самі дні (до того ж числа), щоб порівняння було чесним.
+  const [prevFrom, prevTo] = useMemo(() => {
+    const now = new Date();
+    const prev = subMonths(now, 1);
+    return [startOfMonth(prev).getTime(), min([endOfDay(prev), endOfMonth(prev)]).getTime()];
+  }, []);
+
   const balanceQuery = useQuery({
     queryKey: ["stats", "balance", [], currency],
     queryFn: () => statsService.getDashboard({ from: 0, to: 0, accountIds: [], currency }),
@@ -53,6 +60,11 @@ export function useMobileOverview() {
     queryKey: ["stats", "month", monthFrom, currency],
     queryFn: () =>
       statsService.getDashboard({ from: monthFrom, to: monthTo, accountIds: [], currency }),
+  });
+  const prevMonthQuery = useQuery({
+    queryKey: ["stats", "month", prevFrom, currency],
+    queryFn: () =>
+      statsService.getDashboard({ from: prevFrom, to: prevTo, accountIds: [], currency }),
   });
   const recentQuery = useQuery({
     queryKey: ["stats", "recent", "overview"],
@@ -189,6 +201,7 @@ export function useMobileOverview() {
     balance: balanceQuery.data?.total_balance ?? 0,
     monthExpense: monthQuery.data?.total_expense ?? 0,
     monthIncome: monthQuery.data?.total_income ?? 0,
+    prevMonthExpense: prevMonthQuery.data?.total_expense ?? 0,
     recent,
     accounts: accounts as unknown as Account[],
     categories: categories as Category[],

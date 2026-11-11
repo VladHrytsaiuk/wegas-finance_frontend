@@ -84,6 +84,42 @@ const Stat = styled.div<{ $accent?: boolean }>`
   }
 `;
 
+const Compare = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--m-separator);
+`;
+
+const CompareHead = styled.p`
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--m-label-2);
+
+  & strong {
+    font-weight: 600;
+    color: var(--m-label);
+  }
+`;
+
+const CompareBar = styled.span`
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--m-fill);
+  overflow: hidden;
+
+  & > span {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+  }
+`;
+
 const Avatars = styled(Link)`
   display: flex;
   align-items: center;
@@ -240,6 +276,29 @@ function MobileOverview() {
             <span>{formatMoney(data.monthIncome, data.currency, data.language, false)}</span>
           </Stat>
         </Stats>
+        {data.prevMonthExpense > 0 && (() => {
+          // Витрати цього місяця проти минулого за ті самі дні
+          const delta = Math.round(((data.monthExpense - data.prevMonthExpense) / data.prevMonthExpense) * 100);
+          const scale = Math.max(data.monthExpense, data.prevMonthExpense, 1);
+          return (
+            <Compare aria-label="Витрати цього місяця проти минулого">
+              <CompareHead>
+                <span>Проти минулого місяця, ті ж дні</span>
+                <strong>{delta === 0 ? "так само" : `${delta > 0 ? "+" : "−"}${Math.abs(delta)}%`}</strong>
+              </CompareHead>
+              <CompareBar>
+                <span style={{ width: `${(data.monthExpense / scale) * 100}%`, background: delta > 0 ? "#f59e0b" : "var(--m-accent)" }} />
+              </CompareBar>
+              <CompareBar>
+                <span style={{ width: `${(data.prevMonthExpense / scale) * 100}%`, background: "var(--m-label-3)" }} />
+              </CompareBar>
+              <CompareHead>
+                <span>Цей місяць · {formatMoney(data.monthExpense, data.currency, data.language, false)}</span>
+                <span>Минулий · {formatMoney(data.prevMonthExpense, data.currency, data.language, false)}</span>
+              </CompareHead>
+            </Compare>
+          );
+        })()}
       </BalanceCard>
 
       {data.attention.length > 0 && (
