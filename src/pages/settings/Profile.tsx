@@ -10,6 +10,7 @@ import {
 } from "react-icons/hi2";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import MobileIntegrations from "../../views/mobile/Settings/MobileIntegrations";
 import MobileProfile from "../../views/mobile/Settings/MobileProfile";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -530,8 +531,8 @@ function DesktopProfile() {
 function Profile() {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
-  // Інтеграції (Monobank, Telegram) поки що на старому екрані.
-  if (isMobile && pathname.endsWith("/profile")) return <MobileProfile />;
+  // На телефоні профіль і інтеграції — окремі екрани.
+  if (isMobile) return pathname.endsWith("/integrations") ? <MobileIntegrations /> : <MobileProfile />;
   return <DesktopProfile />;
 }
 
